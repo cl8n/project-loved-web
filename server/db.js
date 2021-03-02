@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const config = require('./config.json');
 
 class MysqlDatabase {
   constructor(connectionConfig) {
