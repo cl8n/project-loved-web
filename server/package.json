@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-mysql-session": "^2.1.5",
+    "mysql": "^2.18.1",
+    "superagent": "^6.1.0"
+  }
+}
