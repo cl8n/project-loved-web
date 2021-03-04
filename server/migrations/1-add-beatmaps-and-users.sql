@@ -1,16 +1,12 @@
-CREATE TABLE `beatmaps` (
+CREATE TABLE `users` (
     `id` INT UNSIGNED NOT NULL,
-    `beatmapset_id` INT UNSIGNED NOT NULL,
-    `bpm` DECIMAL(6, 2) NOT NULL,
-    `game_mode` TINYINT UNSIGNED NOT NULL,
-    `key_count` TINYINT UNSIGNED,
-    `play_count` INT UNSIGNED NOT NULL,
-    `star_rating` DECIMAL(6, 2) NOT NULL,
-    `version` VARCHAR(255) NOT NULL,
+    `api_fetched_at` DATETIME NOT NULL,
+    `avatar_url` VARCHAR(255) NOT NULL,
+    `banned` BOOLEAN NOT NULL,
+    `country` CHAR(2) NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
 
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (`beatmapset_id`)
-        REFERENCES `beatmapsets` (`id`)
+    PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `beatmapsets` (
@@ -32,6 +28,21 @@ CREATE TABLE `beatmapsets` (
         REFERENCES `users` (`id`)
 );
 
+CREATE TABLE `beatmaps` (
+    `id` INT UNSIGNED NOT NULL,
+    `beatmapset_id` INT UNSIGNED NOT NULL,
+    `bpm` DECIMAL(6, 2) NOT NULL,
+    `game_mode` TINYINT UNSIGNED NOT NULL,
+    `key_count` TINYINT UNSIGNED,
+    `play_count` INT UNSIGNED NOT NULL,
+    `star_rating` DECIMAL(6, 2) NOT NULL,
+    `version` VARCHAR(255) NOT NULL,
+
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`beatmapset_id`)
+        REFERENCES `beatmapsets` (`id`)
+);
+
 CREATE TABLE `beatmapset_creators` (
     `beatmapset_id` INT UNSIGNED NOT NULL,
     `creator_id` INT UNSIGNED NOT NULL,
@@ -42,15 +53,4 @@ CREATE TABLE `beatmapset_creators` (
         REFERENCES `beatmapsets` (`id`),
     FOREIGN KEY (`creator_id`)
         REFERENCES `users` (`id`)
-);
-
-CREATE TABLE `users` (
-    `id` INT UNSIGNED NOT NULL,
-    `api_fetched_at` DATETIME NOT NULL,
-    `avatar_url` VARCHAR(255) NOT NULL,
-    `banned` BOOLEAN NOT NULL,
-    `country` CHAR(2) NOT NULL,
-    `name` VARCHAR(255) NOT NULL,
-
-    PRIMARY KEY (`id`)
 );

@@ -1,3 +1,15 @@
+CREATE TABLE `rounds` (
+    `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `polls_ended_at` DATETIME,
+    `polls_started_at` DATETIME,
+    `name` VARCHAR(255) NOT NULL,
+    `news_intro` TEXT,
+    `news_intro_preview` TEXT,
+    `news_posted_at` DATETIME,
+
+    PRIMARY KEY (`id`)
+);
+
 CREATE TABLE `nominations` (
     `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `beatmapset_id` INT UNSIGNED NOT NULL,
@@ -29,16 +41,4 @@ CREATE TABLE `nominations` (
         REFERENCES `users` (`id`),
     FOREIGN KEY (`round_id`)
         REFERENCES `rounds` (`id`)
-);
-
-CREATE TABLE `rounds` (
-    `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `polls_ended_at` DATETIME,
-    `polls_started_at` DATETIME,
-    `name` VARCHAR(255) NOT NULL,
-    `news_intro` TEXT,
-    `news_intro_preview` TEXT,
-    `news_posted_at` DATETIME,
-
-    PRIMARY KEY (`id`)
 );
