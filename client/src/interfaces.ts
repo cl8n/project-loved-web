@@ -84,6 +84,7 @@ export interface IRound {
 export interface IUser {
   id: number;
   avatar_url: string;
+  banned: boolean;
   country: string;
   name: string;
   roles: Record<IRole, boolean> & { captain_game_mode?: GameMode };
