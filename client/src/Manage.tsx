@@ -1,9 +1,9 @@
-import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getLogs, getUsersWithRoles, updateApiObject, updateUserRoles } from './api';
 import { BoolView } from './BoolView';
 import { setFormDisabled } from './dom-helpers';
-import { GameMode, ILog, IUser, LogType } from './interfaces';
+import { ILog, IUser, LogType } from './interfaces';
 import { Modal } from './Modal';
 import { Never } from './Never';
 import { useOsuAuth } from './osuAuth';

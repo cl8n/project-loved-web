@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 import superagent from 'superagent';
 import { IUser } from './interfaces';
 
@@ -12,7 +12,7 @@ const authContext = createContext<OsuAuth | undefined>(undefined);
 
 export const loginUrl = '/api/auth/begin';
 
-export function OsuAuthProvider(props: React.PropsWithChildren<{}>) {
+export function OsuAuthProvider(props: PropsWithChildren<{}>) {
   const [user, setUser] = useState<IUser | undefined>(undefined);
 
   async function logOut(): Promise<void> {

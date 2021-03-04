@@ -1,4 +1,3 @@
-import React from 'react';
 import { Route, RouteProps } from 'react-router-dom';
 import { IRole } from './interfaces';
 import { loginUrl, useOsuAuth } from './osuAuth';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { loginUrl, useOsuAuth } from './osuAuth';
 

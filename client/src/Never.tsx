@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function Never() {
   return (
     <span style={{ color: 'red' }}>

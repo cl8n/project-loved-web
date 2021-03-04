@@ -1,5 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import { StrictMode } from 'react';
+import { render } from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Header } from './Header';
 import { Manage } from './Manage';
@@ -8,12 +8,10 @@ import { NotReady } from './NotReady';
 import { OsuAuthProvider } from './osuAuth';
 import { PicksRoundListing } from './PicksRoundListing';
 import { ProtectedRoute } from './ProtectedRoute';
-import reportWebVitals from './reportWebVitals';
 import './style.css';
-import { Submissions } from './Submissions';
 
-ReactDOM.render(
-  <React.StrictMode>
+render(
+  <StrictMode>
     <BrowserRouter>
       <OsuAuthProvider>
         <Header />
@@ -27,7 +25,7 @@ ReactDOM.render(
         </main>
       </OsuAuthProvider>
     </BrowserRouter>
-  </React.StrictMode>,
+  </StrictMode>,
   document.getElementById('loved-app'),
 );
 
