@@ -86,12 +86,14 @@ app.use(async function (request, response, next) {
       });
     }
 
-  response.locals.user = (await db.query(`
-    SELECT *
+  const user = await db.queryOneWithGroups(`
+    SELECT users.*, '_', user_roles.*
     FROM users
-    LEFT JOIN user_roles ON users.id = user_roles.id
+    INNER JOIN user_roles ON users.id = user_roles.id
     WHERE users.id = ?
-  `, request.session.userId))[0];
+  `, request.session.userId, ['', 'roles']);
+  delete user.api_fetched_at;
+  response.locals.user = user;
 
   next();
 });
