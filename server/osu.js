@@ -9,6 +9,12 @@ const db = require('./db');
 const apiBaseUrl = 'https://osu.ppy.sh/api/v2/';
 const apiScopes = 'identify public';
 
+function sanitizeAvatarUrl(url) {
+  return url.startsWith('/')
+    ? `https://osu.ppy.sh${url}`
+    : url;
+}
+
 function serializeTokenResponse(responseBody) {
   if (responseBody.token_type !== 'Bearer')
     throw 'Unexpected token type from osu! API';
@@ -122,7 +128,7 @@ async function createOrRefreshUser(token, userId) {
 
   const dbFields = {
     api_fetched_at: new Date(),
-    avatar_url: userInfo.avatar_url,
+    avatar_url: sanitizeAvatarUrl(userInfo.avatar_url),
     banned: false,
     country: userInfo.country_code,
     name: userInfo.username,
