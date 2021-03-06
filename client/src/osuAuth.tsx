@@ -4,7 +4,6 @@ import { IUser } from './interfaces';
 
 interface OsuAuth {
   logOut: () => Promise<void>;
-  remember: () => Promise<void>;
   user?: IUser;
 }
 
@@ -15,23 +14,22 @@ export const loginUrl = '/api/auth/begin';
 export function OsuAuthProvider(props: PropsWithChildren<{}>) {
   const [user, setUser] = useState<IUser | undefined>(undefined);
 
+  useEffect(() => {
+    superagent
+      .get('/api/auth/remember')
+      .then((response) => setUser(response.body))
+      .catch(() => {});
+  }, []);
+
   async function logOut(): Promise<void> {
     await superagent.post('/api/auth/bye');
 
     setUser(undefined);
   };
 
-  function remember(): Promise<void> {
-    return superagent
-      .post('/api/auth/remember')
-      .then((response) => setUser(response.body))
-      .catch(() => {});
-  };
-
   return (
     <authContext.Provider value={{
       logOut,
-      remember,
       user,
     }}>
       {props.children}
