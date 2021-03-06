@@ -318,7 +318,7 @@ function BoolRadioCell(props: BoolRadioCellProps) {
 }
 
 function Logs() {
-  const [logs, setLogs] = useState<ILog[]>();
+  const [logs, setLogs] = useState<ILog[] | Error>();
 
   const getLogClassName = (log: ILog) => {
     switch (log.type) {
@@ -329,11 +329,15 @@ function Logs() {
 
   useEffect(() => {
     getLogs()
-      .then((response) => setLogs(response.body));
+      .then((response) => setLogs(response.body))
+      .catch((error) => setLogs(error));
   }, []);
 
   if (logs == null)
     return <span>Loading...</span>;
+
+  if (logs instanceof Error)
+    return <span>Failed to load logs: {logs.message}</span>;
 
   return (
     <table>
