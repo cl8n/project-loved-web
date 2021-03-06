@@ -3,17 +3,22 @@
     padding: 0;
 }
 
-a {
-    color: inherit;
+.fake-a {
+    all: unset;
+    cursor: pointer;
+}
+
+a, .fake-a {
+    color: #f6a;
     text-decoration: none;
 }
 
-a:hover {
+a:hover, .fake-a:hover {
     text-decoration: underline;
 }
 
 body {
-    background-color: #fff;
+    background-color: #fff0f8;
     color: #333;
     font-family: Verdana, Tahoma, Arial, sans-serif;
     font-size: 14px;
@@ -55,33 +60,40 @@ body {
 @blue-darker: #2299bb;
 */
 
-.container {
-    padding: 0 1em;
-}
-
 .big-center {
-    margin: 0 auto;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1em;
+    padding-right: 1em;
     max-width: 1100px;
 }
 
 header {
     background-color: #ff99cc;
     color: #fff;
-    padding-top: 1em;
+    padding-top: 0.5em;
+}
+
+header a, header .fake-a {
+    color: inherit;
 }
 
 header .info {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
+}
+
+header .info > :nth-child(n+3) {
+    margin-left: 1.5em;
 }
 
 header .logo {
+    margin-right: auto;
     font-size: 18px;
 }
 
 nav {
-    margin-top: 0.75em;
+    margin-top: 0.5em;
     display: flex;
 }
 
@@ -91,7 +103,7 @@ nav span {
 
 nav a {
     background-color: #ff66aa;
-    padding: 0.25em 1em;
+    padding: 0.25em 0.5em;
     display: block;
     margin-right: 0.5em;
 }
@@ -107,8 +119,10 @@ nav a.active {
     color: #333;
 }
 
-.content {
-    margin-top: 2em;
+main {
+    padding-top: 1em;
+    padding-bottom: 1em;
+    background-color: #fff;
 }
 
 .content-block {
