@@ -2,11 +2,11 @@ const { timingSafeEqual } = require('crypto');
 const config = require('./config.json');
 
 function isGod(method, user) {
-  return user.god || (method === 'GET' && user.god_readonly);
+  return user.roles.god || (method === 'GET' && user.roles.god_readonly);
 }
 
 function hasRole(method, user, roles) {
-  return isGod(method, user) || roles.some((role) => user[role]);
+  return isGod(method, user) || roles.some((role) => user.roles[role]);
 }
 
 function hasRoleMiddleware(roles, errorMessage) {
@@ -32,7 +32,7 @@ module.exports.isCaptainForGameMode = function (request, response, next) {
   if (gameMode == null)
     return response.status(400).json({ error: 'No game mode provided' });
 
-  if (!isGod(request.method, user) && user.captain_game_mode !== gameMode)
+  if (!isGod(request.method, user) && user.roles.captain_game_mode !== gameMode)
     return response.status(403).json({ error: `Must be a captain for mode ${gameMode}` });
 
   next();
