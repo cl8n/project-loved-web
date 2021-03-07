@@ -1,4 +1,5 @@
-import superagent from 'superagent';
+import { useEffect, useState } from 'react';
+import superagent, { SuperAgentRequest } from 'superagent';
 import { IUser } from './interfaces';
 
 export function getNominations(roundId: number) {
@@ -38,3 +39,16 @@ export function updateUserRoles(userId: number, roles: Partial<IUser['roles']>) 
     });
 }
 //#endregion
+
+export function useApi<T>(requester: () => SuperAgentRequest) {
+  const [body, setBody] = useState<T>();
+  const [error, setError] = useState<Error>();
+
+  useEffect(() => {
+    requester()
+      .then((response) => setBody(response.body))
+      .catch((error) => setError(error));
+  }, [requester]);
+
+  return [body, error, setBody] as const;
+}
