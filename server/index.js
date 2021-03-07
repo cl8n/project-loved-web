@@ -97,11 +97,11 @@ app.use(asyncHandler(async function (request, response, next) {
     }
 
   const user = await db.queryOneWithGroups(`
-    SELECT users.*, '_', user_roles.*
+    SELECT users.*, ':roles', user_roles.*
     FROM users
     INNER JOIN user_roles ON users.id = user_roles.id
     WHERE users.id = ?
-  `, request.session.userId, ['', 'roles']);
+  `, request.session.userId);
   delete user.api_fetched_at;
   response.locals.user = user;
 

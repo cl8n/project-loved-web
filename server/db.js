@@ -32,30 +32,28 @@ class MysqlDatabase {
     return (await this.query(sql, values))[0];
   }
 
-  async queryWithGroups(sql, values, groups) {
+  async queryWithGroups(sql, values) {
     return (await this.query(sql, values)).map(function (row) {
       const grouped = {};
-
-      groups.forEach(function (group) {
-        if (group.length)
-          grouped[group] = {};
-      });
-
-      let currentGroup = 0;
+      let currentGroup = '';
 
       Object.entries(row).forEach(function ([column, value]) {
-        if (column.startsWith(':'))
-          return currentGroup++;
+        if (!column.startsWith(':'))
+          (currentGroup.length > 0 ? grouped[currentGroup] : grouped)[column] = value;
+        else {
+          currentGroup = column.slice(1);
 
-        const group = groups[currentGroup];
-
-        (group.length ? grouped[group] : grouped)[column] = value;
+          if (currentGroup.length > 0)
+            grouped[currentGroup] = {};
+        }
       });
+
+      return grouped;
     });
   }
 
-  async queryOneWithGroups(sql, values, groups) {
-    return (await this.queryWithGroups(sql, values, groups))[0];
+  async queryOneWithGroups(sql, values) {
+    return (await this.queryWithGroups(sql, values))[0];
   }
 }
 
