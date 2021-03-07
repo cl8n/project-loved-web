@@ -138,8 +138,8 @@ router.post('/update-moderator-assignee', guards.isGod, async (req, res) => {
 });
 
 router.get('/users-with-permissions', async (_, res) => {
-  const queryResult = await db.query(`
-    SELECT *
+  const queryResult = await db.queryWithGroups(`
+    SELECT users.*, ':roles', user_roles.*
     FROM user_roles
     LEFT JOIN users ON user_roles.id = users.id
   `);
