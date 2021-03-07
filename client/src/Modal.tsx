@@ -20,6 +20,7 @@ export function Modal(props: ModalProps) {
     };
   }, []);
 
+  // TODO not working
   const handleEsc = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== 'Escape')
       return;
@@ -29,6 +30,9 @@ export function Modal(props: ModalProps) {
   };
 
   const handleOverlayClick = (event: MouseEvent<HTMLDivElement>) => {
+    if ((event.target as Element).closest('.modal') != null)
+      return;
+
     event.preventDefault();
     props.close();
   };

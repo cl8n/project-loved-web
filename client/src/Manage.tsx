@@ -40,36 +40,33 @@ function ApiObjectMenu() {
   };
 
   return (
-    <>
-      <h2>API objects</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor='type'>Type</label>
-        <select
-          name='type'
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          disabled={busy}
-        >
-          <option value='beatmapset'>Beatmapset</option>
-          <option value='user'>User</option>
-        </select>
-        <label htmlFor='id'>ID</label>
-        <input
-          type='number'
-          name='id'
-          value={id}
-          onChange={(e) => setId(parseInt(e.target.value))}
-          disabled={busy}
-        />
-        <button
-          type='submit'
-          disabled={busy}
-        >
-          {busy ? 'Updating...' : 'Update'}
-        </button>
-        <ApiObjectMenuUpdateLogs logs={logs} />
-      </form>
-    </>
+    <form onSubmit={handleSubmit}>
+      <label htmlFor='type'>Type</label>
+      <select
+        name='type'
+        value={type}
+        onChange={(e) => setType(e.target.value)}
+        disabled={busy}
+      >
+        <option value='beatmapset'>Beatmapset</option>
+        <option value='user'>User</option>
+      </select>
+      <label htmlFor='id'>ID</label>
+      <input
+        type='number'
+        name='id'
+        value={id}
+        onChange={(e) => setId(parseInt(e.target.value))}
+        disabled={busy}
+      />
+      <button
+        type='submit'
+        disabled={busy}
+      >
+        {busy ? 'Updating...' : 'Update'}
+      </button>
+      <ApiObjectMenuUpdateLogs logs={logs} />
+    </form>
   );
 }
 
@@ -127,42 +124,39 @@ function PermissionsMenu() {
     return <span>Loading users...</span>;
 
   return (
-    <>
-      <h2>User permissions</h2>
-      <table>
-        <tr>
-          <th>User</th>
-          <th>Captain</th>
-          {boolRoles.map((role) => (
-            <th key={role}>{boolRolesNames[role]}</th>
-          ))}
-        </tr>
-        {users.map((user) => (
-          <tr key={user.id}>
-            <td>
-              <UserInline user={user} />
-            </td>
-            <td>
-              <BoolView value={user.roles.captain} />
-              {user.roles.captain &&
-                `(${user.roles.captain_game_mode})`
-              }
-            </td>
-            {boolRoles.map((role) => (
-              <td key={role}>
-                <BoolView value={user.roles[role]} />
-              </td>
-            ))}
-            {canWriteAs(authUser, 'god') &&
-              <PermissionsMenuUserEditor
-                user={user}
-                setRoles={roleSetter(user.id)}
-              />
-            }
-          </tr>
+    <table>
+      <tr>
+        <th>User</th>
+        <th>Captain</th>
+        {boolRoles.map((role) => (
+          <th key={role}>{boolRolesNames[role]}</th>
         ))}
-      </table>
-    </>
+      </tr>
+      {users.map((user) => (
+        <tr key={user.id}>
+          <td>
+            <UserInline user={user} />
+          </td>
+          <td>
+            <BoolView value={user.roles.captain} />
+            {user.roles.captain &&
+              `(${user.roles.captain_game_mode})`
+            }
+          </td>
+          {boolRoles.map((role) => (
+            <td key={role}>
+              <BoolView value={user.roles[role]} />
+            </td>
+          ))}
+          {canWriteAs(authUser, 'god') &&
+            <PermissionsMenuUserEditor
+              user={user}
+              setRoles={roleSetter(user.id)}
+            />
+          }
+        </tr>
+      ))}
+    </table>
   );
 }
 
@@ -237,9 +231,9 @@ function PermissionsMenuUserEditor(props: PermissionsMenuUserEditorProps) {
         close={() => setModalOpen(false)}
         open={modalOpen}
       >
-        <h3>Editing <UserInline user={props.user} /></h3>
+        <h3>Editing <UserInline user={props.user} noFlag /></h3>
         <form ref={formRef} onSubmit={handleSubmit}>
-          <table>
+          <table className='center-block'>
             <tr>
               <th>Role</th>
               <th>Unset</th>
@@ -280,7 +274,7 @@ function PermissionsMenuUserEditor(props: PermissionsMenuUserEditorProps) {
               </tr>
             ))}
           </table>
-          <button type='submit'>
+          <button type='submit' className='modal-submit-button'>
             {busy ? 'Updating...' : 'Update'}
           </button>
         </form>
@@ -348,18 +342,15 @@ function Logs() {
     return <span>Failed to load logs: {logs.message}</span>;
 
   return (
-    <>
-      <h2>Logs</h2>
-      <table>
-        {logs.map((log) => (
-          <tr key={log.id}>
-            <td>{log.created_at} (#{log.id})</td>
-            <td className={getLogClassName(log)}><LogMessage {...log} /></td>
-            <td>{log.creator}</td>
-          </tr>
-        ))}
-      </table>
-    </>
+    <table>
+      {logs.map((log) => (
+        <tr key={log.id}>
+          <td>{log.created_at} (#{log.id})</td>
+          <td className={getLogClassName(log)}><LogMessage {...log} /></td>
+          <td>{log.creator}</td>
+        </tr>
+      ))}
+    </table>
   );
 }
 
@@ -398,11 +389,18 @@ function LogMessage(log: ILog) {
 export function Manage() {
   return (
     <>
-      <PermissionsMenu />
-      <hr />
-      <ApiObjectMenu />
-      <hr />
-      <Logs />
+      <div className='content-block'>
+        <h2>User permissions</h2>
+        <PermissionsMenu />
+      </div>
+      <div className='content-block'>
+        <h2>API objects</h2>
+        <ApiObjectMenu />
+      </div>
+      <div className='content-block'>
+        <h2>Logs</h2>
+        <Logs />
+      </div>
     </>
   );
 }
