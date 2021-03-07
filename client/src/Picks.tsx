@@ -32,7 +32,7 @@ export function Picks() {
 
   return (
     <div className='box'>
-      <h2>{round.name} [#{round.id}]</h2>
+      <h1>{round.name} [#{round.id}]</h1>
       <div className='flex-bar'>
         <span>{posted ? 'Posted' : 'Posting'} at {round.news_posted_at}</span>
         {notDone &&

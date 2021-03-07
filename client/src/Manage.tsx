@@ -1,6 +1,6 @@
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getLogs, getUsersWithRoles, updateApiObject, updateUserRoles } from './api';
+import { getLogs, getUsersWithRoles, updateApiObject, updateUserRoles, useApi } from './api';
 import { BoolView } from './BoolView';
 import { setFormDisabled } from './dom-helpers';
 import { ILog, IUser, LogType } from './interfaces';
@@ -76,7 +76,7 @@ function ApiObjectMenuUpdateLogs(props: { logs: ApiObjectUpdateLog[] }) {
       {props.logs.map((log, logIndex) => (
         <span
           key={logIndex}
-          className={log.success ? 'log-success' : 'log-fail'}
+          className={log.success ? 'success' : 'error'}
         >
           {log.success
             ? `Updated ${log.type} #${log.id}`
@@ -100,12 +100,7 @@ const boolRolesNames = {
 
 function PermissionsMenu() {
   const authUser = useOsuAuth().user;
-  const [users, setUsers] = useState<IUser[]>();
-
-  useEffect(() => {
-    getUsersWithRoles()
-      .then((response) => setUsers(response.body));
-  }, []);
+  const [users, usersError, setUsers] = useApi<IUser[]>(getUsersWithRoles);
 
   const roleSetter = (userId: number) => {
     return (roles: Partial<IUser['roles']>) => {
@@ -119,6 +114,9 @@ function PermissionsMenu() {
 
   if (authUser == null)
     return <Never />;
+
+  if (usersError != null)
+    return <span className='panic'>Failed to load users: {usersError.message}</span>;
 
   if (users == null)
     return <span>Loading users...</span>;
@@ -231,7 +229,7 @@ function PermissionsMenuUserEditor(props: PermissionsMenuUserEditorProps) {
         close={() => setModalOpen(false)}
         open={modalOpen}
       >
-        <h3>Editing <UserInline user={props.user} noFlag /></h3>
+        <h2>Editing <UserInline user={props.user} noFlag /></h2>
         <form ref={formRef} onSubmit={handleSubmit}>
           <table className='center-block'>
             <tr>
@@ -320,26 +318,20 @@ function BoolRadioCell(props: BoolRadioCellProps) {
 }
 
 function Logs() {
-  const [logs, setLogs] = useState<ILog[] | Error>();
+  const [logs, logsError] = useApi<ILog[]>(getLogs);
 
   const getLogClassName = (log: ILog) => {
     switch (log.type) {
       case LogType.error:
-        return 'log-fail';
+        return 'error';
     }
   };
 
-  useEffect(() => {
-    getLogs()
-      .then((response) => setLogs(response.body))
-      .catch((error) => setLogs(error));
-  }, []);
+  if (logsError != null)
+    return <span className='panic'>Failed to load logs: {logsError.message}</span>;
 
   if (logs == null)
-    return <span>Loading...</span>;
-
-  if (logs instanceof Error)
-    return <span>Failed to load logs: {logs.message}</span>;
+    return <span>Loading logs...</span>;
 
   return (
     <table>
@@ -390,15 +382,15 @@ export function Manage() {
   return (
     <>
       <div className='content-block'>
-        <h2>User permissions</h2>
+        <h1>User permissions</h1>
         <PermissionsMenu />
       </div>
       <div className='content-block'>
-        <h2>API objects</h2>
+        <h1>API objects</h1>
         <ApiObjectMenu />
       </div>
       <div className='content-block'>
-        <h2>Logs</h2>
+        <h1>Logs</h1>
         <Logs />
       </div>
     </>
