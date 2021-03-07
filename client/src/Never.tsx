@@ -1,6 +1,6 @@
 export function Never() {
   return (
-    <span style={{ color: 'red' }}>
+    <span className='panic'>
       You should never see this message!
     </span>
   );
