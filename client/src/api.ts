@@ -2,6 +2,11 @@ import { useEffect, useState } from 'react';
 import superagent, { SuperAgentRequest } from 'superagent';
 import { IUser } from './interfaces';
 
+export function getCaptains() {
+  return superagent
+    .get('/api/captains');
+}
+
 export function getNominations(roundId: number) {
   return superagent
     .get('/api/nominations')

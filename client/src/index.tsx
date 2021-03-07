@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { render } from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Captains } from './Captains';
 import { Header } from './Header';
 import { Manage } from './Manage';
 import { NoRoute } from './NoRoute';
@@ -20,6 +21,7 @@ render(
             <ProtectedRoute exact path='/admin/picks' role='any'><PicksRoundListing /></ProtectedRoute>
             <ProtectedRoute path='/admin/picks/:round' role='any'><NotReady /></ProtectedRoute>
             <ProtectedRoute path='/admin/manage' role='any'><Manage /></ProtectedRoute>
+            <Route path='/captains'><Captains /></Route>
             <Route path='*'><NoRoute /></Route>
           </Switch>
         </main>
@@ -32,5 +34,4 @@ render(
 /*
 <Route exact path='/'><Submissions /></Route>
 <Route path='/submit'><Submit /></Route>
-            <Route path='/captains'><Captains /></Route>
-            */
+*/
