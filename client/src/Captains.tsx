@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { getCaptains, useApi } from './api';
 import { GameMode, IUser } from './interfaces';
 import { UserInline } from './UserInline';
@@ -42,7 +43,7 @@ function CaptainsInner() {
   return (
     <>
       {gameModes.map((gameModeName, gameMode) => (
-        <div key={gameMode}>
+        <Fragment key={gameMode}>
           <h2>{gameModeName}</h2>
           <ul>
             {captainsByGameMode[gameMode].map((captain) => (
@@ -51,7 +52,7 @@ function CaptainsInner() {
               </li>
             ))}
           </ul>
-        </div>
+        </Fragment>
       ))}
     </>
   );
