@@ -125,6 +125,14 @@ main {
     background-color: #fff;
 }
 
+table {
+    border-spacing: 1em 0.25em;
+}
+
+th {
+    text-align: inherit;
+}
+
 .content-block {
     margin: 1em 0;
 }

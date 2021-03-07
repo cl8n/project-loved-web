@@ -38,7 +38,7 @@ export function Modal(props: ModalProps) {
 
   return createPortal(
     <div
-      className={'modal-overlay' + (props.open ? 'modal-open' : '')}
+      className={'modal-overlay' + (props.open ? ' modal-open' : '')}
       onClick={handleOverlayClick}
     >
       <div
