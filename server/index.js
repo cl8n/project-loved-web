@@ -1,27 +1,32 @@
+#!/usr/bin/env node
+
 const { randomBytes } = require('crypto');
 const express = require('express');
 const session = require('express-session');
 const MysqlSessionStore = require('express-mysql-session')(session);
 const config = require('./config.json');
 const db = require('./db');
+const { asyncHandler } = require('./express-helpers');
 const { authRedirectUrl, createOrRefreshUser, fetchToken, refreshToken } = require('./osu');
 const router = require('./router');
 
 const app = express();
-const sessionStore = new MysqlSessionStore({}, db.connection);
+const sessionStore = new MysqlSessionStore({
+  checkExpirationInterval: 1800000, // 30 minutes
+  expiration: 604800000, // 7 days
+}, db.connection);
 
-//db.connect();
-
-app.get('', function (_, response) {
-  response.send('<p>This is the API for <a href="https://loved.sh">loved.sh</a>. You shouldn\'t be here!</p>')
+app.get('/', function (_, response) {
+  response.send('<p>This is the API for <a href="https://loved.sh">loved.sh</a>. You shouldn\'t be here!</p>');
 });
 
 app.use(session({
   cookie: {
-    path: config.sessionCookiePath,
+    httpOnly: true,
     secure: true,
   },
   name: 'loved_sid',
+  proxy: true,
   resave: false,
   saveUninitialized: false,
   secret: config.sessionSecret,
@@ -30,14 +35,17 @@ app.use(session({
 
 app.use(express.json());
 
-app.get('auth/begin', function (request, response) {
+app.get('/auth/begin', function (request, response) {
+  if (request.session.userId != null)
+    return response.status(403).json({ error: 'Already logged in!' });
+
   request.session.authState = randomBytes(32).toString('hex');
   request.session.authBackUrl = request.get('Referrer');
 
   response.redirect(authRedirectUrl(request.session.authState));
 });
 
-app.post('auth/bye', function (request, response) {
+app.post('/auth/bye', function (request, response) {
   request.session.destroy((error) => {
     if (error)
       throw error;
@@ -46,7 +54,7 @@ app.post('auth/bye', function (request, response) {
   });
 });
 
-app.get('auth/callback', async function (request, response) {
+app.get('/auth/callback', asyncHandler(async function (request, response) {
   if (request.query.error)
     throw request.query.error;
 
@@ -67,10 +75,12 @@ app.get('auth/callback', async function (request, response) {
   const userInfo = await createOrRefreshUser(request.session.accessToken);
   request.session.userId = userInfo.id;
 
-  response.redirect(backUrl || '/');
-});
+  await db.query('INSERT IGNORE INTO user_roles SET id = ?', userInfo.id);
 
-app.use(async function (request, response, next) {
+  response.redirect(backUrl || '/');
+}));
+
+app.use(asyncHandler(async function (request, response, next) {
   if (!request.session.userId)
     return response.status(401).json({ error: 'Log in first' });
 
@@ -96,13 +106,13 @@ app.use(async function (request, response, next) {
   response.locals.user = user;
 
   next();
-});
+}));
 
-app.get('auth/remember', function (_, response) {
+app.get('/auth/remember', function (_, response) {
   response.json(response.locals.user);
 });
 
-app.use('', router);
+app.use('/', router);
 
 app.use(function (_, response) {
   response.status(404).json({ error: 'Not found' });
@@ -110,6 +120,8 @@ app.use(function (_, response) {
 
 app.use(function (error, _, response, _) {
   // TODO: do something with error...
+  console.error('Sending 500 response for:');
+  console.error(error);
   response.status(500).json({ error: 'Server error' });
 });
 

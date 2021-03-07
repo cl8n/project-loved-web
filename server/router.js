@@ -17,19 +17,19 @@ const router = express.Router();
 // TODO: rethink guards
 
 //#region public
-router.post('map-submit', async (req, res) => {
+router.post('/map-submit', async (req, res) => {
 
 });
 //#endregion
 
 //#region interop
-router.get('local-interop', guards.hasLocalInterOpKey, async (req, res) => {
-  const round = await db.query(`
+router.get('/local-interop', guards.hasLocalInterOpKey, async (req, res) => {
+  const round = await db.queryOne(`
     SELECT *
     FROM rounds
     ORDER BY id DESC
     LIMIT 1
-  `)[0];
+  `);
 
   const nominations = await db.query(`
     SELECT *
@@ -45,13 +45,13 @@ router.get('local-interop', guards.hasLocalInterOpKey, async (req, res) => {
 //#endregion
 
 //#region captain
-router.get('rounds', async (_, res) => {
+router.get('/rounds', async (_, res) => {
   const rounds = await db.query('SELECT * FROM rounds');
 
   res.json(rounds);
 });
 
-router.get('nominations', async (req, res) => {
+router.get('/nominations', async (req, res) => {
   const nominations = await db.query(`
     SELECT *
     FROM nominations
@@ -61,7 +61,7 @@ router.get('nominations', async (req, res) => {
   res.json(nominations);
 });
 
-router.post('nomination-submit', async (req, res) => {
+router.post('/nomination-submit', async (req, res) => {
   const beatmapset = await createOrRefreshBeatmapset(req.session.accessToken, req.body.beatmapsetId);
 
   const queryResult = await db.query('INSERT INTO nominations SET ?', {
@@ -71,15 +71,15 @@ router.post('nomination-submit', async (req, res) => {
     round_id: req.body.roundId,
   });
 
-  res.json((await db.query('SELECT * FROM nominations WHERE id = ?', queryResult.insertId))[0]);
+  res.json(await db.queryOne('SELECT * FROM nominations WHERE id = ?', queryResult.insertId));
 });
 
-router.post('nomination-edit-description', async (req, res) => {
-  const { description: prevDescription, description_author_id: prevAuthorId } = (await db.query(`
+router.post('/nomination-edit-description', async (req, res) => {
+  const { description: prevDescription, description_author_id: prevAuthorId } = await db.queryOne(`
     SELECT description, description_author_id
     FROM nominations
     WHERE id = ?
-  `, req.body.nominationId))[0];
+  `, req.body.nominationId);
 
   await db.query(`
     UPDATE nominations
@@ -94,7 +94,7 @@ router.post('nomination-edit-description', async (req, res) => {
   res.status(204).send();
 });
 
-router.post('nomination-edit-metadata', guards.isMetadataChecker, async (req, res) => {
+router.post('/nomination-edit-metadata', guards.isMetadataChecker, async (req, res) => {
   await db.query(`
     UPDATE nominations
     SET metadata_state = ?, overwrite_artist = ?, overwrite_title = ?
@@ -111,7 +111,7 @@ router.post('nomination-edit-metadata', guards.isMetadataChecker, async (req, re
 //#endregion
 
 //#region admin
-router.post('update-metadata-assignee', guards.isGod, async (req, res) => {
+router.post('/update-metadata-assignee', guards.isGod, async (req, res) => {
   await db.query(`
     UPDATE nominations
     SET metadata_assignee_id = ?
@@ -124,7 +124,7 @@ router.post('update-metadata-assignee', guards.isGod, async (req, res) => {
   res.status(204).send();
 });
 
-router.post('update-moderator-assignee', guards.isGod, async (req, res) => {
+router.post('/update-moderator-assignee', guards.isGod, async (req, res) => {
   await db.query(`
     UPDATE nominations
     SET moderator_assignee_id = ?
@@ -137,7 +137,7 @@ router.post('update-moderator-assignee', guards.isGod, async (req, res) => {
   res.status(204).send();
 });
 
-router.get('users-with-permissions', async (_, res) => {
+router.get('/users-with-permissions', async (_, res) => {
   const queryResult = await db.query(`
     SELECT *
     FROM user_roles
@@ -147,7 +147,7 @@ router.get('users-with-permissions', async (_, res) => {
   res.json(queryResult);
 });
 
-router.post('update-permissions', guards.isGod, async (req, res) => {
+router.post('/update-permissions', guards.isGod, async (req, res) => {
   await db.query('UPDATE user_roles SET ? WHERE id = ?', [
     getParams(req.body, [
       'captain',
@@ -164,7 +164,7 @@ router.post('update-permissions', guards.isGod, async (req, res) => {
   res.status(204).send();
 });
 
-router.post('update-api-object', guards.isGod, async (req, res) => {
+router.post('/update-api-object', guards.isGod, async (req, res) => {
   switch (req.body.type) {
     case 'beatmapset':
       await createOrRefreshBeatmapset(req.session.accessToken, req.body.id);
