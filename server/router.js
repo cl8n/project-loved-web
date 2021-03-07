@@ -20,6 +20,19 @@ const router = express.Router();
 router.post('/map-submit', async (req, res) => {
 
 });
+
+router.get('/captains', async (req, res) => {
+  const captains = await db.queryWithGroups(`
+    SELECT users.*, ':roles', user_roles.*
+    FROM users
+    INNER JOIN user_roles
+      ON users.id = user_roles.id
+    WHERE user_roles.captain = 1
+      AND user_roles.captain_game_mode IS NOT NULL
+  `);
+
+  res.json(captains);
+});
 //#endregion
 
 //#region interop
