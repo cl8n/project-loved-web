@@ -46,7 +46,7 @@ export function Modal(props: ModalProps) {
       onClick={handleOverlayClick}
     >
       <div
-        className='modal'
+        className='modal content-block'
         onKeyDown={handleEsc}
       >
         {props.children}
