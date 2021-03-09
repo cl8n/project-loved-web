@@ -1,6 +1,6 @@
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getLogs, getUsersWithRoles, updateApiObject, updateUserRoles, useApi } from './api';
+import { getLogs, getUsersWithRoles, isApiObjectType, updateApiObject, updateUserRoles, useApi } from './api';
 import { BoolView } from './BoolView';
 import { setFormDisabled } from './dom-helpers';
 import { ILog, IUser, LogType } from './interfaces';
@@ -28,7 +28,7 @@ function ApiObjectMenu() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (id == null || type == null)
+    if (id == null || !isApiObjectType(type))
       return;
 
     setBusy(true);

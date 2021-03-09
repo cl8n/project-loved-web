@@ -89,3 +89,10 @@ export interface IUser {
   name: string;
   roles: Record<IRole, boolean> & { captain_game_mode?: GameMode };
 }
+
+export interface ICaptain extends IUser {
+  roles: IUser['roles'] & {
+    captain: true;
+    captain_game_mode: GameMode;
+  };
+}

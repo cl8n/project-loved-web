@@ -1,14 +1,7 @@
 import { Fragment } from 'react';
 import { getCaptains, useApi } from './api';
-import { GameMode, IUser } from './interfaces';
+import { ICaptain } from './interfaces';
 import { UserInline } from './UserInline';
-
-type ICaptain = IUser & {
-  roles: IUser['roles'] & {
-    captain: true;
-    captain_game_mode: GameMode;
-  };
-};
 
 const gameModes = [
   'osu!standard',
@@ -27,7 +20,7 @@ export function Captains() {
 }
 
 function CaptainsInner() {
-  const [captains, captainsError] = useApi<ICaptain[]>(getCaptains);
+  const [captains, captainsError] = useApi(getCaptains);
 
   if (captainsError != null)
     return <span className='panic'>Failed to load captains: {captainsError.message}</span>;
