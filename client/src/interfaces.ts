@@ -13,7 +13,8 @@ export enum GameMode {
 
 export enum LogType {
   error,
-  log,
+  action,
+  analytic,
 }
 
 export enum MetadataState {
@@ -32,8 +33,7 @@ export enum ModeratorState {
 export interface IBeatmapset {
   id: number;
   artist: string;
-  created_at: Date;
-  creator: IUser;
+  creator_id: number;
   favorite_count: number;
   play_count: number;
   ranked_status: number;
@@ -45,8 +45,7 @@ export interface IBeatmapset {
 export interface ILog {
   id: number;
   created_at: Date;
-  creator: IUser | 'system';
-  links: Record<string, string>;
+  creator?: IUser;
   message: string;
   type: LogType;
 }
@@ -54,6 +53,7 @@ export interface ILog {
 export interface INomination {
   id: number;
   beatmapset: IBeatmapset;
+  beatmapset_creators: IUser[];
   description?: string;
   description_author?: IUser;
   description_state: DescriptionState;
@@ -96,3 +96,7 @@ export interface ICaptain extends IUser {
     captain_game_mode: GameMode;
   };
 }
+
+export type PartialWithId<T extends { id: unknown }> = { id: T['id'] } & {
+  [P in keyof T as Exclude<P, 'id'>]: T[P];
+};
