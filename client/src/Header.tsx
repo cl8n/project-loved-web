@@ -12,17 +12,19 @@ export function Header() {
         <Link className='logo' to='/'>Project Loved</Link>
         <span>Language: English</span>
         {user == null
-          ? <a href={loginUrl}>Login with osu!</a>
+          ? <a href={loginUrl}>Log in with osu!</a>
           : <span>
               <UserInline user={user} /> — {' '}
-              <button className='fake-a' onClick={logOut}>Log out</button>
+              <button type='button' className='fake-a' onClick={logOut}>Log out</button>
             </span>
         }
       </div>
       <nav>
         <NavLink exact to='/'>Submissions</NavLink>
         <NavLink to='/submit'>Submit a map</NavLink>
+        <NavLink to='/mappers'>Mapper consents</NavLink>
         <NavLink to='/captains'>Captains</NavLink>
+        <NavLink to='/statistics'>Statistics</NavLink>
         {user != null && canReadAs(user, 'any') &&
           <>
             <span>Admin:</span>
