@@ -11,10 +11,17 @@ export function canReadAs(user: IUser, role: IRole | 'any') {
   );
 }
 
-export function canWriteAs(user: IUser, role: IRole) {
+export function canWriteAs(user: IUser, role?: IRole): boolean;
+export function canWriteAs(user: IUser, id?: number): boolean;
+export function canWriteAs(user: IUser, roleOrId?: IRole | number) {
   return (
     user.roles.god ||
-    user.roles[role]
+    (roleOrId != null &&
+      (typeof roleOrId === 'number'
+        ? user.id === roleOrId
+        : user.roles[roleOrId]
+      )
+    )
   );
 }
 
