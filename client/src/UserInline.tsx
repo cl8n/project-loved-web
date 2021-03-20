@@ -2,6 +2,7 @@ import { IUser } from './interfaces';
 
 type UserInlineProps = {
   noFlag?: boolean;
+  noId?: boolean;
   user: IUser;
 };
 
@@ -22,7 +23,10 @@ export function UserInline(props: UserInlineProps) {
           {' '}
         </>
       }
-      {props.user.name} [#{props.user.id}]
+      {props.user.name}
+      {!props.noId &&
+        ` [#${props.user.id}]`
+      }
     </a>
   );
 }
