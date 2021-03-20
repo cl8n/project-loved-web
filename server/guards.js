@@ -19,7 +19,7 @@ function hasRoleMiddleware(roles, errorMessage) {
 }
 
 module.exports.hasLocalInterOpKey = function (request, response, next) {
-  if (!timingSafeEqual(config.localInterOpKey, request.param('interOpKey')))
+  if (!timingSafeEqual(config.localInterOpKey, request.get('X-Loved-InterOpKey')))
     return response.status(401).json({ error: 'Invalid key' });
 
   next();
@@ -38,6 +38,7 @@ module.exports.isCaptainForGameMode = function (request, response, next) {
   next();
 };
 
+module.exports.isAnything = hasRoleMiddleware(['captain', 'metadata', 'moderator', 'news'], 'Must have a role');
 module.exports.isCaptain = hasRoleMiddleware(['captain'], 'Must be a captain');
 module.exports.isGod = hasRoleMiddleware([], 'Must be God');
 module.exports.isMetadataChecker = hasRoleMiddleware(['metadata'], 'Must be a metadata checker');
