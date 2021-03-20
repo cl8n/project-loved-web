@@ -1,14 +1,8 @@
 import { Fragment } from 'react';
-import { getCaptains, useApi } from './api';
+import { apiErrorMessage, getCaptains, useApi } from './api';
 import { ICaptain } from './interfaces';
+import { gameModeLongNames } from './osu-helpers';
 import { UserInline } from './UserInline';
-
-const gameModes = [
-  'osu!standard',
-  'osu!taiko',
-  'osu!catch',
-  'osu!mania',
-];
 
 export function Captains() {
   return (
@@ -23,7 +17,7 @@ function CaptainsInner() {
   const [captains, captainsError] = useApi(getCaptains);
 
   if (captainsError != null)
-    return <span className='panic'>Failed to load captains: {captainsError.message}</span>;
+    return <span className='panic'>Failed to load captains: {apiErrorMessage(captainsError)}</span>;
 
   if (captains == null)
     return <span>Loading captains...</span>;
@@ -35,7 +29,7 @@ function CaptainsInner() {
 
   return (
     <>
-      {gameModes.map((gameModeName, gameMode) => (
+      {gameModeLongNames.map((gameModeName, gameMode) => (
         <Fragment key={gameMode}>
           <h2>{gameModeName}</h2>
           <ul>

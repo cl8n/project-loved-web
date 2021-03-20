@@ -1,13 +1,14 @@
-import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, ChangeEventHandler, RefObject, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getLogs, getUsersWithRoles, isApiObjectType, updateApiObject, updateUserRoles, useApi } from './api';
+import { addUser, apiErrorMessage, getLogs, getUsersWithRoles, isApiObjectType, updateApiObject, updateUserRoles, useApi } from './api';
 import { BoolView } from './BoolView';
-import { setFormDisabled } from './dom-helpers';
+import { Form, FormSubmitHandler } from './dom-helpers';
 import { ILog, IUser, LogType } from './interfaces';
 import { Modal } from './Modal';
 import { Never } from './Never';
+import { gameModeLongName } from './osu-helpers';
 import { useOsuAuth } from './osuAuth';
-import { canWriteAs } from './permissions';
+import { canReadAs, canWriteAs } from './permissions';
 import { UserInline } from './UserInline';
 
 type ApiObjectUpdateLog = {
@@ -20,53 +21,47 @@ function ApiObjectMenu() {
   const [busy, setBusy] = useState(false);
   const [logs, setLogs] = useState<ApiObjectUpdateLog[]>([]);
 
-  const [id, setId] = useState<number>();
-  const [type, setType] = useState<string>();
-
   const addLog = (log: ApiObjectUpdateLog) => setLogs((prev) => prev.concat(log));
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const onSubmit: FormSubmitHandler = (values, then) => {
+    const id = parseInt(values.id);
+    const type = values.type;
 
-    if (id == null || !isApiObjectType(type))
-      return;
+    if (isNaN(id) || !isApiObjectType(type))
+      return null;
 
-    setBusy(true);
-
-    updateApiObject(type, id)
+    return updateApiObject(type, id)
       .then(() => addLog({ id, type, success: true }))
-      .catch(() => addLog({ id, type, success: false }))
-      .finally(() => setBusy(false));
+      .then(then)
+      .catch(() => addLog({ id, type, success: false }));
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor='type'>Type</label>
-      <select
-        name='type'
-        value={type}
-        onChange={(e) => setType(e.target.value)}
-        disabled={busy}
-      >
-        <option value='beatmapset'>Beatmapset</option>
-        <option value='user'>User</option>
-      </select>
-      <label htmlFor='id'>ID</label>
-      <input
-        type='number'
-        name='id'
-        value={id}
-        onChange={(e) => setId(parseInt(e.target.value))}
-        disabled={busy}
-      />
-      <button
-        type='submit'
-        disabled={busy}
-      >
-        {busy ? 'Updating...' : 'Update'}
-      </button>
+    <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
+      <table>
+        <tr>
+          <td><label htmlFor='type'>Type</label></td>
+          <td>
+            <select name='type' required>
+              <option value='beatmapset'>Beatmapset</option>
+              <option value='user'>User</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td><label htmlFor='id'>ID</label></td>
+          <td><input type='number' name='id' required /></td>
+        </tr>
+        <tr>
+          <td>
+            <button type='submit'>
+              {busy ? 'Updating...' : 'Update'}
+            </button>
+          </td>
+        </tr>
+      </table>
       <ApiObjectMenuUpdateLogs logs={logs} />
-    </form>
+    </Form>
   );
 }
 
@@ -98,120 +93,158 @@ const boolRolesNames = {
   god_readonly: 'Readonly',
 };
 
+const sortUsers = (users: IUser[]): IUser[] => {
+  return users
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .sort((a, b) => +canReadAs(b, 'any') - +canReadAs(a, 'any'));
+}
+
 function PermissionsMenu() {
   const authUser = useOsuAuth().user;
-  const [users, usersError, setUsers] = useApi<IUser[]>(getUsersWithRoles);
+  const [users, usersError, setUsers] = useApi(getUsersWithRoles, [], sortUsers);
 
   const roleSetter = (userId: number) => {
-    return (roles: Partial<IUser['roles']>) => {
+    return (roles: IUser['roles']) => {
       setUsers((prev) => {
-        const user = (prev ?? []).find((user) => user.id === userId)!;
-        Object.assign(user.roles, roles);
-        return prev;
+        const users = [...prev!];
+        users.find((user) => user.id === userId)!.roles = roles;
+        return sortUsers(users);
       });
     };
+  };
+
+  const onUserAdd = (user: IUser) => {
+    setUsers((prev) => {
+      const users = [...prev!];
+      users.push(user);
+      return sortUsers(users);
+    });
   };
 
   if (authUser == null)
     return <Never />;
 
   if (usersError != null)
-    return <span className='panic'>Failed to load users: {usersError.message}</span>;
+    return <span className='panic'>Failed to load users: {apiErrorMessage(usersError)}</span>;
 
   if (users == null)
     return <span>Loading users...</span>;
 
   return (
-    <table>
-      <tr>
-        <th>User</th>
-        <th>Captain</th>
-        {boolRoles.map((role) => (
-          <th key={role}>{boolRolesNames[role]}</th>
-        ))}
-      </tr>
-      {users.map((user) => (
-        <tr key={user.id}>
-          <td>
-            <UserInline user={user} />
-          </td>
-          <td>
-            <BoolView value={user.roles.captain} />
-            {user.roles.captain &&
-              `(${user.roles.captain_game_mode})`
-            }
-          </td>
+    <>
+      {canWriteAs(authUser) &&
+        <AddUser onUserAdd={onUserAdd} />
+      }
+      <table>
+        <tr>
+          <th>User</th>
+          <th>Captain</th>
           {boolRoles.map((role) => (
-            <td key={role}>
-              <BoolView value={user.roles[role]} />
-            </td>
+            <th key={role}>{boolRolesNames[role]}</th>
           ))}
-          {canWriteAs(authUser, 'god') &&
-            <PermissionsMenuUserEditor
-              user={user}
-              setRoles={roleSetter(user.id)}
-            />
-          }
         </tr>
-      ))}
-    </table>
+        {users.map((user) => (
+          <tr key={user.id} style={canReadAs(user, 'any') ? undefined : { opacity: 0.7 }}>
+            <td>
+              <UserInline user={user} />
+            </td>
+            <td>
+              <BoolView value={user.roles.captain} />
+              {user.roles.captain_game_mode != null &&
+                ` (${gameModeLongName(user.roles.captain_game_mode)})`
+              }
+            </td>
+            {boolRoles.map((role) => (
+              <td key={role}>
+                <BoolView value={user.roles[role]} />
+              </td>
+            ))}
+            {canWriteAs(authUser) &&
+              <PermissionsMenuUserEditor
+                user={user}
+                setRoles={roleSetter(user.id)}
+              />
+            }
+          </tr>
+        ))}
+      </table>
+    </>
+  );
+}
+
+type AddUserProps = {
+  onUserAdd: (user: IUser) => void;
+};
+
+function AddUser({ onUserAdd }: AddUserProps) {
+  const [busy, setBusy] = useState(false);
+
+  const onSubmit: FormSubmitHandler = (form, then) => {
+    return addUser(form.username)
+      .then((response) => onUserAdd(response.body))
+      .then(then)
+      .catch(() => {}); // TODO: show error
+  };
+
+  // TODO class should probably go on the form itself
+  return (
+    <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
+      <p className='flex-left'>
+        <label htmlFor='username'>Username</label>
+        <input type='text' name='username' required />
+        <button type='submit'>
+          {busy ? 'Adding...' : 'Add'}
+        </button>
+      </p>
+    </Form>
   );
 }
 
 type PermissionsMenuUserEditorProps = {
-  setRoles: (roles: Partial<IUser['roles']>) => void;
+  setRoles: (roles: IUser['roles']) => void;
   user: IUser;
 };
 
-function PermissionsMenuUserEditor(props: PermissionsMenuUserEditorProps) {
+function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditorProps) {
   const [busy, setBusy] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [formFields, setFormFields] = useState(props.user.roles);
-  const formRef = useRef<HTMLFormElement>(null);
+  const captainRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)] as const;
+  const captainGameModeRef = useRef<HTMLSelectElement>(null);
 
-  useEffect(() => {
-    if (formRef.current != null)
-      setFormDisabled(formRef.current, busy);
-  }, [busy]);
-
-  useEffect(() => {
-    if (!formFields.captain)
-      formFieldSetter('captain_game_mode')(undefined);
-  }, [formFields]);
-
-  const formFieldSetter = <T extends keyof IUser['roles']>(field: T) => {
-    return (value: IUser['roles'][T]) => {
-      setFormFields((prev) => {
-        prev[field] = value;
-        return prev;
-      });
+  const onSubmit: FormSubmitHandler = (form, then) => {
+    const roles = { // TODO lol...
+      captain: form.captain === '1',
+      captain_game_mode: form.captain_game_mode === 'none' ? undefined : parseInt(form.captain_game_mode),
+      god: form.god === '1',
+      god_readonly: form.god_readonly === '1',
+      metadata: form.metadata === '1',
+      moderator: form.moderator === '1',
+      news: form.news === '1',
     };
+
+    return updateUserRoles(user.id, roles)
+      .then(() => setRoles(roles))
+      .then(then)
+      .catch(() => {}) // TODO: show error
+      .finally(() => setModalOpen(false));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    setBusy(true);
-
-    updateUserRoles(props.user.id, formFields)
-      .then(() => props.setRoles(formFields))
-      .finally(() => setBusy(false));
+  const onCaptainChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (captainGameModeRef.current != null) {
+      if (event.target.checked !== (event.target.value === '1'))
+        captainGameModeRef.current.value = 'none';
+      else if (captainGameModeRef.current.value === 'none')
+        captainGameModeRef.current.value = '0';
+    }
   };
 
-  const handleGameModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    event.preventDefault();
+  const onCaptainGameModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    if (captainRefs[0].current != null && captainRefs[1].current != null) {
+      const changedToNone = event.target.value === 'none';
 
-    if (!formFields.captain)
-      return;
-
-    let value: string | number | undefined = event.target.value;
-
-    if (value === 'none')
-      value = undefined;
-    else
-      value = parseInt(value);
-
-    formFieldSetter('captain_game_mode')(value);
+      captainRefs[0].current.checked = changedToNone;
+      captainRefs[1].current.checked = !changedToNone;
+    }
   };
 
   return (
@@ -229,8 +262,8 @@ function PermissionsMenuUserEditor(props: PermissionsMenuUserEditorProps) {
         close={() => setModalOpen(false)}
         open={modalOpen}
       >
-        <h2>Editing <UserInline user={props.user} noFlag /></h2>
-        <form ref={formRef} onSubmit={handleSubmit}>
+        <h2>Editing <UserInline user={user} noFlag /></h2>
+        <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
           <table className='center-block'>
             <tr>
               <th>Role</th>
@@ -240,18 +273,20 @@ function PermissionsMenuUserEditor(props: PermissionsMenuUserEditorProps) {
             <tr>
               <td>Captain</td>
               <BoolRadioCell
+                defaultChecked={user.roles.captain}
                 name='captain'
-                enabled={formFields.captain}
-                setEnabled={formFieldSetter('captain')}
+                onChange={onCaptainChange}
+                refs={captainRefs}
               />
             </tr>
             <tr>
               <td>Game mode</td>
               <td colSpan={2}>
                 <select
+                  ref={captainGameModeRef}
                   name='captain_game_mode'
-                  value={formFields.captain_game_mode ?? 'none'}
-                  onChange={handleGameModeChange}
+                  defaultValue={user.roles.captain_game_mode ?? 'none'}
+                  onChange={onCaptainGameModeChange}
                 >
                   <option value='none'>None</option>
                   <option value='0'>Standard</option>
@@ -264,53 +299,47 @@ function PermissionsMenuUserEditor(props: PermissionsMenuUserEditorProps) {
             {boolRoles.map((role) => (
               <tr key={role}>
                 <td>{boolRolesNames[role]}</td>
-                <BoolRadioCell
-                  name={role}
-                  enabled={formFields[role]}
-                  setEnabled={formFieldSetter(role)}
-                />
+                <BoolRadioCell defaultChecked={user.roles[role]} name={role} />
               </tr>
             ))}
           </table>
           <button type='submit' className='modal-submit-button'>
             {busy ? 'Updating...' : 'Update'}
           </button>
-        </form>
+        </Form>
       </Modal>
     </>
   );
 }
 
 type BoolRadioCellProps = {
-  enabled: boolean;
+  defaultChecked: boolean;
   name: string;
-  setEnabled: (enabled: boolean) => void;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+  refs?: readonly [RefObject<HTMLInputElement>, RefObject<HTMLInputElement>];
 };
 
-function BoolRadioCell(props: BoolRadioCellProps) {
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    props.setEnabled(event.target.value === '1');
-  };
-
+function BoolRadioCell({ defaultChecked, name, onChange, refs }: BoolRadioCellProps) {
   return (
     <>
       <td>
         <input
+          ref={refs == null ? undefined : refs[0]}
           type='radio'
-          name={props.name}
+          name={name}
+          defaultChecked={!defaultChecked}
           value='0'
-          onChange={handleChange}
-          checked={!props.enabled}
+          onChange={onChange}
         />
       </td>
       <td>
         <input
+          ref={refs == null ? undefined : refs[1]}
           type='radio'
-          name={props.name}
+          name={name}
+          defaultChecked={defaultChecked}
           value='1'
-          onChange={handleChange}
-          checked={props.enabled}
+          onChange={onChange}
         />
       </td>
     </>
@@ -318,17 +347,10 @@ function BoolRadioCell(props: BoolRadioCellProps) {
 }
 
 function Logs() {
-  const [logs, logsError] = useApi<ILog[]>(getLogs);
-
-  const getLogClassName = (log: ILog) => {
-    switch (log.type) {
-      case LogType.error:
-        return 'error';
-    }
-  };
+  const [logs, logsError] = useApi(getLogs);
 
   if (logsError != null)
-    return <span className='panic'>Failed to load logs: {logsError.message}</span>;
+    return <span className='panic'>Failed to load logs: {apiErrorMessage(logsError)}</span>;
 
   if (logs == null)
     return <span>Loading logs...</span>;
@@ -337,9 +359,8 @@ function Logs() {
     <table>
       {logs.map((log) => (
         <tr key={log.id}>
-          <td>{log.created_at} (#{log.id})</td>
-          <td className={getLogClassName(log)}><LogMessage {...log} /></td>
-          <td>{log.creator}</td>
+          <td>{log.created_at} [#{log.id}]</td>
+          <td className={LogType[log.type]}><LogMessage {...log} /></td>
         </tr>
       ))}
     </table>
@@ -347,11 +368,11 @@ function Logs() {
 }
 
 function LogMessage(log: ILog) {
-  if (Object.keys(log.links).length === 0)
-    return <span>log.message</span>;
+  if (log.message.startsWith('{plain}'))
+    return <span>{log.message.slice(7)}</span>;
 
   const elements: JSX.Element[] = [];
-  const regex = /{([^{}]+)}{([^{}]+)}/g;
+  const regex = /{creator}|{([^{}]+)}{([^{}]+)}/g;
   let match: RegExpExecArray | null;
   let lastMatchEnd = 0;
 
@@ -362,9 +383,16 @@ function LogMessage(log: ILog) {
       );
 
     elements.push(
-      match[2].startsWith('/')
-        ? <Link to={match[2]}>{match[1]}</Link>
-        : <a href={match[2]}>{match[1]}</a>
+      match[1] != null
+        ? (
+          match[2].startsWith('/')
+            ? <Link to={match[2]}>{match[1]}</Link>
+            : <a href={match[2]}>{match[1]}</a>
+        ) : (
+          log.creator == null
+            ? <Never />
+            : <UserInline user={log.creator} />
+        )
     );
 
     lastMatchEnd = regex.lastIndex;
@@ -382,7 +410,7 @@ export function Manage() {
   return (
     <>
       <div className='content-block'>
-        <h1>User permissions</h1>
+        <h1>Roles</h1>
         <PermissionsMenu />
       </div>
       <div className='content-block'>
