@@ -92,28 +92,23 @@ async function getUser(token, userId) {
 //#endregion
 
 //#region models
-async function createOrRefreshBeatmapset(token, beatmapsetId) {
-  const beatmapsetInfo = await getBeatmapset(token, beatmapsetId);
-
-  console.log(beatmapsetInfo);
-  // TODO
-
-  /*
+async function createOrRefreshBeatmapset(token, beatmapsetId, creatorGameMode) {
+  const beatmapset = await getBeatmapset(token, beatmapsetId);
+  await createOrRefreshUser(token, beatmapset.user_id);
 
   const dbFields = {
     api_fetched_at: new Date(),
-    artist: ,
-    created_at: ,
-    creator_id: ,
-    creator_name: ,
-    favorite_count: ,
-    play_count: ,
-    ranked_status: ,
-    submitted_at: ,
-    title: ,
-    updated_at: ,
+    artist: beatmapset.artist,
+    creator_id: beatmapset.user_id,
+    creator_name: beatmapset.creator,
+    favorite_count: beatmapset.favourite_count,
+    play_count: beatmapset.play_count,
+    ranked_status: beatmapset.ranked,
+    submitted_at: new Date(beatmapset.submitted_date),
+    updated_at: new Date(beatmapset.last_updated),
+    title: beatmapset.title,
   };
-  const dbFieldsWithPK = { ...dbFields, id: beatmapsetInfo.id };
+  const dbFieldsWithPK = { ...dbFields, id: beatmapset.id };
 
   await db.query(`
     INSERT INTO beatmapsets SET ?
@@ -123,23 +118,54 @@ async function createOrRefreshBeatmapset(token, beatmapsetId) {
     dbFields,
   ]);
 
+  if (creatorGameMode != null) {
+    try {
+      await db.query('INSERT INTO beatmapset_creators SET ?', {
+        beatmapset_id: beatmapset.id,
+        creator_id: beatmapset.user_id,
+        game_mode: creatorGameMode,
+      });
+    } catch {}
+  }
 
+  for (const beatmap of beatmapset.beatmaps) {
+    const dbFields = {
+      beatmapset_id: beatmap.beatmapset_id,
+      bpm: beatmap.bpm.toFixed(2),
+      deleted_at: beatmap.deleted_at == null ? null : new Date(beatmap.deleted_at),
+      game_mode: beatmap.mode_int,
+      key_count: beatmap.mode_int === 3 ? parseInt(beatmap.cs) : null,
+      play_count: beatmap.playcount,
+      ranked_status: beatmap.ranked,
+      star_rating: beatmap.difficulty_rating.toFixed(2),
+      version: beatmap.version,
+    };
+    const dbFieldsWithPK = { ...dbFields, id: beatmap.id };
+
+    // TODO: Can't insert multiple using this syntax...
+    await db.query(`
+      INSERT INTO beatmaps SET ?
+      ON DUPLICATE KEY UPDATE ?
+    `, [
+      dbFieldsWithPK,
+      dbFields,
+    ]);
+  }
 
   return dbFieldsWithPK;
-  */
 }
 
 async function createOrRefreshUser(token, userId) {
-  const userInfo = await getUser(token, userId);
+  const user = await getUser(token, userId);
 
   const dbFields = {
     api_fetched_at: new Date(),
-    avatar_url: sanitizeAvatarUrl(userInfo.avatar_url),
+    avatar_url: sanitizeAvatarUrl(user.avatar_url),
     banned: false,
-    country: userInfo.country_code,
-    name: userInfo.username,
+    country: user.country_code,
+    name: user.username,
   };
-  const dbFieldsWithPK = { ...dbFields, id: userInfo.id };
+  const dbFieldsWithPK = { ...dbFields, id: user.id };
 
   await db.query(`
     INSERT INTO users SET ?
