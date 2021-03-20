@@ -65,6 +65,12 @@ async function refreshToken(refreshToken) {
 
   return serializeTokenResponse(response.body);
 }
+
+async function revokeToken(token) {
+  await superagent
+    .delete(`${apiBaseUrl}oauth/tokens/current`)
+    .auth(token, { type: 'bearer' });
+}
 //#endregion
 
 //#region requests
@@ -151,6 +157,7 @@ module.exports = {
   authRedirectUrl,
   fetchToken,
   refreshToken,
+  revokeToken,
   createOrRefreshBeatmapset,
   createOrRefreshUser,
 };

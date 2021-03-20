@@ -7,7 +7,8 @@ const MysqlSessionStore = require('express-mysql-session')(session);
 const config = require('./config.json');
 const db = require('./db');
 const { asyncHandler } = require('./express-helpers');
-const { authRedirectUrl, createOrRefreshUser, fetchToken, refreshToken } = require('./osu');
+const { log, logTypes } = require('./log');
+const { authRedirectUrl, createOrRefreshUser, fetchToken, refreshToken, revokeToken } = require('./osu');
 const router = require('./router');
 
 const app = express();
@@ -45,15 +46,6 @@ app.get('/auth/begin', function (request, response) {
   response.redirect(authRedirectUrl(request.session.authState));
 });
 
-app.post('/auth/bye', function (request, response) {
-  request.session.destroy((error) => {
-    if (error)
-      throw error;
-
-    response.status(204).send();
-  });
-});
-
 app.get('/auth/callback', asyncHandler(async function (request, response) {
   if (request.query.error)
     throw request.query.error;
@@ -76,6 +68,7 @@ app.get('/auth/callback', asyncHandler(async function (request, response) {
   request.session.userId = userInfo.id;
 
   await db.query('INSERT IGNORE INTO user_roles SET id = ?', userInfo.id);
+  //await log(logTypes.analytic, '{creator} logged in', userInfo.id);
 
   response.redirect(backUrl || '/');
 }));
@@ -97,7 +90,7 @@ app.use(asyncHandler(async function (request, response, next) {
     }
 
   const user = await db.queryOneWithGroups(`
-    SELECT users.*, ':roles', user_roles.*
+    SELECT users.*, user_roles:roles
     FROM users
     INNER JOIN user_roles
       ON users.id = user_roles.id
@@ -107,6 +100,19 @@ app.use(asyncHandler(async function (request, response, next) {
   response.locals.user = user;
 
   next();
+}));
+
+app.post('/auth/bye', asyncHandler(async function (request, response) {
+  await revokeToken(request.session.accessToken);
+
+  //log(logTypes.analytic, '{creator} logged out', request.session.userId);
+
+  request.session.destroy((error) => {
+    if (error)
+      throw error;
+
+    response.status(204).send();
+  });
 }));
 
 app.get('/auth/remember', function (_, response) {
@@ -120,9 +126,10 @@ app.use(function (_, response) {
 });
 
 app.use(function (error, _, response, _) {
-  // TODO: do something with error...
-  console.error('Sending 500 response for:');
+  // TODO: can probably do better than these logs
+  //log(logTypes.error, `{plain}${error}`);
   console.error(error);
+
   response.status(500).json({ error: 'Server error' });
 });
 
