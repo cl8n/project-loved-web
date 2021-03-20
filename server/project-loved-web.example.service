@@ -1,0 +1,11 @@
+[Unit]
+Description=Project Loved Web API
+After=network-online.target
+
+[Service]
+ExecStart=/srv/project-loved-web/server/index.js
+Restart=always
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
