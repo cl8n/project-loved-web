@@ -377,6 +377,7 @@ function EditAssignee({ assigneeId, candidatesApi, nominationId, onNominationUpd
       .finally(() => setModalOpen(false));
   };
 
+  // TODO: check performance of creating this every render
   const FormOrError = () => {
     if (candidatesApi[1] != null)
       return <span className='panic'>Failed to load assignees: {apiErrorMessage(candidatesApi[1])}</span>;
@@ -410,7 +411,7 @@ function EditAssignee({ assigneeId, candidatesApi, nominationId, onNominationUpd
       <button
         type='button'
         onClick={() => setModalOpen(true)}
-        className='fake-a'
+        className={`fake-a${assigneeId == null ? ' important-bad' : ''}`}
       >
         Edit
       </button>
