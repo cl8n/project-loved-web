@@ -337,7 +337,7 @@ router.post('/update-metadata-assignee', guards.isMetadataChecker, asyncHandler(
   const nomination = await db.queryOneWithGroups(`
     SELECT nominations.id, nominations.metadata_assignee_id, metadata_assignees:metadata_assignee
     FROM nominations
-    INNER JOIN users AS metadata_assignees
+    LEFT JOIN users AS metadata_assignees
       ON nominations.metadata_assignee_id = metadata_assignees.id
     WHERE nominations.id = ?
   `, req.body.nominationId);
@@ -358,7 +358,7 @@ router.post('/update-moderator-assignee', guards.isModerator, asyncHandler(async
   const nomination = await db.queryOneWithGroups(`
     SELECT nominations.id, nominations.moderator_assignee_id, moderator_assignees:moderator_assignee
     FROM nominations
-    INNER JOIN users AS moderator_assignees
+    LEFT JOIN users AS moderator_assignees
       ON nominations.moderator_assignee_id = moderator_assignees.id
     WHERE nominations.id = ?
   `, req.body.nominationId);
