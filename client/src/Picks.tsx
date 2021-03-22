@@ -478,7 +478,13 @@ function Description({ canEdit, nominationId, onNominationUpdate, text }: Descri
       {text ?? 'No description'}{canEdit &&
         <>
           {' — '}
-          <button type='button' className='fake-a' onClick={() => setEditing(true)}>Edit</button>
+          <button
+            type='button'
+            className={`fake-a${text == null ? ' important-bad' : ''}`}
+            onClick={() => setEditing(true)}
+          >
+            Edit
+          </button>
         </>
       }
     </p>
