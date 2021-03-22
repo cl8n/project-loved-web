@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ResponseError } from 'superagent';
 import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getNominations, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, useApi } from './api';
