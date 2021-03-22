@@ -121,13 +121,13 @@ export function updateNominationMetadata(nominationId: number, state: MetadataSt
     .send({ artist, nominationId, state, title });
 }
 
-export function updateMetadataAssignee(nominationId: number, assigneeId: number): UpdateMetadataAssigneeResponse {
+export function updateMetadataAssignee(nominationId: number, assigneeId: number | null): UpdateMetadataAssigneeResponse {
   return superagent
     .post('/api/update-metadata-assignee')
     .send({ assigneeId, nominationId });
 }
 
-export function updateModeratorAssignee(nominationId: number, assigneeId: number): UpdateModeratorAssigneeResponse {
+export function updateModeratorAssignee(nominationId: number, assigneeId: number | null): UpdateModeratorAssigneeResponse {
   return superagent
     .post('/api/update-moderator-assignee')
     .send({ assigneeId, nominationId });

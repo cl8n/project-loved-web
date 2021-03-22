@@ -370,7 +370,7 @@ function EditAssignee({ assigneeId, candidatesApi, nominationId, onNominationUpd
   const [modalOpen, setModalOpen] = useState(false);
 
   const onSubmit: FormSubmitHandler = (form, then) => {
-    return (type === 'Metadata' ? updateMetadataAssignee : updateModeratorAssignee)(nominationId, parseInt(form.userId))
+    return (type === 'Metadata' ? updateMetadataAssignee : updateModeratorAssignee)(nominationId, form.userId === 'none' ? null : parseInt(form.userId))
       .then((response) => onNominationUpdate(response.body))
       .then(then)
       .catch((error) => window.alert(apiErrorMessage(error)))
@@ -387,6 +387,10 @@ function EditAssignee({ assigneeId, candidatesApi, nominationId, onNominationUpd
     return (
       <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
         <table>
+          <tr>
+            <td><input type='radio' name='userId' value='none' defaultChecked={assigneeId == null} /></td>
+            <td>None</td>
+          </tr>
           {candidatesApi[0].map((user) => (
             <tr key={user.id}>
               <td><input type='radio' name='userId' value={user.id} defaultChecked={user.id === assigneeId} /></td>
