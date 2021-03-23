@@ -324,6 +324,15 @@ router.get('/assignees', asyncHandler(async (_, res) => {
   });
 }));
 
+router.post('/update-excluded-beatmaps', guards.isCaptain, asyncHandler(async (req, res) => {
+  await db.query('DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?', req.body.nominationId);
+
+  if (req.body.excludedBeatmapIds != null && req.body.excludedBeatmapIds.length > 0)
+    await db.query('INSERT INTO nomination_excluded_beatmaps VALUES ?', [req.body.excludedBeatmapIds.map((id) => [id, req.body.nominationId])]);
+
+  res.status(204).send();
+}));
+
 router.post('/update-metadata-assignee', guards.isMetadataChecker, asyncHandler(async (req, res) => {
   await db.query(`
     UPDATE nominations

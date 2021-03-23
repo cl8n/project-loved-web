@@ -52,10 +52,13 @@ interface IManiaBeatmap extends IGenericBeatmap {
 
 export type IBeatmap = IManiaBeatmap | INotManiaBeatmap;
 
+export type IBeatmapWithExcluded = IBeatmap & {
+  excluded: boolean;
+};
+
 export interface IBeatmapset {
   id: number;
   artist: string;
-  beatmaps: IBeatmap[];
   creator_id: number;
   creator_name: string;
   favorite_count: number;
@@ -76,6 +79,7 @@ export interface ILog {
 
 export interface INomination {
   id: number;
+  beatmaps: IBeatmapWithExcluded[];
   beatmapset: IBeatmapset;
   beatmapset_creators: IUser[];
   description?: string;
@@ -122,5 +126,5 @@ export interface ICaptain extends IUser {
 }
 
 export type PartialWithId<T extends { id: unknown }> = { id: T['id'] } & {
-  [P in keyof T as Exclude<P, 'id'>]: T[P];
+  [P in keyof T as Exclude<P, 'id'>]?: T[P];
 };

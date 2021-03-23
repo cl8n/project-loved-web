@@ -12,7 +12,17 @@ function setFormDisabled(form: HTMLFormElement, disabled: boolean) {
   }
 }
 
-export type FormSubmitHandler = (values: Record<string, string>, then: () => void, inputs: HTMLFormControlsCollection) => Promise<void> | null;
+export type FormSubmitHandler = (values: Record<string, any>, then: () => void, inputs: HTMLFormControlsCollection) => Promise<void> | null;
+
+function wrapCast<T>(fn: (value: string) => T) {
+  return (value: string) => value.length === 0 ? null : fn(value);
+}
+
+const valueCasts = {
+  decimal: wrapCast((value) => parseFloat(value).toFixed(2)),
+  int: wrapCast(parseInt),
+  string: wrapCast((value) => value),
+};
 
 type FormProps = PropsWithChildren<{
   busyState: [boolean, Dispatch<SetStateAction<boolean>>];
@@ -40,7 +50,7 @@ export function Form({
     const form = event.currentTarget;
     const controls = form.elements;
     const controlsCount = controls.length;
-    const values: Record<string, string> = {};
+    const values: Record<string, any> = {};
 
     for (let i = 0; i < controlsCount; i++) {
       const control = controls[i] as any; // TODO: typing
@@ -48,9 +58,18 @@ export function Form({
       if (control.type === 'submit')
         continue;
 
-      values[control.name] = control.type === 'radio'
-        ? (controls.namedItem(control.name) as RadioNodeList).value
-        : control.value;
+      if (control.type === 'checkbox' && values[control.name] == null)
+        values[control.name] = [];
+
+      if (!control.checked && (control.type === 'checkbox' || control.type === 'radio'))
+        continue;
+
+      let value = valueCasts[control.dataset.valueType as keyof typeof valueCasts ?? 'string'](control.value);
+
+      if (control.type === 'checkbox')
+        values[control.name].push(value);
+      else
+        values[control.name] = value;
     }
 
     const maybePromise = onSubmit(

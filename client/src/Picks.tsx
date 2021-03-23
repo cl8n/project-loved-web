@@ -262,7 +262,7 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
           {canEditDifficulties &&
             <>
               {' — '}
-              <EditDifficulties />
+              <EditDifficulties nomination={nomination} onNominationUpdate={onNominationUpdate} />
             </>
           }
         </span>
@@ -432,12 +432,70 @@ function EditAssignee({ assigneeId, candidatesApi, nominationId, onNominationUpd
 }
 
 type EditDifficultiesProps = {
-
+  nomination: INomination;
+  onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
 };
 
-function EditDifficulties({}: EditDifficultiesProps) {
+function EditDifficulties({ nomination, onNominationUpdate }: EditDifficultiesProps) {
+  const [busy, setBusy] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const onSubmit: FormSubmitHandler = (form, then) => {
+    return updateExcludedBeatmaps(nomination.id, form.excluded)
+      .then(() => {
+        onNominationUpdate({
+          id: nomination.id,
+          beatmaps: nomination.beatmaps
+            .map((beatmap) => { return { ...beatmap, excluded: form.excluded.includes(beatmap.id) }; })
+        });
+      })
+      .then(then)
+      .catch((error) => window.alert(apiErrorMessage(error)))
+      .finally(() => setModalOpen(false));
+  };
+
   return (
-    <button type='button' className='fake-a'>Edit</button>
+    <>
+      <button
+        type='button'
+        onClick={() => setModalOpen(true)}
+        className='fake-a'
+      >
+        Edit
+      </button>
+      <Modal
+        close={() => setModalOpen(false)}
+        open={modalOpen}
+      >
+        <h2>Excluded difficulties</h2>
+        <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
+          <table>
+            {nomination.beatmaps.map((beatmap) => (
+              <tr key={beatmap.id}>
+                <td>
+                  <input
+                    type='checkbox'
+                    name='excluded'
+                    value={beatmap.id}
+                    data-value-type='int'
+                    defaultChecked={beatmap.excluded}
+                  />
+                </td>
+                <td>
+                  {/* TODO: feels like BeatmapInline's job */ beatmap.game_mode === GameMode.mania &&
+                    `[${beatmap.key_count}K] `
+                  }
+                  {beatmap.version} — {beatmap.star_rating.toFixed(2)}★
+                </td>
+              </tr>
+            ))}
+          </table>
+          <button type='submit' className='modal-submit-button'>
+            {busy ? 'Updating...' : 'Update'}
+          </button>
+        </Form>
+      </Modal>
+    </>
   );
 }
 

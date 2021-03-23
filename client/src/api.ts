@@ -23,6 +23,7 @@ type GetRoundsResponse = Promise<Response<(IRound & { nomination_count: number; 
 type GetLogsResponse = Promise<Response<ILog[]>>;
 type GetUsersWithRolesResponse = Promise<Response<IUser[]>>;
 type UpdateApiObjectResponse<T extends ApiObjectType> = Promise<Response<ApiObjectTypes[T]>>;
+type UpdateExcludedBeatmapsResponse = Promise<Response>;
 type UpdateNominationDescriptionResponse = Promise<Response<PartialWithId<INomination>>>;
 type UpdateNominationMetadataResponse = Promise<Response<PartialWithId<INomination>>>;
 type UpdateMetadataAssigneeResponse = Promise<Response<PartialWithId<INomination>>>;
@@ -107,6 +108,12 @@ export function updateApiObject<T extends ApiObjectType>(type: T, id: number): U
   return superagent
     .post('/api/update-api-object')
     .send({ type, id });
+}
+
+export function updateExcludedBeatmaps(nominationId: number, excludedBeatmapIds: number[]): UpdateExcludedBeatmapsResponse {
+  return superagent
+    .post('/api/update-excluded-beatmaps')
+    .send({ nominationId, excludedBeatmapIds });
 }
 
 export function updateNominationDescription(nominationId: number, description: string | null): UpdateNominationDescriptionResponse {

@@ -44,7 +44,7 @@ class MysqlDatabase {
     for (const select of selects) {
       const parts = select.split(':');
 
-      if (parts.length === 1)
+      if (parts.length === 1 || select.match(/\s+AS\s+/i) != null)
         normalSelects.push(select);
       else {
         const joinMatch = sql.match(new RegExp(`JOIN\\s+(\\S+)\\s+AS\\s+${parts[0]}`, 'i'));
