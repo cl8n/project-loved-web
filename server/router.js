@@ -94,6 +94,24 @@ router.get('/nominations', asyncHandler(async (req, res) => {
     FROM rounds
     WHERE id = ?
   `, req.query.roundId);
+
+  const includesByNominationId = groupBy(
+    await db.queryWithGroups(`
+      SELECT nominations.id AS nomination_id, creators:creator, beatmaps:beatmap, nomination_excluded_beatmaps.beatmap_id IS NOT NULL AS 'beatmap:excluded'
+      FROM nominations
+      LEFT JOIN beatmapset_creators
+        ON nominations.beatmapset_id = beatmapset_creators.beatmapset_id
+          AND nominations.game_mode = beatmapset_creators.game_mode
+      LEFT JOIN users AS creators
+        ON beatmapset_creators.creator_id = creators.id
+      LEFT JOIN nomination_excluded_beatmaps
+        ON nominations.id = nomination_excluded_beatmaps.nomination_id
+      LEFT JOIN beatmaps
+        ON nominations.beatmapset_id = beatmaps.beatmapset_id
+      WHERE nominations.round_id = ?
+    `, req.query.roundId),
+    'nomination_id',
+  );
   const nominations = await db.queryWithGroups(`
     SELECT nominations.*, beatmapsets:beatmapset, description_authors:description_author,
       metadata_assignees:metadata_assignee, moderator_assignees:moderator_assignee,
@@ -111,22 +129,14 @@ router.get('/nominations', asyncHandler(async (req, res) => {
       ON nominations.nominator_id = nominators.id
     WHERE nominations.round_id = ?
   `, req.query.roundId);
-  const creatorsByNominationId = groupBy(
-    await db.queryWithGroups(`
-      SELECT nominations.id AS nomination_id, users:creator
-      FROM beatmapset_creators
-      INNER JOIN nominations
-        ON beatmapset_creators.beatmapset_id = nominations.beatmapset_id
-          AND beatmapset_creators.game_mode = nominations.game_mode
-      INNER JOIN users
-        ON beatmapset_creators.creator_id = users.id
-      WHERE nominations.round_id = ?
-    `, req.query.roundId),
-    'nomination_id',
-    'creator',
-  );
 
-  nominations.forEach((nomination) => nomination.beatmapset_creators = creatorsByNominationId[nomination.id] || []);
+  nominations.forEach((nomination) => {
+    nomination.beatmaps = includesByNominationId[nomination.id]
+      .map((include) => include.beatmap).filter((beatmap) => beatmap != null);
+    nomination.beatmapset_creators = includesByNominationId[nomination.id]
+      .map((include) => include.creator)
+      .filter((c1, i, all) => c1 != null && all.findIndex((c2) => c1.id === c2.id) === i);
+  });
 
   res.json({
     nominations,
@@ -155,6 +165,17 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
     parent_id: req.body.parentId,
     round_id: req.body.roundId,
   });
+
+  const creators = await db.query(`
+    SELECT users.*
+    FROM beatmapset_creators
+    INNER JOIN nominations
+      ON beatmapset_creators.beatmapset_id = nominations.beatmapset_id
+        AND beatmapset_creators.game_mode = nominations.game_mode
+    INNER JOIN users
+      ON beatmapset_creators.creator_id = users.id
+    WHERE nominations.id = ?
+  `, queryResult.insertId);
   const nomination = await db.queryOneWithGroups(`
     SELECT nominations.*, description_authors:description_author, metadata_assignees:metadata_assignee,
       moderator_assignees:moderator_assignee, nominators:nominator
@@ -169,17 +190,19 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
       ON nominations.nominator_id = nominators.id
     WHERE nominations.id = ?
   `, queryResult.insertId);
-  const creators = await db.query(`
-    SELECT users.*
-    FROM beatmapset_creators
-    INNER JOIN nominations
-      ON beatmapset_creators.beatmapset_id = nominations.beatmapset_id
-        AND beatmapset_creators.game_mode = nominations.game_mode
-    INNER JOIN users
-      ON beatmapset_creators.creator_id = users.id
-    WHERE nominations.id = ?
-  `, queryResult.insertId);
+  const beatmaps = await db.query(`
+    SELECT beatmaps.*, nomination_excluded_beatmaps.beatmap_id IS NOT NULL AS excluded
+    FROM beatmaps
+    LEFT JOIN nomination_excluded_beatmaps
+      ON beatmaps.id = nomination_excluded_beatmaps.beatmap_id
+        AND nomination_excluded_beatmaps.nomination_id = ?
+    WHERE beatmaps.beatmapset_id = ?
+  `, [
+    queryResult.insertId,
+    nomination.beatmapset_id,
+  ]);
 
+  nomination.beatmaps = beatmaps;
   nomination.beatmapset = beatmapset;
   nomination.beatmapset_creators = creators || [];
 
