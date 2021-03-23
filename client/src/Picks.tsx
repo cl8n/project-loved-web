@@ -503,12 +503,7 @@ function EditDifficulties({ nomination, onNominationUpdate }: EditDifficultiesPr
                     defaultChecked={beatmap.excluded}
                   />
                 </td>
-                <td>
-                  {/* TODO: feels like BeatmapInline's job */ beatmap.game_mode === GameMode.mania &&
-                    `[${beatmap.key_count}K] `
-                  }
-                  {beatmap.version} — {beatmap.star_rating.toFixed(2)}★
-                </td>
+                <td>{beatmap.version} — {beatmap.star_rating.toFixed(2)}★</td>
               </tr>
             ))}
           </table>
