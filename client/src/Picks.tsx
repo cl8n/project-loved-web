@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ResponseError } from 'superagent';
 import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getNominations, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, useApi } from './api';
+import { BeatmapInline } from './BeatmapInline';
 import { autoHeight, Form, FormSubmitHandler } from './dom-helpers';
 import { DescriptionState, GameMode, INomination, IUser, MetadataState, ModeratorState, PartialWithId } from './interfaces';
 import { Modal } from './Modal';
 import { Never } from './Never';
-import { gameModeLongName, gameModes, gameModeShortName } from './osu-helpers';
+import { gameModeLongName, gameModes } from './osu-helpers';
 import { useOsuAuth } from './osuAuth';
 import { canWriteAs, isCaptainForMode } from './permissions';
 import { UserInline } from './UserInline';
@@ -189,23 +190,19 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
   const canEditMetadata = !metadataDone && canWriteAs(authUser, nomination.metadata_assignee?.id);
   const canEditModeration = !moderationDone && canWriteAs(authUser, nomination.moderator_assignee?.id);
 
-  const displayArtist = nomination.overwrite_artist ?? nomination.beatmapset.artist;
-  const displayTitle = nomination.overwrite_title ?? nomination.beatmapset.title;
-
   return (
     <div className='box nomination'>
       <div className='flex-left'>
-        <h3 style={{ flexGrow: 1 }}>
-          <a href={`https://osu.ppy.sh/beatmapsets/${nomination.beatmapset.id}#${gameModeShortName(nomination.game_mode)}`}>
-            {displayArtist} - {displayTitle}
-          </a>
-          {' '} [#{nomination.id}]
-        </h3>
-        {nomination.description_author != null &&
-          <span>Description by <UserInline noId user={nomination.description_author} /></span>
-        }
-        <span>
-          Nominated by <UserInline noId user={nomination.nominator} />
+        <span style={{ flexGrow: 1 }}>
+          <h3>
+            <BeatmapInline
+              artist={nomination.overwrite_artist}
+              beatmapset={nomination.beatmapset}
+              gameMode={nomination.game_mode}
+              title={nomination.overwrite_title}
+            />
+            {' '} [#{nomination.id}]
+          </h3>
           {canDelete &&
             <>
               {' — '}
@@ -219,6 +216,10 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
             </>
           }
         </span>
+        {nomination.description_author != null &&
+          <span>Description by <UserInline noId user={nomination.description_author} /></span>
+        }
+        <span>Nominated by <UserInline noId user={nomination.nominator} /></span>
       </div>
       <div className='flex-left'>
         <span style={{ flexGrow: 1 }}>
@@ -235,7 +236,6 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
         </span>
         {canEditMetadata &&
           <EditMetadata
-            modalTitle={`${displayArtist} - ${displayTitle}`}
             nomination={nomination}
             onNominationUpdate={onNominationUpdate}
           />
@@ -293,12 +293,11 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
 }
 
 type EditMetadataProps = {
-  modalTitle: string;
   nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
 };
 
-function EditMetadata({ modalTitle, nomination, onNominationUpdate }: EditMetadataProps) {
+function EditMetadata({ nomination, onNominationUpdate }: EditMetadataProps) {
   const [busy, setBusy] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -323,7 +322,13 @@ function EditMetadata({ modalTitle, nomination, onNominationUpdate }: EditMetada
         close={() => setModalOpen(false)}
         open={modalOpen}
       >
-        <h2>{modalTitle}</h2>
+        <h2>
+          <BeatmapInline
+            artist={nomination.overwrite_artist}
+            beatmapset={nomination.beatmapset}
+            title={nomination.overwrite_title}
+          />
+        </h2>
         <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
           <table>
             <tr>

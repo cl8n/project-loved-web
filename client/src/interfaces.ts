@@ -30,10 +30,34 @@ export enum ModeratorState {
   notAllowed,
 }
 
+interface IGenericBeatmap {
+  id: number;
+  beatmapset_id: number;
+  bpm: number;
+  deleted_at?: Date;
+  play_count: number;
+  ranked_status: number;
+  star_rating: number;
+  version: string;
+}
+
+interface INotManiaBeatmap extends IGenericBeatmap {
+  game_mode: Exclude<GameMode, GameMode.mania>;
+}
+
+interface IManiaBeatmap extends IGenericBeatmap {
+  game_mode: GameMode.mania;
+  key_count: number;
+}
+
+export type IBeatmap = IManiaBeatmap | INotManiaBeatmap;
+
 export interface IBeatmapset {
   id: number;
   artist: string;
+  beatmaps: IBeatmap[];
   creator_id: number;
+  creator_name: string;
   favorite_count: number;
   play_count: number;
   ranked_status: number;
