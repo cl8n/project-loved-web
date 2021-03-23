@@ -329,7 +329,7 @@ function EditMetadata({ modalTitle, nomination, onNominationUpdate }: EditMetada
             <tr>
               <td><label htmlFor='state'>State</label></td>
               <td>
-                <select name='state' required defaultValue={nomination.metadata_state}>
+                <select name='state' required defaultValue={nomination.metadata_state} key={nomination.metadata_state /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */}>
                   <option value='0'>Not checked</option>
                   <option value='1'>Needs change, posted on discussion</option>
                   <option value='2'>All good!</option>

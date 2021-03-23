@@ -287,6 +287,7 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
                   name='captain_game_mode'
                   defaultValue={user.roles.captain_game_mode ?? 'none'}
                   onChange={onCaptainGameModeChange}
+                  key={user.roles.captain_game_mode ?? 'none' /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */}
                 >
                   <option value='none'>None</option>
                   <option value='0'>Standard</option>
