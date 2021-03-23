@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { ReactChild, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ResponseError } from 'superagent';
 import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getNominations, updateExcludedBeatmaps, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, useApi } from './api';
@@ -11,6 +11,28 @@ import { gameModeLongName, gameModes } from './osu-helpers';
 import { useOsuAuth } from './osuAuth';
 import { canWriteAs, isCaptainForMode } from './permissions';
 import { UserInline } from './UserInline';
+
+type ListInlineProps<T> = {
+  array: T[];
+  none?: ReactChild;
+  render: (item: T) => ReactChild;
+}
+
+function ListInline<T>({ array, none, render }: ListInlineProps<T>) {
+  if (array.length === 0)
+    return <>{none ?? 'None'}</>;
+
+  return (
+    <>
+      {array.map((item, i, array) => (
+        <>
+          {render(item)}
+          {i < array.length - 1 && ', '}
+        </>
+      ))}
+    </>
+  );
+}
 
 export function Picks() {
   const authUser = useOsuAuth().user;
@@ -224,15 +246,11 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
       <div className='flex-left'>
         <span style={{ flexGrow: 1 }}>
           by {' '}
-          {nomination.beatmapset_creators.length === 0
-            ? 'Nobody!'
-            : nomination.beatmapset_creators.map((creator, i, arr) => (
-                <span>
-                  <UserInline noId user={creator} />
-                  {i < arr.length - 1 && ', '}
-                </span>
-              ))
-          }
+          <ListInline
+            array={nomination.beatmapset_creators}
+            none='Nobody'
+            render={(user) => <UserInline noId user={user} />}
+          />
         </span>
         {canEditMetadata &&
           <EditMetadata
@@ -258,7 +276,11 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
       </div>
       <div className='flex-left'>
         <span style={{ flexGrow: 1 }}>
-          Excluded diffs: (not working yet)
+          Excluded diffs: {' '}
+          <ListInline
+            array={nomination.beatmaps.filter((beatmap) => beatmap.excluded)}
+            render={(beatmap) => beatmap.version}
+          />
           {canEditDifficulties &&
             <>
               {' — '}
