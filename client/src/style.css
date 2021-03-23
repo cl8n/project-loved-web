@@ -342,6 +342,7 @@ table.maps .status {
 .nomination h3 {
     margin-top: 0;
     margin-bottom: 0;
+    display: inline;
 }
 
 .description-buttons {
