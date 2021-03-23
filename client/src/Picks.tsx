@@ -194,7 +194,7 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
     <div className='box nomination'>
       <div className='flex-left'>
         <span style={{ flexGrow: 1 }}>
-          <h3>
+          <h3 className='nomination-title'>
             <BeatmapInline
               artist={nomination.overwrite_artist}
               beatmapset={nomination.beatmapset}
