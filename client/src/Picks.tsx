@@ -350,6 +350,7 @@ function EditMetadata({ nomination, onNominationUpdate }: EditMetadataProps) {
             beatmapset={nomination.beatmapset}
             title={nomination.overwrite_title}
           />
+          {' metadata'}
         </h2>
         <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
           <table>
