@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ResponseError } from 'superagent';
-import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getNominations, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, useApi } from './api';
+import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getNominations, updateExcludedBeatmaps, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, useApi } from './api';
 import { BeatmapInline } from './BeatmapInline';
 import { autoHeight, Form, FormSubmitHandler } from './dom-helpers';
 import { DescriptionState, GameMode, INomination, IUser, MetadataState, ModeratorState, PartialWithId } from './interfaces';
