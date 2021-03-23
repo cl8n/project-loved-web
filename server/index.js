@@ -11,6 +11,17 @@ const { log, logTypes } = require('./log');
 const { authRedirectUrl, createOrRefreshUser, fetchToken, refreshToken, revokeToken } = require('./osu');
 const router = require('./router');
 
+function destroySession(session) {
+  return new Promise(function (resolve, reject) {
+    session.destroy(function (error) {
+      if (error != null)
+        reject(error);
+
+      resolve();
+    });
+  });
+}
+
 const app = express();
 const sessionStore = new MysqlSessionStore({
   checkExpirationInterval: 1800000, // 30 minutes
@@ -81,12 +92,8 @@ app.use(asyncHandler(async function (request, response, next) {
     try {
       Object.assign(request.session, await refreshToken(request.session.refreshToken));
     } catch (error) {
-      return request.session.destroy((sessionError) => {
-        if (sessionError)
-          throw sessionError;
-
-        throw error;
-      });
+      await destroySession(request.session);
+      throw error;
     }
 
   const user = await db.queryOneWithGroups(`
@@ -104,15 +111,10 @@ app.use(asyncHandler(async function (request, response, next) {
 
 app.post('/auth/bye', asyncHandler(async function (request, response) {
   await revokeToken(request.session.accessToken);
-
   //log(logTypes.analytic, '{creator} logged out', request.session.userId);
+  await destroySession(request.session);
 
-  request.session.destroy((error) => {
-    if (error)
-      throw error;
-
-    response.status(204).send();
-  });
+  response.status(204).send();
 }));
 
 app.get('/auth/remember', function (_, response) {
