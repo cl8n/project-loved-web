@@ -360,3 +360,11 @@ table.maps .status {
     color: #f22;
     font-weight: bold;
 }
+
+.flex-grow {
+    flex-grow: 1;
+}
+
+.flex-no-shrink {
+    flex-shrink: 0;
+}

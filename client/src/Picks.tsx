@@ -215,7 +215,7 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
   return (
     <div className='box nomination'>
       <div className='flex-left'>
-        <span style={{ flexGrow: 1 }}>
+        <span className='flex-grow'>
           <h3 className='nomination-title'>
             <BeatmapInline
               artist={nomination.overwrite_artist}
@@ -239,12 +239,12 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
           }
         </span>
         {nomination.description_author != null &&
-          <span>Description by <UserInline noId user={nomination.description_author} /></span>
+          <span className='flex-no-shrink'>Description by <UserInline noId user={nomination.description_author} /></span>
         }
-        <span>Nominated by <UserInline noId user={nomination.nominator} /></span>
+        <span className='flex-no-shrink'>Nominated by <UserInline noId user={nomination.nominator} /></span>
       </div>
       <div className='flex-left'>
-        <span style={{ flexGrow: 1 }}>
+        <span className='flex-grow'>
           by {' '}
           <ListInline
             array={nomination.beatmapset_creators}
@@ -258,7 +258,7 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
             onNominationUpdate={onNominationUpdate}
           />
         }
-        <span>
+        <span className='flex-no-shrink'>
           Metadata assignee: {nomination.metadata_assignee == null ? 'None' : <UserInline noId user={nomination.metadata_assignee} />}
           {canAssignMetadata &&
             <>
@@ -275,7 +275,7 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
         </span>
       </div>
       <div className='flex-left'>
-        <span style={{ flexGrow: 1 }}>
+        <span className='flex-grow'>
           Excluded diffs: {' '}
           <ListInline
             array={nomination.beatmaps.filter((beatmap) => beatmap.excluded)}
@@ -288,7 +288,7 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
             </>
           }
         </span>
-        <span>
+        <span className='flex-no-shrink'>
           Moderator assignee: {nomination.moderator_assignee == null ? 'None' : <UserInline noId user={nomination.moderator_assignee} />}
           {canAssignModeration &&
             <>
@@ -336,7 +336,7 @@ function EditMetadata({ nomination, onNominationUpdate }: EditMetadataProps) {
       <button
         type='button'
         onClick={() => setModalOpen(true)}
-        className={`fake-a${nomination.metadata_state === MetadataState.unchecked ? ' important-bad' : ''}`}
+        className={`flex-no-shrink fake-a${nomination.metadata_state === MetadataState.unchecked ? ' important-bad' : ''}`}
       >
         Edit metadata
       </button>
