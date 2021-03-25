@@ -1,14 +1,28 @@
+function accessNested(object, key) {
+  const keyParts = key.split('.');
+  let value = object;
+
+  while (value != null && keyParts.length > 0) {
+    value = value[keyParts.shift()];
+  }
+
+  return value;
+}
+
 function groupBy(array, key, dataKey) {
   return array.reduce((prev, value) => {
-    if (prev[value[key]] == null)
-      prev[value[key]] = [];
+    const groupKey = accessNested(value, key);
 
-    prev[value[key]].push(dataKey == null ? value : value[dataKey]);
+    if (prev[groupKey] == null)
+      prev[groupKey] = [];
+
+    prev[groupKey].push(dataKey == null ? value : accessNested(value, dataKey));
 
     return prev;
   }, {});
 }
 
 module.exports = {
+  accessNested,
   groupBy,
 };
