@@ -1,4 +1,4 @@
-import { ChangeEvent, ChangeEventHandler, RefObject, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, ChangeEventHandler, RefObject, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { addUser, apiErrorMessage, getLogs, getUsersWithRoles, isApiObjectType, updateApiObject, updateUserRoles, useApi } from './api';
 import { BoolView } from './BoolView';

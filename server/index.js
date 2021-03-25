@@ -7,7 +7,6 @@ const MysqlSessionStore = require('express-mysql-session')(session);
 const config = require('./config.json');
 const db = require('./db');
 const { asyncHandler } = require('./express-helpers');
-const { log, logTypes } = require('./log');
 const { authRedirectUrl, createOrRefreshUser, fetchToken, refreshToken, revokeToken } = require('./osu');
 const router = require('./router');
 

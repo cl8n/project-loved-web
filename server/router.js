@@ -3,7 +3,6 @@ const db = require('./db');
 const { asyncHandler } = require('./express-helpers');
 const guards = require('./guards');
 const { groupBy } = require('./helpers');
-const { log, logTypes } = require('./log');
 const { createOrRefreshBeatmapset, createOrRefreshUser } = require('./osu');
 
 function getParams(object, keys) {
