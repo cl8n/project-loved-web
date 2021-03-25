@@ -1,0 +1,13 @@
+{
+  "dbDatabase": "",
+  "dbHost": "",
+  "dbPassword": "",
+  "dbPort": 3306,
+  "dbUser": "",
+  "localInterOpKey": "",
+  "osuApiClientId": 0,
+  "osuApiClientRedirect": "<yourHost>/api/auth/callback",
+  "osuApiClientSecret": "",
+  "port": 3333,
+  "sessionSecret": ""
+}
