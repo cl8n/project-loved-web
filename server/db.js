@@ -74,7 +74,7 @@ class MysqlDatabase {
 
     const specialSelectsSqls = specialSelectInfo.map(
       ([fromTable, toTable, realFromTable]) => specialSelectRealColumns[realFromTable].map(
-          (column) => `${fromTable}.${column} AS '${toTable}:${column}'`
+        (column) => `\`${fromTable}\`.\`${column}\` AS '${toTable}:${column}'`
       )
     );
 
