@@ -158,10 +158,12 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
   }
 
   const beatmapset = await createOrRefreshBeatmapset(req.session.accessToken, req.body.beatmapsetId, req.body.gameMode);
+  const nominationCount = (await db.queryOne('SELECT COUNT(*) AS count FROM nominations WHERE round_id = ? AND game_mode = ?', [req.body.roundId, req.body.gameMode])).count;
   const queryResult = await db.query('INSERT INTO nominations SET ?', {
     beatmapset_id: beatmapset.id,
     game_mode: req.body.gameMode,
     nominator_id: res.locals.user.id,
+    order: nominationCount,
     parent_id: req.body.parentId,
     round_id: req.body.roundId,
   });
