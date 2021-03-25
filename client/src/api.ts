@@ -54,7 +54,7 @@ export function getAssignees(): Response<{ metadatas: IUser[]; moderators: IUser
     .get('/api/assignees');
 }
 
-export function getCaptains(): Response<ICaptain[]> {
+export function getCaptains(): Response<{ [P in GameMode]?: ICaptain[] }> {
   return superagent
     .get('/api/captains');
 }

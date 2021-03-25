@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { apiErrorMessage, getCaptains, useApi } from './api';
-import { ICaptain } from './interfaces';
+import { GameMode } from './interfaces';
 import { gameModeLongNames } from './osu-helpers';
 import { UserInline } from './UserInline';
 
@@ -22,18 +22,13 @@ function CaptainsInner() {
   if (captains == null)
     return <span>Loading captains...</span>;
 
-  const captainsByGameMode: ICaptain[][] = [[], [], [], []];
-  captains.forEach((captain) => {
-    captainsByGameMode[captain.roles.captain_game_mode].push(captain);
-  });
-
   return (
     <>
-      {gameModeLongNames.map((gameModeName, gameMode) => (
+      {gameModeLongNames.map((gameModeName, gameMode: GameMode) => (
         <Fragment key={gameMode}>
           <h2>{gameModeName}</h2>
           <ul>
-            {captainsByGameMode[gameMode].map((captain) => (
+            {captains[gameMode]?.map((captain) => (
               <li key={captain.id}>
                 <UserInline user={captain} />
               </li>
