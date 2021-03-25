@@ -14,5 +14,5 @@ CREATE TABLE `log_values` (
 
     PRIMARY KEY (`log_id`, `parameter`),
     FOREIGN KEY (`log_id`)
-        REFERENCES `logs` (`id`),
+        REFERENCES `logs` (`id`)
 );
