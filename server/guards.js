@@ -18,8 +18,8 @@ function hasRoleMiddleware(roles, errorMessage) {
   };
 }
 
-module.exports.hasLocalInterOpKey = function (request, response, next) {
-  if (!timingSafeEqual(config.localInterOpKey, request.get('X-Loved-InterOpKey')))
+module.exports.hasLocalInteropKey = function (request, response, next) {
+  if (!timingSafeEqual(config.localInteropKey, request.get('X-Loved-InteropKey')))
     return response.status(401).json({ error: 'Invalid key' });
 
   next();

@@ -15,58 +15,7 @@ function getParams(object, keys) {
 }
 
 const router = express.Router();
-// TODO: rethink guards. also, public/interop gets should be available to people not signed in
-
-//#region public
-router.post('/map-submit', asyncHandler(async (req, res) => {
-  // TODO: log me!
-}));
-
-router.get('/captains', asyncHandler(async (req, res) => {
-  const captains = await db.queryWithGroups(`
-    SELECT users.*, user_roles:roles
-    FROM users
-    INNER JOIN user_roles
-      ON users.id = user_roles.id
-    WHERE user_roles.captain_game_mode IS NOT NULL
-    ORDER BY users.name ASC
-  `);
-
-  res.json(captains);
-}));
-//#endregion
-
-//#region interop
-router.get('/local-interop/data', guards.hasLocalInterOpKey, asyncHandler(async (req, res) => {
-  const round = await db.queryOne(`
-    SELECT *
-    FROM rounds
-    WHERE id = ?
-  `, req.query.roundId);
-
-  const nominations = await db.query(`
-    SELECT *
-    FROM nominations
-    WHERE round_id = ?
-  `, req.query.roundId);
-
-  res.json({
-    nominations,
-    round,
-  });
-}));
-
-router.get('/local-interop/rounds-available', guards.hasLocalInterOpKey, asyncHandler(async (_, res) => {
-  const rounds = await db.query(`
-    SELECT *
-    FROM rounds
-    WHERE done = 0
-    ORDER BY id DESC
-  `);
-
-  res.json(rounds);
-}));
-//#endregion
+// TODO: rethink guards
 
 //#region captain
 router.get('/rounds', asyncHandler(async (req, res) => {

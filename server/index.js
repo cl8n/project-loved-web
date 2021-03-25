@@ -7,8 +7,11 @@ const MysqlSessionStore = require('express-mysql-session')(session);
 const config = require('./config.json');
 const db = require('./db');
 const { asyncHandler } = require('./express-helpers');
+const { hasLocalInteropKey, isAnything } = require('./guards');
 const { authRedirectUrl, Osu } = require('./osu');
 const router = require('./router');
+const guestRouter = require('./routers/guest');
+const interopRouter = require('./routers/interop');
 
 function destroySession(session) {
   return new Promise(function (resolve, reject) {
@@ -27,9 +30,9 @@ const sessionStore = new MysqlSessionStore({
   expiration: 604800000, // 7 days
 }, db.connection);
 
-app.get('/', function (_, response) {
-  response.send('<p>This is the API for <a href="https://loved.sh">loved.sh</a>. You shouldn\'t be here!</p>');
-});
+app.use(guestRouter);
+
+app.use('/local-interop', hasLocalInteropKey, interopRouter);
 
 app.use(session({
   cookie: {
@@ -125,7 +128,8 @@ app.get('/auth/remember', function (_, response) {
   response.json(response.locals.user);
 });
 
-app.use('/', router);
+// TODO split out this router. "isAnything" is here because the permissions aren't all figured out yet, and I want to prevent security issues beyond this point
+app.use(isAnything, router);
 
 app.use(function (_, response) {
   response.status(404).json({ error: 'Not found' });

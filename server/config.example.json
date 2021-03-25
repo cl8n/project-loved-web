@@ -4,7 +4,7 @@
   "dbPassword": "",
   "dbPort": 3306,
   "dbUser": "",
-  "localInterOpKey": "",
+  "localInteropKey": "",
   "osuApiClientId": 0,
   "osuApiClientRedirect": "<yourHost>/api/auth/callback",
   "osuApiClientSecret": "",
