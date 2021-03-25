@@ -222,7 +222,7 @@ router.post('/nomination-edit-description', asyncHandler(async (req, res) => {
     SELECT nominations.id, nominations.description,
       nominations.description_author_id, description_authors:description_author
     FROM nominations
-    INNER JOIN users AS description_authors
+    LEFT JOIN users AS description_authors
       ON nominations.description_author_id = description_authors.id
     WHERE nominations.id = ?
   `, req.body.nominationId);
