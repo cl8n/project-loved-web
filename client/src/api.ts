@@ -87,6 +87,12 @@ export function updateApiObject<T extends ApiObjectType>(type: T, id: number): R
     .send({ type, id });
 }
 
+export function updateCreators(beatmapsetId: number, gameMode: GameMode, creatorIds: number[]): Response<IUser[]> {
+  return superagent
+    .post('/api/update-creators')
+    .send({ beatmapsetId, gameMode, creatorIds });
+}
+
 export function updateExcludedBeatmaps(nominationId: number, excludedBeatmapIds: number[]): Response {
   return superagent
     .post('/api/update-excluded-beatmaps')
