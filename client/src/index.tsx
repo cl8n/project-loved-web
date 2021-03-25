@@ -11,7 +11,6 @@ import { Picks } from './Picks';
 import { PicksRoundListing } from './PicksRoundListing';
 import { ProtectedRoute } from './ProtectedRoute';
 import './style.css';
-import { Submissions } from './Submissions';
 
 render(
   <StrictMode>
@@ -20,7 +19,7 @@ render(
         <Header />
         <main className='big-center'>
           <Switch>
-            <Route exact path='/'><NotReady><Submissions /></NotReady></Route>
+            <Route exact path='/'><NotReady /></Route>
             <Route path='/submit'><NotReady /></Route>
             <Route path='/mappers'><NotReady /></Route>
             <Route path='/captains'><Captains /></Route>
