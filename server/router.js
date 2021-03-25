@@ -335,6 +335,27 @@ router.get('/assignees', asyncHandler(async (_, res) => {
   });
 }));
 
+router.post('/update-creators', guards.isMetadataChecker, asyncHandler(async (req, res) => {
+  await db.query('DELETE FROM beatmapset_creators WHERE beatmapset_id = ? AND game_mode = ?', [req.body.beatmapsetId, req.body.gameMode]);
+
+  if (req.body.creatorIds != null && req.body.creatorIds.length > 0)
+    await db.query('INSERT INTO beatmapset_creators VALUES ?', [req.body.creatorIds.map((id) => [req.body.beatmapsetId, id, req.body.gameMode])]);
+
+  const creators = await db.query(`
+    SELECT users.*
+    FROM beatmapset_creators
+    INNER JOIN users
+      ON beatmapset_creators.creator_id = users.id
+    WHERE beatmapset_creators.beatmapset_id = ?
+      AND beatmapset_creators.game_mode = ?
+  `, [
+    req.body.beatmapsetId,
+    req.body.gameMode,
+  ]);
+
+  res.json(creators);
+}));
+
 router.post('/update-excluded-beatmaps', guards.isCaptain, asyncHandler(async (req, res) => {
   await db.query('DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?', req.body.nominationId);
 
