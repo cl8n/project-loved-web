@@ -91,7 +91,8 @@ export function Form({
   return <form ref={ref} onSubmit={handleSubmit}>{children}</form>;
 }
 
-export function autoHeight<T extends HTMLElement>(element: T) {
+// TODO: kinda stupid but it doesn't look bad most of the time
+export function autoHeight(element: HTMLElement) {
   element.style.height = '5px';
   element.style.height = element.scrollHeight + 'px';
 }
