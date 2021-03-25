@@ -3,7 +3,6 @@ const db = require('./db');
 const { asyncHandler } = require('./express-helpers');
 const guards = require('./guards');
 const { groupBy } = require('./helpers');
-const { createOrRefreshBeatmapset, createOrRefreshUser } = require('./osu');
 
 function getParams(object, keys) {
   const params = {};
@@ -162,7 +161,7 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
       return res.status(422).json({ error: 'Invalid parent nomination ID' });
   }
 
-  const beatmapset = await createOrRefreshBeatmapset(req.session.accessToken, req.body.beatmapsetId, req.body.gameMode);
+  const beatmapset = await res.locals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId, req.body.gameMode);
   const nominationCount = (await db.queryOne('SELECT COUNT(*) AS count FROM nominations WHERE round_id = ? AND game_mode = ?', [req.body.roundId, req.body.gameMode])).count;
   const queryResult = await db.query('INSERT INTO nominations SET ?', {
     beatmapset_id: beatmapset.id,
@@ -273,7 +272,7 @@ router.delete('/nomination', asyncHandler(async (req, res) => {
 
 //#region admin
 router.post('/add-user', guards.isGod, asyncHandler(async (req, res) => {
-  const user = await createOrRefreshUser(req.session.accessToken, req.body.name);
+  const user = await res.locals.osu.createOrRefreshUser(req.body.name);
 
   await db.query('INSERT IGNORE INTO user_roles SET id = ?', user.id);
 
@@ -450,9 +449,9 @@ router.post('/update-permissions', guards.isGod, asyncHandler(async (req, res) =
 router.post('/update-api-object', guards.isGod, asyncHandler(async (req, res) => {
   switch (req.body.type) {
     case 'beatmapset':
-      await createOrRefreshBeatmapset(req.session.accessToken, req.body.id);
+      await res.locals.osu.createOrRefreshBeatmapset(req.body.id);
     case 'user':
-      await createOrRefreshUser(req.session.accessToken, req.body.id);
+      await res.locals.osu.createOrRefreshUser(req.body.id);
   }
 
   res.status(204).send();

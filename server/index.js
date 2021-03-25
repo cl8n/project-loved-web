@@ -7,7 +7,7 @@ const MysqlSessionStore = require('express-mysql-session')(session);
 const config = require('./config.json');
 const db = require('./db');
 const { asyncHandler } = require('./express-helpers');
-const { authRedirectUrl, createOrRefreshUser, fetchToken, refreshToken, revokeToken } = require('./osu');
+const { authRedirectUrl, Osu } = require('./osu');
 const router = require('./router');
 
 function destroySession(session) {
@@ -71,10 +71,10 @@ app.get('/auth/callback', asyncHandler(async function (request, response) {
   if (!request.query.state || request.query.state !== state)
     throw 'Invalid state';
 
-  const tokenInfo = await fetchToken(request.query.code);
-  Object.assign(request.session, tokenInfo);
+  const osu = new Osu();
+  Object.assign(request.session, await osu.getToken(request.query.code));
 
-  const userInfo = await createOrRefreshUser(request.session.accessToken);
+  const userInfo = await osu.createOrRefreshUser();
   request.session.userId = userInfo.id;
 
   await db.query('INSERT IGNORE INTO user_roles SET id = ?', userInfo.id);
@@ -87,13 +87,18 @@ app.use(asyncHandler(async function (request, response, next) {
   if (!request.session.userId)
     return response.status(401).json({ error: 'Log in first' });
 
-  if (Date.now() >= request.session.tokenExpiresAt - 60000)
-    try {
-      Object.assign(request.session, await refreshToken(request.session.refreshToken));
-    } catch (error) {
-      await destroySession(request.session);
-      throw error;
-    }
+  response.locals.osu = new Osu(request.session);
+
+  try {
+    const tokenInfo = await response.locals.osu.tryRefreshToken();
+
+    if (tokenInfo != null)
+      Object.assign(request.session, tokenInfo);
+  } catch (error) {
+    // TODO: start a normal re-auth if the refresh token is too old
+    await destroySession(request.session);
+    throw error;
+  }
 
   const user = await db.queryOneWithGroups(`
     SELECT users.*, user_roles:roles
@@ -109,7 +114,7 @@ app.use(asyncHandler(async function (request, response, next) {
 }));
 
 app.post('/auth/bye', asyncHandler(async function (request, response) {
-  await revokeToken(request.session.accessToken);
+  await response.locals.osu.revokeToken();
   //log(logTypes.analytic, '{creator} logged out', request.session.userId);
   await destroySession(request.session);
 
