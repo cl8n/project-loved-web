@@ -69,7 +69,7 @@ app.get('/auth/callback', asyncHandler(async function (request, response) {
   delete request.session.authBackUrl;
   delete request.session.authState;
 
-  if (request.query.state !== state)
+  if (!request.query.state || request.query.state !== state)
     throw 'Invalid state';
 
   const tokenInfo = await fetchToken(request.query.code);
