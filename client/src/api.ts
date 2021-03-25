@@ -70,7 +70,6 @@ export function getRounds(): Response<(IRound & { nomination_count: number; })[]
     .get('/api/rounds');
 }
 
-//#region Manage
 export function getLogs(): Response<ILog[]> {
   return superagent
     .get('/api/logs');
@@ -132,7 +131,6 @@ export function updateUserRoles(userId: number, roles: IUser['roles']): Response
       captain_game_mode: roles.captain_game_mode ?? null,
     });
 }
-//#endregion
 
 export function apiErrorMessage(error: ResponseError): string {
   return error.response?.body.error ?? error.message;
