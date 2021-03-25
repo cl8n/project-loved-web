@@ -23,9 +23,9 @@ function ApiObjectMenu() {
 
   const addLog = (log: ApiObjectUpdateLog) => setLogs((prev) => prev.concat(log));
 
-  const onSubmit: FormSubmitHandler = (values, then) => {
-    const id = parseInt(values.id);
-    const type = values.type;
+  const onSubmit: FormSubmitHandler = (form, then) => {
+    const id = form.id;
+    const type = form.type;
 
     if (isNaN(id) || !isApiObjectType(type))
       return null;
@@ -50,7 +50,7 @@ function ApiObjectMenu() {
         </tr>
         <tr>
           <td><label htmlFor='id'>ID</label></td>
-          <td><input type='number' name='id' required /></td>
+          <td><input type='number' name='id' required data-value-type='int' /></td>
         </tr>
         <tr>
           <td>

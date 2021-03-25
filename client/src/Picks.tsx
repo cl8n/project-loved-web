@@ -138,9 +138,9 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
 
   const onSubmit: FormSubmitHandler = (form, then) => {
     return addNomination(
-      parseInt(form.beatmapsetId),
+      form.beatmapsetId,
       gameMode,
-      form.parentId.length === 0 ? undefined : parseInt(form.parentId),
+      form.parentId,
       roundId,
     )
       .then((response) => onNominationAdd(response.body))
@@ -154,7 +154,7 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
     <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
       <p className='flex-left'>
         <label htmlFor='beatmapsetId'>Beatmapset ID</label>
-        <input type='number' name='beatmapsetId' required />
+        <input type='number' name='beatmapsetId' required data-value-type='int' />
         <span>
           <label htmlFor='parentId'>Parent nomination ID </label>
           <span
@@ -165,7 +165,7 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
             [?]
           </span>
         </span>
-        <input type='number' name='parentId' />
+        <input type='number' name='parentId' data-value-type='int' />
         <button type='submit'>
           {busy ? 'Adding...' : 'Add'}
         </button>
@@ -324,7 +324,7 @@ function EditMetadata({ nomination, onNominationUpdate }: EditMetadataProps) {
   const [modalOpen, setModalOpen] = useState(false);
 
   const onSubmit: FormSubmitHandler = (form, then) => {
-    return updateNominationMetadata(nomination.id, parseInt(form.state), form.artist.length === 0 ? null : form.artist, form.title.length === 0 ? null : form.title)
+    return updateNominationMetadata(nomination.id, form.state, form.artist, form.title)
       .then((response) => onNominationUpdate(response.body))
       .then(then)
       .catch((error) => window.alert(apiErrorMessage(error)))
@@ -357,7 +357,7 @@ function EditMetadata({ nomination, onNominationUpdate }: EditMetadataProps) {
             <tr>
               <td><label htmlFor='state'>State</label></td>
               <td>
-                <select name='state' required defaultValue={nomination.metadata_state} key={nomination.metadata_state /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */}>
+                <select name='state' required defaultValue={nomination.metadata_state} data-value-type='int' key={nomination.metadata_state /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */}>
                   <option value='0'>Not checked</option>
                   <option value='1'>Needs change, posted on discussion</option>
                   <option value='2'>All good!</option>
@@ -537,7 +537,7 @@ function Description({ canEdit, nominationId, onNominationUpdate, text }: Descri
   }, [editing]);
 
   const onSubmit: FormSubmitHandler = (form, then) => {
-    return updateNominationDescription(nominationId, form.description.length === 0 ? null : form.description)
+    return updateNominationDescription(nominationId, form.description)
       .then((response) => onNominationUpdate(response.body))
       .then(then)
       .catch(() => {}) // TODO: show error

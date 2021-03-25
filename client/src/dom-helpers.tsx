@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, FormEvent, PropsWithChildren, SetStateAction, useEffect, useRef } from 'react';
+import { Dispatch, FormEvent, PropsWithChildren, SetStateAction, useEffect, useRef } from 'react';
 
 function setFormDisabled(form: HTMLFormElement, disabled: boolean) {
   const controls = form.elements as any; // TODO: typing
@@ -19,7 +19,8 @@ function wrapCast<T>(fn: (value: string) => T) {
 }
 
 const valueCasts = {
-  decimal: wrapCast((value) => parseFloat(value).toFixed(2)),
+  date: wrapCast((value) => new Date(value)),
+  decimal: wrapCast(parseFloat),
   int: wrapCast(parseInt),
   string: wrapCast((value) => value),
 };

@@ -56,7 +56,7 @@ function AddRound() {
   const [modalOpen, setModalOpen] = useState(false);
 
   const onSubmit: FormSubmitHandler = (form, then) => {
-    return addRound(form.name, new Date(form.newsPostAt))
+    return addRound(form.name, form.newsPostAt)
       .then(() => {}) // TODO: set rounds
       .then(then)
       .catch(() => {}) // TODO: show error
@@ -87,7 +87,7 @@ function AddRound() {
             </tr>
             <tr>
               <td>Post date</td>
-              <td><input type='date' name='newsPostAt' required /></td>
+              <td><input type='date' name='newsPostAt' required data-value-type='date' /></td>
             </tr>
           </table>
           <button type='submit' className='modal-submit-button'>
