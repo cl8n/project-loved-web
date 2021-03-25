@@ -2,33 +2,10 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import superagent, { Response as SuperAgentResponse, ResponseError } from 'superagent';
 import { GameMode, IBeatmapset, ICaptain, ILog, INomination, IRound, IUser, MetadataState, PartialWithId } from './interfaces';
 
-interface Response<BodyType = undefined> extends SuperAgentResponse {
+interface SuperAgentResponseWithBody<BodyType> extends SuperAgentResponse {
   body: BodyType;
 }
-
-type AddNominationResponse = Promise<Response<INomination>>;
-type AddRoundResponse = Promise<Response<IRound>>;
-type AddUserResponse = Promise<Response<IUser>>;
-type DeleteNominationResponse = Promise<Response>;
-type GetAssigneesResponse = Promise<Response<{
-  metadatas: IUser[];
-  moderators: IUser[];
-}>>;
-type GetCaptainsResponse = Promise<Response<ICaptain[]>>;
-type GetNominationsResponse  = Promise<Response<{
-  nominations: INomination[];
-  round: IRound;
-}>>;
-type GetRoundsResponse = Promise<Response<(IRound & { nomination_count: number; })[]>>;
-type GetLogsResponse = Promise<Response<ILog[]>>;
-type GetUsersWithRolesResponse = Promise<Response<IUser[]>>;
-type UpdateApiObjectResponse<T extends ApiObjectType> = Promise<Response<ApiObjectTypes[T]>>;
-type UpdateExcludedBeatmapsResponse = Promise<Response>;
-type UpdateNominationDescriptionResponse = Promise<Response<PartialWithId<INomination>>>;
-type UpdateNominationMetadataResponse = Promise<Response<PartialWithId<INomination>>>;
-type UpdateMetadataAssigneeResponse = Promise<Response<PartialWithId<INomination>>>;
-type UpdateModeratorAssigneeResponse = Promise<Response<PartialWithId<INomination>>>;
-type UpdateUserRolesResponse = Promise<Response>;
+type Response<BodyType = undefined> = Promise<SuperAgentResponseWithBody<BodyType>>;
 
 type ApiObjectTypes = {
   beatmapset: IBeatmapset;
@@ -40,18 +17,18 @@ export function isApiObjectType(type: any): type is ApiObjectType {
   return ['beatmapset', 'user'].includes(type);
 }
 
-export function addNomination(beatmapsetId: number, gameMode: GameMode, parentId: number | undefined, roundId: number): AddNominationResponse {
+export function addNomination(beatmapsetId: number, gameMode: GameMode, parentId: number | null, roundId: number): Response<INomination> {
   return superagent
     .post('/api/nomination-submit')
     .send({
       beatmapsetId,
       gameMode,
-      parentId: parentId ?? null,
+      parentId,
       roundId,
     });
 }
 
-export function addRound(name: string, newsPostAt: Date): AddRoundResponse {
+export function addRound(name: string, newsPostAt: Date): Response<IRound> {
   return superagent
     .post('/api/add-round')
     .send({
@@ -60,87 +37,87 @@ export function addRound(name: string, newsPostAt: Date): AddRoundResponse {
     });
 }
 
-export function addUser(name: string): AddUserResponse {
+export function addUser(name: string): Response<IUser> {
   return superagent
     .post('/api/add-user')
     .send({ name });
 }
 
-export function deleteNomination(nominationId: number): DeleteNominationResponse {
+export function deleteNomination(nominationId: number): Response {
   return superagent
     .delete('/api/nomination')
     .query({ nominationId });
 }
 
-export function getAssignees(): GetAssigneesResponse {
+export function getAssignees(): Response<{ metadatas: IUser[]; moderators: IUser[]; }> {
   return superagent
     .get('/api/assignees');
 }
 
-export function getCaptains(): GetCaptainsResponse {
+export function getCaptains(): Response<ICaptain[]> {
   return superagent
     .get('/api/captains');
 }
 
-export function getNominations(roundId: number): GetNominationsResponse {
+export function getNominations(roundId: number): Response<{ nominations: INomination[]; round: IRound; }> {
   return superagent
     .get('/api/nominations')
     .query({ roundId });
 }
 
-export function getRounds(): GetRoundsResponse {
+export function getRounds(): Response<(IRound & { nomination_count: number; })[]> {
   return superagent
     .get('/api/rounds');
 }
 
 //#region Manage
-export function getLogs(): GetLogsResponse {
+export function getLogs(): Response<ILog[]> {
   return superagent
     .get('/api/logs');
 }
 
-export function getUsersWithRoles(): GetUsersWithRolesResponse {
+export function getUsersWithRoles(): Response<IUser[]> {
   return superagent
     .get('/api/users-with-permissions');
 }
 
-export function updateApiObject<T extends ApiObjectType>(type: T, id: number): UpdateApiObjectResponse<T> {
+export function updateApiObject<T extends ApiObjectType>(type: T, id: number): Response<ApiObjectTypes[T]> {
   return superagent
     .post('/api/update-api-object')
     .send({ type, id });
 }
 
-export function updateExcludedBeatmaps(nominationId: number, excludedBeatmapIds: number[]): UpdateExcludedBeatmapsResponse {
+export function updateExcludedBeatmaps(nominationId: number, excludedBeatmapIds: number[]): Response {
   return superagent
     .post('/api/update-excluded-beatmaps')
     .send({ nominationId, excludedBeatmapIds });
 }
 
-export function updateNominationDescription(nominationId: number, description: string | null): UpdateNominationDescriptionResponse {
+export function updateNominationDescription(nominationId: number, description: string | null): Response<PartialWithId<INomination>> {
   return superagent
     .post('/api/nomination-edit-description')
     .send({ description, nominationId });
 }
 
-export function updateNominationMetadata(nominationId: number, state: MetadataState, artist: string | null, title: string | null): UpdateNominationMetadataResponse {
+export function updateNominationMetadata(nominationId: number, state: MetadataState, artist: string | null, title: string | null): Response<PartialWithId<INomination>> {
   return superagent
     .post('/api/nomination-edit-metadata')
     .send({ artist, nominationId, state, title });
 }
 
-export function updateMetadataAssignee(nominationId: number, assigneeId: number | null): UpdateMetadataAssigneeResponse {
+export function updateMetadataAssignee(nominationId: number, assigneeId: number | null): Response<PartialWithId<INomination>> {
   return superagent
     .post('/api/update-metadata-assignee')
     .send({ assigneeId, nominationId });
 }
 
-export function updateModeratorAssignee(nominationId: number, assigneeId: number | null): UpdateModeratorAssigneeResponse {
+export function updateModeratorAssignee(nominationId: number, assigneeId: number | null): Response<PartialWithId<INomination>> {
   return superagent
     .post('/api/update-moderator-assignee')
     .send({ assigneeId, nominationId });
 }
 
-export function updateUserRoles(userId: number, roles: IUser['roles']): UpdateUserRolesResponse {
+export function updateUserRoles(userId: number, roles: IUser['roles']): Response {
   return superagent
     .post('/api/update-permissions')
     .send({
@@ -157,9 +134,9 @@ export function apiErrorMessage(error: ResponseError): string {
 
 type useApiReturn<T> = [T | undefined, Error | undefined, Dispatch<SetStateAction<T | undefined>>];
 
-export function useApi<T>(requester: () => Promise<Response<T>>): useApiReturn<T>;
-export function useApi<T, P extends unknown[]>(requester: (...args: P) => Promise<Response<T>>, args: P, transform?: (body: T) => T, condition?: boolean): useApiReturn<T>;
-export function useApi<T, P extends unknown[]>(requester: (...args: P) => Promise<Response<T>>, args?: P, transform?: (body: T) => T, condition?: boolean) {
+export function useApi<T>(requester: () => Response<T>): useApiReturn<T>;
+export function useApi<T, P extends unknown[]>(requester: (...args: P) => Response<T>, args: P, transform?: (body: T) => T, condition?: boolean): useApiReturn<T>;
+export function useApi<T, P extends unknown[]>(requester: (...args: P) => Response<T>, args?: P, transform?: (body: T) => T, condition?: boolean): useApiReturn<T> {
   const [body, setBody] = useState<T>();
   const [error, setError] = useState<ResponseError>();
 
