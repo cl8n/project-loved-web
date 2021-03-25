@@ -104,10 +104,12 @@ router.get('/nominations', asyncHandler(async (req, res) => {
           AND nominations.game_mode = beatmapset_creators.game_mode
       LEFT JOIN users AS creators
         ON beatmapset_creators.creator_id = creators.id
-      LEFT JOIN nomination_excluded_beatmaps
-        ON nominations.id = nomination_excluded_beatmaps.nomination_id
       LEFT JOIN beatmaps
         ON nominations.beatmapset_id = beatmaps.beatmapset_id
+          AND nominations.game_mode = beatmaps.game_mode
+      LEFT JOIN nomination_excluded_beatmaps
+        ON nominations.id = nomination_excluded_beatmaps.nomination_id
+          AND beatmaps.id = nomination_excluded_beatmaps.beatmap_id
       WHERE nominations.round_id = ?
     `, req.query.roundId),
     'nomination_id',
@@ -133,7 +135,10 @@ router.get('/nominations', asyncHandler(async (req, res) => {
 
   nominations.forEach((nomination) => {
     nomination.beatmaps = includesByNominationId[nomination.id]
-      .map((include) => include.beatmap).filter((beatmap) => beatmap != null);
+      .map((include) => include.beatmap)
+      .filter((beatmap) => beatmap != null)
+      .sort((a, b) => a.star_rating - b.star_rating)
+      .sort((a, b) => a.key_count - b.key_count);
     nomination.beatmapset_creators = includesByNominationId[nomination.id]
       .map((include) => include.creator)
       .filter((c1, i, all) => c1 != null && all.findIndex((c2) => c1.id === c2.id) === i);
@@ -188,10 +193,15 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
     WHERE nominations.id = ?
   `, queryResult.insertId);
   const beatmaps = await db.query(`
-    SELECT beatmaps.*, FALSE AS excluded
+    SELECT *, FALSE AS excluded
     FROM beatmaps
-    WHERE beatmaps.beatmapset_id = ?
-  `, nomination.beatmapset_id);
+    WHERE beatmapset_id = ?
+      AND game_mode = ?
+    ORDER BY key_count ASC, star_rating ASC
+  `, [
+    nomination.beatmapset_id,
+    req.body.gameMode,
+  ]);
 
   nomination.beatmaps = beatmaps;
   nomination.beatmapset = beatmapset;
