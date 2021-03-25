@@ -54,7 +54,10 @@ export function Picks() {
   const onNominationAdd = (nomination: INomination) => {
     setRoundInfo((prev) => {
       return {
-        nominations: prev!.nominations.concat(nomination),
+        nominations: prev!.nominations
+          .concat(nomination)
+          .sort((a, b) => a.id - b.id)
+          .sort((a, b) => a.order - b.order),
         round: prev!.round,
       };
     });

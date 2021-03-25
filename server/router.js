@@ -128,6 +128,7 @@ router.get('/nominations', asyncHandler(async (req, res) => {
     INNER JOIN users AS nominators
       ON nominations.nominator_id = nominators.id
     WHERE nominations.round_id = ?
+    ORDER BY nominations.order ASC, nominations.id ASC
   `, req.query.roundId);
 
   nominations.forEach((nomination) => {

@@ -91,6 +91,7 @@ export interface INomination {
   moderator_assignee?: IUser;
   moderator_state: ModeratorState;
   nominator: IUser;
+  order: number;
   overwrite_artist?: string;
   overwrite_title?: string;
   parent_id?: number;
