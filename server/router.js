@@ -177,30 +177,18 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
     WHERE nominations.id = ?
   `, queryResult.insertId);
   const nomination = await db.queryOneWithGroups(`
-    SELECT nominations.*, description_authors:description_author, metadata_assignees:metadata_assignee,
-      moderator_assignees:moderator_assignee, nominators:nominator
+    SELECT nominations.*, NULL AS description_author, NULL AS metadata_assignee,
+      NULL AS moderator_assignee, nominators:nominator
     FROM nominations
-    LEFT JOIN users AS description_authors
-      ON nominations.description_author_id = description_authors.id
-    LEFT JOIN users AS metadata_assignees
-      ON nominations.metadata_assignee_id = metadata_assignees.id
-    LEFT JOIN users AS moderator_assignees
-      ON nominations.moderator_assignee_id = moderator_assignees.id
     INNER JOIN users AS nominators
       ON nominations.nominator_id = nominators.id
     WHERE nominations.id = ?
   `, queryResult.insertId);
   const beatmaps = await db.query(`
-    SELECT beatmaps.*, nomination_excluded_beatmaps.beatmap_id IS NOT NULL AS excluded
+    SELECT beatmaps.*, FALSE AS excluded
     FROM beatmaps
-    LEFT JOIN nomination_excluded_beatmaps
-      ON beatmaps.id = nomination_excluded_beatmaps.beatmap_id
-        AND nomination_excluded_beatmaps.nomination_id = ?
     WHERE beatmaps.beatmapset_id = ?
-  `, [
-    queryResult.insertId,
-    nomination.beatmapset_id,
-  ]);
+  `, nomination.beatmapset_id);
 
   nomination.beatmaps = beatmaps;
   nomination.beatmapset = beatmapset;
