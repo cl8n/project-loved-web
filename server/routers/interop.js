@@ -5,6 +5,9 @@ const { asyncHandler } = require('../express-helpers');
 const router = Router();
 
 router.get('/data', asyncHandler(async (req, res) => {
+  if (req.query.roundId == null)
+    return res.status(422).json({ error: 'Missing round ID' });
+
   const round = await db.queryOne(`
     SELECT *
     FROM rounds
