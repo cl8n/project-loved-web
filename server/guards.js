@@ -1,4 +1,4 @@
-const { timingSafeEqual } = require('crypto');
+const { createHash, timingSafeEqual } = require('crypto');
 const config = require('./config.json');
 
 function isGod(method, user) {
@@ -18,8 +18,20 @@ function hasRoleMiddleware(roles, errorMessage) {
   };
 }
 
+function timingSafeStringEqual(a, b) {
+  const aHash = createHash('sha256').update(a).digest();
+  const bHash = createHash('sha256').update(b).digest();
+
+  return timingSafeEqual(aHash, bHash);
+}
+
 module.exports.hasLocalInteropKey = function (request, response, next) {
-  if (!timingSafeEqual(config.localInteropKey, request.get('X-Loved-InteropKey')))
+  const key = request.get('X-Loved-InteropKey');
+
+  if (key == null)
+    return response.status(422).json({ error: 'Missing key' });
+
+  if (!timingSafeStringEqual(config.localInteropKey, key))
     return response.status(401).json({ error: 'Invalid key' });
 
   next();
