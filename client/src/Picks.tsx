@@ -2,6 +2,7 @@ import { ReactChild, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ResponseError } from 'superagent';
 import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getNominations, updateExcludedBeatmaps, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, useApi } from './api';
+import { BBCode } from './BBCode';
 import { BeatmapInline } from './BeatmapInline';
 import { autoHeight, Form, FormSubmitHandler } from './dom-helpers';
 import { DescriptionState, GameMode, INomination, IUser, MetadataState, ModeratorState, PartialWithId } from './interfaces';
@@ -559,8 +560,9 @@ function Description({ canEdit, nominationId, onNominationUpdate, text }: Descri
       </div>
     </Form>
   ) : (
-    <p style={{ whiteSpace: 'pre-wrap' }}>
-      {text ?? 'No description'}{canEdit &&
+    <p>
+      <BBCode style={{ whiteSpace: 'pre-wrap' }} text={text ?? 'No description'} />
+      {canEdit &&
         <>
           {' — '}
           <button
