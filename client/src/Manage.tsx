@@ -37,7 +37,7 @@ function ApiObjectMenu() {
   };
 
   return (
-    <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
+    <Form busyState={[busy, setBusy]} keepAfterSubmit onSubmit={onSubmit}>
       <table>
         <tr>
           <td><label htmlFor='type'>Type</label></td>
