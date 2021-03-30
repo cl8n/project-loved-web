@@ -80,10 +80,12 @@ router.get('/nominations', asyncHandler(async (req, res) => {
     ORDER BY nominations.order ASC, nominations.id ASC
   `, req.query.roundId);
 
+  // TODO: Should not be necessary to check for uniques like this. Just fix query.
+  //       See interop query as well
   nominations.forEach((nomination) => {
     nomination.beatmaps = includesByNominationId[nomination.id]
       .map((include) => include.beatmap)
-      .filter((beatmap) => beatmap != null)
+      .filter((b1, i, all) => b1 != null && all.findIndex((b2) => b1.id === b2.id) === i)
       .sort((a, b) => a.star_rating - b.star_rating)
       .sort((a, b) => a.key_count - b.key_count);
     nomination.beatmapset_creators = includesByNominationId[nomination.id]
