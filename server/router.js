@@ -413,8 +413,10 @@ router.post('/update-api-object', guards.isGod, asyncHandler(async (req, res) =>
   switch (req.body.type) {
     case 'beatmapset':
       await res.locals.osu.createOrRefreshBeatmapset(req.body.id);
+      break;
     case 'user':
       await res.locals.osu.createOrRefreshUser(req.body.id);
+      break;
   }
 
   res.status(204).send();
