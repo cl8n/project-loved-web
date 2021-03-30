@@ -110,6 +110,12 @@ export function updateNominationMetadata(nominationId: number, state: MetadataSt
     .send({ artist, nominationId, state, title });
 }
 
+export function updateNominationOrder(orders: { [nominationId: number]: number }): Response {
+  return superagent
+    .post('/api/update-nomination-order')
+    .send(orders);
+}
+
 export function updateMetadataAssignee(nominationId: number, assigneeId: number | null): Response<PartialWithId<INomination>> {
   return superagent
     .post('/api/update-metadata-assignee')

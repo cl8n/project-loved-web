@@ -217,6 +217,18 @@ router.delete('/nomination', asyncHandler(async (req, res) => {
 
   res.status(204).send();
 }));
+
+router.post('/update-nomination-order', guards.isCaptain, asyncHandler(async (req, res) => {
+  await Promise.all(Object.entries(req.body).map(([nominationId, order]) => (
+    db.query(`
+      UPDATE nominations
+      SET \`order\` = ?
+      WHERE id = ?
+    `, [order, nominationId])
+  )));
+
+  res.status(204).send();
+}));
 //#endregion
 
 //#region admin

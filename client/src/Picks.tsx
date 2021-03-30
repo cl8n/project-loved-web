@@ -1,13 +1,14 @@
 import { ReactChild, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ResponseError } from 'superagent';
-import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getNominations, updateExcludedBeatmaps, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, useApi } from './api';
+import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getNominations, updateExcludedBeatmaps, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, updateNominationOrder, useApi } from './api';
 import { BBCode } from './BBCode';
 import { BeatmapInline } from './BeatmapInline';
 import { autoHeight, Form, FormSubmitHandler } from './dom-helpers';
 import { DescriptionState, GameMode, INomination, IUser, MetadataState, ModeratorState, PartialWithId } from './interfaces';
 import { Modal } from './Modal';
 import { Never } from './Never';
+import { Orderable } from './Orderable';
 import { gameModeLongName, gameModes } from './osu-helpers';
 import { useOsuAuth } from './osuAuth';
 import { canWriteAs, isCaptainForMode } from './permissions';
@@ -41,6 +42,8 @@ export function Picks() {
   const roundId = parseInt(params.round);
   const [roundInfo, roundInfoError, setRoundInfo] = useApi(getNominations, [roundId]);
   const assigneesApi = useApi(getAssignees, [], undefined, authUser != null && (canWriteAs(authUser, 'news') || canWriteAs(authUser, 'metadata') || canWriteAs(authUser, 'moderator')));
+  // TODO: Split by gamemode
+  const [ordering, setOrdering] = useState(false);
 
   if (authUser == null)
     return <Never />;
@@ -50,6 +53,12 @@ export function Picks() {
 
   if (roundInfo == null)
     return <span>Loading round and nominations...</span>;
+
+  const { nominations, round } = roundInfo;
+  const nominationsByGameMode: { [K in GameMode]: INomination[] } = { 0: [], 1: [], 2: [], 3: [] };
+
+  for (const nomination of nominations)
+    nominationsByGameMode[nomination.game_mode].push(nomination);
 
   // TODO: useReducer or useCallback
   const onNominationAdd = (nomination: INomination) => {
@@ -62,6 +71,37 @@ export function Picks() {
         round: prev!.round,
       };
     });
+  };
+  const onNominationMove = (gameMode: GameMode, oldIndex: number, newIndex: number) => {
+    const orders: { [nominationId: number]: number } = {};
+
+    nominationsByGameMode[gameMode].forEach((nomination, index) => {
+      if (index === oldIndex)
+        index = newIndex;
+      else if (oldIndex < index && index <= newIndex)
+        index--;
+      else if (newIndex <= index && index < oldIndex)
+        index++;
+
+      orders[nomination.id] = index;
+    });
+
+    updateNominationOrder(orders)
+      .then(() => setRoundInfo((prev) => {
+        return {
+          nominations: prev!.nominations
+            .map((nomination) => {
+              if (nomination.game_mode === gameMode)
+                nomination.order = orders[nomination.id];
+
+              return nomination;
+            })
+            .sort((a, b) => a.id - b.id)
+            .sort((a, b) => a.order - b.order),
+          round: prev!.round,
+        };
+      }))
+      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
   };
   const onNominationDelete = (nominationId: number) => {
     setRoundInfo((prev) => {
@@ -83,17 +123,10 @@ export function Picks() {
     });
   };
 
-  const { nominations, round } = roundInfo;
-
   //TODO
   const notDone = true;
   const percent = 60;
   const posted = false;
-
-  const nominationsByGameMode: { [K in GameMode]: INomination[] } = { 0: [], 1: [], 2: [], 3: [] };
-
-  for (const nomination of nominations)
-    nominationsByGameMode[nomination.game_mode].push(nomination);
 
   return (
     <>
@@ -112,19 +145,32 @@ export function Picks() {
         <div key={gameMode} className='content-block'>
           <h2>{gameModeLongName(gameMode)}</h2>
           {isCaptainForMode(authUser, gameMode) &&
-            <AddNomination gameMode={gameMode} onNominationAdd={onNominationAdd} roundId={round.id} />
+            <>
+              <AddNomination gameMode={gameMode} onNominationAdd={onNominationAdd} roundId={round.id} />
+              <button type='button' onClick={() => setOrdering((prev) => !prev)}>
+                {ordering ? 'Done ordering' : 'Change order'}
+              </button>
+            </>
           }
-          {nominationsByGameMode[gameMode].map((nomination) => {
-            const parent = nomination.parent_id == null ? undefined : nominations.find((parent) => parent.id === nomination.parent_id);
-            return <Nomination
-              key={nomination.id}
-              assigneesApi={[assigneesApi[0]?.metadatas, assigneesApi[0]?.moderators, assigneesApi[1]]}
-              nomination={nomination}
-              onNominationDelete={onNominationDelete}
-              onNominationUpdate={onNominationUpdate}
-              parentGameMode={parent?.game_mode}
-            />;
-          })}
+          <Orderable
+            enabled={ordering && isCaptainForMode(authUser, gameMode)}
+            onMoveChild={(i, j) => onNominationMove(gameMode, i, j)}
+          >
+            {nominationsByGameMode[gameMode].map((nomination) => {
+              const parent = nomination.parent_id == null ? undefined : nominations.find((parent) => parent.id === nomination.parent_id);
+
+              return (
+                <Nomination
+                  key={nomination.id}
+                  assigneesApi={[assigneesApi[0]?.metadatas, assigneesApi[0]?.moderators, assigneesApi[1]]}
+                  nomination={nomination}
+                  onNominationDelete={onNominationDelete}
+                  onNominationUpdate={onNominationUpdate}
+                  parentGameMode={parent?.game_mode}
+                />
+              );
+            })}
+          </Orderable>
         </div>
       ))}
     </>

@@ -368,3 +368,8 @@ table.maps .status {
 .flex-no-shrink {
     flex-shrink: 0;
 }
+
+.drop-candidate {
+    border-top: 5px dashed #9cf;
+    margin-top: 1em;
+}
