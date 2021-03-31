@@ -102,11 +102,13 @@ export type IRole = 'captain' | 'god' | 'god_readonly' | 'metadata' | 'moderator
 
 export interface IRound {
   id: number;
+  done: boolean;
   polls_ended_at?: Date;
   polls_started_at?: Date;
   name: string;
   news_intro?: string;
   news_intro_preview?: string;
+  news_outro?: string;
   news_posted_at?: Date;
 }
 
