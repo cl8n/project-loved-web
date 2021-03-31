@@ -10,6 +10,17 @@ export function Orderable({ children, enabled, onMoveChild }: OrderableProps) {
   const [draggedIndex, setDraggedIndex] = useState<number>();
   const [dropIndex, setDropIndex] = useState<number>();
 
+  const getClassName = (index: number) => {
+    if (index !== dropIndex || draggedIndex == null)
+      return;
+
+    if (index < draggedIndex)
+      return 'drop-bar-top';
+
+    if (index > draggedIndex)
+      return 'drop-bar-bottom';
+  };
+
   const onDragEnter = (index: number) => {
     if (draggedIndex == null)
       return;
@@ -17,12 +28,18 @@ export function Orderable({ children, enabled, onMoveChild }: OrderableProps) {
     setDropIndex(index);
   };
 
-  const onDrop = (event: DragEvent) => {
-    event.preventDefault();
+  const onDragOver = (event: DragEvent) => {
+    if (draggedIndex == null)
+      return;
 
+    event.preventDefault();
+  };
+
+  const onDrop = (event: DragEvent) => {
     if (draggedIndex == null || dropIndex == null || draggedIndex === dropIndex)
       return;
 
+    event.preventDefault();
     onMoveChild(draggedIndex, dropIndex);
   };
 
@@ -35,12 +52,12 @@ export function Orderable({ children, enabled, onMoveChild }: OrderableProps) {
     <>
       {children.map((child, index) => (
         <div
-          className={index === dropIndex ? 'drop-candidate' : ''}
+          className={getClassName(index)}
           draggable={enabled}
           key={child.key}
           onDragEnd={onDragEnd}
           onDragEnter={() => onDragEnter(index)}
-          onDragOver={(event) => event.preventDefault()}
+          onDragOver={onDragOver}
           onDragStart={() => setDraggedIndex(index)}
           onDrop={onDrop}
         >

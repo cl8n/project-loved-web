@@ -189,15 +189,13 @@ main {
 
 main > :first-child,
 .box > :first-child,
-.content-block > :first-child,
-.content-block > :first-child > :first-child {
+.content-block > :first-child {
     margin-top: 0;
 }
 
 main > :last-child,
 .box > :last-child,
-.content-block > :last-child,
-.content-block > :last-child > :last-child {
+.content-block > :last-child {
     margin-bottom: 0;
 }
 
@@ -369,7 +367,12 @@ table.maps .status {
     flex-shrink: 0;
 }
 
-.drop-candidate {
-    border-top: 5px dashed #9cf;
+.drop-bar-top {
+    border-top: 4px dashed #9cf;
     margin-top: 1em;
+}
+
+.drop-bar-bottom {
+    border-bottom: 4px dashed #9cf;
+    margin-bottom: 1em;
 }

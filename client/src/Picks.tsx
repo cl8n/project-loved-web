@@ -128,6 +128,11 @@ export function Picks() {
   const percent = 60;
   const posted = false;
 
+  // TODO: Also check if the round is done
+  const canOrder = (gameMode: GameMode) => {
+    return canWriteAs(authUser, 'news') || isCaptainForMode(authUser, gameMode);
+  };
+
   return (
     <>
       <div className='content-block'>
@@ -145,15 +150,15 @@ export function Picks() {
         <div key={gameMode} className='content-block'>
           <h2>{gameModeLongName(gameMode)}</h2>
           {isCaptainForMode(authUser, gameMode) &&
-            <>
-              <AddNomination gameMode={gameMode} onNominationAdd={onNominationAdd} roundId={round.id} />
-              <button type='button' onClick={() => setOrdering((prev) => !prev)}>
-                {ordering ? 'Done ordering' : 'Change order'}
-              </button>
-            </>
+            <AddNomination gameMode={gameMode} onNominationAdd={onNominationAdd} roundId={round.id} />
+          }
+          {canOrder(gameMode) &&
+            <button type='button' onClick={() => setOrdering((prev) => !prev)}>
+              {ordering ? 'Done ordering' : 'Change order'}
+            </button>
           }
           <Orderable
-            enabled={ordering && isCaptainForMode(authUser, gameMode)}
+            enabled={ordering && canOrder(gameMode)}
             onMoveChild={(i, j) => onNominationMove(gameMode, i, j)}
           >
             {nominationsByGameMode[gameMode].map((nomination) => {
