@@ -128,6 +128,8 @@ export interface ICaptain extends IUser {
   };
 }
 
-export type PartialWithId<T extends { id: unknown }> = { id: T['id'] } & {
+export type PartialWithoutId<T extends { id: unknown }> = {
   [P in keyof T as Exclude<P, 'id'>]?: T[P];
 };
+
+export type PartialWithId<T extends { id: unknown }> = { id: T['id'] } & PartialWithoutId<T>;

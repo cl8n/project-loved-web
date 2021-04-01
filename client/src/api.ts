@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import superagent, { Response as SuperAgentResponse, ResponseError } from 'superagent';
-import { GameMode, IBeatmapset, ICaptain, ILog, INomination, IRound, IUser, MetadataState, PartialWithId } from './interfaces';
+import { GameMode, IBeatmapset, ICaptain, ILog, INomination, IRound, IUser, MetadataState, PartialWithId, PartialWithoutId } from './interfaces';
 
 interface SuperAgentResponseWithBody<BodyType> extends SuperAgentResponse {
   body: BodyType;
@@ -126,6 +126,12 @@ export function updateModeratorAssignee(nominationId: number, assigneeId: number
   return superagent
     .post('/api/update-moderator-assignee')
     .send({ assigneeId, nominationId });
+}
+
+export function updateRound(roundId: number, round: PartialWithoutId<IRound>): Response {
+  return superagent
+    .post('/api/update-round')
+    .send({ roundId, round });
 }
 
 export function updateUserRoles(userId: number, roles: IUser['roles']): Response {
