@@ -612,7 +612,7 @@ function Description({ canEdit, nominationId, onNominationUpdate, text }: Descri
     </Form>
   ) : (
     <p>
-      <BBCode style={{ whiteSpace: 'pre-wrap' }} text={text ?? 'No description'} />
+      <BBCode text={text ?? 'No description'} />
       {canEdit &&
         <>
           {' — '}
