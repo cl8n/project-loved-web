@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { render } from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { registerTextareaAutoHeightTrigger } from './auto-height';
 import { Captains } from './Captains';
 import { Header } from './Header';
 import { Manage } from './Manage';
@@ -11,6 +12,8 @@ import { Picks } from './Picks';
 import { PicksRoundListing } from './PicksRoundListing';
 import { ProtectedRoute } from './ProtectedRoute';
 import './style.css';
+
+registerTextareaAutoHeightTrigger();
 
 render(
   <StrictMode>

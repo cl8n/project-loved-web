@@ -2,6 +2,7 @@ import { ReactChild, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ResponseError } from 'superagent';
 import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getNominations, updateExcludedBeatmaps, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, updateNominationOrder, useApi } from './api';
+import { autoHeightRef } from './auto-height';
 import { BBCode } from './BBCode';
 import { BeatmapInline } from './BeatmapInline';
 import { autoHeight, Form, FormSubmitHandler } from './dom-helpers';
@@ -586,7 +587,7 @@ function Description({ canEdit, nominationId, onNominationUpdate, text }: Descri
 
   useEffect(() => {
     if (editing) {
-      autoHeight(descriptionRef.current!);
+      autoHeightRef(descriptionRef.current);
       descriptionRef.current!.focus();
     }
   }, [editing]);
@@ -602,7 +603,7 @@ function Description({ canEdit, nominationId, onNominationUpdate, text }: Descri
   return editing ? (
     <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
       <div className='textarea-wrapper'>
-        <textarea name='description' defaultValue={text} ref={descriptionRef} onChange={(e) => autoHeight(e.currentTarget)} />
+        <textarea name='description' defaultValue={text} ref={descriptionRef} />
         <div className='description-buttons'>
           <span>Use BBCode for formatting</span>
           <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>
