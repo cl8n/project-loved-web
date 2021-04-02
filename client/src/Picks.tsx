@@ -5,14 +5,15 @@ import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getNomi
 import { autoHeightRef } from './auto-height';
 import { BBCode } from './BBCode';
 import { BeatmapInline } from './BeatmapInline';
-import { autoHeight, Form, FormSubmitHandler } from './dom-helpers';
-import { DescriptionState, GameMode, INomination, IUser, MetadataState, ModeratorState, PartialWithId } from './interfaces';
+import { Form, FormSubmitHandler } from './dom-helpers';
+import { DescriptionState, GameMode, INomination, IRound, IUser, MetadataState, ModeratorState, PartialWithId } from './interfaces';
 import { Modal } from './Modal';
 import { Never } from './Never';
 import { Orderable } from './Orderable';
 import { gameModeLongName, gameModes } from './osu-helpers';
 import { useOsuAuth } from './osuAuth';
 import { canWriteAs, isCaptainForMode } from './permissions';
+import Header from './round/Header';
 import { UserInline } from './UserInline';
 
 type ListInlineProps<T> = {
@@ -123,11 +124,14 @@ export function Picks() {
       };
     });
   };
-
-  //TODO
-  const notDone = true;
-  const percent = 60;
-  const posted = false;
+  const onRoundUpdate = (round: PartialWithId<IRound>) => {
+    setRoundInfo((prev) => {
+      return {
+        nominations: prev!.nominations,
+        round: Object.assign(prev!.round, round),
+      };
+    });
+  };
 
   // TODO: Also check if the round is done
   const canOrder = (gameMode: GameMode) => {
@@ -136,17 +140,11 @@ export function Picks() {
 
   return (
     <>
-      <div className='content-block'>
-        <h1>{round.name} [#{round.id}]</h1>
-        <div className='flex-bar'>
-          <span>{posted ? 'Posted' : 'Posting'} at {round.news_posted_at}</span>
-          {notDone &&
-            <span className='progress'>
-              (not working yet) 6 / 10 ({percent}%)
-            </span>
-          }
-        </div>
-      </div>
+      <Header
+        canEdit={canWriteAs(authUser, 'news')}
+        onRoundUpdate={onRoundUpdate}
+        round={round}
+      />
       {gameModes.map((gameMode) => (
         <div key={gameMode} className='content-block'>
           <h2>{gameModeLongName(gameMode)}</h2>
