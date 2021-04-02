@@ -27,6 +27,7 @@ const valueCasts = {
 
 type FormProps = PropsWithChildren<{
   busyState: [boolean, Dispatch<SetStateAction<boolean>>];
+  className?: string;
   keepAfterSubmit?: boolean;
   onSubmit: FormSubmitHandler;
 }>;
@@ -34,6 +35,7 @@ type FormProps = PropsWithChildren<{
 export function Form({
   busyState: [busy, setBusy],
   children,
+  className,
   keepAfterSubmit,
   onSubmit,
 }: FormProps) {
@@ -88,11 +90,13 @@ export function Form({
       maybePromise.finally(() => setBusy(false));
   };
 
-  return <form ref={ref} onSubmit={handleSubmit}>{children}</form>;
-}
-
-// TODO: kinda stupid but it doesn't look bad most of the time
-export function autoHeight(element: HTMLElement) {
-  element.style.height = '5px';
-  element.style.height = element.scrollHeight + 'px';
+  return (
+    <form
+      className={className}
+      onSubmit={handleSubmit}
+      ref={ref}
+    >
+      {children}
+    </form>
+  );
 }
