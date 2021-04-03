@@ -88,7 +88,12 @@ export default function PollResults() {
             {gameMode == null &&
               <td>{gameModeLongName(poll.game_mode)}</td>
             }
-            <td><BeatmapInline beatmapset={poll.beatmapset} gameMode={poll.game_mode} showCreator /></td>
+            <td>
+              {poll.beatmapset == null
+                ? <i>Deleted beatmapset</i>
+                : <BeatmapInline beatmapset={poll.beatmapset} gameMode={poll.game_mode} showCreator />
+              }
+            </td>
             <td><a href={`https://osu.ppy.sh/community/forums/topics/${poll.topic_id}`}>{poll.topic_id}</a></td>
             <td className='no-wrap'>{formatResults(poll.result_yes, poll.result_no)}</td>
           </tr>

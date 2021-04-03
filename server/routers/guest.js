@@ -27,7 +27,7 @@ router.get('/stats/polls', asyncHandler(async (_, res) => {
   res.json(await db.queryWithGroups(`
     SELECT poll_results.*, beatmapsets:beatmapset
     FROM poll_results
-    INNER JOIN beatmapsets
+    LEFT JOIN beatmapsets
       ON poll_results.beatmapset_id = beatmapsets.id
     ORDER BY poll_results.ended_at DESC
   `));

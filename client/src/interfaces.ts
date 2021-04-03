@@ -100,7 +100,7 @@ export interface INomination {
 
 export interface IPollResult {
   id: number;
-  beatmapset: IBeatmapset;
+  beatmapset?: IBeatmapset;
   ended_at: Date;
   game_mode: GameMode;
   result_no: number;
