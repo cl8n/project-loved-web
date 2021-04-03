@@ -12,6 +12,7 @@ import { Picks } from './Picks';
 import { PicksRoundListing } from './PicksRoundListing';
 import { ProtectedRoute } from './ProtectedRoute';
 import './style.css';
+import Statistics from "./statistics";
 
 registerTextareaAutoHeightTrigger();
 
@@ -26,7 +27,7 @@ render(
             <Route path='/submit'><NotReady /></Route>
             <Route path='/mappers'><NotReady /></Route>
             <Route path='/captains'><Captains /></Route>
-            <Route path='/statistics'><NotReady /></Route>
+            <Route path='/statistics'><Statistics /></Route>
             <ProtectedRoute exact path='/admin/picks' role='any'><PicksRoundListing /></ProtectedRoute>
             <ProtectedRoute path='/admin/picks/:round' role='any'><Picks /></ProtectedRoute>
             <ProtectedRoute path='/admin/manage' role='any'><Manage /></ProtectedRoute>

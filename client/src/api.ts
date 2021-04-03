@@ -1,6 +1,18 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import superagent, { Response as SuperAgentResponse, ResponseError } from 'superagent';
-import { GameMode, IBeatmapset, ICaptain, ILog, INomination, IRound, IUser, MetadataState, PartialWithId, PartialWithoutId } from './interfaces';
+import {
+  GameMode,
+  IBeatmapset,
+  ICaptain,
+  ILog,
+  INomination,
+  IPollResult,
+  IRound,
+  IUser,
+  MetadataState,
+  PartialWithId,
+  PartialWithoutId
+} from './interfaces';
 
 interface SuperAgentResponseWithBody<BodyType> extends SuperAgentResponse {
   body: BodyType;
@@ -63,6 +75,11 @@ export function getNominations(roundId: number): Response<{ nominations: INomina
   return superagent
     .get('/api/nominations')
     .query({ roundId });
+}
+
+export function getPollResults(): Response<IPollResult[]> {
+  return superagent
+    .get('/api/stats/polls');
 }
 
 export function getRounds(): Response<(IRound & { nomination_count: number; })[]> {

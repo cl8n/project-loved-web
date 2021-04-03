@@ -98,6 +98,17 @@ export interface INomination {
   round_id: number;
 }
 
+export interface IPollResult {
+  id: number;
+  beatmapset: IBeatmapset;
+  ended_at: Date;
+  game_mode: GameMode;
+  result_no: number;
+  result_yes: number;
+  round: number;
+  topic_id: number;
+}
+
 export type IRole = 'captain' | 'god' | 'god_readonly' | 'metadata' | 'moderator' | 'news';
 
 export interface IRound {
