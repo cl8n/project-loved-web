@@ -19,6 +19,7 @@ function wrapCast<T>(fn: (value: string) => T) {
 }
 
 const valueCasts = {
+  bool: wrapCast((value) => value !== '0'),
   date: wrapCast((value) => new Date(value)),
   decimal: wrapCast(parseFloat),
   int: wrapCast(parseInt),
