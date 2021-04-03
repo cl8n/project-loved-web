@@ -158,13 +158,13 @@ class Osu {
     for (const beatmap of beatmapset.beatmaps) {
       const dbFields = {
         beatmapset_id: beatmap.beatmapset_id,
-        bpm: beatmap.bpm.toFixed(2),
+        bpm: beatmap.bpm >= 9999 ? '9999.99' : beatmap.bpm.toFixed(2),
         deleted_at: beatmap.deleted_at == null ? null : new Date(beatmap.deleted_at),
         game_mode: beatmap.mode_int,
         key_count: beatmap.mode_int === 3 ? parseInt(beatmap.cs) : null,
         play_count: beatmap.playcount,
         ranked_status: beatmap.ranked,
-        star_rating: beatmap.difficulty_rating.toFixed(2),
+        star_rating: beatmap.difficulty_rating >= 9999 ? '9999.99' : beatmap.difficulty_rating.toFixed(2),
         version: beatmap.version,
       };
       const dbFieldsWithPK = { ...dbFields, id: beatmap.id };
