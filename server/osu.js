@@ -173,7 +173,10 @@ class Osu {
       ]);
     }
 
-    return dbFieldsWithPK;
+    return {
+      ...dbFieldsWithPK,
+      game_modes: new Set(beatmapset.beatmaps.map((beatmap) => beatmap.mode_int));
+    };
   }
 
   async createOrRefreshUser(userId) {

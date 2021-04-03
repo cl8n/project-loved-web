@@ -113,7 +113,17 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
   }
 
   const beatmapset = await res.locals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId, req.body.gameMode);
-  const nominationCount = (await db.queryOne('SELECT COUNT(*) AS count FROM nominations WHERE round_id = ? AND game_mode = ?', [req.body.roundId, req.body.gameMode])).count;
+
+  if (!beatmapset.game_modes.has(req.body.gameMode)) {
+    return res.status(422).json({ error: `Beatmapset has no beatmaps in game mode ${req.body.gameMode}` });
+  }
+
+  const nominationCount = (await db.queryOne(`
+    SELECT COUNT(*) AS count
+    FROM nominations
+    WHERE round_id = ?
+      AND game_mode = ?
+  `, [req.body.roundId, req.body.gameMode])).count;
   const queryResult = await db.query('INSERT INTO nominations SET ?', {
     beatmapset_id: beatmapset.id,
     game_mode: req.body.gameMode,
