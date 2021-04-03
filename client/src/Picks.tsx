@@ -15,6 +15,7 @@ import { useOsuAuth } from './osuAuth';
 import { canWriteAs, isCaptainForMode } from './permissions';
 import Header from './round/Header';
 import { UserInline } from './UserInline';
+import Help from "./Help";
 
 type ListInlineProps<T> = {
   array: T[];
@@ -211,13 +212,7 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
         <input type='number' name='beatmapsetId' required data-value-type='int' />
         <span>
           <label htmlFor='parentId'>Parent nomination ID </label>
-          <span
-            className='fake-a'
-            style={{ cursor: 'help' }}
-            title="If this map is being nominated because another mode's captains picked it first, set this field to the original mode's nomination ID"
-          >
-            [?]
-          </span>
+          <Help text="If this map is being nominated because another mode's captains picked it first, set this field to the original mode's nomination ID" />
         </span>
         <input type='number' name='parentId' data-value-type='int' />
         <button type='submit'>

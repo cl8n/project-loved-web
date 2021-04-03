@@ -405,3 +405,11 @@ table.maps .status {
     border-bottom: 4px dashed #9cf;
     margin-bottom: 1em;
 }
+
+.help {
+    cursor: help;
+}
+
+.no-wrap {
+    white-space: nowrap;
+}
