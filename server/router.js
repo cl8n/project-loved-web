@@ -420,17 +420,55 @@ router.post('/update-permissions', guards.isGod, asyncHandler(async (req, res) =
 }));
 
 router.post('/update-api-object', guards.isGod, asyncHandler(async (req, res) => {
+  let apiObject;
+
   switch (req.body.type) {
     case 'beatmapset':
-      await res.locals.osu.createOrRefreshBeatmapset(req.body.id);
+      apiObject = await res.locals.osu.createOrRefreshBeatmapset(req.body.id);
       break;
     case 'user':
-      await res.locals.osu.createOrRefreshUser(req.body.id);
+      apiObject = await res.locals.osu.createOrRefreshUser(req.body.id);
       break;
+  }
+
+  if (apiObject == null) {
+    res.status(422).json({ error: 'Invalid ID' });
   }
 
   res.status(204).send();
 }));
+
+router.post('/update-api-object-bulk', guards.isGod, (req, res) => {
+  let fn;
+
+  switch (req.body.type) {
+    case 'beatmapset':
+      fn = res.locals.osu.createOrRefreshBeatmapset;
+      break;
+    case 'user':
+      fn = res.locals.osu.createOrRefreshUser;
+      break;
+  }
+
+  fn = fn.bind(res.locals.osu);
+
+  (async () => {
+    let apiObject;
+
+    for (const id of req.body.ids) {
+      apiObject = await fn(id);
+
+      if (apiObject == null)
+        console.log(`Could not update ${id} from bulk request`);
+      else
+        console.log(`Updated object ${id} from bulk request`);
+
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
+  })();
+
+  res.status(204).send();
+});
 //#endregion
 
 module.exports = router;

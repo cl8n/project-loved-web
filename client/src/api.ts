@@ -97,10 +97,16 @@ export function getUsersWithRoles(): Response<IUser[]> {
     .get('/api/users-with-permissions');
 }
 
-export function updateApiObject<T extends ApiObjectType>(type: T, id: number): Response<ApiObjectTypes[T]> {
+export function updateApiObject<T extends ApiObjectType>(type: T, id: number): Response {
   return superagent
     .post('/api/update-api-object')
     .send({ type, id });
+}
+
+export function updateApiObjectBulk<T extends ApiObjectType>(type: T, ids: number[]): Response {
+  return superagent
+    .post('/api/update-api-object-bulk')
+    .send({ type, ids });
 }
 
 export function updateCreators(beatmapsetId: number, gameMode: GameMode, creatorIds: number[]): Response<IUser[]> {

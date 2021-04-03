@@ -114,7 +114,13 @@ class Osu {
 
   //#region Application requests
   async createOrRefreshBeatmapset(beatmapsetId, creatorGameMode) {
-    const beatmapset = await this._getBeatmapset(beatmapsetId);
+    let beatmapset;
+    try {
+      beatmapset = await this._getBeatmapset(beatmapsetId);
+    } catch {
+      return null;
+    }
+
     await this.createOrRefreshUser(beatmapset.user_id);
 
     const dbFields = {
@@ -175,21 +181,46 @@ class Osu {
 
     return {
       ...dbFieldsWithPK,
-      game_modes: new Set(beatmapset.beatmaps.map((beatmap) => beatmap.mode_int));
+      game_modes: new Set(beatmapset.beatmaps.map((beatmap) => beatmap.mode_int)),
     };
   }
 
   async createOrRefreshUser(userId) {
-    const user = await this._getUser(userId);
+    let user;
+    try {
+      user = await this._getUser(userId);
+    } catch {}
 
-    const dbFields = {
-      api_fetched_at: new Date(),
-      avatar_url: sanitizeAvatarUrl(user.avatar_url),
-      banned: false,
-      country: user.country_code,
-      name: user.username,
-    };
-    const dbFieldsWithPK = { ...dbFields, id: user.id };
+    let dbFields;
+    let dbFieldsWithPK;
+
+    if (user == null) {
+      if (userId == null)
+        throw 'No userId provided and no user found';
+
+      const existingUser = await db.queryOne('SELECT * FROM users WHERE id = ?', userId);
+
+      if (existingUser != null)
+        return existingUser;
+
+      dbFields = {
+        api_fetched_at: new Date(),
+        avatar_url: '/images/layout/avatar-guest.png',
+        banned: true,
+        country: '__',
+        name: 'Banned User',
+      };
+      dbFieldsWithPK = { ...dbFields, id: userId };
+    } else {
+      dbFields = {
+        api_fetched_at: new Date(),
+        avatar_url: sanitizeAvatarUrl(user.avatar_url),
+        banned: false,
+        country: user.country_code,
+        name: user.username,
+      };
+      dbFieldsWithPK = { ...dbFields, id: user.id };
+    }
 
     await db.query(`
       INSERT INTO users SET ?

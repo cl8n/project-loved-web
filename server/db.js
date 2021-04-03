@@ -29,7 +29,9 @@ class MysqlDatabase {
   }
 
   async queryOne(sql, values) {
-    return (await this.query(sql, values))[0];
+    const result = await this.query(sql, values);
+
+    return result[0] == null ? null : result[0];
   }
 
   async queryWithGroups(sql, values) {
