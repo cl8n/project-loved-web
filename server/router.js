@@ -114,6 +114,10 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
 
   const beatmapset = await res.locals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId, req.body.gameMode);
 
+  if (beatmapset == null) {
+    res.status(422).json({ error: 'Invalid beatmapset ID' });
+  }
+
   if (!beatmapset.game_modes.has(req.body.gameMode)) {
     return res.status(422).json({ error: `Beatmapset has no beatmaps in game mode ${req.body.gameMode}` });
   }
