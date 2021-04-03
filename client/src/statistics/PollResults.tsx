@@ -1,5 +1,4 @@
 import { apiErrorMessage, getPollResults, useApi } from '../api';
-import Help from "../Help";
 import {GameMode} from "../interfaces";
 import {ChangeEvent, useState} from "react";
 import {gameModeLongName} from "../osu-helpers";
@@ -62,7 +61,7 @@ export default function PollResults() {
       </div>
       <table style={{ marginTop: '1em' }}>
         <tr>
-          <th className='no-wrap'>Round <Help text="If you're a captain, this is not the same thing as round ID." /></th>
+          <th className='no-wrap'>Round</th>
           {gameMode == null &&
             <th className='no-wrap'>Game mode</th>
           }
