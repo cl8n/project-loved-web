@@ -272,6 +272,21 @@ router.post('/add-round', guards.isNewsAuthor, asyncHandler(async (req, res) => 
   res.json({ id: queryResult.insertId });
 }));
 
+router.post('/update-round', guards.isNewsAuthor, asyncHandler(async (req, res) => {
+  await db.query('UPDATE rounds SET ? WHERE id = ?', [
+    getParams(req.body.round, [
+      'name',
+      'news_intro',
+      'news_intro_preview',
+      'news_outro',
+      'news_posted_at',
+    ]),
+    req.body.roundId,
+  ]);
+
+  res.status(204).send();
+}));
+
 router.get('/mapper-consents', guards.isAnything, asyncHandler(async (req, res) => {
   const consents = await db.queryWithGroups(`
     SELECT mapper_consents.*, mappers:mapper, updaters:updater

@@ -60,7 +60,7 @@ export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditor
         />
       </div>
       <div className='flex-left'>
-        <button type='submit'>{busy ? 'Updating...' : 'Update'} (not working yet)</button>
+        <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>
         <button type='button' onClick={close}>Cancel</button>
       </div>
     </Form>
