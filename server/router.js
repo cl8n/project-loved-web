@@ -266,24 +266,10 @@ router.post('/add-user', guards.isGod, asyncHandler(async (req, res) => {
   });
 }));
 
-router.post('/add-round', guards.isGod, asyncHandler(async (req, res) => {
-  const queryResult = await db.query('INSERT INTO rounds SET ?', {
-    name: req.body.name,
-    news_posted_at: new Date(req.body.news_posted_at),
-  });
-  const round = await db.queryOne(`
-    SELECT rounds.*, IFNULL(nomination_counts.count, 0) AS nomination_count
-    FROM rounds
-    LEFT JOIN (
-      SELECT COUNT(*) AS count, round_id
-      FROM nominations
-      WHERE round_id = ?
-    ) AS nomination_counts
-      ON rounds.id = nomination_counts.round_id
-    WHERE rounds.id = ?
-  `, [queryResult.insertId, queryResult.insertId]);
+router.post('/add-round', guards.isNewsAuthor, asyncHandler(async (req, res) => {
+  const queryResult = await db.query("INSERT INTO rounds SET name = 'Unnamed round'");
 
-  res.json(round);
+  res.json({ id: queryResult.insertId });
 }));
 
 router.get('/mapper-consents', guards.isAnything, asyncHandler(async (req, res) => {

@@ -40,13 +40,9 @@ export function addNomination(beatmapsetId: number, gameMode: GameMode, parentId
     });
 }
 
-export function addRound(name: string, newsPostAt: Date): Response<IRound> {
+export function addRound(): Response<{ id: number; }> {
   return superagent
-    .post('/api/add-round')
-    .send({
-      name,
-      news_posted_at: newsPostAt,
-    });
+    .post('/api/add-round');
 }
 
 export function addUser(name: string): Response<IUser> {

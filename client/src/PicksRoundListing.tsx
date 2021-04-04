@@ -1,9 +1,6 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { addRound, apiErrorMessage, getRounds, useApi } from './api';
-import { Form, FormSubmitHandler } from './dom-helpers';
 import type { IRound } from './interfaces';
-import { Modal } from './Modal';
 import { Never } from './Never';
 import { useOsuAuth } from './osuAuth';
 import { canWriteAs } from './permissions';
@@ -52,50 +49,23 @@ function PicksRoundListingInner() {
 }
 
 function AddRound() {
-  const [busy, setBusy] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
+  const history = useHistory();
 
-  const onSubmit: FormSubmitHandler = (form, then) => {
-    return addRound(form.name, form.newsPostAt)
-      .then(() => {}) // TODO: set rounds
-      .then(then)
-      .catch(() => {}) // TODO: show error
-      .finally(() => setModalOpen(false));
+  const onClick = () => {
+    if (!window.confirm('Are you sure you want to create a new round?'))
+      return;
+
+    addRound()
+      .then((response) => history.push(`/admin/picks/${response.body.id}`))
+      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
   };
 
   return (
-    <>
-      <p>
-        <button
-          className='fake-a'
-          onClick={() => setModalOpen(true)}
-          type='button'
-        >
-          Add round
-        </button>
-      </p>
-      <Modal
-        close={() => setModalOpen(false)}
-        open={modalOpen}
-      >
-        <h2>Add round</h2>
-        <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
-          <table className='center-block'>
-            <tr>
-              <td>Title</td>
-              <td><input type='text' name='name' required /></td>
-            </tr>
-            <tr>
-              <td>Post date</td>
-              <td><input type='date' name='newsPostAt' required data-value-type='date' /></td>
-            </tr>
-          </table>
-          <button type='submit' className='modal-submit-button'>
-            {busy ? 'Adding...' : 'Add'}
-          </button>
-        </Form>
-      </Modal>
-    </>
+    <p>
+      <button onClick={onClick} type='button'>
+        Add round
+      </button>
+    </p>
   );
 }
 
@@ -108,7 +78,7 @@ export function PicksRoundListing() {
   return (
     <>
       <h1>Rounds</h1>
-      {canWriteAs(authUser) &&
+      {canWriteAs(authUser, 'news') &&
         <AddRound />
       }
       <PicksRoundListingInner />
