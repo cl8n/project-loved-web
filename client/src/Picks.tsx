@@ -253,8 +253,8 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
   const anyDone = descriptionDone || metadataDone || moderationDone;
 
   // TODO support array for canwriteas
-  const canAssignMetadata = authUser != null && !metadataDone && (canWriteAs(authUser, 'news') || canWriteAs(authUser, 'metadata'));
-  const canAssignModeration = authUser != null && !moderationDone && (canWriteAs(authUser, 'news') || canWriteAs(authUser, 'moderator'));
+  const canAssignMetadata = !metadataDone && (canWriteAs(authUser, 'news') || canWriteAs(authUser, 'metadata'));
+  const canAssignModeration = !moderationDone && (canWriteAs(authUser, 'news') || canWriteAs(authUser, 'moderator'));
   const canDelete = !anyDone && canWriteAs(authUser, nomination.nominator.id);
   const canEditDescription = !descriptionDone && isCaptainForMode(authUser, nomination.game_mode);
   const canEditDifficulties = !metadataDone && isCaptainForMode(authUser, nomination.game_mode);
