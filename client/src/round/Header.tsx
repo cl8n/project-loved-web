@@ -30,14 +30,6 @@ export default function Header({ canEdit, onRoundUpdate, round }: HeaderProps) {
           </>
         }
       </h1>
-      <div className='flex-bar'>
-        <PostDate round={round} />
-        {/* TODO: notDone &&
-          <span className='progress'>
-            (not working yet) 6 / 10 ({percent}%)
-          </span>
-        */}
-      </div>
       {editing
         ? (
           <RoundEditor
@@ -47,6 +39,7 @@ export default function Header({ canEdit, onRoundUpdate, round }: HeaderProps) {
           />
         ) : (
           <>
+            <PostDate round={round} />
             <p><Markdown text={round.news_intro_preview ?? 'No news intro preview'} /></p>
             <p><Markdown text={round.news_intro ?? 'No news intro'} /></p>
             <p><Markdown text={round.news_outro ?? 'No news outro'} /></p>
