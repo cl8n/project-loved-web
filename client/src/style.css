@@ -12,12 +12,21 @@ a:hover, .fake-a:hover {
     text-decoration: underline;
 }
 
+::-webkit-scrollbar {
+    background: none;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #f9c;
+}
+
 body {
     background-color: #fff0f8;
     color: #333;
     font-family: Verdana, Tahoma, Arial, sans-serif;
     font-size: 14px;
-    margin: 0;
+    /* Left margin equal to scrollbar width, so body doesn't shift */
+    margin: 0 0 0 calc(100vw - 100%);
 }
 
 .modal {
