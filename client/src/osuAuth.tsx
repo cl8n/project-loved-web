@@ -1,6 +1,7 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 import superagent from 'superagent';
 import { IUser } from './interfaces';
+import { apiErrorMessage } from './api';
 
 interface OsuAuth {
   logOut: () => Promise<void>;
@@ -18,7 +19,7 @@ export function OsuAuthProvider(props: PropsWithChildren<{}>) {
     superagent
       .get('/api/auth/remember')
       .then((response) => setUser(response.body))
-      .catch(() => {});
+      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
   }, []);
 
   async function logOut(): Promise<void> {

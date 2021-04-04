@@ -241,7 +241,7 @@ function AddUser({ onUserAdd }: AddUserProps) {
     return addUser(form.username)
       .then((response) => onUserAdd(response.body))
       .then(then)
-      .catch(() => {}); // TODO: show error
+      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
   };
 
   // TODO class should probably go on the form itself
@@ -283,7 +283,7 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
     return updateUserRoles(user.id, roles)
       .then(() => setRoles(roles))
       .then(then)
-      .catch(() => {}) // TODO: show error
+      .catch((error) => window.alert(apiErrorMessage(error))) // TODO: show error better
       .finally(() => setModalOpen(false));
   };
 

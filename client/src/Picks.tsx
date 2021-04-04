@@ -243,7 +243,7 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
 
     deleteNomination(nomination.id)
       .then(() => onNominationDelete(nomination.id))
-      .catch(() => {}); // TODO: show error
+      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
   };
 
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
@@ -589,7 +589,7 @@ function Description({ canEdit, nominationId, onNominationUpdate, text }: Descri
     return updateNominationDescription(nominationId, form.description)
       .then((response) => onNominationUpdate(response.body))
       .then(then)
-      .catch(() => {}) // TODO: show error
+      .catch((error) => window.alert(apiErrorMessage(error))) // TODO: show error better
       .finally(() => setEditing(false));
   };
 
