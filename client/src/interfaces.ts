@@ -64,14 +64,14 @@ export interface IBeatmapset {
   favorite_count: number;
   play_count: number;
   ranked_status: number;
-  submitted_at: Date;
+  submitted_at: string;
   title: string;
-  updated_at: Date;
+  updated_at: string;
 }
 
 export interface ILog {
   id: number;
-  created_at: Date;
+  created_at: string;
   creator?: IUser;
   message: string;
   type: LogType;
@@ -101,7 +101,7 @@ export interface INomination {
 export interface IPollResult {
   id: number;
   beatmapset?: IBeatmapset;
-  ended_at: Date;
+  ended_at: string;
   game_mode: GameMode;
   result_no: number;
   result_yes: number;
@@ -114,13 +114,13 @@ export type IRole = 'captain' | 'god' | 'god_readonly' | 'metadata' | 'moderator
 export interface IRound {
   id: number;
   done: boolean;
-  polls_ended_at?: Date;
-  polls_started_at?: Date;
+  polls_ended_at?: string;
+  polls_started_at?: string;
   name: string;
   news_intro?: string;
   news_intro_preview?: string;
   news_outro?: string;
-  news_posted_at?: Date;
+  news_posted_at?: string;
 }
 
 export interface IUser {

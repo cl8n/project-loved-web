@@ -1,18 +1,20 @@
 import { IRound } from '../interfaces';
+import { dateFromString } from '../date-format';
 
 type PostDateProps = {
   round: IRound;
 };
 
 export default function PostDate({ round }: PostDateProps) {
+  const date = dateFromString(round.news_posted_at);
   // TODO: should have real logic
-  const posted = round.news_posted_at != null && new Date() >= round.news_posted_at;
+  const posted = date != null && new Date() >= date;
 
   return (
     <span>
-      {round.news_posted_at == null
+      {date == null
         ? 'No post date set'
-        : `${posted ? 'Posted' : 'Posting'} on ${round.news_posted_at/* TODO .toLocaleDateString()*/}`
+        : `${posted ? 'Posted' : 'Posting'} on ${date.toLocaleString()}`
       }
     </span>
   );

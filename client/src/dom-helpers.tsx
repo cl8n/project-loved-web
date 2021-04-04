@@ -1,4 +1,5 @@
 import { Dispatch, FormEvent, PropsWithChildren, SetStateAction, useEffect, useRef } from 'react';
+import { dateFromString, mySqlDateTime } from './date-format';
 
 function setFormDisabled(form: HTMLFormElement, disabled: boolean) {
   const controls = form.elements as any; // TODO: typing
@@ -20,9 +21,10 @@ function wrapCast<T>(fn: (value: string) => T) {
 
 const valueCasts = {
   bool: wrapCast((value) => value !== '0'),
-  date: wrapCast((value) => new Date(value)),
+  date: wrapCast((value) => dateFromString(value)),
   decimal: wrapCast(parseFloat),
   int: wrapCast(parseInt),
+  mySqlDate: wrapCast((value) => mySqlDateTime(value)),
   string: wrapCast((value) => value),
 };
 

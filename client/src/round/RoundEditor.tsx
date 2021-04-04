@@ -3,6 +3,7 @@ import { apiErrorMessage, updateRound } from '../api';
 import { autoHeightRef } from '../auto-height';
 import { Form, FormSubmitHandler } from '../dom-helpers';
 import { IRound, PartialWithId } from '../interfaces';
+import { inputDateTime } from '../date-format';
 
 type RoundEditorProps = {
   close: () => void;
@@ -35,8 +36,8 @@ export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditor
         <input
           type='datetime-local'
           name='news_posted_at'
-          defaultValue={round.news_posted_at as any}
-          data-value-type='date'
+          defaultValue={inputDateTime(round.news_posted_at)}
+          data-value-type='mySqlDate'
           pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}'
         />
         <label htmlFor='news_intro_preview'>Intro preview</label>

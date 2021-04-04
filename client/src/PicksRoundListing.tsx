@@ -4,6 +4,7 @@ import type { IRound } from './interfaces';
 import { Never } from './Never';
 import { useOsuAuth } from './osuAuth';
 import { canWriteAs } from './permissions';
+import PostDate from './round/PostDate';
 
 type RoundProps = IRound & {
   nomination_count: number;
@@ -13,7 +14,6 @@ type RoundProps = IRound & {
 function Round(round: RoundProps) {
   //const notDone = props.nominations_done !== props.nomination_count;
   //const percent = props.nominations_done / props.nomination_count * 100;
-  const posted = round.news_posted_at != null && new Date() >= round.news_posted_at;
 
   return (
     <div className='box'>
@@ -21,7 +21,7 @@ function Round(round: RoundProps) {
         <Link to={`/admin/picks/${round.id}`}>{round.name} [#{round.id}]</Link>
       </h2>
       <div className='flex-bar'>
-        <span>{posted ? 'Posted' : 'Posting'} at {round.news_posted_at}</span>
+        <PostDate round={round} />
         <span>{round.nomination_count} nominations</span>
       </div>
     </div>
