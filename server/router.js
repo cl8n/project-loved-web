@@ -80,6 +80,17 @@ router.get('/nominations', asyncHandler(async (req, res) => {
     ORDER BY nominations.order ASC, nominations.id ASC
   `, req.query.roundId);
 
+  round.game_modes = groupBy(
+    await db.query(`
+      SELECT *
+      FROM round_game_modes
+      WHERE round_id = ?
+    `, req.query.roundId),
+    'game_mode',
+    null,
+    true,
+  );
+
   // TODO: Should not be necessary to check for uniques like this. Just fix query.
   //       See interop query as well
   nominations.forEach((nomination) => {
@@ -245,6 +256,16 @@ router.post('/update-nomination-order', guards.isCaptain, asyncHandler(async (re
 
   res.status(204).send();
 }));
+
+router.post('/lock-nominations', guards.isCaptain, asyncHandler(async (req, res) => {
+  await db.query('UPDATE round_game_modes SET nominations_locked = ? WHERE round_id = ? AND game_mode = ?', [
+    req.body.lock,
+    req.body.roundId,
+    req.body.gameMode,
+  ]);
+
+  res.status(204).send();
+}));
 //#endregion
 
 //#region admin
@@ -268,6 +289,14 @@ router.post('/add-user', guards.isGod, asyncHandler(async (req, res) => {
 
 router.post('/add-round', guards.isNewsAuthor, asyncHandler(async (req, res) => {
   const queryResult = await db.query("INSERT INTO rounds SET name = 'Unnamed round'");
+
+  for (const gameMode of [0, 1, 2, 3]) {
+    await db.query('INSERT INTO round_game_modes SET ?', [{
+      game_mode: gameMode,
+      round_id: queryResult.insertId,
+      voting_threshold: gameMode === 0 ? 0.85 : 0.8,
+    }]);
+  }
 
   res.json({ id: queryResult.insertId });
 }));

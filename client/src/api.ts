@@ -93,6 +93,12 @@ export function getUsersWithRoles(): Response<IUser[]> {
     .get('/api/users-with-permissions');
 }
 
+export function lockNominations(roundId: number, gameMode: GameMode, lock: boolean): Response {
+  return superagent
+    .post('/api/lock-nominations')
+    .send({ roundId, gameMode, lock });
+}
+
 export function updateApiObject<T extends ApiObjectType>(type: T, id: number): Response {
   return superagent
     .post('/api/update-api-object')

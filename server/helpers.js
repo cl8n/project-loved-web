@@ -9,7 +9,7 @@ function accessNested(object, key) {
   return value;
 }
 
-function groupBy(array, key, dataKey) {
+function groupBy(array, key, dataKey, keyIsUnique = false) {
   return array.reduce((prev, value) => {
     const groupKey = accessNested(value, key);
 
@@ -17,6 +17,9 @@ function groupBy(array, key, dataKey) {
       prev[groupKey] = [];
 
     prev[groupKey].push(dataKey == null ? value : accessNested(value, dataKey));
+
+    if (keyIsUnique)
+      prev[groupKey] = prev[groupKey][0];
 
     return prev;
   }, {});

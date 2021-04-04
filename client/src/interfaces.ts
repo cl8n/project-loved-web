@@ -114,6 +114,10 @@ export type IRole = 'captain' | 'god' | 'god_readonly' | 'metadata' | 'moderator
 export interface IRound {
   id: number;
   done: boolean;
+  game_modes: Record<GameMode, {
+    nominations_locked: boolean;
+    voting_threshold: number;
+  }>;
   polls_ended_at?: string;
   polls_started_at?: string;
   name: string;

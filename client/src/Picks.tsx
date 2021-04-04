@@ -1,7 +1,7 @@
 import { ReactChild, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ResponseError } from 'superagent';
-import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getNominations, updateExcludedBeatmaps, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, updateNominationOrder, useApi } from './api';
+import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getNominations, lockNominations, updateExcludedBeatmaps, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, updateNominationOrder, useApi } from './api';
 import { autoHeightRef } from './auto-height';
 import { BBCode } from './BBCode';
 import { BeatmapInline } from './BeatmapInline';
@@ -125,6 +125,17 @@ export function Picks() {
       };
     });
   };
+  const onNominationsLock = (gameMode: GameMode, lock: boolean) => {
+    setRoundInfo((prev) => {
+      const prevRound = prev!.round;
+      prevRound.game_modes[gameMode].nominations_locked = lock;
+
+      return {
+        nominations: prev!.nominations,
+        round: prevRound,
+      };
+    });
+  };
   const onRoundUpdate = (round: PartialWithId<IRound>) => {
     setRoundInfo((prev) => {
       return {
@@ -134,10 +145,25 @@ export function Picks() {
     });
   };
 
-  // TODO: Also check if the round is done
-  const canOrder = (gameMode: GameMode) => {
-    return canWriteAs(authUser, 'news') || isCaptainForMode(authUser, gameMode);
+  const nominationsLocked = (gameMode: GameMode) => {
+    return round.game_modes[gameMode].nominations_locked;
   };
+  const toggleLock = (gameMode: GameMode) => {
+    const lock = !nominationsLocked(gameMode);
+
+    lockNominations(round.id, gameMode, lock)
+      .then(() => onNominationsLock(gameMode, lock))
+      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
+  };
+
+  // TODO: Also check if the round is done for each of these
+  const canAdd = (gameMode: GameMode) => {
+    return !nominationsLocked(gameMode) && isCaptainForMode(authUser, gameMode);
+  };
+  const canLock = (gameMode: GameMode) => {
+    return isCaptainForMode(authUser, gameMode);
+  };
+  const canOrder = canAdd;
 
   return (
     <>
@@ -149,13 +175,22 @@ export function Picks() {
       {gameModes.map((gameMode) => (
         <div key={gameMode} className='content-block'>
           <h2>{gameModeLongName(gameMode)}</h2>
-          {isCaptainForMode(authUser, gameMode) &&
+          {canAdd(gameMode) &&
             <AddNomination gameMode={gameMode} onNominationAdd={onNominationAdd} roundId={round.id} />
           }
-          {canOrder(gameMode) &&
-            <button type='button' onClick={() => setOrdering((prev) => !prev)}>
-              {ordering ? 'Done ordering' : 'Change order'}
-            </button>
+          {(canOrder(gameMode) || canLock(gameMode)) &&
+            <div className='flex-left'>
+              {canOrder(gameMode) &&
+                <button type='button' onClick={() => setOrdering((prev) => !prev)}>
+                  {ordering ? 'Done ordering' : 'Change order'}
+                </button>
+              }
+              {canLock(gameMode) &&
+                <button type='button' onClick={() => toggleLock(gameMode)}>
+                  {nominationsLocked(gameMode) ? 'Unlock nominations' : 'Lock nominations'}
+                </button>
+              }
+            </div>
           }
           <Orderable
             enabled={ordering && canOrder(gameMode)}
@@ -249,6 +284,7 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
   const metadataDone = nomination.metadata_state === MetadataState.good;
   const moderationDone = nomination.moderator_state === ModeratorState.good;
+  // TODO: also check if nominations locked
   const allDone = descriptionDone && metadataDone && moderationDone;
   const anyDone = descriptionDone || metadataDone || moderationDone;
 
