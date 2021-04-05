@@ -51,6 +51,11 @@ export function addUser(name: string): Response<IUser> {
     .send({ name });
 }
 
+export function authRemember(): Response<IUser> {
+  return superagent
+    .get('/api/auth/remember');
+}
+
 export function deleteNomination(nominationId: number): Response {
   return superagent
     .delete('/api/nomination')
@@ -179,7 +184,7 @@ export function apiErrorMessage(error: ResponseError): string {
   return error.response?.body.error ?? error.message;
 }
 
-type useApiReturn<T> = [T | undefined, Error | undefined, Dispatch<SetStateAction<T | undefined>>];
+type useApiReturn<T> = [T | undefined, ResponseError | undefined, Dispatch<SetStateAction<T | undefined>>];
 
 export function useApi<T>(requester: () => Response<T>): useApiReturn<T>;
 export function useApi<T, P extends unknown[]>(requester: (...args: P) => Response<T>, args: P, transform?: (body: T) => T, condition?: boolean): useApiReturn<T>;
