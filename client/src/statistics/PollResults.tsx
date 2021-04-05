@@ -1,8 +1,8 @@
+import { ChangeEvent, useState } from 'react';
 import { apiErrorMessage, getPollResults, useApi } from '../api';
-import {GameMode} from "../interfaces";
-import {ChangeEvent, useState} from "react";
-import {gameModeLongName} from "../osu-helpers";
-import {BeatmapInline} from "../BeatmapInline";
+import { BeatmapInline } from '../BeatmapInline';
+import { GameMode, IPollResult } from '../interfaces';
+import { gameModeLongName } from '../osu-helpers';
 
 export default function PollResults() {
   const [gameMode, setGameMode] = useState<GameMode>();
@@ -15,15 +15,6 @@ export default function PollResults() {
 
   if (polls == null)
     return <span>Loading poll results...</span>;
-
-  const formatResults = showPercent
-    ? (yes: number, no: number) => {
-      const total = yes + no;
-      const percent = yes / total * 100;
-
-      return `${percent.toFixed(2)}% — ${total} Total`;
-    }
-    : (yes: number, no: number) => `${yes} Yes — ${no} No`;
 
   const onGameModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = event.currentTarget.value;
@@ -72,15 +63,26 @@ export default function PollResults() {
           <option value='1'>Yes and no</option>
         </select>
       </div>
-      <table style={{ marginTop: '1em' }}>
-        <tr>
-          <th className='no-wrap'>Round</th>
+      <table className='poll-results'>
+        <tr className='sticky'>
+          <th>Round</th>
           {gameMode == null &&
-            <th className='no-wrap'>Game mode</th>
+            <th>Game mode</th>
           }
           <th>Beatmapset</th>
-          <th className='no-wrap'>Poll topic</th>
-          <th>Result</th>
+          <th>Poll topic</th>
+          {showPercent
+            ? (
+              <>
+                <th>Percent</th>
+                <th>Total</th>
+              </>
+            ) : (
+              <>
+                <th>Yes</th>
+                <th>No</th>
+              </>
+            )}
         </tr>
         {displayPolls.map((poll) => (
           <tr key={poll.id}>
@@ -88,17 +90,45 @@ export default function PollResults() {
             {gameMode == null &&
               <td>{gameModeLongName(poll.game_mode)}</td>
             }
-            <td>
+            <td className='force-normal-wrap'>
               {poll.beatmapset == null
                 ? <i>Deleted beatmapset</i>
                 : <BeatmapInline beatmapset={poll.beatmapset} gameMode={poll.game_mode} showCreator />
               }
             </td>
             <td><a href={`https://osu.ppy.sh/community/forums/topics/${poll.topic_id}`}>{poll.topic_id}</a></td>
-            <td className='no-wrap'>{formatResults(poll.result_yes, poll.result_no)}</td>
+            <ResultCells poll={poll} showPercent={showPercent} />
           </tr>
         ))}
       </table>
     </>
   );
+}
+
+type ResultCellsProps = {
+  poll: IPollResult;
+  showPercent: boolean;
+};
+
+function ResultCells({ poll, showPercent }: ResultCellsProps) {
+  const yes = poll.result_yes;
+  const no = poll.result_no;
+  const total = yes + no;
+  const yesFraction = yes / total;
+
+  const className = poll.voting_threshold == null ? undefined
+    : yesFraction >= poll.voting_threshold ? 'success' : 'error';
+
+  return showPercent
+    ? (
+      <>
+        <td className={className}>{(yesFraction * 100).toFixed(2)}%</td>
+        <td>{total}</td>
+      </>
+    ) : (
+      <>
+        <td className={className}>{yes}</td>
+        <td>{no}</td>
+      </>
+    );
 }

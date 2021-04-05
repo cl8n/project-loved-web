@@ -358,7 +358,7 @@ table.maps .status {
 }
 
 .success {
-    color: #2f4;
+    color: #1a1;
 }
 
 .error {
@@ -421,4 +421,38 @@ table.maps .status {
 
 .no-wrap {
     white-space: nowrap;
+}
+
+.poll-results {
+    margin-top: 1em;
+}
+
+.poll-results td, .poll-results th {
+    white-space: nowrap;
+}
+
+.poll-results td.force-normal-wrap, .poll-results th.force-normal-wrap {
+    white-space: normal;
+}
+
+tr.sticky > th {
+    position: sticky;
+    top: 0;
+    padding-bottom: 0.25em;
+}
+
+tr.sticky > th::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    right: -1em;
+    bottom: 0;
+    left: 0;
+    background-color: #fff;
+    border-bottom: 1px solid #f9c;
+}
+
+tr.sticky > th:last-child::after {
+    right: 0;
 }

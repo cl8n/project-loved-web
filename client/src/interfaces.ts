@@ -107,6 +107,7 @@ export interface IPollResult {
   result_yes: number;
   round: number;
   topic_id: number;
+  voting_threshold?: number;
 }
 
 export type IRole = 'captain' | 'god' | 'god_readonly' | 'metadata' | 'moderator' | 'news';

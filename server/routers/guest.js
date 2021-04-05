@@ -25,10 +25,13 @@ router.get('/captains', asyncHandler(async (_, res) => {
 
 router.get('/stats/polls', asyncHandler(async (_, res) => {
   res.json(await db.queryWithGroups(`
-    SELECT poll_results.*, beatmapsets:beatmapset
+    SELECT poll_results.*, beatmapsets:beatmapset, round_game_modes.voting_threshold
     FROM poll_results
     LEFT JOIN beatmapsets
       ON poll_results.beatmapset_id = beatmapsets.id
+    LEFT JOIN round_game_modes
+      ON poll_results.round = round_game_modes.round_id
+        AND poll_results.game_mode = round_game_modes.game_mode
     ORDER BY poll_results.ended_at DESC
   `));
 }));
