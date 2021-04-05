@@ -90,7 +90,6 @@ export interface INomination {
   metadata_state: MetadataState;
   moderator_assignee?: IUser;
   moderator_state: ModeratorState;
-  nominator: IUser;
   nominators: IUserWithoutRoles[];
   order: number;
   overwrite_artist?: string;

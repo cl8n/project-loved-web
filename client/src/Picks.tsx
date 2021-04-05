@@ -33,7 +33,7 @@ function ListInline<T>({ array, none, render }: ListInlineProps<T>) {
       {array.map((item, i, array) => (
         <>
           {render(item)}
-          {i < array.length - 1 && ', '}
+          {i < array.length - 1 && (i === array.length - 2 ? ' and ' : ', ')}
         </>
       ))}
     </>
@@ -285,6 +285,7 @@ function Nomination({ assigneesApi, captainsApi, nomination, onNominationDelete,
       .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
   };
 
+  const isNominator = canWriteAs(authUser, ...nomination.nominators.map((n) => n.id));
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
   const metadataDone = nomination.metadata_state === MetadataState.good;
   const moderationDone = nomination.moderator_state === ModeratorState.good;
@@ -295,13 +296,13 @@ function Nomination({ assigneesApi, captainsApi, nomination, onNominationDelete,
   // TODO support array for canwriteas
   const canAssignMetadata = !metadataDone && (canWriteAs(authUser, 'news') || canWriteAs(authUser, 'metadata'));
   const canAssignModeration = !moderationDone && (canWriteAs(authUser, 'news') || canWriteAs(authUser, 'moderator'));
-  const canDelete = !anyDone && canWriteAs(authUser, nomination.nominator.id);
+  const canDelete = !anyDone && isNominator;
   const canEditDescription = !descriptionDone && isCaptainForMode(authUser, nomination.game_mode);
   const canEditDifficulties = !metadataDone && isCaptainForMode(authUser, nomination.game_mode);
   const canEditMetadata = !metadataDone && canWriteAs(authUser, nomination.metadata_assignee?.id);
   const canEditModeration = !moderationDone && canWriteAs(authUser, nomination.moderator_assignee?.id);
   // TODO restrict if nomination locked
-  const canEditNominators = canWriteAs(authUser, nomination.nominator.id);
+  const canEditNominators = isNominator;
 
   return (
     <div className='box nomination'>
@@ -333,7 +334,12 @@ function Nomination({ assigneesApi, captainsApi, nomination, onNominationDelete,
           <span className='flex-no-shrink'>Description by <UserInline noId user={nomination.description_author} /></span>
         }
         <span className='flex-no-shrink'>
-          Nominated by <UserInline noId user={nomination.nominator} />
+          Nominated by {' '}
+          <ListInline
+            array={nomination.nominators}
+            none='nobody'
+            render={(user) => <UserInline noId user={user} />}
+          />
           {canEditNominators &&
             <>
               {' — '}
@@ -351,7 +357,7 @@ function Nomination({ assigneesApi, captainsApi, nomination, onNominationDelete,
           by {' '}
           <ListInline
             array={nomination.beatmapset_creators}
-            none='Nobody'
+            none='nobody'
             render={(user) => <UserInline noId user={user} />}
           />
         </span>
