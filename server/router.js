@@ -126,7 +126,7 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
   const beatmapset = await res.locals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId, req.body.gameMode);
 
   if (beatmapset == null) {
-    res.status(422).json({ error: 'Invalid beatmapset ID' });
+    return res.status(422).json({ error: 'Invalid beatmapset ID' });
   }
 
   if (!beatmapset.game_modes.has(req.body.gameMode)) {
@@ -466,7 +466,7 @@ router.post('/update-api-object', guards.isGod, asyncHandler(async (req, res) =>
   }
 
   if (apiObject == null) {
-    res.status(422).json({ error: 'Invalid ID' });
+    return res.status(422).json({ error: 'Invalid ID' });
   }
 
   res.status(204).send();
