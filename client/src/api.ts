@@ -153,6 +153,12 @@ export function updateModeratorAssignee(nominationId: number, assigneeId: number
     .send({ assigneeId, nominationId });
 }
 
+export function updateNominators(nominationId: number, nominatorIds: number[]): Response<PartialWithId<INomination>> {
+  return superagent
+    .post('/api/update-nominators')
+    .send({ nominationId, nominatorIds });
+}
+
 export function updateRound(roundId: number, round: PartialWithoutId<IRound>): Response {
   return superagent
     .post('/api/update-round')

@@ -1,9 +1,9 @@
-import { IUser } from './interfaces';
+import { IUserWithoutRoles } from './interfaces';
 
 type UserInlineProps = {
   noFlag?: boolean;
   noId?: boolean;
-  user: IUser;
+  user: IUserWithoutRoles;
 };
 
 export function UserInline(props: UserInlineProps) {

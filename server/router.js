@@ -61,6 +61,19 @@ router.get('/nominations', asyncHandler(async (req, res) => {
     `, req.query.roundId),
     'nomination_id',
   );
+  const nominatorsByNominationId = groupBy(
+    await db.queryWithGroups(`
+      SELECT users:nominator, nominations.id AS nomination_id
+      FROM nominations
+      INNER JOIN nomination_nominators
+        ON nominations.id = nomination_nominators.nomination_id
+      INNER JOIN users
+        ON nomination_nominators.nominator_id = users.id
+      WHERE nominations.round_id = ?
+    `, req.query.roundId),
+    'nomination_id',
+    'nominator',
+  );
   const nominations = await db.queryWithGroups(`
     SELECT nominations.*, beatmapsets:beatmapset, description_authors:description_author,
       metadata_assignees:metadata_assignee, moderator_assignees:moderator_assignee,
@@ -102,6 +115,7 @@ router.get('/nominations', asyncHandler(async (req, res) => {
     nomination.beatmapset_creators = includesByNominationId[nomination.id]
       .map((include) => include.creator)
       .filter((c1, i, all) => c1 != null && all.findIndex((c2) => c1.id === c2.id) === i);
+    nomination.nominators = nominatorsByNominationId[nomination.id] || [];
   });
 
   res.json({
@@ -147,6 +161,10 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
     parent_id: req.body.parentId,
     round_id: req.body.roundId,
   });
+  await db.query(`INSERT INTO nomination_nominators SET ?`, {
+    nomination_id: queryResult.insertId,
+    nominator_id: res.locals.user.id,
+  });
 
   const creators = await db.query(`
     SELECT users.*
@@ -176,10 +194,18 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
     nomination.beatmapset_id,
     req.body.gameMode,
   ]);
+  const nominators = await db.query(`
+    SELECT users.*
+    FROM nomination_nominators
+    INNER JOIN users
+      ON nomination_nominators.nominator_id = users.id
+    WHERE nomination_nominators.nomination_id = ?
+  `, nomination.id);
 
   nomination.beatmaps = beatmaps;
   nomination.beatmapset = beatmapset;
   nomination.beatmapset_creators = creators || [];
+  nomination.nominators = nominators || [];
 
   // TODO: log me!
 
@@ -238,6 +264,10 @@ router.post('/nomination-edit-metadata', guards.isMetadataChecker, asyncHandler(
 
 router.delete('/nomination', asyncHandler(async (req, res) => {
   await db.query(`
+    DELETE FROM nomination_nominators
+    WHERE nomination_id = ?
+  `, req.query.nominationId);
+  await db.query(`
     DELETE FROM nominations
     WHERE id = ?
   `, req.query.nominationId);
@@ -255,6 +285,28 @@ router.post('/update-nomination-order', guards.isCaptain, asyncHandler(async (re
   )));
 
   res.status(204).send();
+}));
+
+router.post('/update-nominators', guards.isCaptain, asyncHandler(async (req, res) => {
+  await db.query('DELETE FROM nomination_nominators WHERE nomination_id = ?', req.body.nominationId);
+
+  if (req.body.nominatorIds != null && req.body.nominatorIds.length > 0)
+    await db.query('INSERT INTO nomination_nominators VALUES ?', [
+      req.body.nominatorIds.map((id) => [req.body.nominationId, id]),
+    ]);
+
+  const nominators = await db.query(`
+    SELECT users.*
+    FROM nomination_nominators
+    INNER JOIN users
+      ON nomination_nominators.nominator_id = users.id
+    WHERE nomination_nominators.nomination_id = ?
+  `, req.body.nominationId);
+
+  res.json({
+    id: req.body.nominationId,
+    nominators: nominators || [],
+  });
 }));
 
 router.post('/lock-nominations', guards.isCaptain, asyncHandler(async (req, res) => {

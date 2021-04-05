@@ -1,12 +1,12 @@
 import { ReactChild, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ResponseError } from 'superagent';
-import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getNominations, lockNominations, updateExcludedBeatmaps, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, updateNominationOrder, useApi } from './api';
+import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getCaptains, getNominations, lockNominations, updateExcludedBeatmaps, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, updateNominationOrder, useApi } from './api';
 import { autoHeightRef } from './auto-height';
 import { BBCode } from './BBCode';
 import { BeatmapInline } from './BeatmapInline';
 import { Form, FormSubmitHandler } from './dom-helpers';
-import { DescriptionState, GameMode, INomination, IRound, IUser, MetadataState, ModeratorState, PartialWithId } from './interfaces';
+import { DescriptionState, GameMode, ICaptain, INomination, IRound, IUser, MetadataState, ModeratorState, PartialWithId } from './interfaces';
 import { Modal } from './Modal';
 import { Never } from './Never';
 import { Orderable } from './Orderable';
@@ -16,6 +16,7 @@ import { canWriteAs, isCaptainForMode } from './permissions';
 import Header from './round/Header';
 import { UserInline } from './UserInline';
 import Help from "./Help";
+import EditNominators from './nomination/EditNominators';
 
 type ListInlineProps<T> = {
   array: T[];
@@ -45,6 +46,7 @@ export function Picks() {
   const roundId = parseInt(params.round);
   const [roundInfo, roundInfoError, setRoundInfo] = useApi(getNominations, [roundId]);
   const assigneesApi = useApi(getAssignees, [], undefined, authUser != null && (canWriteAs(authUser, 'news') || canWriteAs(authUser, 'metadata') || canWriteAs(authUser, 'moderator')));
+  const captainsApi = useApi(getCaptains, [], undefined, authUser != null && canWriteAs(authUser, 'captain'));
   // TODO: Split by gamemode
   const [ordering, setOrdering] = useState(false);
 
@@ -203,6 +205,7 @@ export function Picks() {
                 <Nomination
                   key={nomination.id}
                   assigneesApi={[assigneesApi[0]?.metadatas, assigneesApi[0]?.moderators, assigneesApi[1]]}
+                  captainsApi={[captainsApi[0], captainsApi[1]]}
                   nomination={nomination}
                   onNominationDelete={onNominationDelete}
                   onNominationUpdate={onNominationUpdate}
@@ -260,13 +263,14 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
 
 type NominationProps = {
   assigneesApi: readonly [IUser[] | undefined, IUser[] | undefined, ResponseError | undefined];
+  captainsApi: readonly [{ [P in GameMode]?: ICaptain[] } | undefined, ResponseError | undefined];
   nomination: INomination;
   onNominationDelete: (nominationId: number) => void;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   parentGameMode?: GameMode;
 };
 
-function Nomination({ assigneesApi, nomination, onNominationDelete, onNominationUpdate, parentGameMode }: NominationProps) {
+function Nomination({ assigneesApi, captainsApi, nomination, onNominationDelete, onNominationUpdate, parentGameMode }: NominationProps) {
   const authUser = useOsuAuth().user;
 
   if (authUser == null)
@@ -296,6 +300,8 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
   const canEditDifficulties = !metadataDone && isCaptainForMode(authUser, nomination.game_mode);
   const canEditMetadata = !metadataDone && canWriteAs(authUser, nomination.metadata_assignee?.id);
   const canEditModeration = !moderationDone && canWriteAs(authUser, nomination.moderator_assignee?.id);
+  // TODO restrict if nomination locked
+  const canEditNominators = canWriteAs(authUser, nomination.nominator.id);
 
   return (
     <div className='box nomination'>
@@ -326,7 +332,19 @@ function Nomination({ assigneesApi, nomination, onNominationDelete, onNomination
         {nomination.description_author != null &&
           <span className='flex-no-shrink'>Description by <UserInline noId user={nomination.description_author} /></span>
         }
-        <span className='flex-no-shrink'>Nominated by <UserInline noId user={nomination.nominator} /></span>
+        <span className='flex-no-shrink'>
+          Nominated by <UserInline noId user={nomination.nominator} />
+          {canEditNominators &&
+            <>
+              {' — '}
+              <EditNominators
+                captainsApi={captainsApi}
+                nomination={nomination}
+                onNominationUpdate={onNominationUpdate}
+              />
+            </>
+          }
+        </span>
       </div>
       <div className='flex-left'>
         <span className='flex-grow'>

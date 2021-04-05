@@ -81,7 +81,7 @@ export interface INomination {
   id: number;
   beatmaps: IBeatmapWithExcluded[];
   beatmapset: IBeatmapset;
-  beatmapset_creators: IUser[];
+  beatmapset_creators: IUserWithoutRoles[];
   description?: string;
   description_author?: IUser;
   description_state: DescriptionState;
@@ -91,6 +91,7 @@ export interface INomination {
   moderator_assignee?: IUser;
   moderator_state: ModeratorState;
   nominator: IUser;
+  nominators: IUserWithoutRoles[];
   order: number;
   overwrite_artist?: string;
   overwrite_title?: string;
@@ -136,6 +137,8 @@ export interface IUser {
   name: string;
   roles: Record<IRole, boolean> & { captain_game_mode?: GameMode };
 }
+
+export type IUserWithoutRoles = Omit<IUser, 'roles'>;
 
 export interface ICaptain extends IUser {
   roles: IUser['roles'] & {
