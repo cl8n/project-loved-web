@@ -20,11 +20,14 @@ a:hover, .fake-a:hover {
     background-color: #f9c;
 }
 
+html {
+    font-family: Verdana, Tahoma, Arial, sans-serif;
+    font-size: 14px;
+}
+
 body {
     background-color: #fff0f8;
     color: #333;
-    font-family: Verdana, Tahoma, Arial, sans-serif;
-    font-size: 14px;
     /* Left margin equal to scrollbar width, so body doesn't shift */
     margin: 0 0 0 calc(100vw - 100%);
 }
@@ -53,11 +56,6 @@ body {
 
 li {
     margin-top: 0.25em;
-}
-
-li.done {
-    text-decoration: line-through;
-    opacity: 0.7;
 }
 
 button:not(.fake-a) {
@@ -235,6 +233,11 @@ main > :last-child,
 .box > :last-child,
 .content-block > :last-child {
     margin-bottom: 0;
+}
+
+h1, h2, h3 {
+    margin-top: 1.3rem;
+    margin-bottom: 1rem;
 }
 
 h1 {
@@ -459,4 +462,12 @@ tr.sticky > th:last-child::after {
 
 .list-input-row {
     margin-bottom: 0.25em;
+}
+
+.spacer-margin {
+    margin-top: 1.3rem;
+}
+
+.faded {
+    opacity: 0.7;
 }

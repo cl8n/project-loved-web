@@ -202,7 +202,7 @@ function PermissionsMenu() {
           ))}
         </tr>
         {users.map((user) => (
-          <tr key={user.id} style={canReadAs(user, 'any') ? undefined : { opacity: 0.7 }}>
+          <tr key={user.id} className={canReadAs(user, 'any') ? undefined : 'faded'}>
             <td>
               <UserInline user={user} />
             </td>
