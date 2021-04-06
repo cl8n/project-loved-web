@@ -34,10 +34,22 @@ router.get('/data', asyncHandler(async (req, res) => {
     `, req.query.roundId),
     'nomination_id',
   );
+  const nominatorsByNominationId = groupBy(
+    await db.queryWithGroups(`
+      SELECT users:nominator, nominations.id AS nomination_id
+      FROM nominations
+      INNER JOIN nomination_nominators
+        ON nominations.id = nomination_nominators.nomination_id
+      INNER JOIN users
+        ON nomination_nominators.nominator_id = users.id
+      WHERE nominations.round_id = ?
+    `, req.query.roundId),
+    'nomination_id',
+    'nominator',
+  );
   const nominations = await db.queryWithGroups(`
     SELECT nominations.*, beatmapsets:beatmapset, description_authors:description_author,
-      metadata_assignees:metadata_assignee, moderator_assignees:moderator_assignee,
-      nominators:nominator
+      metadata_assignees:metadata_assignee, moderator_assignees:moderator_assignee
     FROM nominations
     INNER JOIN beatmapsets
       ON nominations.beatmapset_id = beatmapsets.id
@@ -47,11 +59,20 @@ router.get('/data', asyncHandler(async (req, res) => {
       ON nominations.metadata_assignee_id = metadata_assignees.id
     LEFT JOIN users AS moderator_assignees
       ON nominations.moderator_assignee_id = moderator_assignees.id
-    INNER JOIN users AS nominators
-      ON nominations.nominator_id = nominators.id
     WHERE nominations.round_id = ?
     ORDER BY nominations.order ASC, nominations.id ASC
   `, req.query.roundId);
+
+  round.game_modes = groupBy(
+    await db.query(`
+      SELECT *
+      FROM round_game_modes
+      WHERE round_id = ?
+    `, req.query.roundId),
+    'game_mode',
+    null,
+    true,
+  );
 
   nominations.forEach((nomination) => {
     nomination.beatmaps = includesByNominationId[nomination.id]
@@ -62,6 +83,7 @@ router.get('/data', asyncHandler(async (req, res) => {
     nomination.beatmapset_creators = includesByNominationId[nomination.id]
       .map((include) => include.creator)
       .filter((c1, i, all) => c1 != null && all.findIndex((c2) => c1.id === c2.id) === i);
+    nomination.nominators = nominatorsByNominationId[nomination.id] || [];
   });
 
   res.json({
