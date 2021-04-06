@@ -64,7 +64,7 @@ app.get('/auth/callback', asyncHandler(async function (request, response) {
     throw request.query.error;
 
   if (!request.query.code)
-    throw 'No authorization code received (this should never happen)';
+    return response.status(422).json({ error: 'No authorization code provided' });
 
   const backUrl = request.session.authBackUrl;
   const state = request.session.authState;
@@ -72,15 +72,19 @@ app.get('/auth/callback', asyncHandler(async function (request, response) {
   delete request.session.authState;
 
   if (!request.query.state || request.query.state !== state)
-    throw 'Invalid state';
+    return response.status(422).json({ error: 'Invalid state. Try logging in again' });
 
   const osu = new Osu();
   Object.assign(request.session, await osu.getToken(request.query.code));
 
-  const userInfo = await osu.createOrRefreshUser();
-  request.session.userId = userInfo.id;
+  const user = await osu.createOrRefreshUser();
 
-  await db.query('INSERT IGNORE INTO user_roles SET id = ?', userInfo.id);
+  if (user == null)
+    return response.status(500).json({ error: 'Could not get user info from osu! API' });
+
+  request.session.userId = user.id;
+
+  await db.query('INSERT IGNORE INTO user_roles SET id = ?', user.id);
   //await log(logTypes.analytic, '{creator} logged in', userInfo.id);
 
   response.redirect(backUrl || '/');

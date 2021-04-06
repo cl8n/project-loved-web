@@ -195,8 +195,8 @@ class Osu {
     let dbFieldsWithPK;
 
     if (user == null) {
-      if (userId == null)
-        throw 'No userId provided and no user found';
+      if (userId == null || typeof userId === 'string')
+        return null;
 
       const existingUser = await db.queryOne('SELECT * FROM users WHERE id = ?', userId);
 

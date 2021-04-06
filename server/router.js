@@ -324,19 +324,19 @@ router.post('/lock-nominations', guards.isCaptain, asyncHandler(async (req, res)
 router.post('/add-user', guards.isGod, asyncHandler(async (req, res) => {
   const user = await res.locals.osu.createOrRefreshUser(req.body.name);
 
+  if (user == null)
+    return res.status(422).json({ error: 'Invalid username' });
+
   await db.query('INSERT IGNORE INTO user_roles SET id = ?', user.id);
 
-  const roles = await db.queryOne(`
+  user.roles = await db.queryOne(`
     SELECT *
     FROM user_roles
     WHERE id = ?
   `, user.id);
-  delete roles.id;
+  delete user.roles.id;
 
-  res.json({
-    ...user,
-    roles,
-  });
+  res.json(user);
 }));
 
 router.post('/add-round', guards.isNewsAuthor, asyncHandler(async (req, res) => {
