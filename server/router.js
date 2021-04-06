@@ -172,11 +172,10 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
       ON beatmapset_creators.creator_id = users.id
     WHERE nominations.id = ?
   `, queryResult.insertId);
-  const nomination = await db.queryOneWithGroups(`
-    SELECT nominations.*, NULL AS description_author, NULL AS metadata_assignee,
-      NULL AS moderator_assignee
+  const nomination = await db.queryOne(`
+    SELECT *, NULL AS description_author, NULL AS metadata_assignee, NULL AS moderator_assignee
     FROM nominations
-    WHERE nominations.id = ?
+    WHERE id = ?
   `, queryResult.insertId);
   const beatmaps = await db.query(`
     SELECT *, FALSE AS excluded
