@@ -13,6 +13,7 @@ import { PicksRoundListing } from './PicksRoundListing';
 import { ProtectedRoute } from './ProtectedRoute';
 import './style.css';
 import Statistics from "./statistics";
+import SubmissionForm from './submission-form';
 
 registerTextareaAutoHeightTrigger();
 
@@ -24,7 +25,7 @@ render(
         <main className='big-center'>
           <Switch>
             <Route exact path='/'><NotReady /></Route>
-            <Route path='/submit'><NotReady /></Route>
+            <Route path='/submit'><NotReady><SubmissionForm /></NotReady></Route>
             <Route path='/mappers'><NotReady /></Route>
             <Route path='/captains'><Captains /></Route>
             <Route path='/statistics'><Statistics /></Route>

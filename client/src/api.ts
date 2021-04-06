@@ -46,6 +46,12 @@ export function addRound(): Response<{ id: number; }> {
     .post('/api/add-round');
 }
 
+export function addSubmission(beatmapsetId: number, gameModes: GameMode[], reason: string | null): Response<{ id: number; submitted_beatmapset_id: number; }> {
+  return superagent
+    .post('/api/submit-map')
+    .send({ beatmapsetId, gameModes, reason });
+}
+
 export function addUser(name: string): Response<IUser> {
   return superagent
     .post('/api/add-user')
