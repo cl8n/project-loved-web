@@ -116,12 +116,6 @@ export function updateApiObjectBulk<T extends ApiObjectType>(type: T, ids: numbe
     .send({ type, ids });
 }
 
-export function updateCreators(beatmapsetId: number, gameMode: GameMode, creatorIds: number[]): Response<IUser[]> {
-  return superagent
-    .post('/api/update-creators')
-    .send({ beatmapsetId, gameMode, creatorIds });
-}
-
 export function updateExcludedBeatmaps(nominationId: number, excludedBeatmapIds: number[]): Response {
   return superagent
     .post('/api/update-excluded-beatmaps')
