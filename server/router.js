@@ -76,8 +76,7 @@ router.get('/nominations', asyncHandler(async (req, res) => {
   );
   const nominations = await db.queryWithGroups(`
     SELECT nominations.*, beatmapsets:beatmapset, description_authors:description_author,
-      metadata_assignees:metadata_assignee, moderator_assignees:moderator_assignee,
-      nominators:nominator
+      metadata_assignees:metadata_assignee, moderator_assignees:moderator_assignee
     FROM nominations
     INNER JOIN beatmapsets
       ON nominations.beatmapset_id = beatmapsets.id
@@ -87,8 +86,6 @@ router.get('/nominations', asyncHandler(async (req, res) => {
       ON nominations.metadata_assignee_id = metadata_assignees.id
     LEFT JOIN users AS moderator_assignees
       ON nominations.moderator_assignee_id = moderator_assignees.id
-    INNER JOIN users AS nominators
-      ON nominations.nominator_id = nominators.id
     WHERE nominations.round_id = ?
     ORDER BY nominations.order ASC, nominations.id ASC
   `, req.query.roundId);
@@ -156,7 +153,6 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
   const queryResult = await db.query('INSERT INTO nominations SET ?', {
     beatmapset_id: beatmapset.id,
     game_mode: req.body.gameMode,
-    nominator_id: res.locals.user.id,
     order: nominationCount,
     parent_id: req.body.parentId,
     round_id: req.body.roundId,
@@ -178,10 +174,8 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
   `, queryResult.insertId);
   const nomination = await db.queryOneWithGroups(`
     SELECT nominations.*, NULL AS description_author, NULL AS metadata_assignee,
-      NULL AS moderator_assignee, nominators:nominator
+      NULL AS moderator_assignee
     FROM nominations
-    INNER JOIN users AS nominators
-      ON nominations.nominator_id = nominators.id
     WHERE nominations.id = ?
   `, queryResult.insertId);
   const beatmaps = await db.query(`
