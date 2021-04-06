@@ -456,3 +456,7 @@ tr.sticky > th::after {
 tr.sticky > th:last-child::after {
     right: 0;
 }
+
+.list-input-row {
+    margin-bottom: 0.25em;
+}

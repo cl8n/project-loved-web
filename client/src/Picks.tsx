@@ -6,7 +6,7 @@ import { autoHeightRef } from './auto-height';
 import { BBCode } from './BBCode';
 import { BeatmapInline } from './BeatmapInline';
 import { Form, FormSubmitHandler } from './dom-helpers';
-import { DescriptionState, GameMode, ICaptain, INomination, IRound, IUser, MetadataState, ModeratorState, PartialWithId } from './interfaces';
+import { DescriptionState, GameMode, ICaptain, INomination, IRound, IUser, IUserWithoutRoles, MetadataState, ModeratorState, PartialWithId } from './interfaces';
 import { Modal } from './Modal';
 import { Never } from './Never';
 import { Orderable } from './Orderable';
@@ -17,6 +17,7 @@ import Header from './round/Header';
 import { UserInline } from './UserInline';
 import Help from "./Help";
 import EditNominators from './nomination/EditNominators';
+import ListInput from './ListInput';
 
 type ListInlineProps<T> = {
   array: T[];
@@ -428,12 +429,20 @@ type EditMetadataProps = {
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
 };
 
+function nameFromUser(user: IUserWithoutRoles) {
+  return user.name;
+}
+
+function renderUser(user: IUserWithoutRoles) {
+  return <UserInline user={user} />;
+}
+
 function EditMetadata({ nomination, onNominationUpdate }: EditMetadataProps) {
   const [busy, setBusy] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
   const onSubmit: FormSubmitHandler = (form, then) => {
-    return updateNominationMetadata(nomination.id, form.state, form.artist, form.title)
+    return updateNominationMetadata(nomination.id, form.state, form.artist, form.title, form.creators)
       .then((response) => onNominationUpdate(response.body))
       .then(then)
       .catch((error) => window.alert(apiErrorMessage(error)))
@@ -482,7 +491,24 @@ function EditMetadata({ nomination, onNominationUpdate }: EditMetadataProps) {
               <td><input type='text' name='title' defaultValue={nomination.overwrite_title} /></td>
             </tr>
             <tr>
-              <td><label htmlFor='creators'>Creators (not working yet)</label></td>
+              <td>
+                <label htmlFor='creators'>
+                  Creators
+                </label>
+                {' '}
+                <Help text='Do not list creators for excluded difficulties or other game modes. Even the mapset host can be removed if necessary.' />
+              </td>
+              <td>
+                <ListInput
+                  items={nomination.beatmapset_creators}
+                  itemValue={nameFromUser}
+                  itemRender={renderUser}
+                  name='creators'
+                  placeholder='Username'
+                  type='text'
+                  valueType='string'
+                />
+              </td>
             </tr>
           </table>
           <button type='submit' className='modal-submit-button'>

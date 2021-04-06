@@ -242,6 +242,19 @@ router.post('/nomination-edit-description', asyncHandler(async (req, res) => {
 }));
 
 router.post('/nomination-edit-metadata', guards.isMetadataChecker, asyncHandler(async (req, res) => {
+  const creators = [];
+
+  if (req.body.creators != null && req.body.creators.length > 0) {
+    for (const creatorName of req.body.creators) {
+      const creator = await res.locals.osu.createOrRefreshUser(creatorName);
+
+      if (creator == null)
+        return res.status(422).json({ error: `Invalid creator username: ${creatorName}` });
+
+      creators.push(creator);
+    }
+  }
+
   await db.query(`
     UPDATE nominations
     SET metadata_state = ?, overwrite_artist = ?, overwrite_title = ?
@@ -254,10 +267,22 @@ router.post('/nomination-edit-metadata', guards.isMetadataChecker, asyncHandler(
   ]);
 
   const nomination = await db.queryOne(`
-    SELECT id, metadata_state, overwrite_artist, overwrite_title
+    SELECT id, beatmapset_id, game_mode, metadata_state, overwrite_artist, overwrite_title
     FROM nominations
     WHERE id = ?
   `, req.body.nominationId);
+
+  await db.query('DELETE FROM beatmapset_creators WHERE beatmapset_id = ? AND game_mode = ?', [
+    nomination.beatmapset_id,
+    nomination.game_mode,
+  ]);
+
+  if (creators.length > 0)
+    await db.query('INSERT INTO beatmapset_creators VALUES ?', [
+      creators.map((user) => [nomination.beatmapset_id, user.id, nomination.game_mode]),
+    ]);
+
+  nomination.beatmapset_creators = creators;
 
   res.json(nomination);
 }));

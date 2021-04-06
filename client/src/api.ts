@@ -9,6 +9,7 @@ import {
   IPollResult,
   IRound,
   IUser,
+  IUserWithoutRoles,
   MetadataState,
   PartialWithId,
   PartialWithoutId
@@ -128,10 +129,10 @@ export function updateNominationDescription(nominationId: number, description: s
     .send({ description, nominationId });
 }
 
-export function updateNominationMetadata(nominationId: number, state: MetadataState, artist: string | null, title: string | null): Response<PartialWithId<INomination>> {
+export function updateNominationMetadata(nominationId: number, state: MetadataState, artist: string | null, title: string | null, creators: IUserWithoutRoles[] | undefined): Response<PartialWithId<INomination>> {
   return superagent
     .post('/api/nomination-edit-metadata')
-    .send({ artist, nominationId, state, title });
+    .send({ artist, creators, nominationId, state, title });
 }
 
 export function updateNominationOrder(orders: { [nominationId: number]: number }): Response {
