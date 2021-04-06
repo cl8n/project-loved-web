@@ -60,21 +60,23 @@ export function Form({
 
     for (let i = 0; i < controlsCount; i++) {
       const control = controls[i] as any; // TODO: typing
+      const arrayType = !!control.dataset.array || control.type === 'checkbox';
 
       if (control.type === 'submit')
         continue;
 
-      if (control.type === 'checkbox' && values[control.name] == null)
+      if (arrayType && values[control.name] == null)
         values[control.name] = [];
 
       if (!control.checked && (control.type === 'checkbox' || control.type === 'radio'))
         continue;
 
-      let value = valueCasts[control.dataset.valueType as keyof typeof valueCasts ?? 'string'](control.value);
+      const value = valueCasts[control.dataset.valueType as keyof typeof valueCasts ?? 'string'](control.value);
 
-      if (control.type === 'checkbox')
-        values[control.name].push(value);
-      else
+      if (arrayType) {
+        if (value != null)
+          values[control.name].push(value);
+      } else
         values[control.name] = value;
     }
 
