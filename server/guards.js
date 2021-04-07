@@ -1,6 +1,8 @@
 const { createHash, timingSafeEqual } = require('crypto');
 const config = require('./config.json');
 
+const allRoles = ['captain', 'metadata', 'moderator', 'news'];
+
 function isGod(method, user) {
   return user.roles.god || (method === 'GET' && user.roles.god_readonly);
 }
@@ -50,7 +52,17 @@ module.exports.isCaptainForGameMode = function (request, response, next) {
   next();
 };
 
-module.exports.isAnything = hasRoleMiddleware(['captain', 'metadata', 'moderator', 'news'], 'Must have a role');
+module.exports.roles = function (request, response) {
+  const roles = {};
+
+  for (const role of allRoles) {
+    roles[role] = hasRole(request.method, response.locals.user, [role]);
+  }
+
+  return roles;
+};
+
+module.exports.isAnything = hasRoleMiddleware(allRoles, 'Must have a role');
 module.exports.isCaptain = hasRoleMiddleware(['captain'], 'Must be a captain');
 module.exports.isGod = hasRoleMiddleware([], 'Must be God');
 module.exports.isMetadataChecker = hasRoleMiddleware(['metadata'], 'Must be a metadata checker');

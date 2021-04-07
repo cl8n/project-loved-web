@@ -234,7 +234,12 @@ router.post('/nomination-edit-description', asyncHandler(async (req, res) => {
   res.json(nomination);
 }));
 
-router.post('/nomination-edit-metadata', guards.isMetadataChecker, asyncHandler(async (req, res) => {
+router.post('/nomination-edit-metadata', asyncHandler(async (req, res) => {
+  const roles = guards.roles(req, res);
+
+  if (!roles.metadata && !roles.news)
+    return res.status(403).json({ error: 'Must be a metadata checker or news author' });
+
   const creators = [];
 
   if (req.body.creators != null && req.body.creators.length > 0) {
@@ -248,16 +253,18 @@ router.post('/nomination-edit-metadata', guards.isMetadataChecker, asyncHandler(
     }
   }
 
-  await db.query(`
-    UPDATE nominations
-    SET metadata_state = ?, overwrite_artist = ?, overwrite_title = ?
-    WHERE id = ?
-  `, [
-    req.body.state,
-    req.body.artist,
-    req.body.title,
-    req.body.nominationId,
-  ]);
+  if (roles.metadata) {
+    await db.query(`
+      UPDATE nominations
+      SET metadata_state = ?, overwrite_artist = ?, overwrite_title = ?
+      WHERE id = ?
+    `, [
+      req.body.state,
+      req.body.artist,
+      req.body.title,
+      req.body.nominationId,
+    ]);
+  }
 
   const nomination = await db.queryOne(`
     SELECT id, beatmapset_id, game_mode, metadata_state, overwrite_artist, overwrite_title
