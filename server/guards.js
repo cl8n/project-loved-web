@@ -53,7 +53,13 @@ module.exports.isCaptainForGameMode = function (request, response, next) {
 };
 
 module.exports.roles = function (request, response) {
-  const roles = {};
+  function isCaptain(gameMode) {
+    return isGod(request.method, response.locals.user) || response.locals.user.roles.captain_game_mode === gameMode;
+  }
+
+  const roles = {
+    gameModes: [0, 1, 2, 3].map((gameMode) => isCaptain(gameMode)),
+  };
 
   for (const role of allRoles) {
     roles[role] = hasRole(request.method, response.locals.user, [role]);

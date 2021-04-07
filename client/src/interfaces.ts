@@ -1,6 +1,5 @@
 export enum DescriptionState {
-  notWritten,
-  written,
+  notReviewed,
   reviewed,
 }
 

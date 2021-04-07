@@ -206,11 +206,25 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
 }));
 
 router.post('/nomination-edit-description', asyncHandler(async (req, res) => {
-  const { description: prevDescription, description_author_id: prevAuthorId } = await db.queryOne(`
-    SELECT description, description_author_id
+  const existingNomination = await db.queryOne(`
+    SELECT description, description_author_id, description_state, game_mode
     FROM nominations
     WHERE id = ?
   `, req.body.nominationId);
+
+  if (existingNomination == null)
+    return res.status(422).json({ error: 'Invalid nomination ID' });
+
+  const {
+    description: prevDescription,
+    description_author_id: prevAuthorId,
+    description_state: prevState,
+    game_mode: gameMode,
+  } = existingNomination;
+  const roles = guards.roles(req, res);
+
+  if (!(prevState !== 1 && roles.gameModes[gameMode]) && !(prevDescription != null && roles.news))
+    return res.status(403).send();
 
   await db.query(`
     UPDATE nominations

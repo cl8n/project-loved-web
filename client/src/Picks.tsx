@@ -298,7 +298,7 @@ function Nomination({ assigneesApi, captainsApi, nomination, onNominationDelete,
   const canAssignMetadata = !metadataDone && canWriteAs(authUser, 'metadata', 'news');
   const canAssignModeration = !moderationDone && canWriteAs(authUser, 'moderator', 'news');
   const canDelete = !anyDone && isNominator;
-  const canEditDescription = !descriptionDone && isCaptainForMode(authUser, nomination.game_mode);
+  const canEditDescription = (!descriptionDone && isCaptainForMode(authUser, nomination.game_mode)) || (nomination.description != null && canWriteAs(authUser, 'news'));
   const canEditDifficulties = !metadataDone && isCaptainForMode(authUser, nomination.game_mode);
   const canEditMetadata = !metadataDone && canWriteAs(authUser, nomination.metadata_assignee?.id, 'news');
   const canEditModeration = !moderationDone && canWriteAs(authUser, nomination.moderator_assignee?.id);
