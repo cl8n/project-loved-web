@@ -124,13 +124,13 @@ router.get('/nominations', asyncHandler(async (req, res) => {
 router.post('/nomination-submit', asyncHandler(async (req, res) => {
   // TODO: can this be done with foreign constraint instead?
   if (req.body.parentId != null) {
-    const parentNominations = await db.query(`
+    const parentNomination = await db.queryOne(`
       SELECT 1
       FROM nominations
       WHERE id = ?
     `, req.body.parentId);
 
-    if (parentNominations.length !== 1)
+    if (parentNomination == null)
       return res.status(422).json({ error: 'Invalid parent nomination ID' });
   }
 
@@ -142,6 +142,22 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
 
   if (!beatmapset.game_modes.has(req.body.gameMode)) {
     return res.status(422).json({ error: `Beatmapset has no beatmaps in game mode ${req.body.gameMode}` });
+  }
+
+  const existingNomination = await db.queryOne(`
+    SELECT 1
+    FROM nominations
+    WHERE round_id = ?
+      AND game_mode = ?
+      AND beatmapset_id = ?
+  `, [
+    req.body.roundId,
+    req.body.gameMode,
+    beatmapset.id,
+  ]);
+
+  if (existingNomination != null) {
+    return res.status(422).json({ error: "Duplicate nomination. Refresh the page if you don't see it" });
   }
 
   const nominationCount = (await db.queryOne(`
