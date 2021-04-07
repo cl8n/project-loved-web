@@ -197,6 +197,7 @@ class Osu {
         play_count: beatmap.playcount,
         ranked_status: beatmap.ranked,
         star_rating: beatmap.difficulty_rating >= 9999 ? '9999.99' : beatmap.difficulty_rating.toFixed(2),
+        total_length: beatmap.total_length,
         version: beatmap.version,
       };
       const dbFieldsWithPK = { ...dbFields, id: beatmap.id };
