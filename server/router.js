@@ -239,7 +239,7 @@ router.post('/nomination-edit-metadata', guards.isMetadataChecker, asyncHandler(
 
   if (req.body.creators != null && req.body.creators.length > 0) {
     for (const creatorName of req.body.creators) {
-      const creator = await res.locals.osu.createOrRefreshUser(creatorName);
+      const creator = await res.locals.osu.createOrRefreshUser(creatorName, true);
 
       if (creator == null)
         return res.status(422).json({ error: `Invalid creator username: ${creatorName}` });
@@ -340,7 +340,7 @@ router.post('/lock-nominations', guards.isCaptain, asyncHandler(async (req, res)
 
 //#region admin
 router.post('/add-user', guards.isGod, asyncHandler(async (req, res) => {
-  const user = await res.locals.osu.createOrRefreshUser(req.body.name);
+  const user = await res.locals.osu.createOrRefreshUser(req.body.name, true);
 
   if (user == null)
     return res.status(422).json({ error: 'Invalid username' });
@@ -507,10 +507,10 @@ router.post('/update-api-object', guards.isGod, asyncHandler(async (req, res) =>
 
   switch (req.body.type) {
     case 'beatmapset':
-      apiObject = await res.locals.osu.createOrRefreshBeatmapset(req.body.id);
+      apiObject = await res.locals.osu.createOrRefreshBeatmapset(req.body.id, undefined, true);
       break;
     case 'user':
-      apiObject = await res.locals.osu.createOrRefreshUser(req.body.id);
+      apiObject = await res.locals.osu.createOrRefreshUser(req.body.id, false, true);
       break;
   }
 
@@ -522,24 +522,19 @@ router.post('/update-api-object', guards.isGod, asyncHandler(async (req, res) =>
 }));
 
 router.post('/update-api-object-bulk', guards.isGod, (req, res) => {
-  let fn;
-
-  switch (req.body.type) {
-    case 'beatmapset':
-      fn = res.locals.osu.createOrRefreshBeatmapset;
-      break;
-    case 'user':
-      fn = res.locals.osu.createOrRefreshUser;
-      break;
-  }
-
-  fn = fn.bind(res.locals.osu);
+  let apiObject;
+  const type = req.body.type;
 
   (async () => {
-    let apiObject;
-
     for (const id of req.body.ids) {
-      apiObject = await fn(id);
+      switch (type) {
+        case 'beatmapset':
+          apiObject = await res.locals.osu.createOrRefreshBeatmapset(id, undefined, true);
+          break;
+        case 'user':
+          apiObject = await res.locals.osu.createOrRefreshUser(id, false, true);
+          break;
+      }
 
       if (apiObject == null)
         console.log(`Could not update ${id} from bulk request`);

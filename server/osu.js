@@ -6,6 +6,8 @@ const db = require('./db');
 const baseUrl = 'https://osu.ppy.sh';
 const apiBaseUrl = `${baseUrl}/api/v2`;
 const apiScopes = 'identify public';
+const retainApiObjectsFor = 2419200000; // 28 days
+const refreshTokenThreshold = 3600000; // 1 hour
 
 function authRedirectUrl(authState) {
   return `${baseUrl}/oauth/authorize?` + qs.stringify({
@@ -71,7 +73,7 @@ class Osu {
   }
 
   async tryRefreshToken() {
-    if (Date.now() >= this.#tokenExpiresAt - 60000) {
+    if (Date.now() >= this.#tokenExpiresAt - refreshTokenThreshold) {
       const tokenInfo = serializeTokenResponse(
         await superagent
           .post(`${baseUrl}/oauth/token`)
@@ -104,16 +106,29 @@ class Osu {
     return response.body;
   }
 
-  async _getUser(userId) {
+  async _getUser(userIdOrName) {
     const response = await this.#apiAgent
-      .get(apiBaseUrl + (userId ? `/users/${userId}` : '/me'))
+      .get(apiBaseUrl + (userIdOrName != null ? `/users/${userIdOrName}` : '/me'))
 
     return response.body;
   }
   //#endregion
 
   //#region Application requests
-  async createOrRefreshBeatmapset(beatmapsetId, creatorGameMode) {
+  async createOrRefreshBeatmapset(beatmapsetId, creatorGameMode, forceUpdate = false) {
+    if (!forceUpdate) {
+      const currentInDb = db.queryOne('SELECT * FROM beatmapsets WHERE id = ?', beatmapsetId);
+
+      if (currentInDb != null && Date.now() <= currentInDb.api_fetched_at.getTime() + retainApiObjectsFor) {
+        const beatmaps = db.query('SELECT game_mode FROM beatmaps WHERE beatmapset_id = ?', beatmapsetId);
+
+        return {
+          ...currentInDb,
+          game_modes: new Set(beatmaps.map((beatmap) => beatmap.game_mode)),
+        };
+      }
+    }
+
     let beatmapset;
     try {
       beatmapset = await this._getBeatmapset(beatmapsetId);
@@ -121,7 +136,7 @@ class Osu {
       return null;
     }
 
-    await this.createOrRefreshUser(beatmapset.user_id);
+    await this.createOrRefreshUser(beatmapset.user_id, false, forceUpdate);
 
     const dbFields = {
       api_fetched_at: new Date(),
@@ -185,23 +200,39 @@ class Osu {
     };
   }
 
-  async createOrRefreshUser(userId) {
+  async createOrRefreshUser(userIdOrName, byName = false, forceUpdate = false) {
+    if (!forceUpdate && userIdOrName != null) {
+      const currentInDb = db.queryOne('SELECT * FROM users WHERE ?? = ?', [
+        byName ? 'name' : 'id',
+        userIdOrName,
+      ]);
+
+      if (currentInDb != null && Date.now() <= currentInDb.api_fetched_at.getTime() + retainApiObjectsFor)
+        return currentInDb;
+    }
+
     let user;
     try {
-      user = await this._getUser(userId);
+      user = await this._getUser(userIdOrName);
     } catch {}
 
     let dbFields;
     let dbFieldsWithPK;
 
     if (user == null) {
-      if (userId == null || typeof userId === 'string')
+      if (userIdOrName == null)
         return null;
 
-      const existingUser = await db.queryOne('SELECT * FROM users WHERE id = ?', userId);
+      const currentInDb = db.queryOne('SELECT * FROM users WHERE ?? = ?', [
+        byName ? 'name' : 'id',
+        userIdOrName,
+      ]);
 
-      if (existingUser != null)
-        return existingUser;
+      if (currentInDb != null)
+        return currentInDb;
+
+      if (byName)
+        return null;
 
       dbFields = {
         api_fetched_at: new Date(),
@@ -210,7 +241,7 @@ class Osu {
         country: '__',
         name: 'Banned User',
       };
-      dbFieldsWithPK = { ...dbFields, id: userId };
+      dbFieldsWithPK = { ...dbFields, id: userIdOrName };
     } else {
       dbFields = {
         api_fetched_at: new Date(),
