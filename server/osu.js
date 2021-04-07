@@ -54,6 +54,23 @@ class Osu {
   }
 
   //#region Initializers
+  async getClientCredentialsToken() {
+    const tokenInfo = serializeTokenResponse(
+      await superagent
+        .post(`${baseUrl}/oauth/token`)
+        .type('form')
+        .send({
+          client_id: config.osuApiClientId,
+          client_secret: config.osuApiClientSecret,
+          grant_type: 'client_credentials',
+          scope: 'public',
+        })
+    );
+
+    this._assignTokenInfo(tokenInfo);
+    return tokenInfo;
+  }
+
   async getToken(authorizationCode) {
     const tokenInfo = serializeTokenResponse(
       await superagent

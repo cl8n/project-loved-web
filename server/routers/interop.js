@@ -2,6 +2,7 @@ const { Router } = require('express');
 const db = require('../db');
 const { asyncHandler } = require('../express-helpers');
 const { groupBy } = require('../helpers');
+const { Osu } = require('../osu');
 
 const router = Router();
 
@@ -107,6 +108,46 @@ router.get('/rounds-available', asyncHandler(async (_, res) => {
       ORDER BY rounds.id DESC
     `),
   );
+}));
+
+router.post('/update-beatmapsets', asyncHandler(async (req, res) => {
+  if (req.body.roundId == null)
+    return res.status(422).json({ error: 'Missing round ID' });
+
+  const round = await db.queryOne('SELECT 1 FROM rounds WHERE id = ?', req.body.roundId);
+
+  if (round == null)
+    return res.status(422).json({ error: 'Invalid round ID' });
+
+  const beatmapsets = await db.query(`
+    SELECT beatmapsets.id
+    FROM beatmapsets
+    INNER JOIN nominations
+      ON beatmapsets.id = nominations.beatmapset_id,
+    WHERE nominations.round_id = ?
+  `, req.body.roundId);
+  const beatmapsetIds = [...new Set(beatmapsets.map((beatmapset) => beatmapset.id))];
+
+  const osu = new Osu();
+  await osu.getClientCredentialsToken();
+
+  res
+    .status(200)
+    .set('Content-Type', 'text/plain');
+
+  for (let i = 0; i < beatmapsetIds.length; i++) {
+    const beatmapset = await osu.createOrRefreshBeatmapset(beatmapsetIds[i], undefined, true);
+
+    if (beatmapset == null)
+      res.write(`Failed to update beatmapset #${beatmapsetIds[i]}\n`);
+    else
+      res.write(`Updated beatmapset #${beatmapsetIds[i]}\n`);
+
+    if (i < beatmapsetIds.length - 1)
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+  }
+
+  res.end();
 }));
 
 module.exports = router;
