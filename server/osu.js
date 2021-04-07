@@ -117,10 +117,10 @@ class Osu {
   //#region Application requests
   async createOrRefreshBeatmapset(beatmapsetId, creatorGameMode, forceUpdate = false) {
     if (!forceUpdate) {
-      const currentInDb = db.queryOne('SELECT * FROM beatmapsets WHERE id = ?', beatmapsetId);
+      const currentInDb = await db.queryOne('SELECT * FROM beatmapsets WHERE id = ?', beatmapsetId);
 
       if (currentInDb != null && Date.now() <= currentInDb.api_fetched_at.getTime() + retainApiObjectsFor) {
-        const beatmaps = db.query('SELECT game_mode FROM beatmaps WHERE beatmapset_id = ?', beatmapsetId);
+        const beatmaps = await db.query('SELECT game_mode FROM beatmaps WHERE beatmapset_id = ?', beatmapsetId);
 
         return {
           ...currentInDb,
@@ -202,7 +202,7 @@ class Osu {
 
   async createOrRefreshUser(userIdOrName, byName = false, forceUpdate = false) {
     if (!forceUpdate && userIdOrName != null) {
-      const currentInDb = db.queryOne('SELECT * FROM users WHERE ?? = ?', [
+      const currentInDb = await db.queryOne('SELECT * FROM users WHERE ?? = ?', [
         byName ? 'name' : 'id',
         userIdOrName,
       ]);
@@ -223,7 +223,7 @@ class Osu {
       if (userIdOrName == null)
         return null;
 
-      const currentInDb = db.queryOne('SELECT * FROM users WHERE ?? = ?', [
+      const currentInDb = await db.queryOne('SELECT * FROM users WHERE ?? = ?', [
         byName ? 'name' : 'id',
         userIdOrName,
       ]);
