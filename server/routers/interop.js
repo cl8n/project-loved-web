@@ -123,31 +123,28 @@ router.post('/update-beatmapsets', asyncHandler(async (req, res) => {
     SELECT beatmapsets.id
     FROM beatmapsets
     INNER JOIN nominations
-      ON beatmapsets.id = nominations.beatmapset_id,
+      ON beatmapsets.id = nominations.beatmapset_id
     WHERE nominations.round_id = ?
   `, req.body.roundId);
   const beatmapsetIds = [...new Set(beatmapsets.map((beatmapset) => beatmapset.id))];
+  const messages = [];
 
   const osu = new Osu();
   await osu.getClientCredentialsToken();
-
-  res
-    .status(200)
-    .set('Content-Type', 'text/plain');
 
   for (let i = 0; i < beatmapsetIds.length; i++) {
     const beatmapset = await osu.createOrRefreshBeatmapset(beatmapsetIds[i], undefined, true);
 
     if (beatmapset == null)
-      res.write(`Failed to update beatmapset #${beatmapsetIds[i]}\n`);
+      messages.push(`Failed to update beatmapset #${beatmapsetIds[i]}`);
     else
-      res.write(`Updated beatmapset #${beatmapsetIds[i]}\n`);
+      messages.push(`Updated beatmapset #${beatmapsetIds[i]}`);
 
     if (i < beatmapsetIds.length - 1)
       await new Promise((resolve) => setTimeout(resolve, 1500));
   }
 
-  res.end();
+  res.json(messages);
 }));
 
 module.exports = router;

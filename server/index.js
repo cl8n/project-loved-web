@@ -30,6 +30,8 @@ const sessionStore = new MysqlSessionStore({
   expiration: 604800000, // 7 days
 }, db.connection);
 
+app.use(express.json());
+
 app.use(guestRouter);
 
 app.use('/local-interop', hasLocalInteropKey, interopRouter);
@@ -46,8 +48,6 @@ app.use(session({
   secret: config.sessionSecret,
   store: sessionStore,
 }));
-
-app.use(express.json());
 
 app.get('/auth/begin', function (request, response) {
   if (request.session.userId != null)
