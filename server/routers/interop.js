@@ -91,6 +91,8 @@ router.get('/data', asyncHandler(async (req, res) => {
   res.json({
     discord_webhooks: config.discordWebhooks,
     nominations,
+    // TODO: store results posts per round, and query previous round for their results
+    //       REMEMBER TO UPDATE CONFIG EACH ROUND UNTIL THEN!
     results_posts: config.resultsPosts,
     round,
   });
