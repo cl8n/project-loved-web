@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const config = require('../config.json')
 const db = require('../db');
 const { asyncHandler } = require('../express-helpers');
 const { groupBy } = require('../helpers');
@@ -88,7 +89,9 @@ router.get('/data', asyncHandler(async (req, res) => {
   });
 
   res.json({
+    discord_webhooks: config.discordWebhooks,
     nominations,
+    results_posts: config.resultsPosts,
     round,
   });
 }));

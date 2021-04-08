@@ -4,10 +4,22 @@
   "dbPassword": "",
   "dbPort": 3306,
   "dbUser": "",
+  "discordWebhooks": [
+    null,
+    null,
+    null,
+    null
+  ],
   "localInteropKey": "",
   "osuApiClientId": 0,
   "osuApiClientRedirect": "<yourHost>/api/auth/callback",
   "osuApiClientSecret": "",
   "port": 3333,
+  "resultsPosts": [
+    "",
+    "",
+    "",
+    ""
+  ],
   "sessionSecret": ""
 }
