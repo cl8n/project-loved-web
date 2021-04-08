@@ -134,7 +134,7 @@ router.post('/nomination-submit', asyncHandler(async (req, res) => {
       return res.status(422).json({ error: 'Invalid parent nomination ID' });
   }
 
-  const beatmapset = await res.locals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId, req.body.gameMode);
+  const beatmapset = await res.locals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId);
 
   if (beatmapset == null) {
     return res.status(422).json({ error: 'Invalid beatmapset ID' });
@@ -544,7 +544,7 @@ router.post('/update-api-object', guards.isGod, asyncHandler(async (req, res) =>
 
   switch (req.body.type) {
     case 'beatmapset':
-      apiObject = await res.locals.osu.createOrRefreshBeatmapset(req.body.id, undefined, true);
+      apiObject = await res.locals.osu.createOrRefreshBeatmapset(req.body.id, true);
       break;
     case 'user':
       apiObject = await res.locals.osu.createOrRefreshUser(req.body.id, false, true);
@@ -566,7 +566,7 @@ router.post('/update-api-object-bulk', guards.isGod, (req, res) => {
     for (const id of req.body.ids) {
       switch (type) {
         case 'beatmapset':
-          apiObject = await res.locals.osu.createOrRefreshBeatmapset(id, undefined, true);
+          apiObject = await res.locals.osu.createOrRefreshBeatmapset(id, true);
           break;
         case 'user':
           apiObject = await res.locals.osu.createOrRefreshUser(id, false, true);

@@ -138,7 +138,7 @@ router.post('/update-beatmapsets', asyncHandler(async (req, res) => {
   await osu.getClientCredentialsToken();
 
   for (let i = 0; i < beatmapsetIds.length; i++) {
-    const beatmapset = await osu.createOrRefreshBeatmapset(beatmapsetIds[i], undefined, true);
+    const beatmapset = await osu.createOrRefreshBeatmapset(beatmapsetIds[i], true);
 
     if (beatmapset == null)
       messages.push(`Failed to update beatmapset #${beatmapsetIds[i]}`);

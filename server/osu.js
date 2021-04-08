@@ -132,7 +132,7 @@ class Osu {
   //#endregion
 
   //#region Application requests
-  async createOrRefreshBeatmapset(beatmapsetId, creatorGameMode, forceUpdate = false) {
+  async createOrRefreshBeatmapset(beatmapsetId, forceUpdate = false) {
     if (!forceUpdate) {
       const currentInDb = await db.queryOne('SELECT * FROM beatmapsets WHERE id = ?', beatmapsetId);
 
@@ -177,17 +177,11 @@ class Osu {
       dbFields,
     ]);
 
-    if (creatorGameMode != null) {
-      try {
-        await db.query('INSERT INTO beatmapset_creators SET ?', {
-          beatmapset_id: beatmapset.id,
-          creator_id: beatmapset.user_id,
-          game_mode: creatorGameMode,
-        });
-      } catch {}
-    }
+    const gameModes = new Set();
 
     for (const beatmap of beatmapset.beatmaps) {
+      gameModes.add(beatmap.mode_int);
+
       const dbFields = {
         beatmapset_id: beatmap.beatmapset_id,
         bpm: beatmap.bpm >= 9999 ? '9999.99' : beatmap.bpm.toFixed(2),
@@ -211,6 +205,35 @@ class Osu {
         dbFields,
       ]);
     }
+
+    const creatorGameModes = (
+      await db.query(`
+        SELECT game_mode
+        FROM beatmapset_creators
+        WHERE beatmapset_id = ?
+        GROUP BY game_mode
+      `, beatmapset.id)
+    )
+      .map((gameMode) => gameMode.game_mode);
+    const creatorsToInsert = [];
+
+    for (const gameMode of gameModes) {
+      if (creatorGameModes.includes(gameMode))
+        continue;
+
+      creatorsToInsert.push([
+        beatmapset.id,
+        beatmapset.user_id,
+        gameMode,
+      ]);
+    }
+
+    if (creatorsToInsert.length > 0) {
+      await db.query('INSERT INTO beatmapset_creators VALUES ?', [creatorsToInsert]);
+    }
+
+    // TODO: If force updating beatmapset, also force update all exisitng beatmapset_creators
+    //       who aren't the mapset host
 
     return {
       ...dbFieldsWithPK,
