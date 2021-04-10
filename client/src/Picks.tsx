@@ -305,8 +305,8 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
 
   return (
     <div className='box nomination'>
-      <div className='flex-left'>
-        <span className='flex-grow'>
+      <div className='flex-bar'>
+        <span>
           <h3 className='nomination-title'>
             <BeatmapInline
               artist={nomination.overwrite_artist}
