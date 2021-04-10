@@ -329,9 +329,6 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
             </>
           }
         </span>
-        {nomination.description_author != null &&
-          <span className='flex-no-shrink'>Description by <UserInline noId user={nomination.description_author} /></span>
-        }
         <span className='flex-no-shrink'>
           Nominated by {' '}
           <ListInline
@@ -417,7 +414,13 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
           Parent nomination in {gameModeLongName(parentGameMode)}
         </div>
       }
-      <Description canEdit={canEditDescription} nominationId={nomination.id} onNominationUpdate={onNominationUpdate} text={nomination.description} />
+      <Description
+        author={nomination.description_author}
+        canEdit={canEditDescription}
+        nominationId={nomination.id}
+        onNominationUpdate={onNominationUpdate}
+        text={nomination.description}
+      />
     </div>
   );
 }
@@ -651,13 +654,14 @@ function EditDifficulties({ nomination, onNominationUpdate }: EditDifficultiesPr
 }
 
 type DescriptionProps = {
+  author?: IUserWithoutRoles;
   canEdit: boolean;
   nominationId: number;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   text?: string;
 };
 
-function Description({ canEdit, nominationId, onNominationUpdate, text }: DescriptionProps) {
+function Description({ author, canEdit, nominationId, onNominationUpdate, text }: DescriptionProps) {
   const [busy, setBusy] = useState(false);
   const [editing, setEditing] = useState(false);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -690,18 +694,43 @@ function Description({ canEdit, nominationId, onNominationUpdate, text }: Descri
     </Form>
   ) : (
     <p>
-      <BBCode text={text ?? 'No description'} />
-      {canEdit &&
-        <>
-          {' — '}
-          <button
-            type='button'
-            className={`fake-a${text == null ? ' important-bad' : ''}`}
-            onClick={() => setEditing(true)}
-          >
-            Edit
-          </button>
-        </>
+      {text == null
+        ? (
+          <>
+            No description
+            {canEdit &&
+              <>
+                {' — '}
+                <button
+                  type='button'
+                  className='fake-a important-bad'
+                  onClick={() => setEditing(true)}
+                >
+                  Edit
+                </button>
+              </>
+            }
+          </>
+        ) : (
+          <>
+            <div style={{ marginBottom: '0.25em' }}>
+              Description by <UserInline noId user={author! /* TODO: type properly */} />
+              {canEdit &&
+                <>
+                  {' — '}
+                  <button
+                    type='button'
+                    className='fake-a'
+                    onClick={() => setEditing(true)}
+                  >
+                    Edit
+                  </button>
+                </>
+              }
+            </div>
+            <BBCode text={text} />
+          </>
+        )
       }
     </p>
   );
