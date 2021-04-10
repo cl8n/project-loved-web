@@ -164,7 +164,7 @@ export function Picks() {
     return !nominationsLocked(gameMode) && isCaptainForMode(authUser, gameMode);
   };
   const canLock = (gameMode: GameMode) => {
-    return isCaptainForMode(authUser, gameMode);
+    return isCaptainForMode(authUser, gameMode) || canWriteAs(authUser, 'news');
   };
   const canOrder = canAdd;
 

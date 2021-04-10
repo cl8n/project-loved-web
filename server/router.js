@@ -364,7 +364,12 @@ router.post('/update-nominators', guards.isCaptain, asyncHandler(async (req, res
   });
 }));
 
-router.post('/lock-nominations', guards.isCaptain, asyncHandler(async (req, res) => {
+router.post('/lock-nominations', asyncHandler(async (req, res) => {
+  const roles = guards.roles(req, res);
+
+  if (!roles.news && !roles.gameModes[req.body.gameMode])
+    return res.status(403).json({ error: 'Must be a news author or captain for this game mode' });
+
   await db.query('UPDATE round_game_modes SET nominations_locked = ? WHERE round_id = ? AND game_mode = ?', [
     req.body.lock,
     req.body.roundId,
