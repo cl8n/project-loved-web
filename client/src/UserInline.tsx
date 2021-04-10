@@ -8,7 +8,7 @@ type UserInlineProps = {
 
 export function UserInline(props: UserInlineProps) {
   return (
-    <a href={`https://osu.ppy.sh/users/${props.user.id}`}>
+    <a className='no-wrap' href={`https://osu.ppy.sh/users/${props.user.id}`}>
       {!props.noFlag &&
         <>
           <img
