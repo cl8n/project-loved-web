@@ -207,6 +207,7 @@ export function Picks() {
                   key={nomination.id}
                   assigneesApi={[assigneesApi[0]?.metadatas, assigneesApi[0]?.moderators, assigneesApi[1]]}
                   captainsApi={[captainsApi[0], captainsApi[1]]}
+                  locked={nominationsLocked(gameMode)}
                   nomination={nomination}
                   onNominationDelete={onNominationDelete}
                   onNominationUpdate={onNominationUpdate}
@@ -265,13 +266,14 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
 type NominationProps = {
   assigneesApi: readonly [IUser[] | undefined, IUser[] | undefined, ResponseError | undefined];
   captainsApi: readonly [{ [P in GameMode]?: ICaptain[] } | undefined, ResponseError | undefined];
+  locked: boolean;
   nomination: INomination;
   onNominationDelete: (nominationId: number) => void;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   parentGameMode?: GameMode;
 };
 
-function Nomination({ assigneesApi, captainsApi, nomination, onNominationDelete, onNominationUpdate, parentGameMode }: NominationProps) {
+function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominationDelete, onNominationUpdate, parentGameMode }: NominationProps) {
   const authUser = useOsuAuth().user;
 
   if (authUser == null)
@@ -290,20 +292,16 @@ function Nomination({ assigneesApi, captainsApi, nomination, onNominationDelete,
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
   const metadataDone = nomination.metadata_state === MetadataState.good;
   const moderationDone = nomination.moderator_state === ModeratorState.good;
-  // TODO: also check if nominations locked
-  const allDone = descriptionDone && metadataDone && moderationDone;
-  const anyDone = descriptionDone || metadataDone || moderationDone;
 
-  // TODO support array for canwriteas
   const canAssignMetadata = !metadataDone && canWriteAs(authUser, 'metadata', 'news');
   const canAssignModeration = !moderationDone && canWriteAs(authUser, 'moderator', 'news');
-  const canDelete = !anyDone && isNominator;
+  const canDelete = !locked && !descriptionDone && !metadataDone && !moderationDone && isNominator;
   const canEditDescription = (!descriptionDone && isCaptainForMode(authUser, nomination.game_mode)) || (nomination.description != null && canWriteAs(authUser, 'news'));
-  const canEditDifficulties = !metadataDone && isCaptainForMode(authUser, nomination.game_mode);
+  const canEditDifficulties = !locked && !metadataDone && isCaptainForMode(authUser, nomination.game_mode);
   const canEditMetadata = !metadataDone && canWriteAs(authUser, nomination.metadata_assignee?.id, 'news');
   const canEditModeration = !moderationDone && canWriteAs(authUser, nomination.moderator_assignee?.id);
   // TODO restrict if nomination locked
-  const canEditNominators = isNominator;
+  const canEditNominators = !locked && isNominator;
 
   return (
     <div className='box nomination'>
