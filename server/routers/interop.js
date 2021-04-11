@@ -98,6 +98,40 @@ router.get('/data', asyncHandler(async (req, res) => {
   });
 }));
 
+router.get('/poll-result-recent', asyncHandler(async (_, res) => {
+  const pollResult = await db.queryOne(`
+    SELECT round, topic_id
+    FROM poll_results
+    ORDER BY ended_at DESC
+    LIMIT 1
+  `);
+
+  res.json(pollResult);
+}));
+
+router.post('/poll-results', asyncHandler(async (req, res) => {
+  if (!Array.isArray(req.body))
+    return res.status(422).json({ error: 'Body must be an array of poll results' });
+
+  const resultsToInsert = [];
+
+  for (const result of req.body) {
+    resultsToInsert.push([
+      result.beatmapsetId,
+      new Date(result.endedAt),
+      result.gameMode,
+      result.no,
+      result.yes,
+      result.roundId,
+      result.topicId,
+    ]);
+  }
+
+  await db.query('INSERT INTO poll_results (beatmapset_id, ended_at, game_mode, result_no, result_yes, round, topic_id) VALUES ?', [resultsToInsert]);
+
+  res.status(204).send();
+}));
+
 router.get('/rounds-available', asyncHandler(async (_, res) => {
   res.json(
     await db.query(`
