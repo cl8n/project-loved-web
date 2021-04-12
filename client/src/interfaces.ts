@@ -97,6 +97,10 @@ export interface INomination {
   round_id: number;
 }
 
+export interface INominationWithPollResult extends INomination {
+  poll_result?: Omit<IPollResult, 'beatmapset' | 'voting_threshold'>;
+}
+
 export interface IPollResult {
   id: number;
   beatmapset?: IBeatmapset;

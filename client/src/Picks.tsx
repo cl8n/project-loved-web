@@ -6,7 +6,7 @@ import { autoHeightRef } from './auto-height';
 import { BBCode } from './BBCode';
 import { BeatmapInline } from './BeatmapInline';
 import { Form, FormSubmitHandler } from './dom-helpers';
-import { DescriptionState, GameMode, ICaptain, INomination, IRound, IUser, IUserWithoutRoles, MetadataState, ModeratorState, PartialWithId } from './interfaces';
+import { DescriptionState, GameMode, ICaptain, INomination, INominationWithPollResult, IRound, IUser, IUserWithoutRoles, MetadataState, ModeratorState, PartialWithId } from './interfaces';
 import { Modal } from './Modal';
 import { Never } from './Never';
 import { Orderable } from './Orderable';
@@ -61,7 +61,7 @@ export function Picks() {
     return <span>Loading round and nominations...</span>;
 
   const { nominations, round } = roundInfo;
-  const nominationsByGameMode: { [K in GameMode]: INomination[] } = { 0: [], 1: [], 2: [], 3: [] };
+  const nominationsByGameMode: { [K in GameMode]: INominationWithPollResult[] } = { 0: [], 1: [], 2: [], 3: [] };
 
   for (const nomination of nominations)
     nominationsByGameMode[nomination.game_mode].push(nomination);
@@ -212,6 +212,7 @@ export function Picks() {
                   onNominationDelete={onNominationDelete}
                   onNominationUpdate={onNominationUpdate}
                   parentGameMode={parent?.game_mode}
+                  votingThreshold={round.game_modes[gameMode].voting_threshold}
                 />
               );
             })}
@@ -267,13 +268,14 @@ type NominationProps = {
   assigneesApi: readonly [IUser[] | undefined, IUser[] | undefined, ResponseError | undefined];
   captainsApi: readonly [{ [P in GameMode]?: ICaptain[] } | undefined, ResponseError | undefined];
   locked: boolean;
-  nomination: INomination;
+  nomination: INominationWithPollResult;
   onNominationDelete: (nominationId: number) => void;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   parentGameMode?: GameMode;
+  votingThreshold?: number;
 };
 
-function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominationDelete, onNominationUpdate, parentGameMode }: NominationProps) {
+function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominationDelete, onNominationUpdate, parentGameMode, votingThreshold }: NominationProps) {
   const authUser = useOsuAuth().user;
 
   if (authUser == null)
@@ -287,6 +289,17 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
       .then(() => onNominationDelete(nomination.id))
       .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
   };
+
+  let failedVoting = false;
+  let nominationClass = 'box nomination';
+
+  if (nomination.poll_result != null && votingThreshold != null) {
+    const { result_no, result_yes } = nomination.poll_result;
+    const yesFraction = result_yes / (result_no + result_yes);
+
+    failedVoting = yesFraction < votingThreshold;
+    nominationClass += failedVoting ? ' border-error' : ' border-success';
+  }
 
   const isNominator = canWriteAs(authUser, ...nomination.nominators.map((n) => n.id));
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
@@ -304,7 +317,7 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
   const canEditNominators = !locked && isNominator;
 
   return (
-    <div className='box nomination'>
+    <div className={nominationClass}>
       <div className='flex-bar'>
         <span>
           <h3 className='nomination-title'>

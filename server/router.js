@@ -76,7 +76,8 @@ router.get('/nominations', asyncHandler(async (req, res) => {
   );
   const nominations = await db.queryWithGroups(`
     SELECT nominations.*, beatmapsets:beatmapset, description_authors:description_author,
-      metadata_assignees:metadata_assignee, moderator_assignees:moderator_assignee
+      metadata_assignees:metadata_assignee, moderator_assignees:moderator_assignee,
+      poll_results:poll_result
     FROM nominations
     INNER JOIN beatmapsets
       ON nominations.beatmapset_id = beatmapsets.id
@@ -86,6 +87,10 @@ router.get('/nominations', asyncHandler(async (req, res) => {
       ON nominations.metadata_assignee_id = metadata_assignees.id
     LEFT JOIN users AS moderator_assignees
       ON nominations.moderator_assignee_id = moderator_assignees.id
+    LEFT JOIN poll_results
+      ON nominations.round_id = poll_results.round
+        AND nominations.game_mode = poll_results.game_mode
+        AND nominations.beatmapset_id = poll_results.beatmapset_id
     WHERE nominations.round_id = ?
     ORDER BY nominations.order ASC, nominations.id ASC
   `, req.query.roundId);

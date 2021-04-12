@@ -6,6 +6,7 @@ import {
   ICaptain,
   ILog,
   INomination,
+  INominationWithPollResult,
   IPollResult,
   IRound,
   IUser,
@@ -79,7 +80,7 @@ export function getCaptains(): Response<{ [P in GameMode]?: ICaptain[] }> {
     .get('/api/captains');
 }
 
-export function getNominations(roundId: number): Response<{ nominations: INomination[]; round: IRound; }> {
+export function getNominations(roundId: number): Response<{ nominations: INominationWithPollResult[]; round: IRound; }> {
   return superagent
     .get('/api/nominations')
     .query({ roundId });
