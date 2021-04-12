@@ -123,9 +123,13 @@ class Osu {
     return response.body;
   }
 
-  async _getUser(userIdOrName) {
-    const response = await this.#apiAgent
-      .get(apiBaseUrl + (userIdOrName != null ? `/users/${userIdOrName}` : '/me'))
+  async _getUser(userIdOrName, byName) {
+    const request = userIdOrName == null
+      ? this.#apiAgent.get(`${apiBaseUrl}/me`)
+      : this.#apiAgent
+          .get(`${apiBaseUrl}/users/${userIdOrName}`)
+          .query({ key: byName ? 'username' : 'id' });
+    const response = await request;
 
     return response.body;
   }
@@ -254,7 +258,7 @@ class Osu {
 
     let user;
     try {
-      user = await this._getUser(userIdOrName);
+      user = await this._getUser(userIdOrName, byName);
     } catch {}
 
     let dbFields;
