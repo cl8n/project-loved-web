@@ -122,6 +122,7 @@ export interface IRound {
     nominations_locked: boolean;
     voting_threshold: number;
   }>;
+  ignore_moderator_checks: boolean;
   polls_ended_at?: string;
   polls_started_at?: string;
   name: string;

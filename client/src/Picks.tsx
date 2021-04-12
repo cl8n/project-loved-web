@@ -207,6 +207,7 @@ export function Picks() {
                   key={nomination.id}
                   assigneesApi={[assigneesApi[0]?.metadatas, assigneesApi[0]?.moderators, assigneesApi[1]]}
                   captainsApi={[captainsApi[0], captainsApi[1]]}
+                  ignoreModeratorChecks={round.ignore_moderator_checks}
                   locked={nominationsLocked(gameMode)}
                   nomination={nomination}
                   onNominationDelete={onNominationDelete}
@@ -267,6 +268,7 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
 type NominationProps = {
   assigneesApi: readonly [IUser[] | undefined, IUser[] | undefined, ResponseError | undefined];
   captainsApi: readonly [{ [P in GameMode]?: ICaptain[] } | undefined, ResponseError | undefined];
+  ignoreModeratorChecks: boolean;
   locked: boolean;
   nomination: INominationWithPollResult;
   onNominationDelete: (nominationId: number) => void;
@@ -275,7 +277,7 @@ type NominationProps = {
   votingThreshold?: number;
 };
 
-function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominationDelete, onNominationUpdate, parentGameMode, votingThreshold }: NominationProps) {
+function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, nomination, onNominationDelete, onNominationUpdate, parentGameMode, votingThreshold }: NominationProps) {
   const authUser = useOsuAuth().user;
 
   if (authUser == null)
@@ -406,21 +408,23 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
             </>
           }
         </span>
-        <span className='flex-no-shrink'>
-          Moderator assignee: {nomination.moderator_assignee == null ? 'None' : <UserInline noId user={nomination.moderator_assignee} />}
-          {canAssignModeration &&
-            <>
-              {' — '}
-              <EditAssignee
-                assigneeId={nomination.moderator_assignee?.id}
-                candidatesApi={[assigneesApi[1], assigneesApi[2]]}
-                nominationId={nomination.id}
-                onNominationUpdate={onNominationUpdate}
-                type='Moderator'
-              />
-            </>
-          }
-        </span>
+        {!ignoreModeratorChecks &&
+          <span className='flex-no-shrink'>
+            Moderator assignee: {nomination.moderator_assignee == null ? 'None' : <UserInline noId user={nomination.moderator_assignee} />}
+            {canAssignModeration &&
+              <>
+                {' — '}
+                <EditAssignee
+                  assigneeId={nomination.moderator_assignee?.id}
+                  candidatesApi={[assigneesApi[1], assigneesApi[2]]}
+                  nominationId={nomination.id}
+                  onNominationUpdate={onNominationUpdate}
+                  type='Moderator'
+                />
+              </>
+            }
+          </span>
+        }
       </div>
       {parentGameMode != null &&
         <div style={{ fontStyle: 'italic' }}>
