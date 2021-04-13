@@ -479,7 +479,12 @@ router.post('/update-excluded-beatmaps', guards.isCaptain, asyncHandler(async (r
   res.status(204).send();
 }));
 
-router.post('/update-metadata-assignee', guards.isMetadataChecker, asyncHandler(async (req, res) => {
+router.post('/update-metadata-assignee', asyncHandler(async (req, res) => {
+  const roles = guards.roles(req, res);
+
+  if (!roles.news && !roles.metadata)
+    return res.status(403).json({ error: 'Must be a metadata checker or news author' });
+
   await db.query(`
     UPDATE nominations
     SET metadata_assignee_id = ?
@@ -500,7 +505,12 @@ router.post('/update-metadata-assignee', guards.isMetadataChecker, asyncHandler(
   res.json(nomination);
 }));
 
-router.post('/update-moderator-assignee', guards.isModerator, asyncHandler(async (req, res) => {
+router.post('/update-moderator-assignee', asyncHandler(async (req, res) => {
+  const roles = guards.roles(req, res);
+
+  if (!roles.news && !roles.moderator)
+    return res.status(403).json({ error: 'Must be a moderator or news author' });
+
   await db.query(`
     UPDATE nominations
     SET moderator_assignee_id = ?
