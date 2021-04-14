@@ -288,24 +288,43 @@ router.post('/nomination-edit-metadata', asyncHandler(async (req, res) => {
     }
   }
 
+  const nomination = await db.queryOne(`
+    SELECT beatmapset_id, game_mode, metadata_state
+    FROM nominations
+    WHERE id = ?
+  `, req.body.nominationId);
+
   if (roles.metadata) {
+    let artist = req.body.artist;
+    let title = req.body.title;
+
+    if (req.body.state === 2) {
+      artist = null;
+      title = null;
+
+      if (nomination.metadata_state === 1)
+        await res.locals.osu.createOrRefreshBeatmapset(nomination.beatmapset_id, true);
+    }
+
     await db.query(`
       UPDATE nominations
       SET metadata_state = ?, overwrite_artist = ?, overwrite_title = ?
       WHERE id = ?
     `, [
       req.body.state,
-      req.body.artist,
-      req.body.title,
+      artist,
+      title,
       req.body.nominationId,
     ]);
   }
 
-  const nomination = await db.queryOne(`
-    SELECT id, beatmapset_id, game_mode, metadata_state, overwrite_artist, overwrite_title
+  Object.assign(nomination, await db.queryOneWithGroups(`
+    SELECT nominations.*, beatmapsets:beatmapset
     FROM nominations
-    WHERE id = ?
-  `, req.body.nominationId);
+    INNER JOIN beatmapsets
+      ON nominations.beatmapset_id = beatmapsets.id
+    WHERE nominations.id = ?
+  `, req.body.nominationId));
 
   await db.query('DELETE FROM beatmapset_creators WHERE beatmapset_id = ? AND game_mode = ?', [
     nomination.beatmapset_id,
