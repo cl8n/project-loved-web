@@ -1,4 +1,4 @@
-import { ReactChild, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ResponseError } from 'superagent';
 import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getCaptains, getNominations, lockNominations, updateExcludedBeatmaps, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, updateNominationOrder, useApi } from './api';
@@ -18,28 +18,7 @@ import { UserInline } from './UserInline';
 import Help from "./Help";
 import EditNominators from './nomination/EditNominators';
 import ListInput from './ListInput';
-
-type ListInlineProps<T> = {
-  array: T[];
-  none?: ReactChild;
-  render: (item: T) => ReactChild;
-}
-
-function ListInline<T>({ array, none, render }: ListInlineProps<T>) {
-  if (array.length === 0)
-    return <>{none ?? 'None'}</>;
-
-  return (
-    <>
-      {array.map((item, i, array) => (
-        <>
-          {render(item)}
-          {i < array.length - 1 && (i === array.length - 2 ? ' and ' : ', ')}
-        </>
-      ))}
-    </>
-  );
-}
+import ListInline from './ListInline';
 
 export function Picks() {
   const authUser = useOsuAuth().user;
