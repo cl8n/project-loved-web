@@ -368,6 +368,10 @@ table.maps .status {
     color: #f22;
 }
 
+.pending {
+    color: #fa2;
+}
+
 .panic {
     background-color: #f22;
     color: #fff;
@@ -470,12 +474,4 @@ tr.sticky > th:last-child::after {
 
 .faded {
     opacity: 0.7;
-}
-
-.border-success {
-    border-color: #1a1;
-}
-
-.border-error {
-    border-color: #f22;
 }

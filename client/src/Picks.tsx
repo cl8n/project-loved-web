@@ -19,6 +19,8 @@ import Help from "./Help";
 import EditNominators from './nomination/EditNominators';
 import ListInput from './ListInput';
 import ListInline from './ListInline';
+import StatusLine from './nomination/StatusLine';
+import { dateFromString } from './date-format';
 
 export function Picks() {
   const authUser = useOsuAuth().user;
@@ -147,6 +149,8 @@ export function Picks() {
   };
   const canOrder = canAdd;
 
+  const pollsOpened = round.polls_started_at != null && new Date() > dateFromString(round.polls_started_at);
+
   return (
     <>
       <Header
@@ -192,6 +196,7 @@ export function Picks() {
                   onNominationDelete={onNominationDelete}
                   onNominationUpdate={onNominationUpdate}
                   parentGameMode={parent?.game_mode}
+                  pollsOpened={pollsOpened}
                   votingThreshold={round.game_modes[gameMode].voting_threshold}
                 />
               );
@@ -253,10 +258,11 @@ type NominationProps = {
   onNominationDelete: (nominationId: number) => void;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   parentGameMode?: GameMode;
+  pollsOpened: boolean;
   votingThreshold?: number;
 };
 
-function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, nomination, onNominationDelete, onNominationUpdate, parentGameMode, votingThreshold }: NominationProps) {
+function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, nomination, onNominationDelete, onNominationUpdate, parentGameMode, pollsOpened, votingThreshold }: NominationProps) {
   const authUser = useOsuAuth().user;
 
   if (authUser == null)
@@ -272,14 +278,14 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
   };
 
   let failedVoting = false;
-  let nominationClass = 'box nomination';
+  let votingResult: boolean | undefined;
 
   if (nomination.poll_result != null && votingThreshold != null) {
     const { result_no, result_yes } = nomination.poll_result;
     const yesFraction = result_yes / (result_no + result_yes);
 
     failedVoting = yesFraction < votingThreshold;
-    nominationClass += failedVoting ? ' border-error' : ' border-success';
+    votingResult = !failedVoting;
   }
 
   const isNominator = canWriteAs(authUser, ...nomination.nominators.map((n) => n.id));
@@ -298,7 +304,7 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
   const canEditNominators = !locked && isNominator;
 
   return (
-    <div className={nominationClass}>
+    <div className='box nomination'>
       <div className='flex-bar'>
         <span>
           <h3 className='nomination-title'>
@@ -410,6 +416,12 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
           Parent nomination in {gameModeLongName(parentGameMode)}
         </div>
       }
+      <StatusLine
+        ignoreModeratorChecks={ignoreModeratorChecks}
+        locked={locked}
+        nomination={nomination}
+        votingStatus={pollsOpened && votingResult}
+      />
       <Description
         author={nomination.description_author}
         canEdit={canEditDescription}
