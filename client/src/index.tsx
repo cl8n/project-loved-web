@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { registerTextareaAutoHeightTrigger } from './auto-height';
 import { Captains } from './Captains';
+import ForumOptIn from './forum-opt-in';
 import { Header } from './Header';
 import { Manage } from './Manage';
 import { NoRoute } from './NoRoute';
@@ -32,6 +33,7 @@ render(
             <ProtectedRoute exact path='/admin/picks' role='any'><PicksRoundListing /></ProtectedRoute>
             <ProtectedRoute path='/admin/picks/:round' role='any'><Picks /></ProtectedRoute>
             <ProtectedRoute path='/admin/manage' role='any'><Manage /></ProtectedRoute>
+            <ProtectedRoute path='/admin/forum-opt-in' role='captain'><ForumOptIn /></ProtectedRoute>
             <Route path='*'><NoRoute /></Route>
           </Switch>
         </main>
