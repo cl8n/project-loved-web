@@ -16,7 +16,7 @@ import { Form, FormSubmitHandler } from './dom-helpers';
 import { ILog, IUser, LogType } from './interfaces';
 import { Modal } from './Modal';
 import { Never } from './Never';
-import { gameModeLongName } from './osu-helpers';
+import { gameModeLongName, gameModes } from './osu-helpers';
 import { useOsuAuth } from './osuAuth';
 import { canReadAs, canWriteAs } from './permissions';
 import { UserInline } from './UserInline';
@@ -143,7 +143,6 @@ function ApiObjectBulkMenu() {
 
 const boolRoles = ['metadata', 'moderator', 'news', 'god', 'god_readonly'] as const;
 const boolRolesNames = {
-  captain: 'Captain',
   metadata: 'Metadata',
   moderator: 'Moderator',
   news: 'News',
@@ -338,7 +337,7 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
               />
             </tr>
             <tr>
-              <td>Game mode</td>
+              <td>Captain game mode</td>
               <td colSpan={2}>
                 <select
                   ref={captainGameModeRef}
@@ -348,10 +347,9 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
                   key={user.roles.captain_game_mode ?? 'none' /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */}
                 >
                   <option value='none'>None</option>
-                  <option value='0'>Standard</option>
-                  <option value='1'>Taiko</option>
-                  <option value='2'>Catch</option>
-                  <option value='3'>Mania</option>
+                  {gameModes.map((gameMode) => (
+                    <option value={gameMode}>{gameModeLongName(gameMode)}</option>
+                  ))}
                 </select>
               </td>
             </tr>
