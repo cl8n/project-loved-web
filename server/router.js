@@ -564,6 +564,8 @@ router.get('/users-with-permissions', asyncHandler(async (_, res) => {
 router.post('/update-permissions', guards.isGod, asyncHandler(async (req, res) => {
   await db.query('UPDATE user_roles SET ? WHERE id = ?', [
     getParams(req.body, [
+      'alumni',
+      'alumni_game_mode',
       'captain',
       'captain_game_mode',
       'god',
