@@ -113,7 +113,7 @@ export interface IPollResult {
   voting_threshold?: number;
 }
 
-export type IRole = 'captain' | 'god' | 'god_readonly' | 'metadata' | 'moderator' | 'news';
+export type IRole = 'alumni' | 'captain' | 'god' | 'god_readonly' | 'metadata' | 'moderator' | 'news';
 
 export interface IRound {
   id: number;
@@ -138,7 +138,10 @@ export interface IUser {
   banned: boolean;
   country: string;
   name: string;
-  roles: Record<IRole, boolean> & { captain_game_mode?: GameMode };
+  roles: Record<IRole, boolean> & {
+    alumni_game_mode?: GameMode;
+    captain_game_mode?: GameMode;
+  };
 }
 
 export type IUserWithoutRoles = Omit<IUser, 'roles'>;

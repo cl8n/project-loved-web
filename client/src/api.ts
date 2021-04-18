@@ -178,6 +178,7 @@ export function updateUserRoles(userId: number, roles: IUser['roles']): Response
     .send({
       userId,
       ...roles,
+      alumni_game_mode: roles.alumni_game_mode ?? null,
       captain_game_mode: roles.captain_game_mode ?? null,
     });
 }

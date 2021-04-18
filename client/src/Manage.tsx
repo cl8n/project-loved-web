@@ -199,6 +199,7 @@ function PermissionsMenu() {
           {boolRoles.map((role) => (
             <th key={role}>{boolRolesNames[role]}</th>
           ))}
+          <th>Alumni</th>
         </tr>
         {users.map((user) => (
           <tr key={user.id} className={canReadAs(user, 'any') ? undefined : 'faded'}>
@@ -216,6 +217,12 @@ function PermissionsMenu() {
                 <BoolView value={user.roles[role]} />
               </td>
             ))}
+            <td>
+              <BoolView value={user.roles.alumni} />
+              {user.roles.alumni_game_mode != null &&
+                ` (${gameModeLongName(user.roles.alumni_game_mode)})`
+              }
+            </td>
             {canWriteAs(authUser) &&
               <PermissionsMenuUserEditor
                 user={user}
@@ -265,11 +272,15 @@ type PermissionsMenuUserEditorProps = {
 function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditorProps) {
   const [busy, setBusy] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const alumniRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)] as const;
+  const alumniGameModeRef = useRef<HTMLSelectElement>(null);
   const captainRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)] as const;
   const captainGameModeRef = useRef<HTMLSelectElement>(null);
 
   const onSubmit: FormSubmitHandler = (form, then) => {
     const roles = { // TODO lol...
+      alumni: form.alumni === '1',
+      alumni_game_mode: form.alumni_game_mode === 'none' ? undefined : parseInt(form.alumni_game_mode),
       captain: form.captain === '1',
       captain_game_mode: form.captain_game_mode === 'none' ? undefined : parseInt(form.captain_game_mode),
       god: form.god === '1',
@@ -284,6 +295,18 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
       .then(then)
       .catch((error) => window.alert(apiErrorMessage(error))) // TODO: show error better
       .finally(() => setModalOpen(false));
+  };
+
+  const onAlumniChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (alumniGameModeRef.current != null && event.target.checked !== (event.target.value === '1'))
+      alumniGameModeRef.current.value = 'none';
+  };
+
+  const onAlumniGameModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    if (alumniRefs[0].current != null && alumniRefs[1].current != null && event.target.value !== 'none') {
+      alumniRefs[0].current.checked = false;
+      alumniRefs[1].current.checked = true;
+    }
   };
 
   const onCaptainChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -359,6 +382,32 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
                 <BoolRadioCell defaultChecked={user.roles[role]} name={role} />
               </tr>
             ))}
+            <tr>
+              <td>Alumni</td>
+              <BoolRadioCell
+                defaultChecked={user.roles.alumni}
+                name='alumni'
+                onChange={onAlumniChange}
+                refs={alumniRefs}
+              />
+            </tr>
+            <tr>
+              <td>Alumni game mode</td>
+              <td colSpan={2}>
+                <select
+                  ref={alumniGameModeRef}
+                  name='alumni_game_mode'
+                  defaultValue={user.roles.alumni_game_mode ?? 'none'}
+                  onChange={onAlumniGameModeChange}
+                  key={user.roles.alumni_game_mode ?? 'none' /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */}
+                >
+                  <option value='none'>None</option>
+                  {gameModes.map((gameMode) => (
+                    <option value={gameMode}>{gameModeLongName(gameMode)}</option>
+                  ))}
+                </select>
+              </td>
+            </tr>
           </table>
           <button type='submit' className='modal-submit-button'>
             {busy ? 'Updating...' : 'Update'}
