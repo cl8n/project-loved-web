@@ -1,8 +1,7 @@
 import { StrictMode } from 'react';
 import { render } from 'react-dom';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { registerTextareaAutoHeightTrigger } from './auto-height';
-import { Captains } from './Captains';
 import ForumOptIn from './forum-opt-in';
 import { Header } from './Header';
 import { Manage } from './Manage';
@@ -15,6 +14,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 import './style.css';
 import Statistics from "./statistics";
 import SubmissionForm from './submission-form';
+import Team from './team';
 
 registerTextareaAutoHeightTrigger();
 
@@ -28,7 +28,8 @@ render(
             <Route exact path='/'><NotReady /></Route>
             <Route path='/submit'><NotReady><SubmissionForm /></NotReady></Route>
             <Route path='/mappers'><NotReady /></Route>
-            <Route path='/captains'><Captains /></Route>
+            <Route path='/team'><Team /></Route>
+            <Redirect from='/captains' to='/team' />
             <Route path='/statistics'><Statistics /></Route>
             <ProtectedRoute exact path='/admin/picks' role='any'><PicksRoundListing /></ProtectedRoute>
             <ProtectedRoute path='/admin/picks/:round' role='any'><Picks /></ProtectedRoute>

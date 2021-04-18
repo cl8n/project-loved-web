@@ -101,6 +101,16 @@ export function getLogs(): Response<ILog[]> {
     .get('/api/logs');
 }
 
+type GetTeamResponseBody = {
+  alumni: { [P in GameMode | 'general']?: IUserWithoutRoles[]; };
+  current: { [P in GameMode | 'general']?: IUserWithoutRoles[]; };
+};
+
+export function getTeam(): Response<GetTeamResponseBody> {
+  return superagent
+    .get('/api/team');
+}
+
 export function getUsersWithRoles(): Response<IUser[]> {
   return superagent
     .get('/api/users-with-permissions');

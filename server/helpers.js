@@ -9,9 +9,9 @@ function accessNested(object, key) {
   return value;
 }
 
-function groupBy(array, key, dataKey, keyIsUnique = false) {
+function groupBy(array, key, dataKey, keyIsUnique = false, nullKeyGroup = 'null') {
   return array.reduce((prev, value) => {
-    const groupKey = accessNested(value, key);
+    const groupKey = accessNested(value, key) ?? nullKeyGroup;
 
     if (prev[groupKey] == null)
       prev[groupKey] = [];

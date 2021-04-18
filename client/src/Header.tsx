@@ -23,7 +23,7 @@ export function Header() {
         <NavLink exact to='/'>Submissions</NavLink>
         <NavLink to='/submit'>Submit a map</NavLink>
         <NavLink to='/mappers'>Mapper consents</NavLink>
-        <NavLink to='/captains'>Captains</NavLink>
+        <NavLink to='/team'>Team</NavLink>
         <NavLink to='/statistics'>Statistics</NavLink>
         {user != null && canReadAs(user, 'any') &&
           <>
