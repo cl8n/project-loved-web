@@ -346,6 +346,13 @@ table.maps .status {
     margin-bottom: 1em;
 }
 
+.warning-box {
+    background-color: #fa2;
+    padding: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
 .flex-bar {
     display: flex;
     justify-content: space-between;
