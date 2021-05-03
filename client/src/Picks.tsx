@@ -171,11 +171,20 @@ export function Picks() {
                   {ordering ? 'Done ordering' : 'Change order'}
                 </button>
               }
-              {canLock(gameMode) &&
-                <button type='button' onClick={() => toggleLock(gameMode)}>
-                  {nominationsLocked(gameMode) ? 'Unlock nominations' : 'Lock nominations'}
-                </button>
-              }
+              {canLock(gameMode) && (
+                nominationsLocked(gameMode) ? (
+                  <button type='button' onClick={() => toggleLock(gameMode)}>
+                    Unlock nominations
+                  </button>
+                ) : (
+                  <>
+                    <button type='button' className='angry' onClick={() => toggleLock(gameMode)}>
+                      Lock nominations
+                    </button>
+                    <span className='important-bad'>← Press this when all nominations are added!</span>
+                  </>
+                )
+              )}
             </div>
           }
           <Orderable

@@ -411,6 +411,14 @@ table.maps .status {
     font-weight: bold;
 }
 
+button.angry {
+    background-color: #f22;
+}
+
+button.angry:hover {
+    background-color: #fbb;
+}
+
 .flex-grow {
     flex-grow: 1;
 }
