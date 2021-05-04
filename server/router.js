@@ -363,14 +363,10 @@ router.post('/nomination-edit-metadata', asyncHandler(async (req, res) => {
 }));
 
 router.delete('/nomination', asyncHandler(async (req, res) => {
-  await db.query(`
-    DELETE FROM nomination_nominators
-    WHERE nomination_id = ?
-  `, req.query.nominationId);
-  await db.query(`
-    DELETE FROM nominations
-    WHERE id = ?
-  `, req.query.nominationId);
+  await db.query('DELETE FROM nomination_assignees WHERE nomination_id = ?', req.query.nominationId);
+  await db.query('DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?', req.query.nominationId);
+  await db.query('DELETE FROM nomination_nominators WHERE nomination_id = ?', req.query.nominationId);
+  await db.query('DELETE FROM nominations WHERE id = ?', req.query.nominationId);
 
   res.status(204).send();
 }));
