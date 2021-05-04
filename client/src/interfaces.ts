@@ -90,9 +90,9 @@ export interface INomination {
   description_author?: IUser;
   description_state: DescriptionState;
   game_mode: GameMode;
-  metadata_assignee?: IUser;
+  metadata_assignees: IUserWithoutRoles[];
   metadata_state: MetadataState;
-  moderator_assignee?: IUser;
+  moderator_assignees: IUserWithoutRoles[];
   moderator_state: ModeratorState;
   nominators: IUserWithoutRoles[];
   order: number;
