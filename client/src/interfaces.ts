@@ -1,3 +1,8 @@
+export enum AssigneeType {
+  metadata,
+  moderator,
+}
+
 export enum DescriptionState {
   notReviewed,
   reviewed,

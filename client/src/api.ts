@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import superagent, { Response as SuperAgentResponse, ResponseError } from 'superagent';
 import {
+  AssigneeType,
   GameMode,
   IBeatmapset,
   ICaptain,
@@ -140,6 +141,12 @@ export function updateExcludedBeatmaps(nominationId: number, excludedBeatmapIds:
     .send({ nominationId, excludedBeatmapIds });
 }
 
+export function updateNominationAssignees(nominationId: number, type: AssigneeType, assigneeIds: number[]): Response<PartialWithId<INomination>> {
+  return superagent
+    .post('/api/update-nomination-assignees')
+    .send({ nominationId, type, assigneeIds });
+}
+
 export function updateNominationDescription(nominationId: number, description: string | null): Response<PartialWithId<INomination>> {
   return superagent
     .post('/api/nomination-edit-description')
@@ -156,18 +163,6 @@ export function updateNominationOrder(orders: { [nominationId: number]: number }
   return superagent
     .post('/api/update-nomination-order')
     .send(orders);
-}
-
-export function updateMetadataAssignee(nominationId: number, assigneeId: number | null): Response<PartialWithId<INomination>> {
-  return superagent
-    .post('/api/update-metadata-assignee')
-    .send({ assigneeId, nominationId });
-}
-
-export function updateModeratorAssignee(nominationId: number, assigneeId: number | null): Response<PartialWithId<INomination>> {
-  return superagent
-    .post('/api/update-moderator-assignee')
-    .send({ assigneeId, nominationId });
 }
 
 export function updateNominators(nominationId: number, nominatorIds: number[]): Response<PartialWithId<INomination>> {
