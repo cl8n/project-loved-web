@@ -16,6 +16,18 @@ router.get('/data', asyncHandler(async (req, res) => {
     FROM rounds
     WHERE id = ?
   `, req.query.roundId);
+  const assigneesByNominationId = groupBy(
+    await db.queryWithGroups(`
+      SELECT users:assignee, nomination_assignees.type AS assignee_type, nominations.id AS nomination_id
+      FROM nominations
+      INNER JOIN nomination_assignees
+        ON nominations.id = nomination_assignees.nomination_id
+      INNER JOIN users
+        ON nomination_assignees.assignee_id = users.id
+      WHERE nominations.round_id = ?
+    `, req.query.roundId),
+    'nomination_id',
+  );
   const includesByNominationId = groupBy(
     await db.queryWithGroups(`
       SELECT nominations.id AS nomination_id, creators:creator, beatmaps:beatmap,
@@ -50,17 +62,12 @@ router.get('/data', asyncHandler(async (req, res) => {
     'nominator',
   );
   const nominations = await db.queryWithGroups(`
-    SELECT nominations.*, beatmapsets:beatmapset, description_authors:description_author,
-      metadata_assignees:metadata_assignee, moderator_assignees:moderator_assignee
+    SELECT nominations.*, beatmapsets:beatmapset, description_authors:description_author
     FROM nominations
     INNER JOIN beatmapsets
       ON nominations.beatmapset_id = beatmapsets.id
     LEFT JOIN users AS description_authors
       ON nominations.description_author_id = description_authors.id
-    LEFT JOIN users AS metadata_assignees
-      ON nominations.metadata_assignee_id = metadata_assignees.id
-    LEFT JOIN users AS moderator_assignees
-      ON nominations.moderator_assignee_id = moderator_assignees.id
     WHERE nominations.round_id = ?
     ORDER BY nominations.order ASC, nominations.id ASC
   `, req.query.roundId);
@@ -86,6 +93,15 @@ router.get('/data', asyncHandler(async (req, res) => {
       .map((include) => include.creator)
       .filter((c1, i, all) => c1 != null && all.findIndex((c2) => c1.id === c2.id) === i);
     nomination.nominators = nominatorsByNominationId[nomination.id] || [];
+
+    const assignees = assigneesByNominationId[nomination.id] || [];
+
+    nomination.metadata_assignees = assignees
+      .filter((a) => a.assignee_type === 0)
+      .map((a) => a.assignee);
+    nomination.moderator_assignees = assignees
+      .filter((a) => a.assignee_type === 1)
+      .map((a) => a.assignee);
   });
 
   res.json({
