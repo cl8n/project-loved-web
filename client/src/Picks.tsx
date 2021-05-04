@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ResponseError } from 'superagent';
-import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getCaptains, getNominations, lockNominations, updateExcludedBeatmaps, updateMetadataAssignee, updateModeratorAssignee, updateNominationDescription, updateNominationMetadata, updateNominationOrder, useApi } from './api';
+import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getCaptains, getNominations, lockNominations, updateExcludedBeatmaps, updateNominationAssignees, updateNominationDescription, updateNominationMetadata, updateNominationOrder, useApi } from './api';
 import { autoHeightRef } from './auto-height';
 import { BBCode } from './BBCode';
 import { BeatmapInline } from './BeatmapInline';
 import { Form, FormSubmitHandler } from './dom-helpers';
-import { DescriptionState, GameMode, ICaptain, INomination, INominationWithPollResult, IRound, IUser, IUserWithoutRoles, MetadataState, ModeratorState, PartialWithId } from './interfaces';
+import { AssigneeType, DescriptionState, GameMode, ICaptain, INomination, INominationWithPollResult, IRound, IUser, IUserWithoutRoles, MetadataState, ModeratorState, PartialWithId } from './interfaces';
 import { Modal } from './Modal';
 import { Never } from './Never';
 import { Orderable } from './Orderable';
@@ -298,17 +298,19 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
   }
 
   const isNominator = canWriteAs(authUser, ...nomination.nominators.map((n) => n.id));
+  const isMetadataAssignee = canWriteAs(authUser, ...nomination.metadata_assignees.map((a) => a.id));
+  const isModeratorAssignee = canWriteAs(authUser, ...nomination.moderator_assignees.map((a) => a.id));
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
   const metadataDone = nomination.metadata_state === MetadataState.good;
   const moderationDone = nomination.moderator_state === ModeratorState.good;
 
-  const canAssignMetadata = !(failedVoting && nomination.metadata_assignee == null) && !metadataDone && canWriteAs(authUser, 'metadata', 'news');
-  const canAssignModeration = !(failedVoting && nomination.moderator_assignee == null) && !moderationDone && canWriteAs(authUser, 'moderator', 'news');
+  const canAssignMetadata = !(failedVoting && nomination.metadata_assignees.length === 0) && !metadataDone && canWriteAs(authUser, 'metadata', 'news');
+  const canAssignModeration = !(failedVoting && nomination.moderator_assignees.length === 0) && !moderationDone && canWriteAs(authUser, 'moderator', 'news');
   const canDelete = !locked && !descriptionDone && !metadataDone && !moderationDone && isNominator;
   const canEditDescription = (!descriptionDone && isCaptainForMode(authUser, nomination.game_mode)) || (nomination.description != null && canWriteAs(authUser, 'news'));
   const canEditDifficulties = !locked && !metadataDone && isCaptainForMode(authUser, nomination.game_mode);
-  const canEditMetadata = !failedVoting && !metadataDone && canWriteAs(authUser, nomination.metadata_assignee?.id, 'news');
-  const canEditModeration = !failedVoting && !moderationDone && canWriteAs(authUser, nomination.moderator_assignee?.id);
+  const canEditMetadata = !failedVoting && !metadataDone && (isMetadataAssignee || canWriteAs(authUser, 'news'));
+  const canEditModeration = !failedVoting && !moderationDone && isModeratorAssignee;
   // TODO restrict if nomination locked
   const canEditNominators = !locked && isNominator;
 
@@ -373,16 +375,20 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
           />
         }
         <span className='flex-no-shrink'>
-          Metadata assignee: {nomination.metadata_assignee == null ? 'None' : <UserInline noId user={nomination.metadata_assignee} />}
+          Metadata assignees: {' '}
+          <ListInline
+            array={nomination.metadata_assignees}
+            render={(user) => <UserInline noId user={user} />}
+          />
           {canAssignMetadata &&
             <>
               {' — '}
-              <EditAssignee
-                assigneeId={nomination.metadata_assignee?.id}
+              <EditAssignees
+                assignees={nomination.metadata_assignees}
                 candidatesApi={[assigneesApi[0], assigneesApi[2]]}
                 nominationId={nomination.id}
                 onNominationUpdate={onNominationUpdate}
-                type='Metadata'
+                type={AssigneeType.metadata}
               />
             </>
           }
@@ -404,16 +410,20 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
         </span>
         {!ignoreModeratorChecks &&
           <span className='flex-no-shrink'>
-            Moderator assignee: {nomination.moderator_assignee == null ? 'None' : <UserInline noId user={nomination.moderator_assignee} />}
+            Moderator assignees: {' '}
+            <ListInline
+              array={nomination.moderator_assignees}
+              render={(user) => <UserInline noId user={user} />}
+            />
             {canAssignModeration &&
               <>
                 {' — '}
-                <EditAssignee
-                  assigneeId={nomination.moderator_assignee?.id}
+                <EditAssignees
+                  assignees={nomination.moderator_assignees}
                   candidatesApi={[assigneesApi[1], assigneesApi[2]]}
                   nominationId={nomination.id}
                   onNominationUpdate={onNominationUpdate}
-                  type='Moderator'
+                  type={AssigneeType.moderator}
                 />
               </>
             }
@@ -538,20 +548,25 @@ function EditMetadata({ nomination, onNominationUpdate }: EditMetadataProps) {
   );
 }
 
-type EditAssigneeProps = {
-  assigneeId?: number;
-  candidatesApi: readonly [IUser[] | undefined, ResponseError | undefined];
+const assigneeTypeNames = {
+  [AssigneeType.metadata]: 'Metadata',
+  [AssigneeType.moderator]: 'Moderator',
+} as const;
+
+type EditAssigneesProps = {
+  assignees: IUserWithoutRoles[];
+  candidatesApi: readonly [IUserWithoutRoles[] | undefined, ResponseError | undefined];
   nominationId: number;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
-  type: 'Metadata' | 'Moderator';
+  type: AssigneeType;
 };
 
-function EditAssignee({ assigneeId, candidatesApi, nominationId, onNominationUpdate, type }: EditAssigneeProps) {
+function EditAssignees({ assignees, candidatesApi, nominationId, onNominationUpdate, type }: EditAssigneesProps) {
   const [busy, setBusy] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
   const onSubmit: FormSubmitHandler = (form, then) => {
-    return (type === 'Metadata' ? updateMetadataAssignee : updateModeratorAssignee)(nominationId, form.userId === 'none' ? null : parseInt(form.userId))
+    return updateNominationAssignees(nominationId, type, form.assigneeIds)
       .then((response) => onNominationUpdate(response.body))
       .then(then)
       .catch((error) => window.alert(apiErrorMessage(error)))
@@ -566,16 +581,23 @@ function EditAssignee({ assigneeId, candidatesApi, nominationId, onNominationUpd
     if (candidatesApi[0] == null)
       return <span>Loading assignees...</span>;
 
+    if (candidatesApi[0].length === 0)
+      return <span>There is nobody with this role to assign.</span>;
+
     return (
       <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
         <table>
-          <tr>
-            <td><input type='radio' name='userId' value='none' defaultChecked={assigneeId == null} /></td>
-            <td>None</td>
-          </tr>
           {candidatesApi[0].map((user) => (
             <tr key={user.id}>
-              <td><input type='radio' name='userId' value={user.id} defaultChecked={user.id === assigneeId} /></td>
+              <td>
+                <input
+                  type='checkbox'
+                  name='assigneeIds'
+                  value={user.id}
+                  data-value-type='int'
+                  defaultChecked={assignees.find((a) => a.id === user.id) != null}
+                />
+              </td>
               <td><UserInline user={user} /></td>
             </tr>
           ))}
@@ -592,7 +614,7 @@ function EditAssignee({ assigneeId, candidatesApi, nominationId, onNominationUpd
       <button
         type='button'
         onClick={() => setModalOpen(true)}
-        className={`fake-a${assigneeId == null ? ' important-bad' : ''}`}
+        className={`fake-a${assignees.length === 0 ? ' important-bad' : ''}`}
       >
         Edit
       </button>
@@ -600,7 +622,7 @@ function EditAssignee({ assigneeId, candidatesApi, nominationId, onNominationUpd
         close={() => setModalOpen(false)}
         open={modalOpen}
       >
-        <h2>{type} assignee</h2>
+        <h2>{assigneeTypeNames[type]} assignees</h2>
         <FormOrError />
       </Modal>
     </>
