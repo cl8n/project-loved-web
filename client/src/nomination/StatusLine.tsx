@@ -2,10 +2,10 @@ import { DescriptionState, INominationWithPollResult, MetadataState, ModeratorSt
 import ListInline from '../ListInline';
 
 function descriptionClass(description: string | undefined, state: DescriptionState) {
-  if (description == null)
-    return 'error';
+  if (state === DescriptionState.reviewed)
+    return 'success';
 
-  return state === DescriptionState.reviewed ? 'success' : 'pending';
+  return description == null ? 'error' : 'pending';
 }
 
 function metadataClass(state: MetadataState) {
