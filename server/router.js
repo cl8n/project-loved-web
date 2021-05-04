@@ -516,56 +516,45 @@ router.post('/update-excluded-beatmaps', guards.isCaptain, asyncHandler(async (r
   res.status(204).send();
 }));
 
-router.post('/update-metadata-assignee', asyncHandler(async (req, res) => {
-  const roles = guards.roles(req, res);
+router.post('/update-nomination-assignees', asyncHandler(async (req, res) => {
+  const types = {
+    0: 'metadata',
+    1: 'moderator',
+  };
 
-  if (!roles.news && !roles.metadata)
-    return res.status(403).json({ error: 'Must be a metadata checker or news author' });
+  const roles = guards.roles(req, res);
+  const typeString = types[req.body.type];
+
+  if (typeString == null)
+    return res.status(422).json({ error: 'Invalid assignee type' });
+
+  if (!roles.news && !roles[typeString])
+    return res.status(403).json({ error: `Must have ${typeString} or news role` });
 
   await db.query(`
-    UPDATE nominations
-    SET metadata_assignee_id = ?
-    WHERE id = ?
-  `, [
-    req.body.assigneeId,
-    req.body.nominationId,
-  ]);
+    DELETE FROM nomination_assignees
+    WHERE nomination_id = ?
+      AND type = ?
+  `, [req.body.nominationId, req.body.type]);
 
-  const nomination = await db.queryOneWithGroups(`
-    SELECT nominations.id, nominations.metadata_assignee_id, metadata_assignees:metadata_assignee
-    FROM nominations
-    LEFT JOIN users AS metadata_assignees
-      ON nominations.metadata_assignee_id = metadata_assignees.id
-    WHERE nominations.id = ?
-  `, req.body.nominationId);
+  if (req.body.assigneeIds != null && req.body.assigneeIds.length > 0)
+    await db.query('INSERT INTO nomination_assignees (assignee_id, nomination_id, type) VALUES ?', [
+      req.body.assigneeIds.map((id) => [id, req.body.nominationId, req.body.type]),
+    ]);
 
-  res.json(nomination);
-}));
+  const assignees = await db.query(`
+    SELECT users.*
+    FROM nomination_assignees
+    INNER JOIN users
+      ON nomination_assignees.assignee_id = users.id
+    WHERE nomination_assignees.nomination_id = ?
+      AND nomination_assignees.type = ?
+  `, [req.body.nominationId, req.body.type]);
 
-router.post('/update-moderator-assignee', asyncHandler(async (req, res) => {
-  const roles = guards.roles(req, res);
-
-  if (!roles.news && !roles.moderator)
-    return res.status(403).json({ error: 'Must be a moderator or news author' });
-
-  await db.query(`
-    UPDATE nominations
-    SET moderator_assignee_id = ?
-    WHERE id = ?
-  `, [
-    req.body.assigneeId,
-    req.body.nominationId,
-  ]);
-
-  const nomination = await db.queryOneWithGroups(`
-    SELECT nominations.id, nominations.moderator_assignee_id, moderator_assignees:moderator_assignee
-    FROM nominations
-    LEFT JOIN users AS moderator_assignees
-      ON nominations.moderator_assignee_id = moderator_assignees.id
-    WHERE nominations.id = ?
-  `, req.body.nominationId);
-
-  res.json(nomination);
+  res.json({
+    id: req.body.nominationId,
+    [`${typeString}_assignees`]: assignees || [],
+  });
 }));
 
 router.get('/users-with-permissions', asyncHandler(async (_, res) => {
