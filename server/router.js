@@ -265,19 +265,22 @@ router.post('/nomination-edit-description', asyncHandler(async (req, res) => {
   if (!(prevState !== 1 && roles.gameModes[gameMode]) && !(prevDescription != null && roles.news))
     return res.status(403).send();
 
+  if (!roles.gameModes[gameMode] && req.body.description == null)
+    return res.status(403).json({ error: "Can't remove description as editor" });
+
   await db.query(`
     UPDATE nominations
-    SET description = ?, description_author_id = ?
+    SET description = ?, description_author_id = ?, description_state = ?
     WHERE id = ?
   `, [
     req.body.description,
     req.body.description == null ? null : prevDescription == null ? res.locals.user.id : prevAuthorId,
+    (roles.news && prevDescription != null && req.body.description != null) ? 1 : 0,
     req.body.nominationId,
   ]);
 
   const nomination = await db.queryOneWithGroups(`
-    SELECT nominations.id, nominations.description,
-      nominations.description_author_id, description_authors:description_author
+    SELECT nominations.*, description_authors:description_author
     FROM nominations
     LEFT JOIN users AS description_authors
       ON nominations.description_author_id = description_authors.id
