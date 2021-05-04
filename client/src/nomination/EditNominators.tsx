@@ -1,4 +1,4 @@
-import { GameMode, ICaptain, INomination, PartialWithId } from '../interfaces';
+import { GameMode, INomination, IUserWithoutRoles, PartialWithId } from '../interfaces';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { ResponseError } from 'superagent';
 import { apiErrorMessage, updateNominators } from '../api';
@@ -7,7 +7,7 @@ import { Modal } from '../Modal';
 import { UserInline } from '../UserInline';
 
 type EditNominatorsProps = {
-  captainsApi: readonly [{ [P in GameMode]?: ICaptain[] } | undefined, ResponseError | undefined];
+  captainsApi: readonly [{ [P in GameMode]?: IUserWithoutRoles[] } | undefined, ResponseError | undefined];
   nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
 };
