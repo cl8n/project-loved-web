@@ -50,7 +50,7 @@ function EditNominatorsForm({ captainsApi, nomination, onNominationUpdate, setMo
 
   const captains = captainsApi[0][nomination.game_mode];
 
-  if (captains == null)
+  if (captains == null || captains.length === 0)
     return <span>There are no captains for this game mode.</span>;
 
   const onSubmit: FormSubmitHandler = (form, then) => {
