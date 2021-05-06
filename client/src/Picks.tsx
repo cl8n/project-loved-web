@@ -300,14 +300,18 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
   const isNominator = canWriteAs(authUser, ...nomination.nominators.map((n) => n.id));
   const isMetadataAssignee = canWriteAs(authUser, ...nomination.metadata_assignees.map((a) => a.id));
   const isModeratorAssignee = canWriteAs(authUser, ...nomination.moderator_assignees.map((a) => a.id));
+
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
+  const descriptionStarted = nomination.description != null;
   const metadataDone = nomination.metadata_state === MetadataState.good;
-  const moderationDone = nomination.moderator_state === ModeratorState.good;
+  const metadataStarted = nomination.metadata_state !== MetadataState.unchecked;
+  const moderationDone = nomination.moderator_state === ModeratorState.good || nomination.moderator_state === ModeratorState.notAllowed;
+  const moderationStarted = nomination.moderator_state !== ModeratorState.unchecked;
 
   const canAssignMetadata = !(failedVoting && nomination.metadata_assignees.length === 0) && !metadataDone && canWriteAs(authUser, 'metadata', 'news');
   const canAssignModeration = !(failedVoting && nomination.moderator_assignees.length === 0) && !moderationDone && canWriteAs(authUser, 'moderator', 'news');
-  const canDelete = !locked && !descriptionDone && !metadataDone && !moderationDone && isNominator;
-  const canEditDescription = (!descriptionDone && isCaptainForMode(authUser, nomination.game_mode)) || (nomination.description != null && canWriteAs(authUser, 'news'));
+  const canDelete = !locked && !descriptionStarted && !metadataStarted && !moderationStarted && isNominator;
+  const canEditDescription = (!descriptionDone && isCaptainForMode(authUser, nomination.game_mode)) || (descriptionStarted && canWriteAs(authUser, 'news'));
   const canEditDifficulties = !locked && !metadataDone && isCaptainForMode(authUser, nomination.game_mode);
   const canEditMetadata = !failedVoting && !metadataDone && (isMetadataAssignee || canWriteAs(authUser, 'news'));
   const canEditModeration = !failedVoting && !moderationDone && isModeratorAssignee;
@@ -370,6 +374,7 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
         </span>
         {canEditMetadata &&
           <EditMetadata
+            metadataStarted={metadataStarted}
             nomination={nomination}
             onNominationUpdate={onNominationUpdate}
           />
@@ -453,6 +458,7 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
 }
 
 type EditMetadataProps = {
+  metadataStarted: boolean;
   nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
 };
@@ -465,7 +471,7 @@ function renderUser(user: IUserWithoutRoles) {
   return <UserInline user={user} />;
 }
 
-function EditMetadata({ nomination, onNominationUpdate }: EditMetadataProps) {
+function EditMetadata({ metadataStarted, nomination, onNominationUpdate }: EditMetadataProps) {
   const [busy, setBusy] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -482,7 +488,7 @@ function EditMetadata({ nomination, onNominationUpdate }: EditMetadataProps) {
       <button
         type='button'
         onClick={() => setModalOpen(true)}
-        className={`flex-no-shrink fake-a${nomination.metadata_state === MetadataState.unchecked ? ' important-bad' : ''}`}
+        className={`flex-no-shrink fake-a${metadataStarted ? '' : ' important-bad'}`}
       >
         Edit metadata
       </button>
@@ -504,18 +510,18 @@ function EditMetadata({ nomination, onNominationUpdate }: EditMetadataProps) {
               <td><label htmlFor='state'>State</label></td>
               <td>
                 <select name='state' required defaultValue={nomination.metadata_state} data-value-type='int' key={nomination.metadata_state /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */}>
-                  <option value='0'>Not checked</option>
-                  <option value='1'>Needs change, posted on discussion</option>
-                  <option value='2'>All good!</option>
+                  <option value={MetadataState.unchecked}>Not checked</option>
+                  <option value={MetadataState.needsChange}>Needs change, posted on discussion</option>
+                  <option value={MetadataState.good}>All good!</option>
                 </select>
               </td>
             </tr>
             <tr>
-              <td><label htmlFor='artist'>Artist override</label></td>
+              <td><label htmlFor='artist'>Romanized artist override</label></td>
               <td><input type='text' name='artist' defaultValue={nomination.overwrite_artist} /></td>
             </tr>
             <tr>
-              <td><label htmlFor='title'>Title override</label></td>
+              <td><label htmlFor='title'>Romanized title override</label></td>
               <td><input type='text' name='title' defaultValue={nomination.overwrite_title} /></td>
             </tr>
             <tr>

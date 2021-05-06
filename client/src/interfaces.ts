@@ -30,6 +30,7 @@ export enum MetadataState {
 export enum ModeratorState {
   unchecked,
   needsChange,
+  sentToReview,
   good,
   notAllowed,
 }
