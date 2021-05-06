@@ -12,7 +12,7 @@ type EditNominatorsProps = {
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
 };
 
-export default function EditNominators({ captainsApi, nomination, onNominationUpdate }: EditNominatorsProps) {
+export default function EditNominators(props: EditNominatorsProps) {
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
@@ -29,7 +29,7 @@ export default function EditNominators({ captainsApi, nomination, onNominationUp
         open={modalOpen}
       >
         <h2>Nominators</h2>
-        <EditNominatorsForm {...{ captainsApi, nomination, onNominationUpdate, setModalOpen }} />
+        <EditNominatorsForm {...props} setModalOpen={setModalOpen} />
       </Modal>
     </>
   );
