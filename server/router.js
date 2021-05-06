@@ -362,6 +362,18 @@ router.post('/nomination-edit-metadata', asyncHandler(async (req, res) => {
   res.json(nomination);
 }));
 
+router.post('/nomination-edit-moderation', guards.isModerator, asyncHandler(async (req, res) => {
+  await db.query('UPDATE nominations SET moderator_state = ? WHERE id = ?', [
+    req.body.state,
+    req.body.nominationId,
+  ]);
+
+  res.json({
+    id: req.body.nominationId,
+    moderator_state: req.body.state,
+  });
+}));
+
 router.delete('/nomination', asyncHandler(async (req, res) => {
   await db.query('DELETE FROM nomination_assignees WHERE nomination_id = ?', req.query.nominationId);
   await db.query('DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?', req.query.nominationId);

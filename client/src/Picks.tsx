@@ -21,6 +21,7 @@ import ListInput from './ListInput';
 import ListInline from './ListInline';
 import StatusLine from './nomination/StatusLine';
 import { dateFromString } from './date-format';
+import EditModeration from './nomination/EditModeration';
 
 export function Picks() {
   const authUser = useOsuAuth().user;
@@ -413,27 +414,36 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
             </>
           }
         </span>
-        {!ignoreModeratorChecks &&
-          <span className='flex-no-shrink'>
-            Moderator assignees: {' '}
-            <ListInline
-              array={nomination.moderator_assignees}
-              render={(user) => <UserInline noId user={user} />}
-            />
-            {canAssignModeration &&
-              <>
-                {' — '}
-                <EditAssignees
-                  assignees={nomination.moderator_assignees}
-                  candidatesApi={[assigneesApi[1], assigneesApi[2]]}
-                  nominationId={nomination.id}
-                  onNominationUpdate={onNominationUpdate}
-                  type={AssigneeType.moderator}
-                />
-              </>
-            }
-          </span>
-        }
+        {!ignoreModeratorChecks && (
+          <>
+            {canEditModeration && (
+              <EditModeration
+                moderationStarted={moderationStarted}
+                nomination={nomination}
+                onNominationUpdate={onNominationUpdate}
+              />
+            )}
+            <span className='flex-no-shrink'>
+              Moderator assignees: {' '}
+              <ListInline
+                array={nomination.moderator_assignees}
+                render={(user) => <UserInline noId user={user} />}
+              />
+              {canAssignModeration &&
+                <>
+                  {' — '}
+                  <EditAssignees
+                    assignees={nomination.moderator_assignees}
+                    candidatesApi={[assigneesApi[1], assigneesApi[2]]}
+                    nominationId={nomination.id}
+                    onNominationUpdate={onNominationUpdate}
+                    type={AssigneeType.moderator}
+                  />
+                </>
+              }
+            </span>
+          </>
+        )}
       </div>
       {parentGameMode != null &&
         <div style={{ fontStyle: 'italic' }}>

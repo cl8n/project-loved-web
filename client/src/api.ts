@@ -13,6 +13,7 @@ import {
   IUser,
   IUserWithoutRoles,
   MetadataState,
+  ModeratorState,
   PartialWithId,
   PartialWithoutId
 } from './interfaces';
@@ -157,6 +158,12 @@ export function updateNominationMetadata(nominationId: number, state: MetadataSt
   return superagent
     .post('/api/nomination-edit-metadata')
     .send({ artist, creators, nominationId, state, title });
+}
+
+export function updateNominationModeration(nominationId: number, state: ModeratorState): Response<PartialWithId<INomination>> {
+  return superagent
+    .post('/api/nomination-edit-moderation')
+    .send({nominationId, state });
 }
 
 export function updateNominationOrder(orders: { [nominationId: number]: number }): Response {
