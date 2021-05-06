@@ -21,13 +21,15 @@ function metadataClass(state: MetadataState) {
 
 function moderationClass(state: ModeratorState) {
   switch (state) {
-    case ModeratorState.notAllowed:
     case ModeratorState.unchecked:
       return 'error';
     case ModeratorState.needsChange:
+    case ModeratorState.sentToReview:
       return 'pending';
     case ModeratorState.good:
       return 'success';
+    case ModeratorState.notAllowed:
+      return 'panic';
   }
 }
 
