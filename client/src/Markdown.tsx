@@ -1,10 +1,16 @@
-import escapeHtml from 'escape-html';
+import remarkHtml from 'remark-html';
+import remarkParse from 'remark-parse';
+import unified from 'unified';
+
+const processor = unified()
+  .use(remarkParse)
+  .use(remarkHtml)
+  .freeze();
 
 interface MarkdownProps {
   text: string;
 }
 
-// TODO
 export default function Markdown({ text }: MarkdownProps) {
-  return <span style={{ whiteSpace: 'pre-wrap' }} dangerouslySetInnerHTML={{ __html: escapeHtml(text) }} />;
+  return <span dangerouslySetInnerHTML={{ __html: processor.processSync(text).toString() }} />;
 }
