@@ -454,7 +454,8 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
         ignoreModeratorChecks={ignoreModeratorChecks}
         locked={locked}
         nomination={nomination}
-        votingStatus={pollsOpened && votingResult}
+        pollsOpened={pollsOpened}
+        votingResult={votingResult}
       />
       <Description
         author={nomination.description_author}

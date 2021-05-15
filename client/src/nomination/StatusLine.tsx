@@ -33,21 +33,22 @@ function moderationClass(state: ModeratorState) {
   }
 }
 
-function votingClass(status: boolean | undefined) {
-  if (status == null)
-    return 'pending';
+function votingClass(opened: boolean, result: boolean | undefined) {
+  if (result == null)
+    return opened ? 'pending' : 'error';
 
-  return status ? 'success' : 'error';
+  return result ? 'success' : 'panic';
 }
 
 type StatusLineProps = {
   ignoreModeratorChecks: boolean;
   locked: boolean;
   nomination: INominationWithPollResult;
-  votingStatus: boolean | undefined;
+  pollsOpened: boolean;
+  votingResult: boolean | undefined;
 };
 
-export default function StatusLine({ ignoreModeratorChecks, locked, nomination, votingStatus }: StatusLineProps) {
+export default function StatusLine({ ignoreModeratorChecks, locked, nomination, pollsOpened, votingResult }: StatusLineProps) {
   const infoArray = [
     <span className={descriptionClass(nomination.description, nomination.description_state)}>Description</span>,
     <span className={metadataClass(nomination.metadata_state)}>Metadata</span>,
@@ -62,7 +63,7 @@ export default function StatusLine({ ignoreModeratorChecks, locked, nomination, 
       {' → '}
       <ListInline array={infoArray} onlyCommas />
       {' → '}
-      <span className={votingClass(votingStatus)}>Voting</span>
+      <span className={votingClass(pollsOpened, votingResult)}>Voting</span>
       {' → '}
       <span className={nomination.beatmapset.ranked_status === 4 ? 'success' : 'error'}>Loved</span>
     </div>
