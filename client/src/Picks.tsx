@@ -141,12 +141,11 @@ export function Picks() {
       .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
   };
 
-  // TODO: Also check if the round is done for each of these
   const canAdd = (gameMode: GameMode) => {
-    return !nominationsLocked(gameMode) && isCaptainForMode(authUser, gameMode);
+    return !round.done && !nominationsLocked(gameMode) && isCaptainForMode(authUser, gameMode);
   };
   const canLock = (gameMode: GameMode) => {
-    return isCaptainForMode(authUser, gameMode) || canWriteAs(authUser, 'news');
+    return !round.done && (isCaptainForMode(authUser, gameMode) || canWriteAs(authUser, 'news'));
   };
   const canOrder = canAdd;
 
@@ -200,14 +199,13 @@ export function Picks() {
                   key={nomination.id}
                   assigneesApi={[assigneesApi[0]?.metadatas, assigneesApi[0]?.moderators, assigneesApi[1]]}
                   captainsApi={[captainsApi[0], captainsApi[1]]}
-                  ignoreModeratorChecks={round.ignore_moderator_checks}
                   locked={nominationsLocked(gameMode)}
                   nomination={nomination}
                   onNominationDelete={onNominationDelete}
                   onNominationUpdate={onNominationUpdate}
                   parentGameMode={parent?.game_mode}
                   pollsOpened={pollsOpened}
-                  votingThreshold={round.game_modes[gameMode].voting_threshold}
+                  round={round}
                 />
               );
             })}
@@ -262,17 +260,16 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
 type NominationProps = {
   assigneesApi: readonly [IUser[] | undefined, IUser[] | undefined, ResponseError | undefined];
   captainsApi: readonly [{ [P in GameMode]?: ICaptain[] } | undefined, ResponseError | undefined];
-  ignoreModeratorChecks: boolean;
   locked: boolean;
   nomination: INominationWithPollResult;
   onNominationDelete: (nominationId: number) => void;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   parentGameMode?: GameMode;
   pollsOpened: boolean;
-  votingThreshold?: number;
+  round: IRound;
 };
 
-function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, nomination, onNominationDelete, onNominationUpdate, parentGameMode, pollsOpened, votingThreshold }: NominationProps) {
+function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominationDelete, onNominationUpdate, parentGameMode, pollsOpened, round }: NominationProps) {
   const authUser = useOsuAuth().user;
 
   if (authUser == null)
@@ -290,11 +287,11 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
   let failedVoting = false;
   let votingResult: boolean | undefined;
 
-  if (nomination.poll_result != null && votingThreshold != null) {
+  if (nomination.poll_result != null) {
     const { result_no, result_yes } = nomination.poll_result;
     const yesFraction = result_yes / (result_no + result_yes);
 
-    failedVoting = yesFraction < votingThreshold;
+    failedVoting = yesFraction < round.game_modes[nomination.game_mode].voting_threshold;
     votingResult = !failedVoting;
   }
 
@@ -309,15 +306,14 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
   const moderationDone = nomination.moderator_state === ModeratorState.good || nomination.moderator_state === ModeratorState.notAllowed;
   const moderationStarted = nomination.moderator_state !== ModeratorState.unchecked;
 
-  const canAssignMetadata = !(failedVoting && nomination.metadata_assignees.length === 0) && !metadataDone && canWriteAs(authUser, 'metadata', 'news');
-  const canAssignModeration = !(failedVoting && nomination.moderator_assignees.length === 0) && !moderationDone && canWriteAs(authUser, 'moderator', 'news');
-  const canDelete = !locked && !descriptionStarted && !metadataStarted && !moderationStarted && isNominator;
-  const canEditDescription = (!descriptionDone && isCaptainForMode(authUser, nomination.game_mode)) || (descriptionStarted && canWriteAs(authUser, 'news'));
-  const canEditDifficulties = !locked && !metadataDone && isCaptainForMode(authUser, nomination.game_mode);
-  const canEditMetadata = !failedVoting && !metadataDone && (isMetadataAssignee || canWriteAs(authUser, 'news'));
-  const canEditModeration = !failedVoting && !moderationDone && isModeratorAssignee;
-  // TODO restrict if nomination locked
-  const canEditNominators = !locked && isNominator;
+  const canAssignMetadata = !round.done && !(failedVoting && nomination.metadata_assignees.length === 0) && !metadataDone && canWriteAs(authUser, 'metadata', 'news');
+  const canAssignModeration = !round.done && !(failedVoting && nomination.moderator_assignees.length === 0) && !moderationDone && canWriteAs(authUser, 'moderator', 'news');
+  const canDelete = !round.done && !locked && !descriptionStarted && !metadataStarted && !moderationStarted && isNominator;
+  const canEditDescription = !round.done && ((!descriptionDone && isCaptainForMode(authUser, nomination.game_mode)) || (descriptionStarted && canWriteAs(authUser, 'news')));
+  const canEditDifficulties = !round.done && !locked && !metadataDone && isCaptainForMode(authUser, nomination.game_mode);
+  const canEditMetadata = !round.done && !failedVoting && !metadataDone && (isMetadataAssignee || canWriteAs(authUser, 'news'));
+  const canEditModeration = !round.done && !failedVoting && !moderationDone && isModeratorAssignee;
+  const canEditNominators = !round.done && !locked && isNominator;
 
   return (
     <div className='box nomination'>
@@ -414,7 +410,7 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
             </>
           }
         </span>
-        {!ignoreModeratorChecks && (
+        {!round.ignore_moderator_checks && (
           <>
             {canEditModeration && (
               <EditModeration
@@ -451,7 +447,7 @@ function Nomination({ assigneesApi, captainsApi, ignoreModeratorChecks, locked, 
         </div>
       }
       <StatusLine
-        ignoreModeratorChecks={ignoreModeratorChecks}
+        ignoreModeratorChecks={round.ignore_moderator_checks}
         locked={locked}
         nomination={nomination}
         pollsOpened={pollsOpened}
