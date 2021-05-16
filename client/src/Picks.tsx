@@ -144,6 +144,7 @@ export function Picks() {
   const canAdd = (gameMode: GameMode) => {
     return !round.done && !nominationsLocked(gameMode) && isCaptainForMode(authUser, gameMode);
   };
+  const canEditRound = !round.done && canWriteAs(authUser, 'news');
   const canLock = (gameMode: GameMode) => {
     return !round.done && (isCaptainForMode(authUser, gameMode) || canWriteAs(authUser, 'news'));
   };
@@ -154,7 +155,7 @@ export function Picks() {
   return (
     <>
       <Header
-        canEdit={canWriteAs(authUser, 'news')}
+        canEdit={canEditRound}
         onRoundUpdate={onRoundUpdate}
         round={round}
       />
