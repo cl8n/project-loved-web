@@ -239,6 +239,64 @@ class Osu {
     // TODO: If force updating beatmapset, also force update all exisitng beatmapset_creators
     //       who aren't the mapset host
 
+    // If this map is now Loved, check if any of the incomplete rounds it
+    // belongs to now only contain maps that are Loved or failed voting. If so,
+    // mark the round as "done".
+    if (dbFields.ranked_status === 4) {
+      const incompleteRoundsWithBeatmapset = await db.query(`
+        SELECT rounds.id
+        FROM rounds
+        INNER JOIN nominations
+          ON rounds.id = nominations.round_id
+        WHERE rounds.done = 0
+          AND rounds.polls_ended_at IS NOT NULL
+          AND rounds.polls_ended_at < ?
+          AND nominations.beatmapset_id = ?
+      `, [new Date(), beatmapset.id]);
+      const roundIdsToComplete = [];
+
+      for (const round of incompleteRoundsWithBeatmapset) {
+        const beatmapsets = await db.queryWithGroups(`
+          SELECT beatmapsets.ranked_status, poll_results:poll_result,
+            round_game_modes.voting_threshold AS 'poll_result:voting_threshold'
+          FROM nominations
+          INNER JOIN beatmapsets
+            ON nominations.beatmapset_id = beatmapsets.id
+          LEFT JOIN poll_results
+            ON nominations.round_id = poll_results.round
+            AND nominations.game_mode = poll_results.game_mode
+            AND nominations.beatmapset_id = poll_results.beatmapset_id
+          INNER JOIN round_game_modes
+            ON nominations.round_id = round_game_modes.round_id
+            AND nominations.game_mode = round_game_modes.game_mode
+          WHERE nominations.round_id = ?
+        `, round.id);
+        let roundDone = true;
+
+        for (const beatmapset of beatmapsets) {
+          if (beatmapset.ranked_status === 4)
+            continue;
+
+          const result = beatmapset.poll_result;
+
+          if (
+            result == null ||
+            result.voting_threshold == null ||
+            result.result_yes / (result.result_no + result.result_yes) >= result.voting_threshold
+          ) {
+            roundDone = false;
+            break;
+          }
+        }
+
+        if (roundDone)
+          roundIdsToComplete.push(round.id);
+      }
+
+      if (roundIdsToComplete.length > 0)
+        await db.query('UPDATE rounds SET done = 1 WHERE id IN (?)', [roundIdsToComplete]);
+    }
+
     return {
       ...dbFieldsWithPK,
       game_modes: new Set(beatmapset.beatmaps.map((beatmap) => beatmap.mode_int)),
