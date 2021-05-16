@@ -5,6 +5,7 @@ import { Never } from './Never';
 import { useOsuAuth } from './osuAuth';
 import { canWriteAs } from './permissions';
 import PostDate from './round/PostDate';
+import { ResponseError } from 'superagent';
 
 type RoundProps = IRound & {
   nomination_count: number;
@@ -36,9 +37,12 @@ function Round(round: RoundProps) {
         */
 }
 
-function PicksRoundListingInner() {
-  const [rounds, roundsError] = useApi(getRounds);
+type PicksRoundListingInnerProps = {
+  rounds: RoundProps[] | undefined;
+  roundsError: ResponseError | undefined;
+}
 
+function PicksRoundListingInner({ rounds, roundsError }: PicksRoundListingInnerProps) {
   if (roundsError != null)
     return <span className='panic'>Failed to load rounds: {apiErrorMessage(roundsError)}</span>;
 
@@ -71,17 +75,30 @@ function AddRound() {
 
 export function PicksRoundListing() {
   const authUser = useOsuAuth().user;
+  const [rounds, roundsError] = useApi(getRounds);
 
   if (authUser == null)
     return <Never />;
 
   return (
     <>
-      <h1>Rounds</h1>
-      {canWriteAs(authUser, 'news') &&
-        <AddRound />
-      }
-      <PicksRoundListingInner />
+      <div className='content-block'>
+        <h1>Current rounds</h1>
+        {canWriteAs(authUser, 'news') && (
+          <AddRound />
+        )}
+        <PicksRoundListingInner
+          rounds={rounds?.incomplete_rounds}
+          roundsError={roundsError}
+        />
+      </div>
+      <div className='content-block'>
+        <h1>Past rounds</h1>
+        <PicksRoundListingInner
+          rounds={rounds?.complete_rounds}
+          roundsError={roundsError}
+        />
+      </div>
     </>
   );
 }

@@ -30,9 +30,12 @@ router.get('/rounds', asyncHandler(async (req, res) => {
       ON rounds.id = nomination_counts.round_id
     ORDER BY rounds.id ASC
     ${db.pageQuery(req)}
-  `); // TODO: active rounds idASC at the top, inactive rounds idDESC at bottom
+  `);
 
-  res.json(rounds);
+  res.json({
+    complete_rounds: rounds.filter((round) => round.done).reverse(),
+    incomplete_rounds: rounds.filter((round) => !round.done),
+  });
 }));
 
 router.get('/nominations', asyncHandler(async (req, res) => {

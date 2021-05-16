@@ -93,7 +93,12 @@ export function getPollResults(): Response<IPollResult[]> {
     .get('/api/stats/polls');
 }
 
-export function getRounds(): Response<(IRound & { nomination_count: number; })[]> {
+type GetRoundsResponseBody = {
+  complete_rounds: (IRound & { nomination_count: number; })[];
+  incomplete_rounds: (IRound & { nomination_count: number; })[];
+};
+
+export function getRounds(): Response<GetRoundsResponseBody> {
   return superagent
     .get('/api/rounds');
 }
