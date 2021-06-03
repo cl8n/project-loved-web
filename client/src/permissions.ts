@@ -15,6 +15,11 @@ export function canWriteAs(user: IUser, ...rolesOrIds: (IRole | number | undefin
   if (user.roles.god)
     return true;
 
+  // TODO: This gives a very misleading UI that god_readonly can edit things,
+  // but not worth the time to clean it up
+  if (user.roles.god_readonly)
+    return true;
+
   return rolesOrIds.some((roleOrId) => {
     if (roleOrId == null)
       return false;
