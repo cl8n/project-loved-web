@@ -161,7 +161,12 @@ export function Picks() {
       />
       {gameModes.map((gameMode) => (
         <div key={gameMode} className='content-block'>
-          <h2>{gameModeLongName(gameMode)}</h2>
+          <h2>
+            {gameModeLongName(gameMode)}
+            {nominationsLocked(gameMode) && (
+              <span className='success'> ✓ Locked</span>
+            )}
+          </h2>
           {canAdd(gameMode) &&
             <AddNomination gameMode={gameMode} onNominationAdd={onNominationAdd} roundId={round.id} />
           }
@@ -449,7 +454,6 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
       }
       <StatusLine
         ignoreModeratorChecks={round.ignore_moderator_checks}
-        locked={locked}
         nomination={nomination}
         pollsOpened={pollsOpened}
         votingResult={votingResult}

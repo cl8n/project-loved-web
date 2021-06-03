@@ -42,13 +42,12 @@ function votingClass(opened: boolean, result: boolean | undefined) {
 
 type StatusLineProps = {
   ignoreModeratorChecks: boolean;
-  locked: boolean;
   nomination: INominationWithPollResult;
   pollsOpened: boolean;
   votingResult: boolean | undefined;
 };
 
-export default function StatusLine({ ignoreModeratorChecks, locked, nomination, pollsOpened, votingResult }: StatusLineProps) {
+export default function StatusLine({ ignoreModeratorChecks, nomination, pollsOpened, votingResult }: StatusLineProps) {
   const infoArray = [
     <span className={descriptionClass(nomination.description, nomination.description_state)}>Description</span>,
     <span className={metadataClass(nomination.metadata_state)}>Metadata</span>,
@@ -59,8 +58,6 @@ export default function StatusLine({ ignoreModeratorChecks, locked, nomination, 
 
   return (
     <div>
-      <span className={locked ? 'success' : 'error'}>Locked nominations</span>
-      {' → '}
       <ListInline array={infoArray} onlyCommas />
       {' → '}
       <span className={votingClass(pollsOpened, votingResult)}>Voting</span>
