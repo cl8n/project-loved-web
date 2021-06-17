@@ -104,12 +104,21 @@ router.get('/data', asyncHandler(async (req, res) => {
       .map((a) => a.assignee);
   });
 
+  const lastRoundResultsPostIds = groupBy(
+    await db.query(`
+      SELECT game_mode, results_post_id
+      FROM round_game_modes
+      WHERE round_id = ?
+    `, parseInt(req.query.roundId) - 1), // TODO: naive
+    'game_mode',
+    'results_post_id',
+    true,
+  );
+
   res.json({
     discord_webhooks: config.discordWebhooks,
     nominations,
-    // TODO: store results posts per round, and query previous round for their results
-    //       REMEMBER TO UPDATE CONFIG EACH ROUND UNTIL THEN!
-    results_posts: config.resultsPosts,
+    results_post_ids: lastRoundResultsPostIds,
     round,
   });
 }));

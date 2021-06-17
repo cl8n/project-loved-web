@@ -15,11 +15,5 @@
   "osuApiClientRedirect": "<yourHost>/api/auth/callback",
   "osuApiClientSecret": "",
   "port": 3333,
-  "resultsPosts": [
-    "",
-    "",
-    "",
-    ""
-  ],
   "sessionSecret": ""
 }
