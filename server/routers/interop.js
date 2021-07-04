@@ -178,9 +178,7 @@ router.post('/update-beatmapsets', asyncHandler(async (req, res) => {
   if (req.body.roundId == null)
     return res.status(422).json({ error: 'Missing round ID' });
 
-  const round = await db.queryOne('SELECT 1 FROM rounds WHERE id = ?', req.body.roundId);
-
-  if (round == null)
+  if ((await db.queryOne('SELECT 1 FROM rounds WHERE id = ?', req.body.roundId)) == null)
     return res.status(422).json({ error: 'Invalid round ID' });
 
   const beatmapsets = await db.query(`
