@@ -209,4 +209,30 @@ router.post('/update-beatmapsets', asyncHandler(async (req, res) => {
   res.json(messages);
 }));
 
+router.post('/results-post-ids', asyncHandler(async (req, res) => {
+  if (req.body.roundId == null)
+    return res.status(422).json({ error: 'Missing round ID' });
+
+  if (req.body.replies == null || Object.keys(req.body.replies).length === 0)
+    return res.status(422).json({ error: 'Missing reply IDs' });
+
+  if ((await db.queryOne('SELECT 1 FROM rounds WHERE id = ?', req.body.roundId)) == null)
+    return res.status(422).json({ error: 'Invalid round ID' });
+
+  for (const [gameMode, postId] of Object.entries(req.body.replies)) {
+    await db.query(`
+      UPDATE round_game_modes
+      SET results_post_id = ?
+      WHERE round_id = ?
+        AND game_mode = ?
+    `, [
+      postId,
+      req.body.roundId,
+      gameMode,
+    ]);
+  }
+
+  res.status(204).send();
+}));
+
 module.exports = router;
