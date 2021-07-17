@@ -406,6 +406,10 @@ table.maps .status {
     margin-left: 0.5em;
 }
 
+.important {
+    font-weight: bold;
+}
+
 .important-bad {
     color: #f22;
     font-weight: bold;

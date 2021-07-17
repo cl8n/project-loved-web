@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ResponseError } from 'superagent';
-import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getCaptains, getNominations, lockNominations, updateExcludedBeatmaps, updateNominationAssignees, updateNominationDescription, updateNominationMetadata, updateNominationOrder, useApi } from './api';
+import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getCaptains, getNominations, lockNominations, updateApiObject, updateExcludedBeatmaps, updateNominationAssignees, updateNominationBeatmapset, updateNominationDescription, updateNominationMetadata, updateNominationOrder, useApi } from './api';
 import { autoHeightRef } from './auto-height';
 import { BBCode } from './BBCode';
 import { BeatmapInline } from './BeatmapInline';
@@ -312,6 +312,7 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
   const moderationDone = nomination.moderator_state === ModeratorState.good || nomination.moderator_state === ModeratorState.notAllowed;
   const moderationStarted = nomination.moderator_state !== ModeratorState.unchecked;
 
+  const canAccessGodMenu = canWriteAs(authUser);
   const canAssignMetadata = !round.done && !(failedVoting && nomination.metadata_assignees.length === 0) && !metadataDone && canWriteAs(authUser, 'metadata', 'news');
   const canAssignModeration = !round.done && !(failedVoting && nomination.moderator_assignees.length === 0) && !moderationDone && canWriteAs(authUser, 'moderator', 'news');
   const canDelete = !round.done && !locked && !descriptionStarted && !metadataStarted && !moderationStarted && isNominator;
@@ -452,12 +453,20 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
           Parent nomination in {gameModeLongName(parentGameMode)}
         </div>
       }
-      <StatusLine
-        ignoreModeratorChecks={round.ignore_moderator_checks}
-        nomination={nomination}
-        pollsOpened={pollsOpened}
-        votingResult={votingResult}
-      />
+      <div className='flex-bar'>
+        <StatusLine
+          ignoreModeratorChecks={round.ignore_moderator_checks}
+          nomination={nomination}
+          pollsOpened={pollsOpened}
+          votingResult={votingResult}
+        />
+        {canAccessGodMenu &&
+          <GodMenu
+            nomination={nomination}
+            onNominationUpdate={onNominationUpdate}
+          />
+        }
+      </div>
       <Description
         author={nomination.description_author}
         canEdit={canEditDescription}
@@ -704,6 +713,75 @@ function EditDifficulties({ nomination, onNominationUpdate }: EditDifficultiesPr
           <button type='submit' className='modal-submit-button'>
             {busy ? 'Updating...' : 'Update'}
           </button>
+        </Form>
+      </Modal>
+    </>
+  );
+}
+
+type GodMenuProps = {
+  nomination: INomination;
+  onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
+};
+
+function GodMenu({ nomination, onNominationUpdate }: GodMenuProps) {
+  const [busy, setBusy] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const onChangeBeatmapsetSubmit: FormSubmitHandler = (form, then) => {
+    return updateNominationBeatmapset(nomination.id, form.beatmapsetId)
+      .then((response) => onNominationUpdate(response.body))
+      .then(then)
+      .catch((error) => window.alert(apiErrorMessage(error)))
+      .finally(() => setModalOpen(false));
+  };
+  const updateBeatmapset = () => {
+    setBusy(true);
+
+    updateApiObject('beatmapset', nomination.beatmapset.id)
+      .then(() => window.location.reload()) // TODO: update in place...
+      .catch((error) => window.alert(apiErrorMessage(error)))
+      .finally(() => {
+        setBusy(false);
+        setModalOpen(false);
+      });
+  };
+
+  return (
+    <>
+      <button
+        type='button'
+        onClick={() => setModalOpen(true)}
+        className='flex-no-shrink fake-a important'
+      >
+        God menu
+      </button>
+      <Modal
+        close={() => setModalOpen(false)}
+        open={modalOpen}
+      >
+        <h2>God options</h2>
+        <h3>Update</h3>
+        <button
+          type='button'
+          disabled={busy}
+          onClick={updateBeatmapset}
+        >
+          {busy ? 'Updating...' : 'Update beatmapset'}
+        </button>
+        <h3>
+          Use different beatmapset
+          {' '}
+          <Help text="Only do this if an accident caused linking to the wrong mapset or deletion of the mapset. There should be no normal case where it's necessary" />
+        </h3>
+        <Form busyState={[busy, setBusy]} onSubmit={onChangeBeatmapsetSubmit}>
+          <p className='flex-left'>
+            <label htmlFor='beatmapsetId'>New beatmapset ID</label>
+            <input type='number' name='beatmapsetId' required data-value-type='int' />
+            <button type='submit'>
+              {busy ? 'Updating...' : 'Update'}
+            </button>
+          </p>
         </Form>
       </Modal>
     </>

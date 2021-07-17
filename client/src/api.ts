@@ -153,6 +153,12 @@ export function updateNominationAssignees(nominationId: number, type: AssigneeTy
     .send({ nominationId, type, assigneeIds });
 }
 
+export function updateNominationBeatmapset(nominationId: number, beatmapsetId: number): Response<PartialWithId<INomination>> {
+  return superagent
+    .post('/api/nomination-change-beatmapset')
+    .send({ beatmapsetId, nominationId });
+}
+
 export function updateNominationDescription(nominationId: number, description: string | null): Response<PartialWithId<INomination>> {
   return superagent
     .post('/api/nomination-edit-description')
