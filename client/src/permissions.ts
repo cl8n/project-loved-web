@@ -11,7 +11,7 @@ export function canReadAs(user: IUser, role: IRole | 'any') {
   );
 }
 
-export function canWriteAs(user: IUser, ...rolesOrIds: (IRole | number | undefined)[]) {
+export function canWriteAs(user: IUser, ...rolesOrIds: (IRole | number)[]) {
   if (user.roles.god)
     return true;
 
@@ -21,9 +21,6 @@ export function canWriteAs(user: IUser, ...rolesOrIds: (IRole | number | undefin
     return true;
 
   return rolesOrIds.some((roleOrId) => {
-    if (roleOrId == null)
-      return false;
-
     return typeof roleOrId === 'number'
       ? user.id === roleOrId
       : user.roles[roleOrId];
