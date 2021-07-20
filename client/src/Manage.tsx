@@ -153,6 +153,7 @@ const boolRolesNames = {
 const sortUsers = (users: IUser[]): IUser[] => {
   return users
     .sort((a, b) => a.name.localeCompare(b.name))
+    .sort((a, b) => +a.roles.alumni - +b.roles.alumni)
     .sort((a, b) => +canReadAs(b, 'any') - +canReadAs(a, 'any'));
 }
 
