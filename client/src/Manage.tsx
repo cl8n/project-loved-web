@@ -195,6 +195,7 @@ function PermissionsMenu() {
       }
       <table>
         <tr>
+          {canWriteAs(authUser) && <th/>}
           <th>User</th>
           <th>Captain</th>
           {boolRoles.map((role) => (
@@ -204,6 +205,12 @@ function PermissionsMenu() {
         </tr>
         {users.map((user) => (
           <tr key={user.id} className={canReadAs(user, 'any') ? undefined : 'faded'}>
+            {canWriteAs(authUser) &&
+              <PermissionsMenuUserEditor
+                user={user}
+                setRoles={roleSetter(user.id)}
+              />
+            }
             <td>
               <UserInline user={user} />
             </td>
@@ -224,12 +231,6 @@ function PermissionsMenu() {
                 ` (${gameModeLongName(user.roles.alumni_game_mode)})`
               }
             </td>
-            {canWriteAs(authUser) &&
-              <PermissionsMenuUserEditor
-                user={user}
-                setRoles={roleSetter(user.id)}
-              />
-            }
           </tr>
         ))}
       </table>
