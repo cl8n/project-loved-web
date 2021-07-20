@@ -19,6 +19,17 @@ function metadataClass(state: MetadataState) {
   }
 }
 
+function metadataText(state: MetadataState) {
+  switch (state) {
+    case MetadataState.unchecked:
+      return 'Not checked';
+    case MetadataState.needsChange:
+      return 'Needs change';
+    case MetadataState.good:
+      return 'Good';
+  }
+}
+
 function moderationClass(state: ModeratorState) {
   switch (state) {
     case ModeratorState.unchecked:
@@ -50,7 +61,10 @@ type StatusLineProps = {
 export default function StatusLine({ ignoreModeratorChecks, nomination, pollsOpened, votingResult }: StatusLineProps) {
   const infoArray = [
     <span className={descriptionClass(nomination.description, nomination.description_state)}>Description</span>,
-    <span className={metadataClass(nomination.metadata_state)}>Metadata</span>,
+    <span>
+      <span className={metadataClass(nomination.metadata_state)}>Metadata</span>
+      <i> {`(${metadataText(nomination.metadata_state)})`}</i>
+    </span>,
   ];
 
   if (!ignoreModeratorChecks)
