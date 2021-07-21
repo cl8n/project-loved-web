@@ -86,7 +86,7 @@ Sheet columns:
     await writeTsv(
       `${__dirname}/mapper-sheet.tsv`,
       ['Username', 'Permission', 'Blacklist or whitelist', 'Reason'],
-      uncleanRows,
+      uncleanRows.sort((a, b) => tsvValue(a, 2).length - tsvValue(b, 2).length),
     );
   }
 })();
