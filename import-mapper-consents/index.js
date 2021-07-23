@@ -12,6 +12,9 @@ Sheet columns:
 - Reason for permission, blacklist, or whitelist
 */
 
+const maplistRegex = /^(?:#(\d+),?)+$/;
+const maplistRegexGlobal = /#(\d+)/g;
+
 (async () => {
   const mapperSheet = await readTsv(`${__dirname}/mapper-sheet.tsv`);
   const cleanRows = [];
@@ -46,11 +49,8 @@ Sheet columns:
     let clean =
       tsvValue(row, 0).startsWith('#') &&
       ['Yes', 'No', 'Pending', 'Unreachable'].includes(tsvValue(row, 1)) &&
-      tsvValue(row, 2).length === 0;
-
-    if (!process.argv.includes('--reasons-are-clean', 2)) {
-      clean = clean && tsvValue(row, 3).length === 0;
-    }
+      (tsvValue(row, 2).length === 0 || (maplistRegex.test(tsvValue(row, 2)) && ['Yes', 'No'].includes(tsvValue(row, 1)))) &&
+      (tsvValue(row, 3).length === 0 || ['General', 'Beatmapset'].includes(tsvValue(row, 4)));
 
     (clean ? cleanRows : uncleanRows).push(row);
   }
@@ -60,7 +60,7 @@ Sheet columns:
   if (cleanRows.length > 0) {
     await writeSql(
       `${__dirname}/${timestamp}.sql`,
-      'mapper_consents_import',
+      'mapper_consents',
       ['id', 'consent', 'consent_reason', 'updated_at', 'updater_id'],
       cleanRows.map((row) => [
         tsvValue(row, 0).slice(1),
@@ -70,11 +70,40 @@ Sheet columns:
           Yes: '1',
           Unreachable: '2',
         }[tsvValue(row, 1)],
-        tsvValue(row, 3).length > 0 ? sqlString(tsvValue(row, 3)) : 'NULL',
+        tsvValue(row, 3).length > 0 && tsvValue(row, 4) === 'General' ? sqlString(tsvValue(row, 3)) : 'NULL',
         sqlString('1970-01-01 00:00:01'),
         '0',
       ]),
     );
+
+    const mapsetSqlRows = [];
+
+    for (const row of cleanRows) {
+      if (tsvValue(row, 2).length > 0) {
+        const consent = tsvValue(row, 1) === 'No';
+        const reason = tsvValue(row, 3).length > 0 && tsvValue(row, 4) === 'Beatmapset' ? sqlString(tsvValue(row, 3)) : 'NULL';
+
+        for (const beatmapsetIdMatch of tsvValue(row, 2).matchAll(maplistRegexGlobal)) {
+          const beatmapsetId = beatmapsetIdMatch[1];
+
+          mapsetSqlRows.push([
+            beatmapsetId,
+            tsvValue(row, 0).slice(1),
+            consent ? '1' : '0',
+            reason,
+          ]);
+        }
+      }
+    }
+
+    if (mapsetSqlRows.length > 0) {
+      await writeSql(
+        `${__dirname}/${timestamp}-beatmapsets.sql`,
+        'mapper_consent_beatmapsets',
+        ['beatmapset_id', 'user_id', 'consent', 'consent_reason'],
+        mapsetSqlRows,
+      );
+    }
   }
 
   await rename(
@@ -85,7 +114,7 @@ Sheet columns:
   if (uncleanRows.length > 0) {
     await writeTsv(
       `${__dirname}/mapper-sheet.tsv`,
-      ['Username', 'Permission', 'Blacklist or whitelist', 'Reason'],
+      ['Username', 'Permission', 'Blacklist or whitelist', 'Reason', 'Insert reason for'],
       uncleanRows.sort((a, b) => tsvValue(a, 2).length - tsvValue(b, 2).length),
     );
   }
