@@ -207,7 +207,7 @@ export function updateUserRoles(userId: number, roles: IUser['roles']): Response
 }
 
 export function apiErrorMessage(error: ResponseError): string {
-  return error.response?.body.error ?? error.message;
+  return error.response?.body?.error ?? error.message;
 }
 
 type useApiReturn<T> = [T | undefined, ResponseError | undefined, Dispatch<SetStateAction<T | undefined>>];
