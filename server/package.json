@@ -1,4 +1,5 @@
 {
+  "name": "loved-server",
   "private": true,
   "dependencies": {
     "express": "^4.17.1",

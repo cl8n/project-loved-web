@@ -1,4 +1,5 @@
 {
+  "name": "loved-client",
   "private": true,
   "dependencies": {
     "@types/escape-html": "^1.0.0",
