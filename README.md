@@ -12,7 +12,7 @@ On the first run of the database container, the `project_loved` user will be cre
 
 ### Live data
 
-If you want to develop using data from the live site, contact me.
+Regular data exports (sans `logs`, `log_values`, and `sessions`) are posted to <https://loved.sh/exports>. Be aware that they will drop all tables and import new ones.
 
 ## Deployment
 
