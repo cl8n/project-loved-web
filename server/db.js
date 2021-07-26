@@ -3,14 +3,30 @@ const config = require('./config');
 
 class MysqlDatabase {
   constructor(connectionConfig) {
+    this.connected = false;
     this.connection = mysql.createConnection(connectionConfig);
   }
 
   connect() {
     return new Promise((resolve, reject) => {
-      this.connection.connect(function (error) {
+      this.connection.connect(async (error) => {
         if (error)
           return reject(error);
+
+        this.connected = true;
+
+        const columns = await this.query(`
+          SELECT TABLE_NAME, COLUMN_NAME
+          FROM information_schema.COLUMNS
+          WHERE TABLE_SCHEMA = ?
+        `, config.dbDatabase);
+        this.columnsByTable = columns.reduce((prev, column) => {
+          if (prev[column.TABLE_NAME] == null)
+            prev[column.TABLE_NAME] = [];
+
+          prev[column.TABLE_NAME].push(column.COLUMN_NAME);
+          return prev;
+        }, {});
 
         resolve();
       });
@@ -18,6 +34,10 @@ class MysqlDatabase {
   }
 
   query(sql, values) {
+    if (!this.connected) {
+      return Promise.reject('Not connected');
+    }
+
     return new Promise((resolve, reject) => {
       this.connection.query(sql, values, function (error, results) {
         if (error)
@@ -57,25 +77,8 @@ class MysqlDatabase {
       }
     }
 
-    const specialSelectRealColumns = (await this.query(`
-      SELECT table_name, column_name
-      FROM information_schema.columns
-      WHERE table_schema = ?
-        AND table_name IN (?)
-    `, [
-      config.dbDatabase,
-      specialSelectRealTables,
-    ]))
-      .reduce((prev, column) => {
-        if (prev[column.table_name] == null)
-          prev[column.table_name] = [];
-
-        prev[column.table_name].push(column.column_name);
-        return prev;
-      }, {});
-
     const specialSelectsSqls = specialSelectInfo.map(
-      ([fromTable, toTable, realFromTable]) => specialSelectRealColumns[realFromTable].map(
+      ([fromTable, toTable, realFromTable]) => this.columnsByTable[realFromTable].map(
         (column) => `\`${fromTable}\`.\`${column}\` AS '${toTable}:${column}'`
       )
     );
