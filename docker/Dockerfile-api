@@ -1,0 +1,7 @@
+FROM node:14
+RUN ["apt-get", "update", "-y"]
+RUN ["apt-get", "install", "-y", "netcat"]
+RUN ["npm", "install", "-g", "npm"]
+RUN ["npm", "install", "-g", "nodemon"]
+WORKDIR /srv/loved
+CMD ["/api-entrypoint.sh"]

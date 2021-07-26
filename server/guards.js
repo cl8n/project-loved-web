@@ -1,5 +1,5 @@
 const { createHash, timingSafeEqual } = require('crypto');
-const config = require('./config.json');
+const config = require('./config');
 
 const allRoles = ['alumni', 'captain', 'metadata', 'moderator', 'news'];
 

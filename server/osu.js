@@ -1,6 +1,6 @@
 const qs = require('querystring');
 const superagent = require('superagent');
-const config = require('./config.json');
+const config = require('./config');
 const db = require('./db');
 
 const baseUrl = 'https://osu.ppy.sh';

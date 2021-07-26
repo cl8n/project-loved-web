@@ -1,0 +1,5 @@
+CREATE USER 'project_loved'@'%' IDENTIFIED BY '';
+GRANT ALL PRIVILEGES ON `project_loved`.* TO 'project_loved'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+CREATE DATABASE IF NOT EXISTS `project_loved` DEFAULT CHARSET utf8mb4;
