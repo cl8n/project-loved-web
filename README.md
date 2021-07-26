@@ -1,20 +1,37 @@
 This project contains the web client (<https://loved.sh>), web server (<https://loved.sh/api>), and related tools for osu!'s [Project Loved](https://osu.ppy.sh/wiki/Project_Loved). See [cl8n/project-loved](https://github.com/cl8n/project-loved) for more management tools.
 
-## Dependencies
+## Development with Docker
 
-- [Node.js](https://nodejs.org/en/download/) 12+
-- [MySQL](https://dev.mysql.com/downloads/mysql/) 5.7+
+The provided `docker-compose` configuration sets up a development environment with the client, API, MySQL, and Nginx. The client is served from http://localhost:8080 by default. Server config options `db*`, `localInteropKey`, and `port` are overridden in this environment.
 
-## Usage
+### Database migrations
+
+`/server/migrations` contains SQL to create the `project_loved` database schema. There are no backward migrations.
+
+On the first run of the database container, the `project_loved` user will be created with an empty password. MySQL is exposed to the host machine on port 3306. The `project_loved` database will be created and existing migrations will be applied, but future ones need to be run manually.
+
+### Live data
+
+If you want to develop using data from the live site, contact me.
+
+## Deployment
+
+### Dependencies
+
+- [Node.js](https://nodejs.org/en/download/) 14
+  - Preferably with npm 7 to support the new lockfile format
+- [MySQL](https://dev.mysql.com/downloads/mysql/) 8
 
 ### Client
 
+- `cd client`
 - `npm install && npm run build`
 
-Built webpage will be in `build/`, it's an SPA.
+The built webpage will be in `/client/build`, it's an SPA.
 
 ### Server
 
+- `cd server`
 - `npm install && cp config.example.json config.json`
 - Fill in provided config
 - Run server
@@ -22,7 +39,3 @@ Built webpage will be in `build/`, it's an SPA.
   - With systemd: See provided `project-loved-web.example.service`
 
 Request paths under `/api` should proxy to the server, paths exactly matching files should serve the files, and everything else should serve the client's `index.html`.
-
-#### Migrations
-
-Run the SQL under `migrations/` in order to migrate up. There are no migrations down.
