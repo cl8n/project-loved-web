@@ -24,6 +24,8 @@ function destroySession(session) {
   });
 }
 
+db.connect().then(() => {
+
 const app = express();
 const sessionStore = new MysqlSessionStore({
   checkExpirationInterval: 1800000, // 30 minutes
@@ -148,3 +150,5 @@ app.use(function (error, _, response, _) {
 });
 
 app.listen(config.port);
+
+});
