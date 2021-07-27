@@ -15,6 +15,7 @@ import './style.css';
 import Statistics from "./statistics";
 import SubmissionForm from './submission-form';
 import Team from './team';
+import MapperConsents from './mapper-consents';
 
 registerTextareaAutoHeightTrigger();
 
@@ -27,7 +28,7 @@ render(
           <Switch>
             <Route exact path='/'><NotReady /></Route>
             <Route path='/submit'><NotReady><SubmissionForm /></NotReady></Route>
-            <Route path='/mappers'><NotReady /></Route>
+            <Route path='/mappers'><MapperConsents /></Route>
             <Route path='/team'><Team /></Route>
             <Redirect from='/captains' to='/team' />
             <Route path='/statistics'><Statistics /></Route>

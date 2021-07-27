@@ -159,6 +159,16 @@ export interface ICaptain extends IUser {
   };
 }
 
+export interface IMapperConsent {
+  id: number;
+  consent?: 0 | 1 | 2;
+  consent_reason?: string;
+  updated_at?: Date;
+  updater_id: number;
+  mapper: IUser;
+  updater: IUser;
+}
+
 export type PartialWithoutId<T extends { id: unknown }> = {
   [P in keyof T as Exclude<P, 'id'>]?: T[P];
 };

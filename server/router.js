@@ -492,7 +492,7 @@ router.get('/mapper-consents', guards.isAnything, asyncHandler(async (req, res) 
       ON mapper_consents.id = mappers.id
     INNER JOIN users AS updaters
       ON mapper_consents.updater_id = updaters.id
-    ORDER BY mapper.name ASC
+    ORDER BY \`mapper:name\` ASC
     ${db.pageQuery(req)}
   `);
 
