@@ -2,12 +2,7 @@ import { apiErrorMessage, getMapperConsents, useApi } from '../api';
 import { UserInline } from '../UserInline';
 
 function consentToCell(consent?: 0 | 1 | 2) {
-  let index: 'null' | 0 | 1 | 2;
-  if (consent == null) {
-    index = 'null';
-  } else {
-    index = consent;
-  }
+  let index: 'null' | 0 | 1 | 2 = consent == null ? 'null' : consent;
   const mapping = {
     'null': ['no reply', 'pending'],
     0: ['no', 'error'],
