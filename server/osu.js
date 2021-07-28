@@ -1,6 +1,5 @@
 const qs = require('querystring');
 const superagent = require('superagent');
-const config = require('./config');
 const db = require('./db');
 
 const baseUrl = 'https://osu.ppy.sh';
@@ -11,8 +10,8 @@ const refreshTokenThreshold = 3600000; // 1 hour
 
 function authRedirectUrl(authState) {
   return `${baseUrl}/oauth/authorize?` + qs.stringify({
-    client_id: config.osuApiClientId,
-    redirect_uri: config.osuApiClientRedirect,
+    client_id: process.env.OSU_CLIENT_ID,
+    redirect_uri: process.env.OSU_CLIENT_REDIRECT,
     response_type: 'code',
     scope: apiScopes,
     state: authState,
@@ -60,8 +59,8 @@ class Osu {
         .post(`${baseUrl}/oauth/token`)
         .type('form')
         .send({
-          client_id: config.osuApiClientId,
-          client_secret: config.osuApiClientSecret,
+          client_id: process.env.OSU_CLIENT_ID,
+          client_secret: process.env.OSU_CLIENT_SECRET,
           grant_type: 'client_credentials',
           scope: 'public',
         })
@@ -77,11 +76,11 @@ class Osu {
         .post(`${baseUrl}/oauth/token`)
         .type('form')
         .send({
-          client_id: config.osuApiClientId,
-          client_secret: config.osuApiClientSecret,
+          client_id: process.env.OSU_CLIENT_ID,
+          client_secret: process.env.OSU_CLIENT_SECRET,
           code: authorizationCode,
           grant_type: 'authorization_code',
-          redirect_uri: config.osuApiClientRedirect,
+          redirect_uri: process.env.OSU_CLIENT_REDIRECT,
         })
     );
 
@@ -96,8 +95,8 @@ class Osu {
           .post(`${baseUrl}/oauth/token`)
           .type('form')
           .send({
-            client_id: config.osuApiClientId,
-            client_secret: config.osuApiClientSecret,
+            client_id: process.env.OSU_CLIENT_ID,
+            client_secret: process.env.OSU_CLIENT_SECRET,
             grant_type: 'refresh_token',
             refresh_token: this.#refreshToken,
             scope: apiScopes,

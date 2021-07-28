@@ -1,10 +1,24 @@
 const mysql = require('mysql');
-const config = require('./config');
 
 class MysqlDatabase {
   constructor(connectionConfig) {
     this.connected = false;
     this.connection = mysql.createConnection(connectionConfig);
+  }
+
+  close() {
+    if (!this.connected) {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve, reject) => {
+      this.connection.end((error) => {
+        if (error)
+          return reject(error);
+
+        resolve();
+      });
+    });
   }
 
   connect() {
@@ -19,7 +33,7 @@ class MysqlDatabase {
           SELECT TABLE_NAME, COLUMN_NAME
           FROM information_schema.COLUMNS
           WHERE TABLE_SCHEMA = ?
-        `, config.dbDatabase);
+        `, process.env.DB_DATABASE);
         this.columnsByTable = columns.reduce((prev, column) => {
           if (prev[column.TABLE_NAME] == null)
             prev[column.TABLE_NAME] = [];
@@ -148,11 +162,11 @@ class MysqlDatabase {
 }
 
 module.exports = new MysqlDatabase({
-  database: config.dbDatabase,
-  host: config.dbHost,
-  password: config.dbPassword,
-  port: config.dbPort,
-  user: config.dbUser,
+  database: process.env.DB_DATABASE,
+  host: process.env.DB_HOST,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
 
   typeCast: function (field, next) {
     if (field.type !== 'TINY' || field.length !== 1)

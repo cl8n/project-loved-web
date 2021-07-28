@@ -1,5 +1,4 @@
 const { Router } = require('express');
-const config = require('../config')
 const db = require('../db');
 const { asyncHandler } = require('../express-helpers');
 const { groupBy } = require('../helpers');
@@ -116,7 +115,12 @@ router.get('/data', asyncHandler(async (req, res) => {
   );
 
   res.json({
-    discord_webhooks: config.discordWebhooks,
+    discord_webhooks: [
+      process.env.DISCORD_WEBHOOK_OSU || null,
+      process.env.DISCORD_WEBHOOK_TAIKO || null,
+      process.env.DISCORD_WEBHOOK_CATCH || null,
+      process.env.DISCORD_WEBHOOK_MANIA || null,
+    ],
     nominations,
     results_post_ids: lastRoundResultsPostIds,
     round,
