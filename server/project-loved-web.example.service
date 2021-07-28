@@ -3,7 +3,7 @@ Description=Project Loved Web API
 After=network-online.target
 
 [Service]
-ExecStart=/srv/project-loved-web/server/index.js
+ExecStart=/srv/loved/index.js
 Restart=always
 Environment=NODE_ENV=production
 
