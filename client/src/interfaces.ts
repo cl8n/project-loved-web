@@ -167,6 +167,14 @@ export interface IMapperConsent {
   updater_id: number;
   mapper: IUser;
   updater: IUser;
+  beatmapset_consent: IMapperBeatmapsetConsent
+}
+
+export interface IMapperBeatmapsetConsent {
+  beatmapset_id: number;
+  user_id: number;
+  consent: boolean;
+  consent_reason?: string;
 }
 
 export type PartialWithoutId<T extends { id: unknown }> = {
