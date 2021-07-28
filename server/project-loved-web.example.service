@@ -4,6 +4,7 @@ After=network-online.target
 
 [Service]
 ExecStart=/srv/loved/index.js
+WorkingDirectory=/srv/loved
 Restart=always
 Environment=NODE_ENV=production
 
