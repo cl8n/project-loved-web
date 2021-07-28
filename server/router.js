@@ -486,7 +486,7 @@ router.post('/update-round', guards.isNewsAuthor, asyncHandler(async (req, res) 
 
 router.get('/mapper-consents', guards.isAnything, asyncHandler(async (req, res) => {
   const consents = await db.queryWithGroups(`
-    SELECT mapper_consents.*, mappers:mapper, updaters:updater, mapper_consent_beatmapsets:beatmapset_consent
+    SELECT mapper_consents.*, mappers:mapper, updaters:updater, mapper_consent_beatmapsets:beatmapset_consent, beatmapsets:beatmapset_consent_beatmapset
     FROM mapper_consents
     INNER JOIN users AS mappers
       ON mapper_consents.id = mappers.id
@@ -494,6 +494,8 @@ router.get('/mapper-consents', guards.isAnything, asyncHandler(async (req, res) 
       ON mapper_consents.updater_id = updaters.id
     LEFT JOIN mapper_consent_beatmapsets
       ON mapper_consent_beatmapsets.user_id = mapper_consents.id
+    LEFT JOIN beatmapsets
+      ON mapper_consent_beatmapsets.beatmapset_id = beatmapsets.id
     ORDER BY \`mapper:name\` ASC
     ${db.pageQuery(req)}
   `);

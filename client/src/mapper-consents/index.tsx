@@ -1,11 +1,14 @@
 import { apiErrorMessage, getMapperConsents, useApi } from '../api';
 import { BeatmapInline } from '../BeatmapInline';
-import { IMapperBeatmapsetConsent, IMapperConsent } from '../interfaces';
+import { IBeatmapset, IMapperBeatmapsetConsent, IMapperConsent } from '../interfaces';
 import { UserInline } from '../UserInline';
 
+interface IMapperBeatmapsetConsentGrouped extends Omit<IMapperBeatmapsetConsent, 'beatmapset_id'> {
+  beatmapset: IBeatmapset
+}
 
 interface IMapperConsentGrouped extends Omit<IMapperConsent, 'beatmapset_consent'> {
-  beatmapset_consents: IMapperBeatmapsetConsent[]
+  beatmapset_consents: IMapperBeatmapsetConsentGrouped[]
 }
 
 function consentToCell(consent?: 0 | 1 | 2 | boolean) {
@@ -47,16 +50,19 @@ function MapperBeatmapsetConsents(mapperConsent: IMapperConsentGrouped) {
   return (
     <table style={{'width': '80%', 'marginLeft': '3em', 'marginRight': '3em', 'tableLayout': 'fixed'}}>
       <tr>
-          <th style={{'width': '20%'}}>Beatmap</th>
-          <th style={{'width': '20%'}}>Consent</th>
+          <th style={{'width': '30%'}}>Beatmapset</th>
+          <th style={{'width': '10%'}}>Consent</th>
           <th style={{'width': '60%'}}>Notes</th>
       </tr>
       {mapperConsent.beatmapset_consents.map((consent) => {
+        // TODO remove when beatmapset foreign key issues have been resolved
+        if (consent.beatmapset == null) {
+          return
+        }
         return (
           <>
-            <tr key={mapperConsent.id + "-beatmapset-" + consent.beatmapset_id}>
-              {/* <td><BeatmapInline beatmapset={consent.beatmapset_id} /></td> */}
-              <td>{consent.beatmapset_id}</td>
+            <tr key={mapperConsent.id + "-beatmapset-" + consent.beatmapset.id}>
+              <td><BeatmapInline beatmapset={consent.beatmapset!} /></td>
               {consentToCell(consent.consent)}
               <td>{consent.consent_reason}</td>
             </tr>
@@ -78,12 +84,18 @@ export default function MapperConsents() {
 
   let mappedConsents: Record<number, IMapperConsentGrouped> = {}
 
+  function consentToBeatmapsetConsent(consent: IMapperConsent) : IMapperBeatmapsetConsentGrouped  {
+    let newConsent: any = {...consent.beatmapset_consent}
+    newConsent.beatmapset = consent.beatmapset_consent_beatmapset
+    return newConsent
+  }
+
   consents.forEach((consent) => {
     if (consent.id in mappedConsents) {
-      mappedConsents[consent.id].beatmapset_consents.push(consent.beatmapset_consent);
+      mappedConsents[consent.id].beatmapset_consents.push(consentToBeatmapsetConsent(consent));
     } else {
       let newConsent: any = {...consent}
-      newConsent.beatmapset_consents = consent.beatmapset_consent == null ? [] : [consent.beatmapset_consent]
+      newConsent.beatmapset_consents = consent.beatmapset_consent == null ? [] : [consentToBeatmapsetConsent(consent)]
       delete newConsent.beatmapset_consent
       mappedConsents[consent.id] = newConsent
     }
