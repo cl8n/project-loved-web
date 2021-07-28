@@ -1,10 +1,24 @@
 const mysql = require('mysql');
-const config = require('./config');
 
 class MysqlDatabase {
   constructor(connectionConfig) {
     this.connected = false;
     this.connection = mysql.createConnection(connectionConfig);
+  }
+
+  close() {
+    if (!this.connected) {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve, reject) => {
+      this.connection.end((error) => {
+        if (error)
+          return reject(error);
+
+        resolve();
+      });
+    });
   }
 
   connect() {
@@ -19,7 +33,7 @@ class MysqlDatabase {
           SELECT TABLE_NAME, COLUMN_NAME
           FROM information_schema.COLUMNS
           WHERE TABLE_SCHEMA = ?
-        `, config.dbDatabase);
+        `, process.env.DB_DATABASE);
         this.columnsByTable = columns.reduce((prev, column) => {
           if (prev[column.TABLE_NAME] == null)
             prev[column.TABLE_NAME] = [];
@@ -59,7 +73,6 @@ class MysqlDatabase {
       .slice(sql.indexOf('SELECT') + 6, sql.indexOf('FROM'))
       .split(',')
       .map((select) => select.trim());
-    const specialSelectRealTables = [];
     const specialSelectInfo = [];
     const normalSelects = [];
 
@@ -70,10 +83,12 @@ class MysqlDatabase {
         normalSelects.push(select);
       else {
         const joinMatch = sql.match(new RegExp(`JOIN\\s+(\\S+)\\s+AS\\s+${parts[0]}`, 'i'));
-        const realTable = joinMatch == null ? parts[0] : joinMatch[1];
 
-        specialSelectRealTables.push(realTable);
-        specialSelectInfo.push([parts[0], parts[1], realTable]);
+        specialSelectInfo.push([
+          parts[0],
+          parts[1],
+          joinMatch == null ? parts[0] : joinMatch[1],
+        ]);
       }
     }
 
@@ -147,11 +162,11 @@ class MysqlDatabase {
 }
 
 module.exports = new MysqlDatabase({
-  database: config.dbDatabase,
-  host: config.dbHost,
-  password: config.dbPassword,
-  port: config.dbPort,
-  user: config.dbUser,
+  database: process.env.DB_DATABASE,
+  host: process.env.DB_HOST,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
 
   typeCast: function (field, next) {
     if (field.type !== 'TINY' || field.length !== 1)

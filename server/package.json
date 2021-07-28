@@ -2,6 +2,7 @@
   "name": "loved-server",
   "private": true,
   "dependencies": {
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-mysql-session": "^2.1.6",
     "express-session": "^1.17.2",

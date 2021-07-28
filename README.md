@@ -2,7 +2,7 @@ This project contains the web client (<https://loved.sh>), web server (<https://
 
 ## Development with Docker
 
-The provided `docker-compose` configuration sets up a development environment with the client, API, MySQL, and Nginx. The client is served from http://localhost:8080 by default. Server config options `db*`, `localInteropKey`, and `port` are overridden in this environment.
+The provided `docker-compose` configuration sets up a development environment with the client, API, MySQL, and Nginx. The client is served from http://localhost:8080 by default. Server environment variables under "API server options" and "MySQL connection options" are overridden in this environment.
 
 ### Database migrations
 
@@ -12,7 +12,18 @@ On the first run of the database container, the `project_loved` user will be cre
 
 ### Live data
 
-Regular data exports (sans `logs`, `log_values`, and `sessions`) are posted to <https://loved.sh/exports>. Be aware that they will drop all tables and import new ones.
+Regular data exports (sans `logs`, `log_values`, and `sessions`) are posted to <https://loved.sh/exports>.
+
+```sh
+# Latest export is used with no argument
+docker-compose exec database /import-live-data.sh [export URL]
+```
+
+### Creating an admin user
+
+```sh
+docker-compose run --rm api ./init-user.js <osu! username>
+```
 
 ## Deployment
 
@@ -32,8 +43,8 @@ The built webpage will be in `/client/build`, it's an SPA.
 ### Server
 
 - `cd server`
-- `npm install && cp config.example.json config.json`
-- Fill in provided config
+- `npm install`
+- Copy `.env.example` to `.env` and fill in the options, or export the environment variables separately
 - Run server
   - Directly: `NODE_ENV=production ./index.js`
   - With systemd: See provided `project-loved-web.example.service`

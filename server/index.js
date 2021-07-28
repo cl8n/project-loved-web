@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
+require('dotenv').config();
 const { randomBytes } = require('crypto');
 const express = require('express');
 const session = require('express-session');
 const MysqlSessionStore = require('express-mysql-session')(session);
-const config = require('./config');
 const db = require('./db');
 const { asyncHandler } = require('./express-helpers');
 const { hasLocalInteropKey, isAnything } = require('./guards');
@@ -27,10 +27,6 @@ function destroySession(session) {
 db.connect().then(() => {
 
 const app = express();
-const sessionStore = new MysqlSessionStore({
-  checkExpirationInterval: 1800000, // 30 minutes
-  expiration: 604800000, // 7 days
-}, db.connection);
 
 app.use(express.json());
 
@@ -41,14 +37,20 @@ app.use('/local-interop', hasLocalInteropKey, interopRouter);
 app.use(session({
   cookie: {
     httpOnly: true,
-    secure: true,
+    secure: process.env.HTTPS_ALWAYS === '1',
   },
   name: 'loved_sid',
   proxy: true,
   resave: false,
   saveUninitialized: false,
-  secret: config.sessionSecret,
-  store: sessionStore,
+  secret: process.env.SESSION_SECRET,
+  store: new MysqlSessionStore(
+    {
+      checkExpirationInterval: 1800000, // 30 minutes
+      expiration: 604800000, // 7 days
+    },
+    db.connection,
+  ),
 }));
 
 app.get('/auth/begin', function (request, response) {
@@ -149,6 +151,16 @@ app.use(function (error, _, response, _) {
   response.status(500).json({ error: 'Server error' });
 });
 
-app.listen(config.port);
+const httpServer = app.listen(parseInt(process.env.PORT, 10));
+
+function shutdown() {
+  httpServer.close();
+  db.close();
+}
+
+process.on('SIGHUP', shutdown);
+process.on('SIGINT', shutdown);
+process.on('SIGQUIT', shutdown);
+process.on('SIGTERM', shutdown);
 
 });
