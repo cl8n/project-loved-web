@@ -27,10 +27,6 @@ function destroySession(session) {
 db.connect().then(() => {
 
 const app = express();
-const sessionStore = new MysqlSessionStore({
-  checkExpirationInterval: 1800000, // 30 minutes
-  expiration: 604800000, // 7 days
-}, db.connection);
 
 app.use(express.json());
 
@@ -48,7 +44,13 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   secret: config.sessionSecret,
-  store: sessionStore,
+  store: new MysqlSessionStore(
+    {
+      checkExpirationInterval: 1800000, // 30 minutes
+      expiration: 604800000, // 7 days
+    },
+    db.connection,
+  ),
 }));
 
 app.get('/auth/begin', function (request, response) {

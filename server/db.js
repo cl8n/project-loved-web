@@ -59,7 +59,6 @@ class MysqlDatabase {
       .slice(sql.indexOf('SELECT') + 6, sql.indexOf('FROM'))
       .split(',')
       .map((select) => select.trim());
-    const specialSelectRealTables = [];
     const specialSelectInfo = [];
     const normalSelects = [];
 
@@ -70,10 +69,12 @@ class MysqlDatabase {
         normalSelects.push(select);
       else {
         const joinMatch = sql.match(new RegExp(`JOIN\\s+(\\S+)\\s+AS\\s+${parts[0]}`, 'i'));
-        const realTable = joinMatch == null ? parts[0] : joinMatch[1];
 
-        specialSelectRealTables.push(realTable);
-        specialSelectInfo.push([parts[0], parts[1], realTable]);
+        specialSelectInfo.push([
+          parts[0],
+          parts[1],
+          joinMatch == null ? parts[0] : joinMatch[1],
+        ]);
       }
     }
 
