@@ -6,17 +6,17 @@ services:
     depends_on:
       - database
     environment:
-      API_PORT: 3000
+      HTTPS_ALWAYS: 0
+      PORT: 3000
+      SESSION_SECRET: development-secret
       DB_DATABASE: project_loved
       DB_HOST: database
       DB_PASSWORD: ""
       DB_PORT: 3306
       DB_USER: project_loved
-      LOCAL_INTEROP_KEY: development-key
       NODE_ENV: development
     volumes:
       - ./server:/srv/loved
-      - ./docker/api-entrypoint.sh:/api-entrypoint.sh
 
   assets:
     build:
@@ -26,18 +26,14 @@ services:
       - ./client:/app/loved
 
   database:
-    image: mysql:8
-    command: --default-authentication-plugin=mysql_native_password
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
-      MYSQL_ONETIME_PASSWORD: "true"
+    build:
+      context: ./docker
+      dockerfile: Dockerfile-database
     ports:
       - "3306:3306"
     volumes:
       - database:/var/lib/mysql
       - ./server/migrations:/migrations
-      - ./docker/database-setup.sql:/docker-entrypoint-initdb.d/0-setup.sql
-      - ./docker/database-migrate.sh:/docker-entrypoint-initdb.d/1-migrate.sh
 
   nginx:
     image: nginx:latest
