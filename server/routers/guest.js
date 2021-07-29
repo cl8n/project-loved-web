@@ -38,31 +38,34 @@ router.get('/stats/polls', asyncHandler(async (_, res) => {
 }));
 
 router.get('/team', asyncHandler(async (_, res) => {
-  const team = await db.queryWithGroups(`
+  const team = (await db.queryWithGroups(`
     SELECT users.*, user_roles:roles
     FROM users
     INNER JOIN user_roles
       ON users.id = user_roles.id
     ORDER BY users.name ASC
-  `);
+  `))
+    .filter((user) => Object.entries(user.roles).some(([role, value]) => !role.startsWith('god') && value === true));
+
   const alumni = groupBy(
     team.filter((user) => user.roles.alumni),
     'roles.alumni_game_mode',
     undefined,
     false,
-    'general',
+    'other',
   );
-  const current = groupBy(
-    team.filter((user) => (
-      !user.roles.alumni &&
-      !user.roles.god_readonly &&
-      Object.values(user.roles).some((roleValue) => roleValue === true)
-    )),
-    'roles.captain_game_mode',
-    undefined,
-    false,
-    'general',
-  );
+
+  const allCurrent = team.filter((user) => !user.roles.alumni);
+  const current = groupBy(allCurrent, 'roles.captain_game_mode');
+  delete current.null;
+
+  for (const role of ['metadata', 'moderator', 'news']) {
+    const usersWithRole = allCurrent.filter((user) => user.roles[role]);
+
+    if (usersWithRole.length > 0) {
+      current[role] = usersWithRole;
+    }
+  }
 
   res.json({ alumni, current });
 }));

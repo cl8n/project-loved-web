@@ -32,10 +32,28 @@ export default function TeamList({ current, teamApi }: TeamListProps) {
           />
         );
       })}
-      {teamUsers.general != null &&
+      {teamUsers.news != null &&
+        <UserList
+          title='News editor / Manager'
+          users={teamUsers.news}
+        />
+      }
+      {teamUsers.metadata != null &&
+        <UserList
+          title='Metadata reviewer'
+          users={teamUsers.metadata}
+        />
+      }
+      {teamUsers.moderator != null &&
+        <UserList
+          title='Moderator'
+          users={teamUsers.moderator}
+        />
+      }
+      {teamUsers.other != null &&
         <UserList
           title='Other'
-          users={teamUsers.general}
+          users={teamUsers.other}
         />
       }
     </div>
