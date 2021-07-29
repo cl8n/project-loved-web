@@ -23,14 +23,8 @@ export function UserInline(props: UserInlineProps) {
         <>
           <img
             alt={`${props.user.country} flag`}
+            className='country-flag'
             src={flagUrl(props.user.country)}
-            style={{
-              height: '1.4em',
-              // svgs osuweb provides have transparent space on the bottom and top so account for that with negative margin
-              marginBottom: '-0.075em',
-              marginTop: '-0.075em',
-              verticalAlign: 'bottom',
-            }}
           />
           {' '}
         </>
