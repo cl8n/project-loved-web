@@ -59,7 +59,7 @@ router.get('/team', asyncHandler(async (_, res) => {
   const current = groupBy(allCurrent, 'roles.captain_game_mode');
   delete current.null;
 
-  for (const role of ['metadata', 'moderator', 'news']) {
+  for (const role of ['dev', 'metadata', 'moderator', 'news']) {
     const usersWithRole = allCurrent.filter((user) => user.roles[role]);
 
     if (usersWithRole.length > 0) {

@@ -1,6 +1,6 @@
 const { createHash, timingSafeEqual } = require('crypto');
 
-const allRoles = ['alumni', 'captain', 'metadata', 'moderator', 'news'];
+const allRoles = ['alumni', 'captain', 'dev', 'metadata', 'moderator', 'news'];
 
 function isGod(method, user) {
   return user.roles.god || (method === 'GET' && user.roles.god_readonly);

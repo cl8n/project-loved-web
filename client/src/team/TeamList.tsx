@@ -50,6 +50,12 @@ export default function TeamList({ current, teamApi }: TeamListProps) {
           users={teamUsers.moderator}
         />
       }
+      {teamUsers.dev != null &&
+        <UserList
+          title='Developer'
+          users={teamUsers.dev}
+        />
+      }
       {teamUsers.other != null &&
         <UserList
           title='Other'
