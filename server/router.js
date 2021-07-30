@@ -531,6 +531,7 @@ router.get('/mapper-consents', guards.isAnything, asyncHandler(async (req, res) 
       delete consent.beatmapset_consent;
       mappedConsents[consent.id] = consent;
     }
+    delete consent.beatmapset_consent_beatmapset;
   })
 
   consents = Object.values(mappedConsents);
