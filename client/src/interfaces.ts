@@ -167,12 +167,11 @@ export interface IMapperConsent {
   updater_id: number;
   mapper: IUser;
   updater: IUser;
-  beatmapset_consent?: IMapperBeatmapsetConsent
-  beatmapset_consent_beatmapset?: IBeatmapset
+  beatmapset_consents: IMapperBeatmapsetConsent[]
 }
 
 export interface IMapperBeatmapsetConsent {
-  beatmapset_id: number;
+  beatmapset: IBeatmapset;
   user_id: number;
   consent: boolean;
   consent_reason?: string;

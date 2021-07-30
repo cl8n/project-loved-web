@@ -1,4 +1,5 @@
 const express = require('express');
+const { connect } = require('./db');
 const db = require('./db');
 const { asyncHandler } = require('./express-helpers');
 const guards = require('./guards');
@@ -44,6 +45,19 @@ router.get('/nominations', asyncHandler(async (req, res) => {
     FROM rounds
     WHERE id = ?
   `, req.query.roundId);
+
+  let a = await db.queryWithGroups(`
+  SELECT users:assignee, nomination_assignees.type AS assignee_type, nominations.id AS nomination_id
+  FROM nominations
+  INNER JOIN nomination_assignees
+    ON nominations.id = nomination_assignees.nomination_id
+  INNER JOIN users
+    ON nomination_assignees.assignee_id = users.id
+  WHERE nominations.round_id = ?
+  `, req.query.roundId);
+  console.log("aaaaa", a);
+  console.log("bbbbb", groupBy(a, "nomination_id"));
+
   const assigneesByNominationId = groupBy(
     await db.queryWithGroups(`
       SELECT users:assignee, nomination_assignees.type AS assignee_type, nominations.id AS nomination_id
@@ -485,7 +499,7 @@ router.post('/update-round', guards.isNewsAuthor, asyncHandler(async (req, res) 
 }));
 
 router.get('/mapper-consents', guards.isAnything, asyncHandler(async (req, res) => {
-  const consents = await db.queryWithGroups(`
+  let consents = await db.queryWithGroups(`
     SELECT mapper_consents.*, mappers:mapper, updaters:updater, mapper_consent_beatmapsets:beatmapset_consent, beatmapsets:beatmapset_consent_beatmapset
     FROM mapper_consents
     INNER JOIN users AS mappers
@@ -500,6 +514,27 @@ router.get('/mapper-consents', guards.isAnything, asyncHandler(async (req, res) 
     ${db.pageQuery(req)}
   `);
 
+  let mappedConsents = {};
+
+  function beatmapsetConsentFromConsent(consent) {
+    let beatmapset_consent = consent.beatmapset_consent;
+    beatmapset_consent.beatmapset = consent.beatmapset_consent_beatmapset;
+    delete beatmapset_consent.beatmapset_id;
+    return beatmapset_consent;
+  }
+
+  consents.forEach((consent) => {
+    if (consent.id in mappedConsents) {
+      mappedConsents[consent.id].beatmapset_consents.push(beatmapsetConsentFromConsent(consent));
+    } else {
+      consent.beatmapset_consents = consent.beatmapset_consent == null ? [] : [beatmapsetConsentFromConsent(consent)];
+      delete consent.beatmapset_consent;
+      mappedConsents[consent.id] = consent;
+    }
+  })
+
+  consents = Object.values(mappedConsents);
+  consents.sort((c1, c2) => c1.mapper.name.localeCompare(c2.mapper.name));
   res.json(consents);
 }));
 
