@@ -1,6 +1,6 @@
 import { apiErrorMessage, getMapperConsents, useApi } from '../api';
 import { BeatmapInline } from '../BeatmapInline';
-import { IBeatmapset, IMapperBeatmapsetConsent, IMapperConsent } from '../interfaces';
+import { IMapperConsent } from '../interfaces';
 import { UserInline } from '../UserInline';
 
 function consentToCell(consent?: 0 | 1 | 2 | boolean) {
