@@ -49,7 +49,7 @@ function MapperBeatmapsetConsents(mapperConsent: IMapperConsent) {
       {mapperConsent.beatmapset_consents.map((consent) => {
         // TODO remove when beatmapset foreign key issues have been resolved
         if (consent.beatmapset == null) {
-          return
+          return null;
         }
         return (
           <>
