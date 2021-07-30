@@ -141,11 +141,12 @@ function ApiObjectBulkMenu() {
   );
 }
 
-const boolRoles = ['metadata', 'moderator', 'news', 'god', 'god_readonly'] as const;
+const boolRoles = ['metadata', 'moderator', 'news', 'dev', 'god', 'god_readonly'] as const;
 const boolRolesNames = {
   metadata: 'Metadata',
   moderator: 'Moderator',
   news: 'News',
+  dev: 'Developer',
   god: 'God',
   god_readonly: 'Readonly',
 };
@@ -285,6 +286,7 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
       alumni_game_mode: form.alumni_game_mode === 'none' ? undefined : parseInt(form.alumni_game_mode),
       captain: form.captain === '1',
       captain_game_mode: form.captain_game_mode === 'none' ? undefined : parseInt(form.captain_game_mode),
+      dev: form.dev === '1',
       god: form.god === '1',
       god_readonly: form.god_readonly === '1',
       metadata: form.metadata === '1',

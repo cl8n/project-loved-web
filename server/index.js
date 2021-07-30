@@ -154,11 +154,24 @@ app.use(function (error, _, response, _) {
 const httpServer = app.listen(parseInt(process.env.PORT, 10));
 
 function shutdown() {
-  httpServer.close();
-  db.close();
+  Promise.allSettled([
+    new Promise((resolve) => {
+      httpServer.close((error) => {
+        if (error) {
+          console.error(error);
+        }
+
+        console.log('HTTP server closed');
+        resolve();
+      });
+    }),
+    db.close()
+      .then(() => console.log('Database connection(s) closed'))
+      .catch((error) => console.error(error)),
+  ])
+    .finally(() => process.exit());
 }
 
-process.on('SIGHUP', shutdown);
 process.on('SIGINT', shutdown);
 process.on('SIGQUIT', shutdown);
 process.on('SIGTERM', shutdown);

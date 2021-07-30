@@ -109,9 +109,9 @@ export function getLogs(): Response<ILog[]> {
     .get('/api/logs');
 }
 
-type GetTeamResponseBody = {
-  alumni: { [P in GameMode | 'general']?: IUserWithoutRoles[]; };
-  current: { [P in GameMode | 'general']?: IUserWithoutRoles[]; };
+export type GetTeamResponseBody = {
+  alumni: { [P in GameMode | 'dev' | 'metadata' | 'moderator' | 'news' | 'other' ]?: IUserWithoutRoles[]; };
+  current: { [P in GameMode | 'dev' | 'metadata' | 'moderator' | 'news' | 'other' ]?: IUserWithoutRoles[]; };
 };
 
 export function getTeam(): Response<GetTeamResponseBody> {

@@ -494,3 +494,27 @@ tr.sticky > th:last-child::after {
 .faded {
     opacity: 0.7;
 }
+
+.country-flag {
+    height: 1.4em;
+    /* svgs osuweb provides have transparent space on the bottom and top so account for that with negative margin */
+    margin: -0.075em 0;
+    vertical-align: bottom;
+}
+
+.team-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.team-list > div {
+    flex-basis: 33.3%;
+}
+
+.team-list > div:nth-child(-n+3) > h2 {
+    margin-top: 0;
+}
+
+.team-list > div > ul {
+    margin-bottom: 0;
+}

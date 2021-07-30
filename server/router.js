@@ -593,6 +593,7 @@ router.post('/update-permissions', guards.isGod, asyncHandler(async (req, res) =
       'alumni_game_mode',
       'captain',
       'captain_game_mode',
+      'dev',
       'god',
       'god_readonly',
       'metadata',

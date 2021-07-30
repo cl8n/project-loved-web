@@ -119,7 +119,7 @@ export interface IPollResult {
   voting_threshold?: number;
 }
 
-export type IRole = 'alumni' | 'captain' | 'god' | 'god_readonly' | 'metadata' | 'moderator' | 'news';
+export type IRole = 'alumni' | 'captain' | 'dev' | 'god' | 'god_readonly' | 'metadata' | 'moderator' | 'news';
 
 export interface IRound {
   id: number;
