@@ -207,7 +207,7 @@ router.post('/update-beatmapsets', asyncHandler(async (req, res) => {
       messages.push(`Updated beatmapset #${beatmapsetIds[i]}`);
 
     if (i < beatmapsetIds.length - 1)
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
   res.json(messages);
