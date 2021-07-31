@@ -301,25 +301,24 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
     votingResult = !failedVoting;
   }
 
-  const isNominator = canWriteAs(authUser, ...nomination.nominators.map((n) => n.id));
-  const isMetadataAssignee = canWriteAs(authUser, ...nomination.metadata_assignees.map((a) => a.id));
-  const isModeratorAssignee = canWriteAs(authUser, ...nomination.moderator_assignees.map((a) => a.id));
-
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
   const descriptionStarted = nomination.description != null;
+  const isNominator = canWriteAs(authUser, ...nomination.nominators.map((n) => n.id));
+  const metadataAssigned = nomination.metadata_assignees.length > 0;
   const metadataDone = nomination.metadata_state === MetadataState.good;
   const metadataStarted = nomination.metadata_state !== MetadataState.unchecked;
+  const moderationAssigned = nomination.moderator_assignees.length > 0;
   const moderationDone = nomination.moderator_state === ModeratorState.good || nomination.moderator_state === ModeratorState.notAllowed;
   const moderationStarted = nomination.moderator_state !== ModeratorState.unchecked;
 
   const canAccessGodMenu = canWriteAs(authUser);
-  const canAssignMetadata = !round.done && !(failedVoting && nomination.metadata_assignees.length === 0) && !metadataDone && canWriteAs(authUser, 'metadata', 'news');
-  const canAssignModeration = !round.done && !(failedVoting && nomination.moderator_assignees.length === 0) && !moderationDone && canWriteAs(authUser, 'moderator', 'news');
+  const canAssignMetadata = !round.done && !(failedVoting && !metadataAssigned) && !metadataDone && canWriteAs(authUser, 'metadata', 'news');
+  const canAssignModeration = !round.done && !(failedVoting && !moderationAssigned) && !moderationDone && canWriteAs(authUser, 'moderator', 'news');
   const canDelete = !round.done && !locked && !descriptionStarted && !metadataStarted && !moderationStarted && isNominator;
   const canEditDescription = !round.done && ((!descriptionDone && isCaptainForMode(authUser, nomination.game_mode)) || (descriptionStarted && canWriteAs(authUser, 'news')));
   const canEditDifficulties = !round.done && !locked && !metadataDone && isCaptainForMode(authUser, nomination.game_mode);
-  const canEditMetadata = !round.done && !failedVoting && !metadataDone && (isMetadataAssignee || canWriteAs(authUser, 'news'));
-  const canEditModeration = !round.done && !failedVoting && !moderationDone && isModeratorAssignee;
+  const canEditMetadata = !round.done && !failedVoting && !metadataDone && ((canWriteAs(authUser, 'metadata') && metadataAssigned) || canWriteAs(authUser, 'news'));
+  const canEditModeration = !round.done && !failedVoting && !moderationDone && canWriteAs(authUser, 'moderator') && moderationAssigned;
   const canEditNominators = !round.done && !locked && isNominator;
 
   return (
