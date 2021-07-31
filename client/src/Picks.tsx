@@ -353,7 +353,7 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
           <ListInline
             array={nomination.nominators}
             none='nobody'
-            render={(user) => <UserInline noId user={user} />}
+            render={(user) => <UserInline user={user} />}
           />
           {canEditNominators &&
             <>
@@ -373,7 +373,7 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
           <ListInline
             array={nomination.beatmapset_creators}
             none='nobody'
-            render={(user) => <UserInline noId user={user} />}
+            render={(user) => <UserInline user={user} />}
           />
         </span>
         {canEditMetadata &&
@@ -387,7 +387,7 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
           Metadata assignees: {' '}
           <ListInline
             array={nomination.metadata_assignees}
-            render={(user) => <UserInline noId user={user} />}
+            render={(user) => <UserInline user={user} />}
           />
           {canAssignMetadata &&
             <>
@@ -430,7 +430,7 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
               Moderator assignees: {' '}
               <ListInline
                 array={nomination.moderator_assignees}
-                render={(user) => <UserInline noId user={user} />}
+                render={(user) => <UserInline user={user} />}
               />
               {canAssignModeration &&
                 <>
@@ -849,7 +849,7 @@ function Description({ author, canEdit, nominationId, onNominationUpdate, text }
         ) : (
           <>
             <div style={{ marginBottom: '0.25em' }}>
-              Description by <UserInline noId user={author! /* TODO: type properly */} />
+              Description by <UserInline user={author! /* TODO: type properly */} />
               {canEdit &&
                 <>
                   {' — '}

@@ -346,7 +346,7 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
         close={() => setModalOpen(false)}
         open={modalOpen}
       >
-        <h2>Editing <UserInline user={user} noFlag /></h2>
+        <h2>Editing <UserInline user={user} /></h2>
         <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
           <table className='center-block'>
             <tr>
