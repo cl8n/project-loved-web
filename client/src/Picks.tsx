@@ -317,8 +317,8 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
   const canDelete = !round.done && !locked && !descriptionStarted && !metadataStarted && !moderationStarted && isNominator;
   const canEditDescription = !round.done && ((!descriptionDone && isCaptainForMode(authUser, nomination.game_mode)) || (descriptionStarted && canWriteAs(authUser, 'news')));
   const canEditDifficulties = !round.done && !locked && !metadataDone && isCaptainForMode(authUser, nomination.game_mode);
-  const canEditMetadata = !round.done && !failedVoting && !metadataDone && ((canWriteAs(authUser, 'metadata') && metadataAssigned) || canWriteAs(authUser, 'news'));
-  const canEditModeration = !round.done && !failedVoting && !moderationDone && canWriteAs(authUser, 'moderator') && moderationAssigned;
+  const canEditMetadata = !round.done && !failedVoting && ((canWriteAs(authUser, 'metadata') && metadataAssigned) || canWriteAs(authUser, 'news'));
+  const canEditModeration = !round.done && !failedVoting && canWriteAs(authUser, 'moderator') && moderationAssigned;
   const canEditNominators = !round.done && !locked && isNominator;
 
   return (
