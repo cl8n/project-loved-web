@@ -161,13 +161,10 @@ export interface ICaptain extends IUser {
 
 export interface IMapperConsent {
   id: number;
+  beatmapset_consents: IMapperBeatmapsetConsent[];
   consent?: 0 | 1 | 2;
   consent_reason?: string;
-  updated_at?: Date;
-  updater_id: number;
   mapper: IUser;
-  updater: IUser;
-  beatmapset_consents: IMapperBeatmapsetConsent[]
 }
 
 export interface IMapperBeatmapsetConsent {
