@@ -496,47 +496,6 @@ router.post('/update-round', guards.isNewsAuthor, asyncHandler(async (req, res) 
   res.status(204).send();
 }));
 
-router.get('/mapper-consents', guards.isAnything, asyncHandler(async (req, res) => {
-  let consents = await db.queryWithGroups(`
-    SELECT mapper_consents.*, mappers:mapper, updaters:updater, mapper_consent_beatmapsets:beatmapset_consent, beatmapsets:beatmapset_consent_beatmapset
-    FROM mapper_consents
-    INNER JOIN users AS mappers
-      ON mapper_consents.id = mappers.id
-    INNER JOIN users AS updaters
-      ON mapper_consents.updater_id = updaters.id
-    LEFT JOIN mapper_consent_beatmapsets
-      ON mapper_consent_beatmapsets.user_id = mapper_consents.id
-    LEFT JOIN beatmapsets
-      ON mapper_consent_beatmapsets.beatmapset_id = beatmapsets.id
-    ORDER BY \`mapper:name\` ASC
-    ${db.pageQuery(req)}
-  `);
-
-  let mappedConsents = {};
-
-  function beatmapsetConsentFromConsent(consent) {
-    let beatmapset_consent = consent.beatmapset_consent;
-    beatmapset_consent.beatmapset = consent.beatmapset_consent_beatmapset;
-    delete beatmapset_consent.beatmapset_id;
-    return beatmapset_consent;
-  }
-
-  consents.forEach((consent) => {
-    if (consent.id in mappedConsents) {
-      mappedConsents[consent.id].beatmapset_consents.push(beatmapsetConsentFromConsent(consent));
-    } else {
-      consent.beatmapset_consents = consent.beatmapset_consent == null ? [] : [beatmapsetConsentFromConsent(consent)];
-      delete consent.beatmapset_consent;
-      mappedConsents[consent.id] = consent;
-    }
-    delete consent.beatmapset_consent_beatmapset;
-  })
-
-  consents = Object.values(mappedConsents);
-  consents.sort((c1, c2) => c1.mapper.name.localeCompare(c2.mapper.name));
-  res.json(consents);
-}));
-
 router.get('/assignees', asyncHandler(async (_, res) => {
   const metadatas = await db.query(`
     SELECT users.*
