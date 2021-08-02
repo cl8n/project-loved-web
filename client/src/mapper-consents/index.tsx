@@ -34,21 +34,13 @@ function MapperBeatmapsetConsents(mapperConsent: IMapperConsent) {
           <th style={{'width': '10%'}}>Consent</th>
           <th style={{'width': '60%'}}>Notes</th>
       </tr>
-      {mapperConsent.beatmapset_consents.map((consent) => {
-        // TODO remove when beatmapset foreign key issues have been resolved
-        if (consent.beatmapset == null) {
-          return null;
-        }
-        return (
-          <>
-            <tr key={mapperConsent.id + "-beatmapset-" + consent.beatmapset.id}>
-              <td><BeatmapInline beatmapset={consent.beatmapset!} /></td>
-              {consentToCell(consent.consent)}
-              <td>{consent.consent_reason}</td>
-            </tr>
-          </>
-        )
-      })}
+      {mapperConsent.beatmapset_consents.map((consent) =>
+        <tr key={mapperConsent.id + "-beatmapset-" + consent.beatmapset.id}>
+          <td><BeatmapInline beatmapset={consent.beatmapset!} /></td>
+          {consentToCell(consent.consent)}
+          <td>{consent.consent_reason}</td>
+        </tr>
+      )}
     </table>
   )
 }
