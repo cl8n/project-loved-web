@@ -14,7 +14,7 @@ export function Header() {
         {user == null
           ? <a href={loginUrl}>Log in with osu!</a>
           : <span>
-              <UserInline user={user} /> — {' '}
+              <UserInline showId user={user} /> — {' '}
               <button type='button' className='fake-a' onClick={logOut}>Log out</button>
             </span>
         }
