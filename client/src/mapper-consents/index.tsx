@@ -26,17 +26,6 @@ function consentToCell(consent?: 0 | 1 | 2 | boolean) {
   )
 }
 
-function maybeBeatmapsetTable(consent: IMapperConsent) {
-  if (consent.beatmapset_consents.length === 0) {
-    return
-  }
-  return (
-    <tr key={consent.id + "-dropdown"}>
-      <td colSpan={3}>{MapperBeatmapsetConsents(consent)}</td>
-    </tr>
-  )
-}
-
 function MapperBeatmapsetConsents(mapperConsent: IMapperConsent) {
   return (
     <table style={{'width': '80%', 'marginLeft': '3em', 'marginRight': '3em', 'tableLayout': 'fixed'}}>
@@ -82,18 +71,20 @@ export default function MapperConsents() {
             <th>Consent</th>
             <th>Notes</th>
         </tr>
-        {consents.map((consent) => {
-          return (
-            <>
-              <tr key={consent.id}>
-                <td><UserInline user={consent.mapper} /></td>
-                {consentToCell(consent.consent)}
-                <td>{consent.consent_reason}</td>
+        {consents.map((consent) =>
+          <Fragment key={consent.id}>
+            <tr>
+              <td><UserInline user={consent.mapper} /></td>
+              {consentToCell(consent.consent)}
+              <td>{consent.consent_reason}</td>
+            </tr>
+            {consent.beatmapset_consents.length > 0 &&
+              <tr>
+                <td colSpan={3}>{MapperBeatmapsetConsents(consent)}</td>
               </tr>
-              {maybeBeatmapsetTable(consent)}
-            </>
-          )
-        })}
+            }
+          </Fragment>
+        )}
       </table>
     </div>
   );
