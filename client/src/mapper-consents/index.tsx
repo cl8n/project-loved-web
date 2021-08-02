@@ -3,22 +3,21 @@ import { BeatmapInline } from '../BeatmapInline';
 import { IMapperConsent } from '../interfaces';
 import { UserInline } from '../UserInline';
 
+const consentMap = {
+  'null': ['no reply', 'pending'],
+  0: ['no', 'error'],
+  1: ['yes', 'success'],
+  2: ['unreachable', 'pending']
+};
+
 function consentToCell(consent?: 0 | 1 | 2 | boolean) {
-  let index: 'null' | 0 | 1 | 2;
   if (consent === true) {
-    index = 1
+    consent = 1;
   } else if (consent === false) {
-    index = 0
-  } else {
-    index = consent == null ? 'null' : consent;
+    consent = 0;
   }
-  const mapping = {
-    'null': ['no reply', 'pending'],
-    0: ['no', 'error'],
-    1: ['yes', 'success'],
-    2: ['unreachable', 'pending']
-  };
-  const [consentStr, className] = mapping[index];
+
+  const [consentStr, className] = consentMap[consent ?? 'null'];
 
   return (
     <td className={className}>
