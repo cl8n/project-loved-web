@@ -25,40 +25,27 @@ router.get('/captains', asyncHandler(async (_, res) => {
 }));
 
 router.get('/mapper-consents', asyncHandler(async (_, res) => {
-  let consents = await db.queryWithGroups(`
-    SELECT mapper_consents.*, mappers:mapper, mapper_consent_beatmapsets:beatmapset_consent, beatmapsets:beatmapset_consent_beatmapset
+  const beatmapsetConsentsByMapperId = groupBy(
+    await db.queryWithGroups(`
+      SELECT mapper_consent_beatmapsets.*, beatmapsets:beatmapset
+      FROM mapper_consent_beatmapsets
+      INNER JOIN beatmapsets
+        ON mapper_consent_beatmapsets.beatmapset_id = beatmapsets.id
+    `),
+    'user_id',
+  );
+  const consents = await db.queryWithGroups(`
+    SELECT mapper_consents.*, mappers:mapper
     FROM mapper_consents
     INNER JOIN users AS mappers
       ON mapper_consents.id = mappers.id
-    LEFT JOIN mapper_consent_beatmapsets
-      ON mapper_consent_beatmapsets.user_id = mapper_consents.id
-    LEFT JOIN beatmapsets
-      ON mapper_consent_beatmapsets.beatmapset_id = beatmapsets.id
     ORDER BY \`mapper:name\` ASC
   `);
 
-  let mappedConsents = {};
-
-  function beatmapsetConsentFromConsent(consent) {
-    let beatmapset_consent = consent.beatmapset_consent;
-    beatmapset_consent.beatmapset = consent.beatmapset_consent_beatmapset;
-    delete beatmapset_consent.beatmapset_id;
-    return beatmapset_consent;
-  }
-
   consents.forEach((consent) => {
-    if (consent.id in mappedConsents) {
-      mappedConsents[consent.id].beatmapset_consents.push(beatmapsetConsentFromConsent(consent));
-    } else {
-      consent.beatmapset_consents = consent.beatmapset_consent == null ? [] : [beatmapsetConsentFromConsent(consent)];
-      delete consent.beatmapset_consent;
-      mappedConsents[consent.id] = consent;
-    }
-    delete consent.beatmapset_consent_beatmapset;
-  })
+    consent.beatmapset_consents = beatmapsetConsentsByMapperId[consent.id] || [];
+  });
 
-  consents = Object.values(mappedConsents);
-  consents.sort((c1, c2) => c1.mapper.name.localeCompare(c2.mapper.name));
   res.json(consents);
 }));
 
