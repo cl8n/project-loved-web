@@ -1,5 +1,4 @@
 const express = require('express');
-const { connect } = require('./db');
 const db = require('./db');
 const { asyncHandler } = require('./express-helpers');
 const guards = require('./guards');
@@ -44,16 +43,6 @@ router.get('/nominations', asyncHandler(async (req, res) => {
     SELECT *
     FROM rounds
     WHERE id = ?
-  `, req.query.roundId);
-
-  let a = await db.queryWithGroups(`
-  SELECT users:assignee, nomination_assignees.type AS assignee_type, nominations.id AS nomination_id
-  FROM nominations
-  INNER JOIN nomination_assignees
-    ON nominations.id = nomination_assignees.nomination_id
-  INNER JOIN users
-    ON nomination_assignees.assignee_id = users.id
-  WHERE nominations.round_id = ?
   `, req.query.roundId);
 
   const assigneesByNominationId = groupBy(
