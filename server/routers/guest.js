@@ -24,7 +24,7 @@ router.get('/captains', asyncHandler(async (_, res) => {
   ));
 }));
 
-router.get('/mapper-consents', asyncHandler(async (req, res) => {
+router.get('/mapper-consents', asyncHandler(async (_, res) => {
   let consents = await db.queryWithGroups(`
     SELECT mapper_consents.*, mappers:mapper, mapper_consent_beatmapsets:beatmapset_consent, beatmapsets:beatmapset_consent_beatmapset
     FROM mapper_consents
@@ -35,7 +35,6 @@ router.get('/mapper-consents', asyncHandler(async (req, res) => {
     LEFT JOIN beatmapsets
       ON mapper_consent_beatmapsets.beatmapset_id = beatmapsets.id
     ORDER BY \`mapper:name\` ASC
-    ${db.pageQuery(req)}
   `);
 
   let mappedConsents = {};
