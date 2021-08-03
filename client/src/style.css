@@ -501,10 +501,10 @@ tr.sticky > th:last-child::after {
 }
 
 .team-list > div {
-    flex-basis: 33.3%;
+    flex-basis: 25%;
 }
 
-.team-list > div:nth-child(-n+3) > h2 {
+.team-list > div:nth-child(-n+4) > h2 {
     margin-top: 0;
 }
 
