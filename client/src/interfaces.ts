@@ -119,6 +119,16 @@ export interface IPollResult {
   voting_threshold?: number;
 }
 
+export interface IReview {
+  id: number;
+  beatmapset_id: number;
+  captain_id: number;
+  game_mode: GameMode;
+  reason: string;
+  reviewed_at: string;
+  score: number;
+}
+
 export type IRole = 'alumni' | 'captain' | 'dev' | 'god' | 'god_readonly' | 'metadata' | 'moderator' | 'news';
 
 export interface IRound {
@@ -136,6 +146,15 @@ export interface IRound {
   news_intro_preview?: string;
   news_outro?: string;
   news_posted_at?: string;
+}
+
+export interface ISubmission {
+  id: number;
+  beatmapset_id: number;
+  game_mode: GameMode;
+  reason: string | null;
+  submitted_at: string | null;
+  submitter_id: number | null;
 }
 
 export interface IUser {

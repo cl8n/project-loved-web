@@ -10,13 +10,15 @@ import {
   INominationWithPollResult,
   IPollResult,
   IRound,
+  ISubmission,
   IUser,
   IUserWithoutRoles,
   IMapperConsent,
   MetadataState,
   ModeratorState,
   PartialWithId,
-  PartialWithoutId
+  PartialWithoutId,
+  IReview
 } from './interfaces';
 
 interface SuperAgentResponseWithBody<BodyType> extends SuperAgentResponse {
@@ -50,9 +52,9 @@ export function addRound(): Response<{ id: number; }> {
     .post('/api/add-round');
 }
 
-export function addSubmission(beatmapsetId: number, gameModes: GameMode[], reason: string | null): Response<{ id: number; submitted_beatmapset_id: number; }> {
+export function addSubmission(beatmapsetId: number, gameModes: GameMode[], reason: string | null): Response {
   return superagent
-    .post('/api/submit-map')
+    .post('/api/submit')
     .send({ beatmapsetId, gameModes, reason });
 }
 
@@ -107,6 +109,25 @@ export function getRounds(): Response<GetRoundsResponseBody> {
 export function getLogs(): Response<ILog[]> {
   return superagent
     .get('/api/logs');
+}
+
+export type GetSubmissionsResponseBody = {
+  beatmapsets: (IBeatmapset & {
+    reviews: IReview[];
+    submissions: ISubmission[];
+  })[];
+  usersById: Record<
+    number,
+    IUserWithoutRoles & {
+      alumni: boolean | null;
+    }
+  >;
+};
+
+export function getSubmissions(gameMode: GameMode): Response<GetSubmissionsResponseBody> {
+  return superagent
+    .get('/api/submissions')
+    .query({ gameMode });
 }
 
 export type GetTeamResponseBody = {
