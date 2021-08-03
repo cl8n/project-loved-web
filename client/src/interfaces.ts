@@ -159,6 +159,21 @@ export interface ICaptain extends IUser {
   };
 }
 
+export interface IMapperConsent {
+  id: number;
+  beatmapset_consents: IMapperBeatmapsetConsent[];
+  consent?: 0 | 1 | 2;
+  consent_reason?: string;
+  mapper: IUser;
+}
+
+export interface IMapperBeatmapsetConsent {
+  beatmapset: IBeatmapset;
+  user_id: number;
+  consent: boolean;
+  consent_reason?: string;
+}
+
 export type PartialWithoutId<T extends { id: unknown }> = {
   [P in keyof T as Exclude<P, 'id'>]?: T[P];
 };

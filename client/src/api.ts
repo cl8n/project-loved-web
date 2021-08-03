@@ -12,6 +12,7 @@ import {
   IRound,
   IUser,
   IUserWithoutRoles,
+  IMapperConsent,
   MetadataState,
   ModeratorState,
   PartialWithId,
@@ -121,6 +122,11 @@ export function getTeam(): Response<GetTeamResponseBody> {
 export function getUsersWithRoles(): Response<IUser[]> {
   return superagent
     .get('/api/users-with-permissions');
+}
+
+export function getMapperConsents(): Response<IMapperConsent[]> {
+  return superagent
+    .get('/api/mapper-consents');
 }
 
 export function lockNominations(roundId: number, gameMode: GameMode, lock: boolean): Response {

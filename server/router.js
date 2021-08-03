@@ -484,21 +484,6 @@ router.post('/update-round', guards.isNewsAuthor, asyncHandler(async (req, res) 
   res.status(204).send();
 }));
 
-router.get('/mapper-consents', guards.isAnything, asyncHandler(async (req, res) => {
-  const consents = await db.queryWithGroups(`
-    SELECT mapper_consents.*, mappers:mapper, updaters:updater
-    FROM mapper_consents
-    INNER JOIN users AS mappers
-      ON mapper_consents.id = mappers.id
-    INNER JOIN users AS updaters
-      ON mapper_consents.updater_id = updaters.id
-    ORDER BY mapper.name ASC
-    ${db.pageQuery(req)}
-  `);
-
-  res.json(consents);
-}));
-
 router.get('/assignees', asyncHandler(async (_, res) => {
   const metadatas = await db.query(`
     SELECT users.*

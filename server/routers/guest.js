@@ -24,6 +24,31 @@ router.get('/captains', asyncHandler(async (_, res) => {
   ));
 }));
 
+router.get('/mapper-consents', asyncHandler(async (_, res) => {
+  const beatmapsetConsentsByMapperId = groupBy(
+    await db.queryWithGroups(`
+      SELECT mapper_consent_beatmapsets.*, beatmapsets:beatmapset
+      FROM mapper_consent_beatmapsets
+      INNER JOIN beatmapsets
+        ON mapper_consent_beatmapsets.beatmapset_id = beatmapsets.id
+    `),
+    'user_id',
+  );
+  const consents = await db.queryWithGroups(`
+    SELECT mapper_consents.*, mappers:mapper
+    FROM mapper_consents
+    INNER JOIN users AS mappers
+      ON mapper_consents.id = mappers.id
+    ORDER BY \`mapper:name\` ASC
+  `);
+
+  consents.forEach((consent) => {
+    consent.beatmapset_consents = beatmapsetConsentsByMapperId[consent.id] || [];
+  });
+
+  res.json(consents);
+}));
+
 router.get('/stats/polls', asyncHandler(async (_, res) => {
   res.json(await db.queryWithGroups(`
     SELECT poll_results.*, beatmapsets:beatmapset, round_game_modes.voting_threshold
