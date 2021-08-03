@@ -27,7 +27,7 @@ export default function TeamList({ current, teamApi }: TeamListProps) {
         return gameModeUsers != null && (
           <UserList
             key={gameMode}
-            title={gameModeLongName(gameMode) + ' Captains'}
+            title={gameModeLongName(gameMode) + ' captains'}
             users={gameModeUsers}
           />
         );
