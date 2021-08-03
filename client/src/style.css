@@ -519,3 +519,26 @@ tr.sticky > th:last-child::after {
 .team-list > div > ul {
     margin-bottom: 0;
 }
+
+.submissions {
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+    padding-left: 2em;
+}
+
+.submission-reason {
+    margin-top: 0.25em;
+    margin-bottom: 0.5em;
+}
+
+.beatmap {
+    display: inline-block;
+}
+
+.beatmap-artist {
+    font-size: 12px;
+}
+
+.beatmap-title {
+    font-weight: bold;
+}

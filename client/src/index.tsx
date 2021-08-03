@@ -14,6 +14,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 import './style.css';
 import Statistics from "./statistics";
 import SubmissionForm from './submission-form';
+import SubmissionListing from './submission-listing';
 import Team from './team';
 import MapperConsents from './mapper-consents';
 
@@ -26,7 +27,8 @@ render(
         <Header />
         <main className='big-center'>
           <Switch>
-            <Route exact path='/'><NotReady /></Route>
+            <Redirect exact from='/' to='/submissions/osu' />
+            <Route path='/submissions/:gameMode'><NotReady><SubmissionListing /></NotReady></Route>
             <Route path='/submit'><NotReady><SubmissionForm /></NotReady></Route>
             <Route path='/mappers'><MapperConsents /></Route>
             <Route path='/team'><Team /></Route>
