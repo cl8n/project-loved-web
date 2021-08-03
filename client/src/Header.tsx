@@ -20,8 +20,19 @@ export function Header() {
         }
       </div>
       <nav>
-        <NavLink exact to='/'>Submissions</NavLink>
-        <NavLink to='/submit'>Submit a map</NavLink>
+        <NavLink
+          className='attention'
+          isActive={(_, location) => location.pathname.startsWith('/submissions')}
+          to='/'
+        >
+          Submissions
+        </NavLink>
+        <NavLink
+          className='attention'
+          to='/submit'
+        >
+          Submit a map
+        </NavLink>
         <NavLink to='/mappers'>Mapper consents</NavLink>
         <NavLink to='/team'>Team</NavLink>
         <NavLink to='/statistics'>Statistics</NavLink>

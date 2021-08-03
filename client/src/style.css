@@ -212,8 +212,16 @@ nav a:hover {
     text-decoration: none;
 }
 
+nav a.attention {
+    background-color: rgb(236, 94, 255);
+}
+
+nav a.attention:hover {
+    background-color: rgb(248, 207, 253);
+}
+
 nav a.active {
-    background-color: #fff;
+    background-color: #fff !important;
     color: #333;
 }
 
