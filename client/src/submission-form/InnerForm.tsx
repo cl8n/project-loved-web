@@ -39,7 +39,7 @@ export default function InnerForm() {
           </tr>
         ))}
       </table>
-      <h2><label htmlFor='reason'>Why do you want this map to be loved? <span className='faded'>(optional)</span></label></h2>
+      <h2><label htmlFor='reason'>Why do you want this map to be Loved? <span className='faded'>(optional)</span></label></h2>
       <textarea name='reason' style={{ width: '100%' }} ref={autoHeightRef} />
       <button type='submit' className='spacer-margin'>
         {busy ? 'Submitting...' : 'Submit'}
