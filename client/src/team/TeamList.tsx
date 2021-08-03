@@ -27,32 +27,32 @@ export default function TeamList({ current, teamApi }: TeamListProps) {
         return gameModeUsers != null && (
           <UserList
             key={gameMode}
-            title={gameModeLongName(gameMode)}
+            title={gameModeLongName(gameMode) + ' Captains'}
             users={gameModeUsers}
           />
         );
       })}
       {teamUsers.news != null &&
         <UserList
-          title='News editor / Manager'
+          title='News editors / Managers'
           users={teamUsers.news}
         />
       }
       {teamUsers.metadata != null &&
         <UserList
-          title='Metadata reviewer'
+          title='Metadata reviewers'
           users={teamUsers.metadata}
         />
       }
       {teamUsers.moderator != null &&
         <UserList
-          title='Moderator'
+          title='Moderators'
           users={teamUsers.moderator}
         />
       }
       {teamUsers.dev != null &&
         <UserList
-          title='Developer'
+          title='Developers'
           users={teamUsers.dev}
         />
       }
