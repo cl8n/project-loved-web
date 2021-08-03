@@ -21,7 +21,7 @@ export default function InnerForm() {
     }
 
     return addSubmission(parseInt(beatmapsetMatch[1]), form.gameModes, form.reason)
-      .then((response) => { /* TODO: Navigate to this submission under the map on Submissions */ })
+      .then(() => { /* TODO: Navigate to this submission under the map on Submissions */ })
       .then(then)
       .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
   };
