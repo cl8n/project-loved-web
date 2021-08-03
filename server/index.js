@@ -10,6 +10,7 @@ const { asyncHandler } = require('./express-helpers');
 const { hasLocalInteropKey, isAnything } = require('./guards');
 const { authRedirectUrl, Osu } = require('./osu');
 const router = require('./router');
+const anyoneRouter = require('./routers/anyone');
 const guestRouter = require('./routers/guest');
 const interopRouter = require('./routers/interop');
 
@@ -135,6 +136,8 @@ app.post('/auth/bye', asyncHandler(async function (request, response) {
 app.get('/auth/remember', function (_, response) {
   response.json(response.locals.user);
 });
+
+app.use(anyoneRouter);
 
 // TODO split out this router. "isAnything" is here because the permissions aren't all figured out yet, and I want to prevent security issues beyond this point
 app.use(isAnything, router);

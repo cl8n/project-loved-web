@@ -62,6 +62,93 @@ router.get('/stats/polls', asyncHandler(async (_, res) => {
   `));
 }));
 
+router.get('/submissions', asyncHandler(async (req, res) => {
+  const gameMode = parseInt(req.query.gameMode, 10);
+
+  if (isNaN(gameMode) || gameMode < 0 || gameMode > 3) {
+    return res.status(422).json({ error: 'Invalid game mode' });
+  }
+
+  const beatmapsetIds = new Set();
+  const userIds = new Set();
+
+  const submissions = await db.query(`
+    SELECT *
+    FROM submissions
+    WHERE game_mode = ?
+    ORDER BY submitted_at ASC
+  `, gameMode);
+
+  for (const submission of submissions) {
+    beatmapsetIds.add(submission.beatmapset_id);
+
+    if (submission.submitter_id != null) {
+      userIds.add(submission.submitter_id);
+    }
+  }
+
+  const reviews = await db.query(`
+    SELECT *
+    FROM reviews
+    WHERE game_mode = ?
+    ORDER BY reviewed_at ASC
+  `, gameMode);
+
+  for (const review of reviews) {
+    // This shouldn't be necessary, but is included in case there somehow ends up a mapset with a review but no submissions
+    beatmapsetIds.add(review.beatmapset_id);
+    userIds.add(review.captain_id);
+  }
+
+  if (beatmapsetIds.size === 0) {
+    return res.json({
+      beatmapsets: [],
+      usersById: {},
+    });
+  }
+
+  const beatmapsets = await db.query(`
+    SELECT *
+    FROM beatmapsets
+    WHERE id IN (?)
+  `, [[...beatmapsetIds]]);
+  const reviewsByBeatmapsetId = groupBy(reviews, 'beatmapset_id');
+  const submissionsByBeatmapsetId = groupBy(submissions, 'beatmapset_id');
+
+  for (const beatmapset of beatmapsets) {
+    beatmapset.reviews = reviewsByBeatmapsetId[beatmapset.id] || [];
+    beatmapset.submissions = submissionsByBeatmapsetId[beatmapset.id] || [];
+
+    userIds.add(beatmapset.creator_id);
+  }
+
+  // Should never happen
+  if (userIds.size === 0) {
+    return res.json({
+      beatmapsets: [],
+      usersById: {},
+    });
+  }
+
+  const usersById = groupBy(
+    await db.query(`
+      SELECT users.*, user_roles.alumni
+      FROM users
+      LEFT JOIN user_roles
+        ON users.id = user_roles.id
+      WHERE users.id IN (?)
+    `, [[...userIds]]),
+    'id',
+    null,
+    true,
+  );
+
+  res.json({
+    beatmapsets,
+    usersById,
+  });
+}));
+
 router.get('/team', asyncHandler(async (_, res) => {
   const team = (await db.queryWithGroups(`
     SELECT users.*, user_roles:roles
