@@ -44,7 +44,6 @@ router.get('/nominations', asyncHandler(async (req, res) => {
     FROM rounds
     WHERE id = ?
   `, req.query.roundId);
-
   const assigneesByNominationId = groupBy(
     await db.queryWithGroups(`
       SELECT users:assignee, nomination_assignees.type AS assignee_type, nominations.id AS nomination_id

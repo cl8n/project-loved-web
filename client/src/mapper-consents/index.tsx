@@ -1,14 +1,15 @@
+import { Fragment } from 'react';
 import { apiErrorMessage, getMapperConsents, useApi } from '../api';
 import { BeatmapInline } from '../BeatmapInline';
 import { IMapperConsent } from '../interfaces';
 import { UserInline } from '../UserInline';
 
 const consentMap = {
-  'null': ['no reply', 'pending'],
-  0: ['no', 'error'],
-  1: ['yes', 'success'],
-  2: ['unreachable', 'pending']
-};
+  null: ['No reply', 'pending'],
+  0: ['No', 'error'],
+  1: ['Yes', 'success'],
+  2: ['Unreachable', 'pending'],
+} as const;
 
 function consentToCell(consent?: 0 | 1 | 2 | boolean) {
   if (consent === true) {
@@ -23,26 +24,26 @@ function consentToCell(consent?: 0 | 1 | 2 | boolean) {
     <td className={className}>
       {consentStr}
     </td>
-  )
+  );
 }
 
 function MapperBeatmapsetConsents(mapperConsent: IMapperConsent) {
   return (
-    <table style={{'width': '80%', 'marginLeft': '3em', 'marginRight': '3em', 'tableLayout': 'fixed'}}>
+    <table style={{ 'width': '80%', 'marginLeft': '3em', 'marginRight': '3em', 'tableLayout': 'fixed' }}>
       <tr>
-          <th style={{'width': '30%'}}>Beatmapset</th>
-          <th style={{'width': '10%'}}>Consent</th>
-          <th style={{'width': '60%'}}>Notes</th>
+        <th style={{'width': '30%'}}>Beatmapset</th>
+        <th style={{'width': '10%'}}>Consent</th>
+        <th style={{'width': '60%'}}>Notes</th>
       </tr>
-      {mapperConsent.beatmapset_consents.map((consent) =>
-        <tr key={mapperConsent.id + "-beatmapset-" + consent.beatmapset.id}>
-          <td><BeatmapInline beatmapset={consent.beatmapset!} /></td>
+      {mapperConsent.beatmapset_consents.map((consent) => (
+        <tr key={consent.beatmapset.id}>
+          <td><BeatmapInline beatmapset={consent.beatmapset} /></td>
           {consentToCell(consent.consent)}
           <td>{consent.consent_reason}</td>
         </tr>
-      )}
+      ))}
     </table>
-  )
+  );
 }
 
 export default function MapperConsents() {
@@ -59,24 +60,24 @@ export default function MapperConsents() {
       <h1>Mapper Consents</h1>
       <table>
         <tr className='sticky'>
-            <th>Mapper</th>
-            <th>Consent</th>
-            <th>Notes</th>
+          <th>Mapper</th>
+          <th>Consent</th>
+          <th>Notes</th>
         </tr>
-        {consents.map((consent) =>
+        {consents.map((consent) => (
           <Fragment key={consent.id}>
             <tr>
               <td><UserInline user={consent.mapper} /></td>
               {consentToCell(consent.consent)}
               <td>{consent.consent_reason}</td>
             </tr>
-            {consent.beatmapset_consents.length > 0 &&
+            {consent.beatmapset_consents.length > 0 && (
               <tr>
                 <td colSpan={3}>{MapperBeatmapsetConsents(consent)}</td>
               </tr>
-            }
+            )}
           </Fragment>
-        )}
+        ))}
       </table>
     </div>
   );
