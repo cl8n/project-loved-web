@@ -8,7 +8,7 @@ export default function SubmissionForm() {
   return (
     <>
       <h1>Submit a map for Loved!</h1>
-      <p>Filling out this form helps <Link to='/captains'>captains</Link> decide which maps to nominate for Loved in the monthly polls. Even if a map has already been <Link to='/'>submitted</Link>, you can add your thoughts about the map here.</p>
+      <p>Filling out this form helps <Link to='/team'>captains</Link> decide which maps to nominate for Loved in the monthly polls. Even if a map has already been <Link to='/'>submitted</Link>, you can add your thoughts about the map here.</p>
       <p>Some things to keep in mind:</p>
       <ul>
         <li>What you write on this form will be visible publicly, so don't write something that you don't want others to see. You don't have to fill in the reason field if you don't want to.</li>
