@@ -113,7 +113,9 @@ export function getLogs(): Response<ILog[]> {
 
 export type GetSubmissionsResponseBody = {
   beatmapsets: (IBeatmapset & {
+    review_score: number;
     reviews: IReview[];
+    score: number;
     submissions: ISubmission[];
   })[];
   usersById: Record<

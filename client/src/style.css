@@ -268,6 +268,13 @@ th {
     text-align: inherit;
 }
 
+hr {
+    border: none;
+    border-top: 1px solid #f9c;
+    padding: 0;
+    margin: 0.5em 0;
+}
+
 .center-block {
     margin-left: auto;
     margin-right: auto;
@@ -541,4 +548,56 @@ tr.sticky > th:last-child::after {
 
 .beatmap-title {
     font-weight: bold;
+}
+
+.review {
+    font-weight: bold;
+}
+
+.strong-rejection {
+    color: #f22;
+}
+
+.rejection {
+    color: #f44;
+}
+
+.light-rejection {
+    color: #f66;
+}
+
+.no-preference {
+    color: #fa2;
+}
+
+.light-support {
+    color: #5a5;
+}
+
+.support {
+    color: #3a3;
+}
+
+.strong-support {
+    color: #1a1;
+}
+
+.priority {
+    font-weight: bold;
+}
+
+.priority.rejected {
+    color: #f22;
+}
+
+.priority.low {
+    color: #fa2;
+}
+
+.priority.medium {
+    color: #5a5;
+}
+
+.priority.high {
+    color: #1a1;
 }

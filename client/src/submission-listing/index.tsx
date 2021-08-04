@@ -22,10 +22,10 @@ export default function SubmissionBeatmapsetListing() {
         <tr className='sticky'>
           <th>Beatmapset</th>
           <th>Mapper</th>
-          <th>Status</th>
+          <th>Priority</th>
+          <th>Score <Help text='A placeholder method to sort this listing. Score = Favorites × 50 + Plays' /></th>
           <th>Plays</th>
           <th>Favorites</th>
-          <th>Score <Help text='A placeholder method to sort this listing. Score = Favorites × 10 + Plays' /></th>
           <th>Year</th>
           <th>Difficulties</th>
           <th>BPM</th>

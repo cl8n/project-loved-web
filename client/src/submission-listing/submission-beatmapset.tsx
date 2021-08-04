@@ -13,10 +13,6 @@ interface SubmissionBeatmapsetProps {
 
 export default function SubmissionBeatmapset({ beatmapset, usersById }: SubmissionBeatmapsetProps) {
   const [expanded, setExpanded] = useState(false);
-
-  const mapper = useMemo(() => (
-    <UserInline name={beatmapset.creator_name} user={usersById[beatmapset.creator_id]} />
-  ), [beatmapset, usersById]);
   const year = useMemo(() => displayRange([
     dateFromString(beatmapset.submitted_at).getFullYear(),
     dateFromString(beatmapset.updated_at).getFullYear(),
@@ -26,11 +22,11 @@ export default function SubmissionBeatmapset({ beatmapset, usersById }: Submissi
     <>
       <tr>
         <td><Beatmap beatmapset={beatmapset} /></td>
-        <td>{mapper}</td>
-        <td>{beatmapset.reviews.length > 0 ? 'Who knows' : 'Pending'}</td>
+        <td><UserInline name={beatmapset.creator_name} user={usersById[beatmapset.creator_id]} /></td>
+        <PriorityCell beatmapset={beatmapset} />
+        <td>{beatmapset.score}</td>
         <td>{beatmapset.play_count}</td>
         <td>{beatmapset.favorite_count}</td>
-        <td>{beatmapset.favorite_count * 10 + beatmapset.play_count}</td>
         <td>{year}</td>
         <td>???</td>
         <td>???</td>
@@ -47,8 +43,9 @@ export default function SubmissionBeatmapset({ beatmapset, usersById }: Submissi
       </tr>
       {expanded && (
         <tr>
-          <td colSpan={9}>
+          <td colSpan={10}>
             <SubmissionsDropdown
+              reviews={beatmapset.reviews}
               submissions={beatmapset.submissions}
               usersById={usersById}
             />
@@ -56,5 +53,30 @@ export default function SubmissionBeatmapset({ beatmapset, usersById }: Submissi
         </tr>
       )}
     </>
+  );
+}
+
+const priorities = [
+  [5, 'High', 'high'],
+  [0, 'Medium', 'medium'],
+  [-5, 'Low', 'low'],
+  [-Infinity, 'Rejected', 'rejected'],
+] as const;
+
+interface PriorityCellProps {
+  beatmapset: GetSubmissionsResponseBody['beatmapsets'][0];
+}
+
+function PriorityCell({ beatmapset }: PriorityCellProps) {
+  if (beatmapset.reviews.length === 0) {
+    return <td className='priority low'>Pending</td>;
+  }
+
+  const [, priortyText, priorityClass] = priorities.find((p) => beatmapset.review_score >= p[0])!;
+
+  return (
+    <td className={'priority ' + priorityClass}>
+      {priortyText} ({beatmapset.review_score > 0 && '+'}{beatmapset.review_score})
+    </td>
   );
 }
