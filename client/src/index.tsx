@@ -29,7 +29,7 @@ render(
           <Switch>
             <Redirect exact from='/' to='/submissions/osu' />
             <Route path='/submissions/:gameMode'><NotReady><SubmissionListing /></NotReady></Route>
-            <Route path='/submit'><NotReady><SubmissionForm /></NotReady></Route>
+            <Route path='/submit'><SubmissionForm /></Route>
             <Route path='/mappers'><MapperConsents /></Route>
             <Route path='/team'><Team /></Route>
             <Redirect from='/captains' to='/team' />
