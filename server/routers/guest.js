@@ -119,8 +119,17 @@ router.get('/submissions', asyncHandler(async (req, res) => {
     beatmapset.reviews = reviewsByBeatmapsetId[beatmapset.id] || [];
     beatmapset.submissions = submissionsByBeatmapsetId[beatmapset.id] || [];
 
+    beatmapset.review_score = beatmapset.reviews.length > 0
+      ? beatmapset.reviews.reduce((sum, review) => sum + review.score, 0)
+      : -1000; // Can't -Infinity because JSON
+    beatmapset.score = beatmapset.favorite_count * 50 + beatmapset.play_count;
+
     userIds.add(beatmapset.creator_id);
   }
+
+  beatmapsets
+    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => b.review_score - a.review_score);
 
   // Should never happen
   if (userIds.size === 0) {
