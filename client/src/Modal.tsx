@@ -1,4 +1,4 @@
-import { KeyboardEvent, MouseEvent, PropsWithChildren, useEffect, useRef } from 'react';
+import { KeyboardEvent, MouseEvent, PropsWithChildren, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 type ModalProps = PropsWithChildren<{
@@ -7,18 +7,24 @@ type ModalProps = PropsWithChildren<{
 }>;
 
 export function Modal(props: ModalProps) {
-  const modalContainerRef = useRef<HTMLDivElement>();
+  const [hasOpened, setHasOpened] = useState(props.open);
+  const modalContainerRef = useRef(document.createElement('div'));
 
   useEffect(() => {
-    const container =
-      modalContainerRef.current =
-      document.createElement('div');
+    const container = modalContainerRef.current;
     document.body.appendChild(container);
 
     return () => {
       container.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (!hasOpened && props.open) {
+      setHasOpened(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.open]);
 
   // TODO not working
   const handleEsc = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -37,7 +43,7 @@ export function Modal(props: ModalProps) {
     props.close();
   };
 
-  if (modalContainerRef.current == null)
+  if (!hasOpened)
     return null;
 
   return createPortal(
