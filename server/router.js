@@ -18,6 +18,72 @@ const router = express.Router();
 // TODO: rethink guards
 
 //#region captain
+router.post('/review', asyncHandler(async (req, res) => {
+  if (typeof req.body.beatmapsetId !== 'number') {
+    return res.status(422).json({ error: 'Invalid beatmapset ID' });
+  }
+
+  if (typeof req.body.gameMode !== 'number' || req.body.gameMode < 0 || req.body.gameMode > 3) {
+    return res.status(422).json({ error: 'Invalid game mode' });
+  }
+
+  if (typeof req.body.reason !== 'string') {
+    return res.status(422).json({ error: 'Invalid reason' });
+  }
+
+  if (typeof req.body.score !== 'number' || req.body.score === 0 || Math.abs(req.body.score) > 3) {
+    return res.status(422).json({ error: 'Invalid score' });
+  }
+
+  const roles = guards.roles(req, res);
+
+  if (!roles.gameModes[req.body.gameMode]) {
+    return res.status(403).send();
+  }
+
+  const existingReview = await db.queryOne(`
+    SELECT *
+    FROM reviews
+    WHERE beatmapset_id = ?
+      AND captain_id = ?
+      AND game_mode = ?
+  `, [req.body.beatmapsetId, res.locals.user.id, req.body.gameMode]);
+
+  if (existingReview != null) {
+    await db.query('UPDATE reviews SET ? WHERE id = ?', [
+      {
+        reason: req.body.reason,
+        reviewed_at: new Date(),
+        score: req.body.score,
+      },
+      existingReview.id,
+    ]);
+
+    return res.json(await db.queryOne('SELECT * FROM reviews WHERE id = ?', existingReview.id));
+  }
+
+  const beatmapset = await res.locals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId);
+
+  if (beatmapset == null) {
+    return res.status(422).json({ error: 'Invalid beatmapset ID' });
+  }
+
+  if (!beatmapset.game_modes.has(req.body.gameMode)) {
+    return res.status(422).json({ error: `Beatmapset has no beatmaps in game mode ${req.body.gameMode}` });
+  }
+
+  const { insertId } = await db.query('INSERT INTO reviews SET ?', {
+    beatmapset_id: req.body.beatmapsetId,
+    captain_id: res.locals.user.id,
+    game_mode: req.body.gameMode,
+    reason: req.body.reason,
+    reviewed_at: new Date(),
+    score: req.body.score,
+  });
+
+  res.json(await db.queryOne('SELECT * FROM reviews WHERE id = ?', insertId));
+}));
+
 router.get('/rounds', asyncHandler(async (req, res) => {
   const rounds = await db.query(`
     SELECT rounds.*, IFNULL(nomination_counts.count, 0) AS nomination_count
