@@ -47,6 +47,12 @@ export function addNomination(beatmapsetId: number, gameMode: GameMode, parentId
     });
 }
 
+export function addOrUpdateReview(beatmapsetId: number, gameMode: GameMode, reason: string, score: number): Response<IReview> {
+  return superagent
+    .post('/api/review')
+    .send({ beatmapsetId, gameMode, reason, score });
+}
+
 export function addRound(): Response<{ id: number; }> {
   return superagent
     .post('/api/add-round');

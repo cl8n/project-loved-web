@@ -5,13 +5,19 @@ import { displayRange } from './helpers';
 import Beatmap from '../Beatmap';
 import { UserInline } from '../UserInline';
 import { GetSubmissionsResponseBody } from '../api';
+import ReviewEditor from './ReviewEditor';
+import { GameMode, IReview } from '../interfaces';
 
 interface SubmissionBeatmapsetProps {
   beatmapset: GetSubmissionsResponseBody['beatmapsets'][0];
+  canReview: boolean;
+  gameMode: GameMode;
+  onReviewUpdate: (review: IReview) => void;
+  review?: IReview;
   usersById: GetSubmissionsResponseBody['usersById'];
 }
 
-export default function SubmissionBeatmapset({ beatmapset, usersById }: SubmissionBeatmapsetProps) {
+export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, onReviewUpdate, review, usersById }: SubmissionBeatmapsetProps) {
   const [expanded, setExpanded] = useState(false);
   const year = useMemo(() => displayRange([
     dateFromString(beatmapset.submitted_at).getFullYear(),
@@ -40,6 +46,14 @@ export default function SubmissionBeatmapset({ beatmapset, usersById }: Submissi
             {expanded ? 'Close' : 'Expand'}
           </button>
         </td>
+        {canReview && (
+          <ReviewEditor
+            beatmapset={beatmapset}
+            gameMode={gameMode}
+            onReviewUpdate={onReviewUpdate}
+            review={review}
+          />
+        )}
       </tr>
       {expanded && (
         <tr>
