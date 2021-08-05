@@ -1,25 +1,15 @@
 import { dateFromString } from '../date-format';
 import { IReview, IUserWithoutRoles } from '../interfaces';
 import { UserInline } from '../UserInline';
-
-const scoreTexts = [
-  'strong rejection',
-  'rejection',
-  'light rejection',
-  'no preference',
-  'light support',
-  'support',
-  'strong support',
-] as const;
-const scoreClasses = scoreTexts.map((score) => score.replace(' ', '-'));
+import { reviewScoreClasses, reviewScoreTexts } from './helpers';
 
 interface ReviewProps {
   review: IReview & { captain: IUserWithoutRoles & { alumni: boolean | null; } };
 }
 
 export default function Review({ review }: ReviewProps) {
-  const scoreClass = scoreClasses[review.score + 3];
-  const scoreText = scoreTexts[review.score + 3];
+  const scoreClass = reviewScoreClasses[review.score + 3];
+  const scoreText = reviewScoreTexts[review.score + 3];
 
   return (
     <li>
