@@ -156,7 +156,7 @@ class Osu {
       return null;
     }
 
-    await this.createOrRefreshUser(beatmapset.user_id, false, forceUpdate);
+    await this.createOrRefreshUser(beatmapset.user_id, { forceUpdate, storeBanned: true });
 
     const dbFields = {
       api_fetched_at: new Date(),
@@ -302,9 +302,16 @@ class Osu {
     };
   }
 
-  async createOrRefreshUser(userIdOrName, byName = false, forceUpdate = false) {
+  async createOrRefreshUser(userIdOrName, options) {
+    const {
+      byName = false,
+      forceUpdate = false,
+      storeBanned = false,
+    } = options ?? {};
+    let currentInDb;
+
     if (!forceUpdate && userIdOrName != null) {
-      const currentInDb = await db.queryOne('SELECT * FROM users WHERE ?? = ?', [
+      currentInDb = await db.queryOne('SELECT * FROM users WHERE ?? = ?', [
         byName ? 'name' : 'id',
         userIdOrName,
       ]);
@@ -325,25 +332,38 @@ class Osu {
       if (userIdOrName == null)
         return null;
 
-      const currentInDb = await db.queryOne('SELECT * FROM users WHERE ?? = ?', [
-        byName ? 'name' : 'id',
-        userIdOrName,
-      ]);
+      if (currentInDb == null)
+        currentInDb = await db.queryOne('SELECT * FROM users WHERE ?? = ?', [
+          byName ? 'name' : 'id',
+          userIdOrName,
+        ]);
 
       if (currentInDb != null)
         return currentInDb;
 
-      if (byName)
+      if (!storeBanned)
         return null;
 
       dbFields = {
         api_fetched_at: new Date(),
-        avatar_url: '/images/layout/avatar-guest.png',
+        avatar_url: sanitizeAvatarUrl('/images/layout/avatar-guest.png'),
         banned: true,
         country: '__',
-        name: 'Banned User',
       };
-      dbFieldsWithPK = { ...dbFields, id: userIdOrName };
+
+      if (byName) {
+        const nextBannedId = (await db.queryOne(`
+          SELECT IF(COUNT(*) > 0, MAX(id) + 1, 4294000000) AS next_id
+          FROM users
+          WHERE id >= 4294000000
+        `)).next_id;
+
+        dbFields.name = userIdOrName;
+        dbFieldsWithPK = { ...dbFields, id: nextBannedId };
+      } else {
+        dbFields.name = 'Banned user';
+        dbFieldsWithPK = { ...dbFields, id: userIdOrName };
+      }
     } else {
       dbFields = {
         api_fetched_at: new Date(),

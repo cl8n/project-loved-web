@@ -18,7 +18,7 @@ const username = process.argv[2];
     osu.getClientCredentialsToken(),
   ]);
 
-  const user = await osu.createOrRefreshUser(username, true);
+  const user = await osu.createOrRefreshUser(username, { byName: true });
 
   if (user == null) {
     console.error('Invalid username');

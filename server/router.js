@@ -365,19 +365,6 @@ router.post('/nomination-edit-metadata', asyncHandler(async (req, res) => {
   if (!roles.metadata && !roles.news)
     return res.status(403).json({ error: 'Must be a metadata checker or news author' });
 
-  const creators = [];
-
-  if (req.body.creators != null && req.body.creators.length > 0) {
-    for (const creatorName of req.body.creators) {
-      const creator = await res.locals.osu.createOrRefreshUser(creatorName, true);
-
-      if (creator == null)
-        return res.status(422).json({ error: `Invalid creator username: ${creatorName}` });
-
-      creators.push(creator);
-    }
-  }
-
   const nomination = await db.queryOne(`
     SELECT beatmapset_id, game_mode, metadata_state
     FROM nominations
@@ -421,10 +408,16 @@ router.post('/nomination-edit-metadata', asyncHandler(async (req, res) => {
     nomination.game_mode,
   ]);
 
-  if (creators.length > 0)
+  const creators = [];
+
+  if (req.body.creators != null && req.body.creators.length > 0) {
+    for (const creatorName of req.body.creators)
+      creators.push(await res.locals.osu.createOrRefreshUser(creatorName, { byName: true, storeBanned: true }));
+
     await db.query('INSERT INTO beatmapset_creators VALUES ?', [
       creators.map((user) => [nomination.beatmapset_id, user.id, nomination.game_mode]),
     ]);
+  }
 
   nomination.beatmapset_creators = creators;
 
@@ -504,7 +497,7 @@ router.post('/lock-nominations', asyncHandler(async (req, res) => {
 
 //#region admin
 router.post('/add-user', guards.isGod, asyncHandler(async (req, res) => {
-  const user = await res.locals.osu.createOrRefreshUser(req.body.name, true);
+  const user = await res.locals.osu.createOrRefreshUser(req.body.name, { byName: true });
 
   if (user == null)
     return res.status(422).json({ error: 'Invalid username' });
@@ -661,7 +654,7 @@ router.post('/update-api-object', guards.isGod, asyncHandler(async (req, res) =>
       apiObject = await res.locals.osu.createOrRefreshBeatmapset(req.body.id, true);
       break;
     case 'user':
-      apiObject = await res.locals.osu.createOrRefreshUser(req.body.id, false, true);
+      apiObject = await res.locals.osu.createOrRefreshUser(req.body.id, { forceUpdate: true });
       break;
   }
 
@@ -683,7 +676,7 @@ router.post('/update-api-object-bulk', guards.isGod, (req, res) => {
           apiObject = await res.locals.osu.createOrRefreshBeatmapset(id, true);
           break;
         case 'user':
-          apiObject = await res.locals.osu.createOrRefreshUser(id, false, true);
+          apiObject = await res.locals.osu.createOrRefreshUser(id, { forceUpdate: true });
           break;
       }
 
