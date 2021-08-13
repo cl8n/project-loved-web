@@ -25,7 +25,7 @@ function destroySession(session) {
   });
 }
 
-db.connect().then(() => {
+db.initialize().then(() => {
 
 const app = express();
 
@@ -50,7 +50,7 @@ app.use(session({
       checkExpirationInterval: 1800000, // 30 minutes
       expiration: 604800000, // 7 days
     },
-    db.connection,
+    db.pool,
   ),
 }));
 

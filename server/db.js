@@ -1,59 +1,17 @@
 const mysql = require('mysql');
 
-class MysqlDatabase {
-  constructor(connectionConfig) {
-    this.connected = false;
-    this.connection = mysql.createConnection(connectionConfig);
-  }
+class MysqlConnection {
+  #columnsByTable;
+  #connection;
 
-  close() {
-    if (!this.connected) {
-      return Promise.resolve();
-    }
-
-    return new Promise((resolve, reject) => {
-      this.connection.end((error) => {
-        if (error)
-          return reject(error);
-
-        resolve();
-      });
-    });
-  }
-
-  connect() {
-    return new Promise((resolve, reject) => {
-      this.connection.connect(async (error) => {
-        if (error)
-          return reject(error);
-
-        this.connected = true;
-
-        const columns = await this.query(`
-          SELECT TABLE_NAME, COLUMN_NAME
-          FROM information_schema.COLUMNS
-          WHERE TABLE_SCHEMA = ?
-        `, process.env.DB_DATABASE);
-        this.columnsByTable = columns.reduce((prev, column) => {
-          if (prev[column.TABLE_NAME] == null)
-            prev[column.TABLE_NAME] = [];
-
-          prev[column.TABLE_NAME].push(column.COLUMN_NAME);
-          return prev;
-        }, {});
-
-        resolve();
-      });
-    });
+  constructor(connection, columnsByTable) {
+    this.#columnsByTable = columnsByTable;
+    this.#connection = connection;
   }
 
   query(sql, values) {
-    if (!this.connected) {
-      return Promise.reject('Not connected');
-    }
-
     return new Promise((resolve, reject) => {
-      this.connection.query(sql, values, function (error, results) {
+      this.#connection.query(sql, values, function (error, results) {
         if (error)
           return reject(error);
 
@@ -63,12 +21,13 @@ class MysqlDatabase {
   }
 
   async queryOne(sql, values) {
-    const result = await this.query(sql, values);
-
-    return result[0] == null ? null : result[0];
+    return (await this.query(sql, values))[0] ?? null;
   }
 
   async queryWithGroups(sql, values) {
+    if (this.#columnsByTable == null)
+      throw 'Columns not loaded yet';
+
     const selects = sql
       .slice(sql.indexOf('SELECT') + 6, sql.indexOf('FROM'))
       .split(',')
@@ -93,7 +52,7 @@ class MysqlDatabase {
     }
 
     const specialSelectsSqls = specialSelectInfo.map(
-      ([fromTable, toTable, realFromTable]) => this.columnsByTable[realFromTable].map(
+      ([fromTable, toTable, realFromTable]) => this.#columnsByTable[realFromTable].map(
         (column) => `\`${fromTable}\`.\`${column}\` AS '${toTable}:${column}'`
       )
     );
@@ -138,30 +97,102 @@ class MysqlDatabase {
   }
 
   async queryOneWithGroups(sql, values) {
-    return (await this.queryWithGroups(sql, values))[0];
-  }
+    if (this.#columnsByTable == null)
+      throw 'Columns not loaded yet';
 
-  pageQuery(request) {
-    const params = { ...request.query, ...request.body };
-    let limit, offset;
-
-    if (params.limit != null) {
-      limit = params.limit;
-      offset = 0;
-    } else if (params.page != null) {
-      const perPage = params.perPage;
-
-      limit = perPage;
-      offset = (page - 1) * perPage;
-    } else {
-      return '';
-    }
-
-    return `LIMIT ${limit} OFFSET ${offset}`;
+    return (await this.queryWithGroups(sql, values))[0] ?? null;
   }
 }
 
-module.exports = new MysqlDatabase({
+class MysqlPool {
+  #closed = false;
+  #columnsByTable;
+  #pool;
+
+  constructor(config) {
+    this.#pool = mysql.createPool(config);
+  }
+
+  get pool() {
+    return this.#pool;
+  }
+
+  close() {
+    if (this.#closed)
+      return Promise.resolve();
+
+    return new Promise((resolve, reject) => {
+      this.#pool.end((error) => {
+        if (error)
+          return reject(error);
+
+        this.#closed = true;
+
+        resolve();
+      });
+    });
+  }
+
+  async initialize() {
+    this.#columnsByTable = (
+      await this.query(
+        `
+          SELECT TABLE_NAME, COLUMN_NAME
+          FROM information_schema.COLUMNS
+          WHERE TABLE_SCHEMA = ?
+        `,
+        process.env.DB_DATABASE,
+      )
+    )
+      .reduce((prev, column) => {
+        if (prev[column.TABLE_NAME] == null)
+          prev[column.TABLE_NAME] = [];
+
+        prev[column.TABLE_NAME].push(column.COLUMN_NAME);
+        return prev;
+      }, {});
+  }
+
+  query(...args) {
+    return this.useConnection((connection) => connection.query(...args));
+  }
+
+  queryOne(...args) {
+    return this.useConnection((connection) => connection.queryOne(...args));
+  }
+
+  queryWithGroups(...args) {
+    if (this.#columnsByTable == null)
+      return Promise.reject('Columns not loaded yet');
+
+    return this.useConnection((connection) => connection.queryWithGroups(...args));
+  }
+
+  queryOneWithGroups(...args) {
+    if (this.#columnsByTable == null)
+      return Promise.reject('Columns not loaded yet');
+
+    return this.useConnection((connection) => connection.queryOneWithGroups(...args));
+  }
+
+  useConnection(fn) {
+    if (this.#closed)
+      return Promise.reject('Connection pool has been closed');
+
+    return new Promise((resolve, reject) => {
+      this.#pool.getConnection((error, connection) => {
+        if (error)
+          return reject(error);
+
+        fn(new MysqlConnection(connection, this.#columnsByTable))
+          .then(resolve, reject)
+          .finally(() => connection.release());
+      });
+    });
+  }
+}
+
+module.exports = new MysqlPool({
   database: process.env.DB_DATABASE,
   host: process.env.DB_HOST,
   password: process.env.DB_PASSWORD,
@@ -177,3 +208,22 @@ module.exports = new MysqlDatabase({
     return string === '0' ? false : string === '1' ? true : null;
   },
 });
+
+module.exports.pageQuery = function (request) {
+  const params = { ...request.query, ...request.body };
+  let limit, offset;
+
+  if (params.limit != null) {
+    limit = params.limit;
+    offset = 0;
+  } else if (params.page != null) {
+    const perPage = params.perPage;
+
+    limit = perPage;
+    offset = (page - 1) * perPage;
+  } else {
+    return '';
+  }
+
+  return `LIMIT ${limit} OFFSET ${offset}`;
+};

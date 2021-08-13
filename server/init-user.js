@@ -14,7 +14,7 @@ const username = process.argv[2];
 
 (async () => {
   await Promise.all([
-    db.connect(),
+    db.initialize(),
     osu.getClientCredentialsToken(),
   ]);
 
