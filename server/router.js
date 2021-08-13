@@ -654,7 +654,8 @@ router.post('/update-api-object', guards.isGod, asyncHandler(async (req, res) =>
       apiObject = await res.locals.osu.createOrRefreshBeatmapset(req.body.id, true);
       break;
     case 'user':
-      apiObject = await res.locals.osu.createOrRefreshUser(req.body.id, { forceUpdate: true });
+      // TODO: Store banned only if some box is ticked on web form
+      apiObject = await res.locals.osu.createOrRefreshUser(req.body.id, { forceUpdate: true, storeBanned: true });
       break;
   }
 
@@ -676,7 +677,8 @@ router.post('/update-api-object-bulk', guards.isGod, (req, res) => {
           apiObject = await res.locals.osu.createOrRefreshBeatmapset(id, true);
           break;
         case 'user':
-          apiObject = await res.locals.osu.createOrRefreshUser(id, { forceUpdate: true });
+          // TODO: Store banned only if some box is ticked on web form
+          apiObject = await res.locals.osu.createOrRefreshUser(id, { forceUpdate: true, storeBanned: true });
           break;
       }
 
