@@ -446,6 +446,20 @@ router.post('/nomination-edit-moderation', guards.isModerator, asyncHandler(asyn
 }));
 
 router.delete('/nomination', asyncHandler(async (req, res) => {
+  if (!res.locals.user.roles.god) {
+    if ((await db.queryOne(`
+      SELECT 1
+      FROM nomination_nominators
+      WHERE nomination_id = ?
+        AND nominator_id = ?
+    `, [
+      req.query.nominationId,
+      res.locals.user.id,
+    ])) == null) {
+      return res.status(403).send();
+    }
+  }
+
   await db.transact(async (connection) => {
     await connection.query('DELETE FROM nomination_assignees WHERE nomination_id = ?', req.query.nominationId);
     await connection.query('DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?', req.query.nominationId);
