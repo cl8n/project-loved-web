@@ -25,8 +25,10 @@ const username = process.argv[2];
     process.exit(1);
   }
 
-  await db.query('DELETE FROM user_roles WHERE id = ?', user.id);
-  await db.query('INSERT INTO user_roles SET ?', { id: user.id, dev: true, god: true });
+  await db.transact(async (connection) => {
+    await connection.query('DELETE FROM user_roles WHERE id = ?', user.id);
+    await connection.query('INSERT INTO user_roles SET ?', { id: user.id, dev: true, god: true });
+  });
 
   console.log(`Added ${user.name} [#${user.id}] as administrator`);
 

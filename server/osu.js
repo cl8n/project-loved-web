@@ -171,16 +171,17 @@ class Osu {
       title: beatmapset.title,
     };
     const dbFieldsWithPK = { ...dbFields, id: beatmapset.id };
+    const gameModes = new Set();
 
-    await db.query(`
+    await db.transact(async (connection) => {
+
+    await connection.query(`
       INSERT INTO beatmapsets SET ?
       ON DUPLICATE KEY UPDATE ?
     `, [
       dbFieldsWithPK,
       dbFields,
     ]);
-
-    const gameModes = new Set();
 
     for (const beatmap of beatmapset.beatmaps) {
       gameModes.add(beatmap.mode_int);
@@ -200,7 +201,7 @@ class Osu {
       const dbFieldsWithPK = { ...dbFields, id: beatmap.id };
 
       // TODO: Can't insert multiple using this syntax...
-      await db.query(`
+      await connection.query(`
         INSERT INTO beatmaps SET ?
         ON DUPLICATE KEY UPDATE ?
       `, [
@@ -210,7 +211,7 @@ class Osu {
     }
 
     const creatorGameModes = (
-      await db.query(`
+      await connection.query(`
         SELECT game_mode
         FROM beatmapset_creators
         WHERE beatmapset_id = ?
@@ -232,7 +233,7 @@ class Osu {
     }
 
     if (creatorsToInsert.length > 0) {
-      await db.query('INSERT INTO beatmapset_creators VALUES ?', [creatorsToInsert]);
+      await connection.query('INSERT INTO beatmapset_creators VALUES ?', [creatorsToInsert]);
     }
 
     // TODO: If force updating beatmapset, also force update all exisitng beatmapset_creators
@@ -242,7 +243,7 @@ class Osu {
     // belongs to now only contain maps that are Loved or failed voting. If so,
     // mark the round as "done".
     if (dbFields.ranked_status === 4) {
-      const incompleteRoundsWithBeatmapset = await db.query(`
+      const incompleteRoundsWithBeatmapset = await connection.query(`
         SELECT rounds.id
         FROM rounds
         INNER JOIN nominations
@@ -255,7 +256,7 @@ class Osu {
       const roundIdsToComplete = [];
 
       for (const round of incompleteRoundsWithBeatmapset) {
-        const beatmapsets = await db.queryWithGroups(`
+        const beatmapsets = await connection.queryWithGroups(`
           SELECT beatmapsets.ranked_status, poll_results:poll_result,
             round_game_modes.voting_threshold AS 'poll_result:voting_threshold'
           FROM nominations
@@ -293,8 +294,10 @@ class Osu {
       }
 
       if (roundIdsToComplete.length > 0)
-        await db.query('UPDATE rounds SET done = 1 WHERE id IN (?)', [roundIdsToComplete]);
+        await connection.query('UPDATE rounds SET done = 1 WHERE id IN (?)', [roundIdsToComplete]);
     }
+
+    });
 
     return {
       ...dbFieldsWithPK,
@@ -328,12 +331,14 @@ class Osu {
     let dbFields;
     let dbFieldsWithPK;
 
+    await db.transact(async (connection) => {
+
     if (user == null) {
       if (userIdOrName == null)
         return null;
 
       if (currentInDb == null)
-        currentInDb = await db.queryOne('SELECT * FROM users WHERE ?? = ?', [
+        currentInDb = await connection.queryOne('SELECT * FROM users WHERE ?? = ?', [
           byName ? 'name' : 'id',
           userIdOrName,
         ]);
@@ -352,7 +357,7 @@ class Osu {
       };
 
       if (byName) {
-        const nextBannedId = (await db.queryOne(`
+        const nextBannedId = (await connection.queryOne(`
           SELECT IF(COUNT(*) > 0, MAX(id) + 1, 4294000000) AS next_id
           FROM users
           WHERE id >= 4294000000
@@ -375,7 +380,7 @@ class Osu {
       dbFieldsWithPK = { ...dbFields, id: user.id };
 
       if (user.previous_usernames.length > 0) {
-        await db.query('INSERT IGNORE INTO user_names (id, name) VALUES ?', [
+        await connection.query('INSERT IGNORE INTO user_names (id, name) VALUES ?', [
           user.previous_usernames.map((name) => [
             user.id,
             name,
@@ -384,13 +389,15 @@ class Osu {
       }
     }
 
-    await db.query(`
+    await connection.query(`
       INSERT INTO users SET ?
       ON DUPLICATE KEY UPDATE ?
     `, [
       dbFieldsWithPK,
       dbFields,
     ]);
+
+    });
 
     return dbFieldsWithPK;
   }

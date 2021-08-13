@@ -102,6 +102,19 @@ class MysqlConnection {
 
     return (await this.queryWithGroups(sql, values))[0] ?? null;
   }
+
+  async transact(fn) {
+    await this.query('START TRANSACTION');
+
+    try {
+      const result = await fn(this);
+      await this.query('COMMIT');
+      return result;
+    } catch (error) {
+      await this.query('ROLLBACK');
+      throw error;
+    }
+  }
 }
 
 class MysqlPool {
@@ -173,6 +186,10 @@ class MysqlPool {
       return Promise.reject('Columns not loaded yet');
 
     return this.useConnection((connection) => connection.queryOneWithGroups(...args));
+  }
+
+  transact(...args) {
+    return this.useConnection((connection) => connection.transact(...args));
   }
 
   useConnection(fn) {

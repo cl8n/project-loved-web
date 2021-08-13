@@ -223,18 +223,20 @@ router.post('/results-post-ids', asyncHandler(async (req, res) => {
   if ((await db.queryOne('SELECT 1 FROM rounds WHERE id = ?', req.body.roundId)) == null)
     return res.status(422).json({ error: 'Invalid round ID' });
 
-  for (const [gameMode, postId] of Object.entries(req.body.replies)) {
-    await db.query(`
-      UPDATE round_game_modes
-      SET results_post_id = ?
-      WHERE round_id = ?
-        AND game_mode = ?
-    `, [
-      postId,
-      req.body.roundId,
-      gameMode,
-    ]);
-  }
+  await db.transact((connection) => Promise.all(
+    Object.entries(req.body.replies).map(([gameMode, postId]) => (
+      connection.query(`
+        UPDATE round_game_modes
+        SET results_post_id = ?
+        WHERE round_id = ?
+          AND game_mode = ?
+      `, [
+        postId,
+        req.body.roundId,
+        gameMode,
+      ])
+    ))
+  ));
 
   res.status(204).send();
 }));
