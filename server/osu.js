@@ -353,6 +353,15 @@ class Osu {
         name: user.username,
       };
       dbFieldsWithPK = { ...dbFields, id: user.id };
+
+      if (user.previous_usernames.length > 0) {
+        await db.query('INSERT IGNORE INTO user_names (id, name) VALUES ?', [
+          user.previous_usernames.map((name) => [
+            user.id,
+            name,
+          ]),
+        ]);
+      }
     }
 
     await db.query(`
