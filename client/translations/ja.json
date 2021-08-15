@@ -1,0 +1,50 @@
+{
+  "/CNHO3": {
+    "defaultMessage": "osu! でログイン",
+    "description": "Button in site header to log in"
+  },
+  "3J+k4U": {
+    "defaultMessage": "フォーラム",
+    "description": "Nav link"
+  },
+  "5OS21f": {
+    "defaultMessage": "外部：",
+    "description": "Nav separator"
+  },
+  "BSKWqB": {
+    "defaultMessage": "チーム",
+    "description": "Nav link"
+  },
+  "CIAu6S": {
+    "defaultMessage": "ウィキ",
+    "description": "Nav link"
+  },
+  "MoR8Of": {
+    "defaultMessage": "マッパー連絡",
+    "description": "Nav link"
+  },
+  "TqI9fE": {
+    "defaultMessage": "アドミン：",
+    "description": "Nav separator"
+  },
+  "gvLZL5": {
+    "defaultMessage": "ログアウト",
+    "description": "Button in site header to log out"
+  },
+  "jlkqJz": {
+    "defaultMessage": "治める",
+    "description": "Nav link"
+  },
+  "me3BjX": {
+    "defaultMessage": "統計",
+    "description": "Nav link"
+  },
+  "sG6ons": {
+    "defaultMessage": "Loved リスト",
+    "description": "Nav link"
+  },
+  "tCV6dl": {
+    "defaultMessage": "言語版：{selector}",
+    "description": "Selector in site header to change language"
+  }
+}

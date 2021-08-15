@@ -12,4 +12,4 @@ yarn-debug.log*
 yarn-error.log*
 
 /public/loved.html
-/src/react-app-env.d.ts
+/src/compiled-translations
