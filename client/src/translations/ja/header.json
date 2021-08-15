@@ -1,0 +1,18 @@
+{
+  "language": "言語版",
+  "log_in": "osu! でログイン",
+  "log_out": "ログアウト",
+
+  "nav": {
+    "admin": "アドミン",
+    "external": "外部",
+
+    "consents": "マッパー連絡",
+    "team": "チーム",
+    "statistics": "統計",
+    "manage": "治める",
+    "listing": "Loved リスト",
+    "forum": "フォーラム",
+    "wiki": "ウィキ"
+  }
+}

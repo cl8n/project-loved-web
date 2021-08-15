@@ -17,6 +17,7 @@ import SubmissionForm from './submission-form';
 import SubmissionListingContainer from './submission-listing';
 import Team from './team';
 import MapperConsents from './mapper-consents';
+import { TranslationProvider } from './translation';
 
 registerTextareaAutoHeightTrigger();
 
@@ -24,6 +25,7 @@ render(
   <StrictMode>
     <BrowserRouter>
       <OsuAuthProvider>
+      <TranslationProvider>
         <Header />
         <main className='big-center'>
           <Switch>
@@ -41,6 +43,7 @@ render(
             <Route path='*'><NoRoute /></Route>
           </Switch>
         </main>
+      </TranslationProvider>
       </OsuAuthProvider>
     </BrowserRouter>
   </StrictMode>,
