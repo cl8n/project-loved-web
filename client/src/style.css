@@ -601,3 +601,12 @@ tr.sticky > th:last-child::after {
 .priority.high {
     color: #1a1;
 }
+
+.locale-selector {
+    border: none;
+    padding: 0;
+}
+
+.locale-selector > option {
+    color: initial;
+}
