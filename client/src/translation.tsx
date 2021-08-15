@@ -24,6 +24,12 @@ const trans = new LocalizedStrings<LocaleStrings>({
   } as LocaleStrings,
 }, { logsEnabled: false });
 
+const savedLocale = localStorage.getItem('locale');
+
+if (savedLocale != null) {
+  trans.setLanguage(savedLocale);
+}
+
 export const locales = {
   en: 'English',
   ja: '日本語',
@@ -44,7 +50,10 @@ export function TranslationProvider({ children }: PropsWithChildren<{}>) {
     locale,
     setLocale: (newLocale) => {
       trans.setLanguage(newLocale);
-      _setLocale(trans.getLanguage());
+      newLocale = trans.getLanguage();
+
+      _setLocale(newLocale);
+      localStorage.setItem('locale', newLocale);
     },
     trans,
   }), [locale]);
