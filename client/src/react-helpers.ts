@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useRef } from 'react';
+import { Context, Dispatch, SetStateAction, useContext, useEffect, useRef } from 'react';
 
 export function setProperty<T, K extends keyof T>(
   setter: Dispatch<SetStateAction<T>>,
@@ -21,4 +21,13 @@ export function usePrevious<T>(value: T) {
   }, [value]);
 
   return ref.current;
+}
+
+export function useRequiredContext<T>(context: Context<T | undefined>): T {
+  const contextValue = useContext(context);
+
+  if (contextValue == null)
+    throw new Error('Missing context provider');
+
+  return contextValue;
 }
