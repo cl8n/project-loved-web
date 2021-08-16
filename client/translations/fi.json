@@ -1,0 +1,66 @@
+{
+  "/CNHO3": {
+    "defaultMessage": "Kirjaudu sisään osu!-tililläsi",
+    "description": "Button in site header to log in"
+  },
+  "3J+k4U": {
+    "defaultMessage": "Foorumi",
+    "description": "Nav link"
+  },
+  "5OS21f": {
+    "defaultMessage": "Ulkoiset:",
+    "description": "Nav separator"
+  },
+  "5oqovx": {
+    "defaultMessage": "Ehdota mappi",
+    "description": "Nav link"
+  },
+  "BSKWqB": {
+    "defaultMessage": "Tiimi",
+    "description": "Nav link"
+  },
+  "CIAu6S": {
+    "defaultMessage": "Wiki",
+    "description": "Nav link"
+  },
+  "Hf1vPz": {
+    "defaultMessage": "Valinnat",
+    "description": "Nav link"
+  },
+  "Lm++cZ": {
+    "defaultMessage": "Project Loved",
+    "description": "Site title"
+  },
+  "MoR8Of": {
+    "defaultMessage": "Mappaajien käyttöluvat",
+    "description": "Nav link"
+  },
+  "TqI9fE": {
+    "defaultMessage": "Admin:",
+    "description": "Nav separator"
+  },
+  "gvLZL5": {
+    "defaultMessage": "Kirjaudu ulos",
+    "description": "Button in site header to log out"
+  },
+  "jlkqJz": {
+    "defaultMessage": "Hallitse",
+    "description": "Nav link"
+  },
+  "me3BjX": {
+    "defaultMessage": "Tilastot",
+    "description": "Nav link"
+  },
+  "pvfxi+": {
+    "defaultMessage": "Ehdotukset",
+    "description": "Nav link"
+  },
+  "sG6ons": {
+    "defaultMessage": "Loved-listaus",
+    "description": "Nav link"
+  },
+  "tCV6dl": {
+    "defaultMessage": "Kieli: {selector}",
+    "description": "Selector in site header to change language"
+  }
+}
