@@ -1,8 +1,8 @@
-import missingFlag from './flags/__.png';
+import missingFlag from './images/flags/__.png';
 
 function flagSrc(country: string) {
   try {
-    return require(`./flags/${country.toLowerCase()}.png`).default;
+    return require(`./images/flags/${country.toLowerCase()}.png`).default;
   } catch {
     return missingFlag;
   }

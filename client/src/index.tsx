@@ -14,7 +14,7 @@ import { Picks } from './Picks';
 import { PicksRoundListing } from './PicksRoundListing';
 import { ProtectedRoute } from './ProtectedRoute';
 import Statistics from "./statistics";
-import './style.css';
+import './styles/style.css';
 import SubmissionForm from './submission-form';
 import SubmissionListingContainer from './submission-listing';
 import Team from './team';
