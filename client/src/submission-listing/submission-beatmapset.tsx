@@ -62,7 +62,7 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, 
       </tr>
       {expanded && (
         <tr>
-          <td colSpan={10}>
+          <td className='normal-wrap' colSpan={10}>
             <SubmissionsDropdown
               reviews={beatmapset.reviews}
               submissions={beatmapset.submissions}
