@@ -14,7 +14,7 @@ export default function SubmissionForm() {
         <li>What you write on this form will be visible publicly, so don't write something that you don't want others to see. You don't have to fill in the reason field if you don't want to.</li>
         <li>If the map you submit is either very unpopular or completely unplayable, captains may never check it. Please only submit maps that you believe would add genuine value to the Loved category.</li>
         <li>The map you submit may never be nominated for Loved, even if it does have some merit. Currently, the rate that maps get Loved is limited, so it's possible that the captains will continually find better picks than the map you submit.</li>
-        <li><s>After you submit a map, you can check on its status on <Link to='/'>the "Submissions" page</Link>.</s> <b>Coming soon!</b></li>
+        <li>After you submit a map, you can check on its status on <Link to='/'>the "Submissions" page</Link>.</li>
       </ul>
       {authUser == null
         ? <b>You must <a href={loginUrl}>log in</a> to fill out the form.</b>
