@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const db = require('../db');
 const { asyncHandler } = require('../express-helpers');
-const { groupBy } = require('../helpers');
+const { groupBy, modeBy } = require('../helpers');
 
 const router = Router();
 
@@ -112,6 +112,14 @@ router.get('/submissions', asyncHandler(async (req, res) => {
     FROM beatmapsets
     WHERE id IN (?)
   `, [[...beatmapsetIds]]);
+  const beatmapsByBeatmapsetId = groupBy(
+    await db.query(`
+      SELECT beatmapset_id, bpm, game_mode
+      FROM beatmaps
+      WHERE beatmapset_id IN (?)
+    `, [[...beatmapsetIds]]),
+    'beatmapset_id',
+  );
   const reviewsByBeatmapsetId = groupBy(reviews, 'beatmapset_id');
   const submissionsByBeatmapsetId = groupBy(submissions, 'beatmapset_id');
 
@@ -123,6 +131,16 @@ router.get('/submissions', asyncHandler(async (req, res) => {
       ? beatmapset.reviews.reduce((sum, review) => sum + review.score, 0)
       : -1000; // Can't -Infinity because JSON
     beatmapset.score = beatmapset.favorite_count * 50 + beatmapset.play_count;
+
+    beatmapset.beatmap_info = groupBy(beatmapsByBeatmapsetId[beatmapset.id] || [], 'game_mode');
+    for (const gameMode of [0, 1, 2, 3]) {
+      const beatmaps = beatmapset.beatmap_info[gameMode]?.sort((a, b) => a.bpm - b.bpm) || [];
+
+      beatmapset.beatmap_info[gameMode] = {
+        beatmap_count: beatmaps.length,
+        modal_bpm: modeBy(beatmaps, 'bpm'),
+      };
+    }
 
     userIds.add(beatmapset.creator_id);
   }

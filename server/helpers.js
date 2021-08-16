@@ -25,7 +25,25 @@ function groupBy(array, key, dataKey, keyIsUnique = false, nullKeyGroup = 'null'
   }, {});
 }
 
+function modeBy(array, key) {
+  const counts = { 0: 0 };
+  let mode = 0;
+
+  for (const { [key]: value } of array) {
+    const count = counts[value] == null
+      ? counts[value] = 1
+      : ++counts[value];
+
+    if (count > counts[mode]) {
+      mode = value;
+    }
+  }
+
+  return mode;
+}
+
 module.exports = {
   accessNested,
   groupBy,
+  modeBy,
 };
