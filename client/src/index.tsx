@@ -8,7 +8,6 @@ import { IntlProviderWrapper } from './intl';
 import { Manage } from './Manage';
 import MapperConsents from './mapper-consents';
 import { NoRoute } from './NoRoute';
-import { NotReady } from './NotReady';
 import { OsuAuthProvider } from './osuAuth';
 import { Picks } from './Picks';
 import { PicksRoundListing } from './PicksRoundListing';
@@ -30,7 +29,7 @@ render(
           <main className='big-center'>
             <Switch>
               <Redirect exact from='/' to='/submissions/osu' />
-              <Route path='/submissions/:gameMode'><NotReady><SubmissionListingContainer /></NotReady></Route>
+              <Route path='/submissions/:gameMode'><SubmissionListingContainer /></Route>
               <Route path='/submit'><SubmissionForm /></Route>
               <Route path='/mappers'><MapperConsents /></Route>
               <Route path='/team'><Team /></Route>
