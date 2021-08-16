@@ -24,6 +24,9 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, 
     dateFromString(beatmapset.updated_at).getFullYear(),
   ]), [beatmapset]);
 
+  const beatmapCountThisMode = beatmapset.beatmap_info[gameMode].beatmap_count;
+  const beatmapCountOtherModes = Object.values(beatmapset.beatmap_info).reduce((sum, info) => sum += info.beatmap_count, 0) - beatmapCountThisMode;
+
   return (
     <>
       <tr>
@@ -34,9 +37,11 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, 
         <td>{beatmapset.play_count}</td>
         <td>{beatmapset.favorite_count}</td>
         <td>{year}</td>
-        <td>???</td>
-        <td>???</td>
-        <td>???</td>
+        <td>
+          {beatmapCountThisMode}
+          {beatmapCountOtherModes > 0 && ` (+${beatmapCountOtherModes})`}
+        </td>
+        <td>{beatmapset.beatmap_info[gameMode].modal_bpm}</td>
         <td>
           <button
             type='button'

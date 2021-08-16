@@ -105,7 +105,6 @@ function SubmissionListing({ gameMode }: SubmissionListingProps) {
           <th>Year</th>
           <th>Diffs</th>
           <th>BPM</th>
-          <th>Length</th>
           <th />
           {canReview && <th />}
         </tr>
