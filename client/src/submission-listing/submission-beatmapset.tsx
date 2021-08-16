@@ -27,7 +27,7 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, 
   return (
     <>
       <tr>
-        <td><Beatmap beatmapset={beatmapset} /></td>
+        <td className='normal-wrap'><Beatmap beatmapset={beatmapset} /></td>
         <td><UserInline name={beatmapset.creator_name} user={usersById[beatmapset.creator_id]} /></td>
         <PriorityCell beatmapset={beatmapset} />
         <td>{beatmapset.score}</td>

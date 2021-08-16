@@ -63,7 +63,7 @@ export default function PollResults() {
           <option value='1'>Yes and no</option>
         </select>
       </div>
-      <table className='poll-results'>
+      <table className='main-table'>
         <tr className='sticky'>
           <th>Round</th>
           {gameMode == null &&
@@ -90,7 +90,7 @@ export default function PollResults() {
             {gameMode == null &&
               <td>{gameModeLongName(poll.game_mode)}</td>
             }
-            <td className='force-normal-wrap'>
+            <td className='normal-wrap'>
               {poll.beatmapset == null
                 ? <i>Deleted beatmapset</i>
                 : <BeatmapInline beatmapset={poll.beatmapset} gameMode={poll.game_mode} showCreator />

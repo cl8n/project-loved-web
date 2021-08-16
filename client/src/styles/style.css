@@ -464,15 +464,15 @@ button.angry:hover {
     white-space: nowrap;
 }
 
-.poll-results {
+.main-table {
     margin-top: 1em;
 }
 
-.poll-results td, .poll-results th {
+.main-table td, .main-table th {
     white-space: nowrap;
 }
 
-.poll-results td.force-normal-wrap, .poll-results th.force-normal-wrap {
+.main-table td.normal-wrap, .main-table th.normal-wrap {
     white-space: normal;
 }
 

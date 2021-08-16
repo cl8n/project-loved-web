@@ -93,7 +93,7 @@ function SubmissionListing({ gameMode }: SubmissionListingProps) {
   };
 
   return (
-    <table>
+    <table className='main-table'>
       <thead>
         <tr className='sticky'>
           <th>Beatmapset</th>
@@ -101,9 +101,9 @@ function SubmissionListing({ gameMode }: SubmissionListingProps) {
           <th>Priority</th>
           <th>Score <Help text='A placeholder method to sort this listing. Score = Favorites × 50 + Plays' /></th>
           <th>Plays</th>
-          <th>Favorites</th>
+          <th>Favs</th>
           <th>Year</th>
-          <th>Difficulties</th>
+          <th>Diffs</th>
           <th>BPM</th>
           <th>Length</th>
           <th />
