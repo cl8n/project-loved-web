@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
 import { apiErrorMessage, getPollResults, useApi } from '../api';
 import { BeatmapInline } from '../BeatmapInline';
 import { GameMode, IPollResult } from '../interfaces';
@@ -9,11 +9,25 @@ export default function PollResults() {
   const [polls, pollsError] = useApi(getPollResults);
   const [roundOrderAsc, setRoundOrderAsc] = useState(false);
   const [showPercent, setShowPercent] = useState(true);
+  const displayPolls = useMemo(() => {
+    if (polls == null)
+      return undefined;
+
+    let displayPolls = [...polls];
+
+    if (gameMode != null)
+      displayPolls = displayPolls.filter((poll) => poll.game_mode === gameMode);
+
+    if (roundOrderAsc)
+      displayPolls.sort((a, b) => a.round - b.round);
+
+    return displayPolls;
+  }, [gameMode, polls, roundOrderAsc]);
 
   if (pollsError != null)
     return <span className='panic'>Failed to load poll results: {apiErrorMessage(pollsError)}</span>;
 
-  if (polls == null)
+  if (displayPolls == null)
     return <span>Loading poll results...</span>;
 
   const onGameModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -21,14 +35,6 @@ export default function PollResults() {
 
     setGameMode(value === 'all' ? undefined : parseInt(value));
   };
-
-  let displayPolls = [...polls];
-
-  if (gameMode != null)
-    displayPolls = displayPolls.filter((poll) => poll.game_mode === gameMode);
-
-  if (roundOrderAsc)
-    displayPolls.sort((a, b) => a.round - b.round);
 
   return (
     <>
