@@ -12,7 +12,9 @@ async function loadMessages(locale: string) {
 
 export const locales = [
   { code: 'en', name: 'English' },
+  { code: 'fi', name: 'Suomi' },
   { code: 'ja', name: '日本語' },
+  { code: 'sv', name: 'Svenska' },
 ] as const;
 
 export function IntlProviderWrapper({ children }: PropsWithChildren<{}>) {
