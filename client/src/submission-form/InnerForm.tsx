@@ -29,7 +29,7 @@ export default function InnerForm() {
   return (
     <Form busyState={[busy, setBusy]} className='box spacer-margin' onSubmit={onSubmit}>
       <h2><label htmlFor='beatmapset'>Beatmapset link or ID</label></h2>
-      <input type='text' name='beatmapset' required />
+      <input type='text' name='beatmapset' required pattern='(?:/(?:beatmapset)?s/|^)\d+' />
       <h2><label htmlFor='gameModes'>For which game modes do you want this map to be Loved?</label></h2>
       <table>
         {gameModes.map((gameMode) => (
