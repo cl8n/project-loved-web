@@ -6,8 +6,10 @@ type IntlContextValue = [string, (locale: string) => void];
 
 const intlContext = createContext<IntlContextValue | undefined>(undefined);
 
-async function loadMessages(locale: string) {
-  return (await import(`./compiled-translations/${locale}.json`)).default;
+function loadMessages(locale: string) {
+  return import(`./compiled-translations/${locale}.json`)
+    .then((module) => module.default)
+    .catch(() => ({}));
 }
 
 export const locales = [
