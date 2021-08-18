@@ -183,10 +183,6 @@
     "defaultMessage": "Skicka in",
     "description": "Submit button"
   },
-  "P/DMly": {
-    "defaultMessage": "Poäng <help>Tillfälligt sätt att sortera denna listning. Poäng = Favoriter × 50 + Spelningar</help>",
-    "description": "Submissions table header"
-  },
   "PpxIZP": {
     "defaultMessage": "stark avvisning",
     "description": "-3 review score. Fits into {score} of the review line"
@@ -362,6 +358,10 @@
   "tCV6dl": {
     "defaultMessage": "Språk: {selector}",
     "description": "Selector in site header to change language"
+  },
+  "tdZae7": {
+    "defaultMessage": "Poäng <help>Tillfälligt sätt att sortera denna listning. Poäng{definition}</help>",
+    "description": "Submissions table header"
   },
   "uNpYlX": {
     "defaultMessage": "Avvisad",
