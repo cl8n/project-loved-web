@@ -130,7 +130,7 @@ router.get('/submissions', asyncHandler(async (req, res) => {
     beatmapset.review_score = beatmapset.reviews.length > 0
       ? beatmapset.reviews.reduce((sum, review) => sum + review.score, 0)
       : -1000; // Can't -Infinity because JSON
-    beatmapset.score = beatmapset.favorite_count * 50 + beatmapset.play_count;
+    beatmapset.score = beatmapset.favorite_count * 75 + beatmapset.play_count;
 
     beatmapset.beatmap_info = groupBy(beatmapsByBeatmapsetId[beatmapset.id] || [], 'game_mode');
     for (const gameMode of [0, 1, 2, 3]) {

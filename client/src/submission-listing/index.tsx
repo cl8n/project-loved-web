@@ -141,7 +141,7 @@ function SubmissionListing({ gameMode }: SubmissionListingProps) {
             description='Submissions table header'
             tagName='th'
             values={{
-              definition: ` = ${intl.formatMessage(messages.favorites)} × 50 + ${intl.formatMessage(messages.plays)}`,
+              definition: ` = ${intl.formatMessage(messages.favorites)} × 75 + ${intl.formatMessage(messages.plays)}`,
               help: (c: string) => <Help text={c} />,
             }}
           />
