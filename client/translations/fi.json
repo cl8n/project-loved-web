@@ -1,59 +1,359 @@
 {
+  "+3rK3I": {
+    "defaultMessage": "Ei vastausta",
+    "description": "Mapper consent shown in mapper consents table"
+  },
+  "+d4ZcX": {
+    "defaultMessage": "Moderaattorit",
+    "description": "Team listing title"
+  },
   "/CNHO3": {
     "defaultMessage": "Kirjaudu sisään osu!-tililläsi",
     "description": "Button in site header to log in"
+  },
+  "/SSCZX": {
+    "defaultMessage": "Kyllä",
+    "description": "Poll results table header"
+  },
+  "0+S3hP": {
+    "defaultMessage": "Jos ehdottamasi mappi on erittäin epäsuosittu tai jos sitä ei kukaan pysty läpäistä, kapteenit voivat jättää sen tarkistamatta. Ole hyvä ja ehdota vain mappeja, jotka mielestäsi vaikuttavat positiivisesti Loved-kategoriaan.",
+    "description": "Submission form list item 2"
+  },
+  "0Vz3c/": {
+    "defaultMessage": "Prosentti ja summa",
+    "description": "Result display option for poll results table"
+  },
+  "2SX61V": {
+    "defaultMessage": "Huomautukset",
+    "description": "Mapper consents table header"
+  },
+  "2dOoEc": {
+    "defaultMessage": "Metatietotarkistajat",
+    "description": "Team listing title"
+  },
+  "39zfVl": {
+    "defaultMessage": "heikosti puolesta",
+    "description": "+1 review score. Fits into {score} of the review line"
+  },
+  "3E4vRf": {
+    "defaultMessage": "Matala",
+    "description": "Aggregate review score shown on submissions table"
   },
   "3J+k4U": {
     "defaultMessage": "Foorumi",
     "description": "Nav link"
   },
+  "3Kch6P": {
+    "defaultMessage": "Nouseva",
+    "description": "Round order option for poll results table"
+  },
   "5OS21f": {
     "defaultMessage": "Ulkoiset:",
     "description": "Nav separator"
+  },
+  "5jbut3": {
+    "defaultMessage": "<label>Sarjojen järjestys:</label> {selector}",
+    "description": "Selector to change round order in poll results table"
   },
   "5oqovx": {
     "defaultMessage": "Ehdota mappi",
     "description": "Nav link"
   },
+  "7CJMwD": {
+    "defaultMessage": "Prioriteetti",
+    "description": "Submissions table header"
+  },
+  "8bAHuK": {
+    "defaultMessage": "Sulje",
+    "description": "Button to close forms, dropdowns, modals, etc."
+  },
+  "8l6BC0": {
+    "defaultMessage": "Mappaajien hyväksynnät",
+    "description": "Mapper consents page title"
+  },
+  "9cv8r4": {
+    "defaultMessage": "Beatmapsetti",
+    "description": "Poll results table header"
+  },
+  "AGzOYr": {
+    "defaultMessage": "Ehdota mappi Loved-kategoriaan!",
+    "description": "Submission form title"
+  },
+  "BGA5hC": {
+    "defaultMessage": "Kehittäjät",
+    "description": "Team listing title"
+  },
   "BSKWqB": {
     "defaultMessage": "Tiimi",
     "description": "Nav link"
+  },
+  "Be0kKF": {
+    "defaultMessage": "Voi olla, että ehdottamasi mappi ei koskaan nimitetä Loved-kategoriaan, vaikka se näyttäisikin lupaavalta. Loved-kategoriaan pääsee parhaillaan vain tietty määrä mappeja kerralla, eli voi olla, että kapteenit löytävät aina parempia mappeja kuin mitä ehdotat.",
+    "description": "Submission form list item 3"
   },
   "CIAu6S": {
     "defaultMessage": "Wiki",
     "description": "Nav link"
   },
+  "CxsxoI": {
+    "defaultMessage": "Lähetetään ehdotus...",
+    "description": "Submit button when in progress"
+  },
+  "Do+EPJ": {
+    "defaultMessage": "{user} äänesti {score} {timestamp, date, long}",
+    "description": "Review line"
+  },
+  "EqGiDp": {
+    "defaultMessage": "Mitä kirjoitat tähän lomakkeen tulee näkymään julkisesti, joten älä kirjoita mitään, mitä et halua muiden näkevän. Et tarvitse kirjoittaa syy-kenttään mitään, jos et halua.",
+    "description": "Submission form list item 1"
+  },
+  "H65rvb": {
+    "defaultMessage": "Et ole tarpeeksi tyylikäs nähdääksesi tätä sivua.",
+    "description": "Error message shown when logged in but not having permission to view a page"
+  },
+  "HVzPRU": {
+    "defaultMessage": "Ei",
+    "description": "Poll results table header"
+  },
   "Hf1vPz": {
     "defaultMessage": "Valinnat",
     "description": "Nav link"
+  },
+  "HvpI7B": {
+    "defaultMessage": "Poistettu beatmapsetti",
+    "description": "Placeholder for beatmapsets that were deleted from osu!"
+  },
+  "IiYTWb": {
+    "defaultMessage": "Nykyinen tiimi",
+    "description": "Team listing group title"
+  },
+  "IvOUKt": {
+    "defaultMessage": "<label>Pelimuoto:</label> {selector}",
+    "description": "Selector to change game mode"
+  },
+  "JPKVz4": {
+    "defaultMessage": "Beatmapsetti",
+    "description": "Mapper beatmapset consents table header"
+  },
+  "JPSkxB": {
+    "defaultMessage": "{country} lippu",
+    "description": "Country flag image alt text"
+  },
+  "Jy6JW8": {
+    "defaultMessage": "En tiedä kuka sinä olet! Yritä <a>kirjautua sisään</a> ensin.",
+    "description": "Error message shown when trying to view a protected page before logging in"
+  },
+  "LBBZpt": {
+    "defaultMessage": "Pelimuoto",
+    "description": "Poll results table header"
+  },
+  "Ll1LUO": {
+    "defaultMessage": "vahvasti puolesta",
+    "description": "+3 review score. Fits into {score} of the review line"
   },
   "Lm++cZ": {
     "defaultMessage": "Project Loved",
     "description": "Site title"
   },
+  "MUDTXQ": {
+    "defaultMessage": "Beatmapsetin linkki tai ID",
+    "description": "Submission form beatmapset input prompt"
+  },
   "MoR8Of": {
-    "defaultMessage": "Mappaajien käyttöluvat",
+    "defaultMessage": "Mappaajien hyväksynnät",
     "description": "Nav link"
+  },
+  "N4xf2i": {
+    "defaultMessage": "Suosikkeja",
+    "description": "Submissions table header"
+  },
+  "NG8X9U": {
+    "defaultMessage": "Parhaillaan rakenteilla",
+    "description": "Title of page not yet ready for public access"
+  },
+  "NjIKQe": {
+    "defaultMessage": "Ei saada yhteyttä",
+    "description": "Mapper consent shown in mapper consents table"
+  },
+  "O2IvSs": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} ehdotti tämän mapin {timestamp, date, long}} other{{user} ehdotti tämän mapin}}",
+    "description": "Submission line"
+  },
+  "Oep6va": {
+    "defaultMessage": "Lähetä",
+    "description": "Submit button"
+  },
+  "P/DMly": {
+    "defaultMessage": "Pistemäärä <help>Väliaikainen tapa järjestää tätä listausta. Pistemäärä = Suosikkeja × 50 + Pelikertoja</help>",
+    "description": "Submissions table header"
+  },
+  "PpxIZP": {
+    "defaultMessage": "vahvasti vastaan",
+    "description": "-3 review score. Fits into {score} of the review line"
+  },
+  "RHg+09": {
+    "defaultMessage": "Mitkä pelimuodot tässä mapissa pitäisi saada Loved-tilan?",
+    "description": "Submission form game mode input prompt"
+  },
+  "RuFprR": {
+    "defaultMessage": "Muu",
+    "description": "Team listing title for any role not explicitly listed"
+  },
+  "ScBgfg": {
+    "defaultMessage": "ilman mielipidettä",
+    "description": "0 review score. Fits into {score} of the review line"
+  },
+  "Sti+Y3": {
+    "defaultMessage": "Kun olet ehdottanut mapin, voit tarkistaa sen tilannetta <submissionsLink>\"Ehdotukset\"-sivussa</submissionsLink>.",
+    "description": "Submission form list item 4"
+  },
+  "Tf7XH9": {
+    "defaultMessage": "Huomautukset",
+    "description": "Mapper beatmapset consents table header"
   },
   "TqI9fE": {
     "defaultMessage": "Admin:",
     "description": "Nav separator"
   },
+  "TrDD+Y": {
+    "defaultMessage": "Sinun täytyy <a>kirjautua sisään</a> täyttääksesi lomakkeen.",
+    "description": "Submission form login prompt"
+  },
+  "U1fcdw": {
+    "defaultMessage": "Uutistoimittajat / Johtajat",
+    "description": "Team listing title"
+  },
+  "UjLvid": {
+    "defaultMessage": "Laajenna",
+    "description": "Button to expand dropdowns"
+  },
+  "UxNmCh": {
+    "defaultMessage": "Mediumi",
+    "description": "Aggregate review score shown on submissions table"
+  },
+  "V5W+3b": {
+    "defaultMessage": "Hyväksyntä",
+    "description": "Mapper beatmapset consents table header"
+  },
+  "VHEp9G": {
+    "defaultMessage": "Laskeva",
+    "description": "Round order option for poll results table"
+  },
+  "WEpxnj": {
+    "defaultMessage": "Pelikertoja",
+    "description": "Submissions table header"
+  },
+  "ZEsdcm": {
+    "defaultMessage": "Foorumiaihe",
+    "description": "Poll results table header"
+  },
+  "ZWbq0S": {
+    "defaultMessage": "Vuosi",
+    "description": "Submissions table header"
+  },
+  "ZZqLxU": {
+    "defaultMessage": "Vaikeustasoja",
+    "description": "Submissions table header"
+  },
+  "aHJR9F": {
+    "defaultMessage": "Hyväksyntä",
+    "description": "Mapper consents table header"
+  },
+  "bKfIQC": {
+    "defaultMessage": "Miksi haluat nähdä tämän mapin Loved-kategoriassa? <fade>(vapaaehtoinen)</fade>",
+    "description": "Submission form reason input prompt"
+  },
+  "c/0N4+": {
+    "defaultMessage": "vastaan",
+    "description": "-2 review score. Fits into {score} of the review line"
+  },
+  "c2UCNp": {
+    "defaultMessage": "Prosentti",
+    "description": "Poll results table header"
+  },
+  "ccf+6T": {
+    "defaultMessage": "{gameMode}-kapteenit",
+    "description": "Team listing title"
+  },
+  "cwgho6": {
+    "defaultMessage": "Vireillä",
+    "description": "Aggregate review score shown on submissions table for maps with no reviews"
+  },
+  "e6WZri": {
+    "defaultMessage": "puolesta",
+    "description": "+2 review score. Fits into {score} of the review line"
+  },
+  "gDomEP": {
+    "defaultMessage": "<label>Tulosnäyttö:</label> {selector}",
+    "description": "Selector to change result display in poll results table"
+  },
+  "gLG6dL": {
+    "defaultMessage": "Ehdotetut mapit",
+    "description": "Submissions table title"
+  },
   "gvLZL5": {
     "defaultMessage": "Kirjaudu ulos",
     "description": "Button in site header to log out"
+  },
+  "iCkWun": {
+    "defaultMessage": "Sarja",
+    "description": "Poll results table header"
   },
   "jlkqJz": {
     "defaultMessage": "Hallitse",
     "description": "Nav link"
   },
+  "kr2W+L": {
+    "defaultMessage": "<p>Tämän lomakeen täyttäminen auttaa <teamLink>kapteeneja</teamLink> päättämään mitä mappeja he aikovat nimittää Loved-kategoriaan kuukausittaisissa äänestyksissä. Vaikka ajattelemasi mappi on jo <submissionsLink>ehdotettu</submissionsLink>, voit lisätä mielipiteesi siitä tähän.</p> <p>Huomioi kuitenkin näitä asioita:</p>",
+    "description": "Submission form intro"
+  },
+  "lMSjPi": {
+    "defaultMessage": "Tämä ei ole vielä valmis käyttettäväksesi. Tarkista uudelleen myöhemmin!",
+    "description": "Body of page not yet ready for public access"
+  },
+  "lRk8DP": {
+    "defaultMessage": "heikosti vastaan",
+    "description": "-1 review score. Fits into {score} of the review line"
+  },
+  "lbC8H+": {
+    "defaultMessage": "Mappaaja",
+    "description": "Mapper consents table header"
+  },
+  "lz1fkx": {
+    "defaultMessage": "Kyllä",
+    "description": "Boolean"
+  },
   "me3BjX": {
     "defaultMessage": "Tilastot",
     "description": "Nav link"
   },
+  "mhBW5h": {
+    "defaultMessage": "Mappaaja",
+    "description": "Submissions table header"
+  },
+  "nn9fFb": {
+    "defaultMessage": "BPM",
+    "description": "Submissions table header"
+  },
+  "pLUxkj": {
+    "defaultMessage": "Ei",
+    "description": "Boolean"
+  },
+  "pXOU6C": {
+    "defaultMessage": "Täällä ei ole mitään =(",
+    "description": "Body of \"not found\" page"
+  },
+  "phKBIX": {
+    "defaultMessage": "Tuntematon valtio",
+    "description": "Shown in flag image alt text for the \"?\" flag"
+  },
   "pvfxi+": {
     "defaultMessage": "Ehdotukset",
     "description": "Nav link"
+  },
+  "qfEiSZ": {
+    "defaultMessage": "Summa",
+    "description": "Poll results table header"
   },
   "sG6ons": {
     "defaultMessage": "Loved-listaus",
@@ -62,5 +362,33 @@
   "tCV6dl": {
     "defaultMessage": "Kieli: {selector}",
     "description": "Selector in site header to change language"
+  },
+  "uNpYlX": {
+    "defaultMessage": "Hylätty",
+    "description": "Aggregate review score shown on submissions table"
+  },
+  "urIF1D": {
+    "defaultMessage": "Beatmapsetti",
+    "description": "Submissions table header"
+  },
+  "vDQerf": {
+    "defaultMessage": "Äänestystulokset",
+    "description": "Poll results title"
+  },
+  "wGcwBN": {
+    "defaultMessage": "Korkea",
+    "description": "Aggregate review score shown on submissions table"
+  },
+  "wOZypU": {
+    "defaultMessage": "Alumni",
+    "description": "Team listing group title"
+  },
+  "xv9aUB": {
+    "defaultMessage": "Kyllä ja ei",
+    "description": "Result display option for poll results table"
+  },
+  "y+BE4P": {
+    "defaultMessage": "Kaikki",
+    "description": "Game mode option for poll results table"
   }
 }
