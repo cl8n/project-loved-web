@@ -76,7 +76,6 @@ export default function PollResults() {
             <th>Game mode</th>
           }
           <th>Beatmapset</th>
-          <th>Poll topic</th>
           {showPercent
             ? (
               <>
@@ -88,7 +87,9 @@ export default function PollResults() {
                 <th>Yes</th>
                 <th>No</th>
               </>
-            )}
+            )
+          }
+          <th>Poll topic</th>
         </tr>
         {displayPolls.map((poll) => (
           <tr key={poll.id}>
@@ -102,8 +103,8 @@ export default function PollResults() {
                 : <BeatmapInline beatmapset={poll.beatmapset} gameMode={poll.game_mode} showCreator />
               }
             </td>
-            <td><a href={`https://osu.ppy.sh/community/forums/topics/${poll.topic_id}`}>{poll.topic_id}</a></td>
             <ResultCells poll={poll} showPercent={showPercent} />
+            <td><a href={`https://osu.ppy.sh/community/forums/topics/${poll.topic_id}`}>#{poll.topic_id}</a></td>
           </tr>
         ))}
       </table>
