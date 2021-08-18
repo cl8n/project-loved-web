@@ -7,6 +7,7 @@ import { ChangeEvent } from 'react';
 import { GameMode, IReview } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import { isCaptainForMode } from '../permissions';
+import { FormattedMessage } from 'react-intl';
 
 export default function SubmissionListingContainer() {
   const history = useHistory();
@@ -28,18 +29,30 @@ export default function SubmissionListingContainer() {
 
   return (
     <>
-      <h1>Submitted maps</h1>
+      <FormattedMessage
+        defaultMessage='Submitted maps'
+        description='Submissions table title'
+        tagName='h1'
+      />
       <p className='flex-left'>
-        <label htmlFor='gameMode'>Game mode:</label>
-        <select
-          name='gameMode'
-          value={gameMode}
-          onChange={onGameModeChange}
-        >
-          {gameModes.map((m) => (
-            <option key={m} value={m}>{gameModeLongName(m)}</option>
-          ))}
-        </select>
+        <FormattedMessage
+          defaultMessage='<label>Game mode:</label> {selector}'
+          description='Selector to change game mode'
+          values={{
+            label: (c: string) => <label htmlFor='gameMode'>{c}</label>,
+            selector: (
+              <select
+                name='gameMode'
+                value={gameMode}
+                onChange={onGameModeChange}
+              >
+                {gameModes.map((m) => (
+                  <option key={m} value={m}>{gameModeLongName(m)}</option>
+                ))}
+              </select>
+            ),
+          }}
+        />
       </p>
       <SubmissionListing gameMode={gameMode} />
     </>
@@ -96,15 +109,54 @@ function SubmissionListing({ gameMode }: SubmissionListingProps) {
     <table className='main-table'>
       <thead>
         <tr className='sticky'>
-          <th>Beatmapset</th>
-          <th>Mapper</th>
-          <th>Priority</th>
-          <th>Score <Help text='A placeholder method to sort this listing. Score = Favorites × 50 + Plays' /></th>
-          <th>Plays</th>
-          <th>Favs</th>
-          <th>Year</th>
-          <th>Diffs</th>
-          <th>BPM</th>
+          <FormattedMessage
+            defaultMessage='Beatmapset'
+            description='Submissions table header'
+            tagName='th'
+          />
+          <FormattedMessage
+            defaultMessage='Mapper'
+            description='Submissions table header'
+            tagName='th'
+          />
+          <FormattedMessage
+            defaultMessage='Priority'
+            description='Submissions table header'
+            tagName='th'
+          />
+          <FormattedMessage
+            defaultMessage='Score <help>A placeholder method to sort this listing. Score = Favorites × 50 + Plays</help>'
+            description='Submissions table header'
+            tagName='th'
+            values={{
+              help: (c: string) => <Help text={c} />,
+            }}
+          />
+          <FormattedMessage
+            defaultMessage='Plays'
+            description='Submissions table header'
+            tagName='th'
+          />
+          <FormattedMessage
+            defaultMessage='Favs'
+            description='Submissions table header'
+            tagName='th'
+          />
+          <FormattedMessage
+            defaultMessage='Year'
+            description='Submissions table header'
+            tagName='th'
+          />
+          <FormattedMessage
+            defaultMessage='Diffs'
+            description='Submissions table header'
+            tagName='th'
+          />
+          <FormattedMessage
+            defaultMessage='BPM'
+            description='Submissions table header'
+            tagName='th'
+          />
           <th />
           {canReview && <th />}
         </tr>

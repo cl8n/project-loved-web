@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import { useIntl } from 'react-intl';
 import { addOrUpdateReview, apiErrorMessage } from '../api';
 import { autoHeightRef } from '../auto-height';
 import { BeatmapInline } from '../BeatmapInline';
 import { Form, FormSubmitHandler } from '../dom-helpers';
 import { GameMode, IBeatmapset, IReview } from '../interfaces';
 import { Modal } from '../Modal';
-import { reviewScoreClasses, reviewScoreTexts, selectableReviewScores } from './helpers';
+import { reviewScoreClasses, reviewScoreMessages, selectableReviewScores } from './helpers';
 
 interface ReviewEditorProps {
   beatmapset: IBeatmapset;
@@ -15,6 +16,7 @@ interface ReviewEditorProps {
 }
 
 export default function ReviewEditor({ beatmapset, gameMode, onReviewUpdate, review }: ReviewEditorProps) {
+  const intl = useIntl();
   const [busy, setBusy] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -61,7 +63,7 @@ export default function ReviewEditor({ beatmapset, gameMode, onReviewUpdate, rev
                     <option hidden />
                     {selectableReviewScores.map((score) => (
                       <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
-                        {reviewScoreTexts[score + 3]} ({score > 0 && '+'}{score})
+                        {intl.formatMessage(reviewScoreMessages[score + 3])} ({intl.formatNumber(score, { signDisplay: 'exceptZero' })})
                       </option>
                     ))}
                   </select>

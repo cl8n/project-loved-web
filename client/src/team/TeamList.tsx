@@ -1,7 +1,35 @@
+import { defineMessages, useIntl } from 'react-intl';
 import { ResponseError } from 'superagent';
 import { apiErrorMessage, GetTeamResponseBody } from '../api';
 import { gameModeLongName, gameModes } from '../osu-helpers';
 import UserList from './UserList';
+
+const messages = defineMessages({
+  captains: {
+    defaultMessage: '{gameMode} captains',
+    description: 'Team listing title'
+  },
+  developer: {
+    defaultMessage: 'Developers',
+    description: 'Team listing title'
+  },
+  metadata: {
+    defaultMessage: 'Metadata reviewers',
+    description: 'Team listing title'
+  },
+  moderator: {
+    defaultMessage: 'Moderators',
+    description: 'Team listing title'
+  },
+  news: {
+    defaultMessage: 'News editors / Managers',
+    description: 'Team listing title'
+  },
+  other: {
+    defaultMessage: 'Other',
+    description: 'Team listing title for any role not explicitly listed'
+  },
+});
 
 type TeamListProps = {
   current: boolean;
@@ -9,6 +37,7 @@ type TeamListProps = {
 };
 
 export default function TeamList({ current, teamApi }: TeamListProps) {
+  const intl = useIntl();
   const [team, teamError] = teamApi;
 
   if (teamError != null)
@@ -27,38 +56,38 @@ export default function TeamList({ current, teamApi }: TeamListProps) {
         return gameModeUsers != null && (
           <UserList
             key={gameMode}
-            title={gameModeLongName(gameMode) + ' captains'}
+            title={intl.formatMessage(messages.captains, { gameMode: gameModeLongName(gameMode) })}
             users={gameModeUsers}
           />
         );
       })}
       {teamUsers.news != null &&
         <UserList
-          title='News editors / Managers'
+          title={intl.formatMessage(messages.news)}
           users={teamUsers.news}
         />
       }
       {teamUsers.metadata != null &&
         <UserList
-          title='Metadata reviewers'
+          title={intl.formatMessage(messages.metadata)}
           users={teamUsers.metadata}
         />
       }
       {teamUsers.moderator != null &&
         <UserList
-          title='Moderators'
+          title={intl.formatMessage(messages.moderator)}
           users={teamUsers.moderator}
         />
       }
       {teamUsers.dev != null &&
         <UserList
-          title='Developers'
+          title={intl.formatMessage(messages.developer)}
           users={teamUsers.dev}
         />
       }
       {teamUsers.other != null &&
         <UserList
-          title='Other'
+          title={intl.formatMessage(messages.other)}
           users={teamUsers.other}
         />
       }

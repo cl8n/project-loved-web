@@ -1,3 +1,36 @@
+import { defineMessages } from 'react-intl';
+
+const messages = defineMessages({
+  strongRejection: {
+    defaultMessage: 'strong rejection',
+    description: '-3 review score. Fits into {score} of the review line',
+  },
+  rejection: {
+    defaultMessage: 'rejection',
+    description: '-2 review score. Fits into {score} of the review line',
+  },
+  lightRejection: {
+    defaultMessage: 'light rejection',
+    description: '-1 review score. Fits into {score} of the review line',
+  },
+  noPreference: {
+    defaultMessage: 'no preference',
+    description: '0 review score. Fits into {score} of the review line',
+  },
+  lightSupport: {
+    defaultMessage: 'light support',
+    description: '+1 review score. Fits into {score} of the review line',
+  },
+  support: {
+    defaultMessage: 'support',
+    description: '+2 review score. Fits into {score} of the review line',
+  },
+  strongSupport: {
+    defaultMessage: 'strong support',
+    description: '+3 review score. Fits into {score} of the review line',
+  },
+});
+
 export function displayRange(values: number[], displayFn?: (value: number) => string) {
   const max = Math.max(...values);
   const min = Math.min(...values);
@@ -7,17 +40,17 @@ export function displayRange(values: number[], displayFn?: (value: number) => st
 
   return max === min
     ? displayFn(max)
-    : `${displayFn(min)} - ${displayFn(max)}`;
+    : `${displayFn(min)}–${displayFn(max)}`;
 }
 
-export const reviewScoreTexts = [
-  'strong rejection',
-  'rejection',
-  'light rejection',
-  'no preference',
-  'light support',
-  'support',
-  'strong support',
+export const reviewScoreMessages = [
+  messages.strongRejection,
+  messages.rejection,
+  messages.lightRejection,
+  messages.noPreference,
+  messages.lightSupport,
+  messages.support,
+  messages.strongSupport,
 ] as const;
-export const reviewScoreClasses = reviewScoreTexts.map((score) => score.replace(' ', '-'));
+export const reviewScoreClasses = reviewScoreMessages.map((_, score) => `review-score-${score - 3}`);
 export const selectableReviewScores = [3, 2, 1, -1, -2, -3];

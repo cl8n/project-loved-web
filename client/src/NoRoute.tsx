@@ -1,5 +1,11 @@
+import { FormattedMessage } from 'react-intl';
+
 export function NoRoute() {
   return (
-    <span>There's nothing here =(</span>
+    <FormattedMessage
+      defaultMessage="There's nothing here =("
+      description='Body of "not found" page'
+      tagName='span'
+    />
   );
 }

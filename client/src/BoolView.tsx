@@ -1,9 +1,23 @@
+import { defineMessages, useIntl } from 'react-intl';
+
+const messages = defineMessages({
+  no: {
+    defaultMessage: 'No',
+    description: 'Boolean',
+  },
+  yes: {
+    defaultMessage: 'Yes',
+    description: 'Boolean',
+  },
+});
+
 type BoolViewProps = {
   noColor?: boolean;
   value: boolean;
 };
 
 export function BoolView({ noColor, value }: BoolViewProps) {
+  const intl = useIntl();
   let className: string | undefined;
 
   if (!noColor)
@@ -11,7 +25,7 @@ export function BoolView({ noColor, value }: BoolViewProps) {
 
   return (
     <span className={className}>
-      {value ? 'Yes' : 'No'}
+      {intl.formatMessage(value ? messages.yes : messages.no)}
     </span>
   );
 }

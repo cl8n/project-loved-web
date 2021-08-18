@@ -1,4 +1,5 @@
 import { PropsWithChildren } from "react";
+import { FormattedMessage } from "react-intl";
 import { useOsuAuth } from "./osuAuth";
 import { canReadAs } from "./permissions";
 
@@ -8,8 +9,16 @@ export function NotReady({ children }: PropsWithChildren<{}>) {
   if (children == null || (authUser == null || !canReadAs(authUser, 'any'))) {
     return (
       <>
-        <h1>Under construction</h1>
-        <p>This isn't available to you yet. Check back soon!</p>
+        <FormattedMessage
+          defaultMessage='Under construction'
+          description='Title of page not yet ready for public access'
+          tagName='h1'
+        />
+        <FormattedMessage
+          defaultMessage="This isn't available to you yet. Check back soon!"
+          description='Body of page not yet ready for public access'
+          tagName='p'
+        />
       </>
     );
   }

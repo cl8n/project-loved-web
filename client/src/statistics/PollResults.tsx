@@ -1,10 +1,40 @@
 import { ChangeEvent, useMemo, useState } from 'react';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { apiErrorMessage, getPollResults, useApi } from '../api';
 import { BeatmapInline } from '../BeatmapInline';
 import { GameMode, IPollResult } from '../interfaces';
-import { gameModeLongName } from '../osu-helpers';
+import { gameModeLongName, gameModes } from '../osu-helpers';
+
+const messages = defineMessages({
+  all: {
+    defaultMessage: 'All',
+    description: 'Game mode option for poll results table',
+  },
+  ascending: {
+    defaultMessage: 'Ascending',
+    description: 'Round order option for poll results table',
+  },
+  descending: {
+    defaultMessage: 'Descending',
+    description: 'Round order option for poll results table',
+  },
+  percentAndTotal: {
+    defaultMessage: 'Percent and total',
+    description: 'Result display option for poll results table',
+  },
+  yesAndNo: {
+    defaultMessage: 'Yes and no',
+    description: 'Result display option for poll results table',
+  },
+
+  deletedBeatmapset: {
+    defaultMessage: 'Deleted beatmapset',
+    description: 'Placeholder for beatmapsets that were deleted from osu!',
+  },
+});
 
 export default function PollResults() {
+  const intl = useIntl();
   const [gameMode, setGameMode] = useState<GameMode>();
   const [polls, pollsError] = useApi(getPollResults);
   const [roundOrderAsc, setRoundOrderAsc] = useState(false);
@@ -39,70 +69,126 @@ export default function PollResults() {
   return (
     <>
       <div className='flex-left'>
-        <label htmlFor='gameMode'>Game mode:</label>
-        <select
-          name='gameMode'
-          value={gameMode}
-          onChange={onGameModeChange}
-        >
-          <option value='all'>All</option>
-          {[0, 1, 2, 3].map((m) => (
-            <option value={m}>{gameModeLongName(m)}</option>
-          ))}
-        </select>
-        <label htmlFor='roundOrder'>Round order:</label>
-        <select
-          name='roundOrder'
-          value={roundOrderAsc ? '1' : '0'}
-          onChange={(event) => setRoundOrderAsc(event.currentTarget.value === '1')}
-        >
-          <option value='0'>Descending</option>
-          <option value='1'>Ascending</option>
-        </select>
-        <label htmlFor='resultDisplay'>Result display:</label>
-        <select
-          name='resultDisplay'
-          value={showPercent ? '0' : '1'}
-          onChange={(event) => setShowPercent(event.currentTarget.value === '0')}
-        >
-          <option value='0'>Percent and total</option>
-          <option value='1'>Yes and no</option>
-        </select>
+        <FormattedMessage
+          defaultMessage='<label>Game mode:</label> {selector}'
+          description='Selector to change game mode'
+          values={{
+            label: (c: string) => <label htmlFor='gameMode'>{c}</label>,
+            selector: (
+              <select
+                name='gameMode'
+                value={gameMode ?? 'all'}
+                onChange={onGameModeChange}
+              >
+                <option value='all'>{intl.formatMessage(messages.all)}</option>
+                {gameModes.map((m) => (
+                  <option key={m} value={m}>{gameModeLongName(m)}</option>
+                ))}
+              </select>
+            ),
+          }}
+        />
+        <FormattedMessage
+          defaultMessage='<label>Round order:</label> {selector}'
+          description='Selector to change round order in poll results table'
+          values={{
+            label: (c: string) => <label htmlFor='roundOrder'>{c}</label>,
+            selector: (
+              <select
+                name='roundOrder'
+                value={roundOrderAsc ? '1' : '0'}
+                onChange={(event) => setRoundOrderAsc(event.currentTarget.value === '1')}
+              >
+                <option value='0'>{intl.formatMessage(messages.descending)}</option>
+                <option value='1'>{intl.formatMessage(messages.ascending)}</option>
+              </select>
+            ),
+          }}
+        />
+        <FormattedMessage
+          defaultMessage='<label>Result display:</label> {selector}'
+          description='Selector to change result display in poll results table'
+          values={{
+            label: (c: string) => <label htmlFor='resultDisplay'>{c}</label>,
+            selector: (
+              <select
+                name='resultDisplay'
+                value={showPercent ? '0' : '1'}
+                onChange={(event) => setShowPercent(event.currentTarget.value === '0')}
+              >
+                <option value='0'>{intl.formatMessage(messages.percentAndTotal)}</option>
+                <option value='1'>{intl.formatMessage(messages.yesAndNo)}</option>
+              </select>
+            ),
+          }}
+        />
       </div>
       <table className='main-table'>
         <thead>
           <tr className='sticky'>
-            <th>Round</th>
+            <FormattedMessage
+              defaultMessage='Round'
+              description='Poll results table header'
+              tagName='th'
+            />
             {gameMode == null &&
-              <th>Game mode</th>
+              <FormattedMessage
+                defaultMessage='Game mode'
+                description='Poll results table header'
+                tagName='th'
+              />
             }
-            <th>Beatmapset</th>
+            <FormattedMessage
+              defaultMessage='Beatmapset'
+              description='Poll results table header'
+              tagName='th'
+            />
             {showPercent
               ? (
                 <>
-                  <th>Percent</th>
-                  <th>Total</th>
+                  <FormattedMessage
+                    defaultMessage='Percent'
+                    description='Poll results table header'
+                    tagName='th'
+                  />
+                  <FormattedMessage
+                    defaultMessage='Total'
+                    description='Poll results table header'
+                    tagName='th'
+                  />
                 </>
               ) : (
                 <>
-                  <th>Yes</th>
-                  <th>No</th>
+                  <FormattedMessage
+                    defaultMessage='Yes'
+                    description='Poll results table header'
+                    tagName='th'
+                  />
+                  <FormattedMessage
+                    defaultMessage='No'
+                    description='Poll results table header'
+                    tagName='th'
+                  />
                 </>
               )
             }
-            <th>Poll topic</th>
+            <FormattedMessage
+              defaultMessage='Poll topic'
+              description='Poll results table header'
+              tagName='th'
+            />
           </tr>
         </thead>
         <tbody>
           {displayPolls.map((poll) => (
             <tr key={poll.id}>
-              <td>{poll.round}</td>
+              <td>{intl.formatNumber(poll.round)}</td>
               {gameMode == null &&
                 <td>{gameModeLongName(poll.game_mode)}</td>
               }
               <td className='normal-wrap'>
                 {poll.beatmapset == null
-                  ? <i>Deleted beatmapset</i>
+                  ? <i>{intl.formatMessage(messages.deletedBeatmapset)}</i>
                   : <BeatmapInline beatmapset={poll.beatmapset} gameMode={poll.game_mode} showCreator />
                 }
               </td>
@@ -122,6 +208,8 @@ type ResultCellsProps = {
 };
 
 function ResultCells({ poll, showPercent }: ResultCellsProps) {
+  const intl = useIntl();
+
   const yes = poll.result_yes;
   const no = poll.result_no;
   const total = yes + no;
@@ -133,13 +221,13 @@ function ResultCells({ poll, showPercent }: ResultCellsProps) {
   return showPercent
     ? (
       <>
-        <td className={className}>{(yesFraction * 100).toFixed(2)}%</td>
-        <td>{total}</td>
+        <td className={className}>{intl.formatNumber(yesFraction, { minimumFractionDigits: 2, style: 'percent' })}</td>
+        <td>{intl.formatNumber(total)}</td>
       </>
     ) : (
       <>
-        <td className={className}>{yes}</td>
-        <td>{no}</td>
+        <td className={className}>{intl.formatNumber(yes)}</td>
+        <td>{intl.formatNumber(no)}</td>
       </>
     );
 }

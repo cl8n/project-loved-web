@@ -1,3 +1,4 @@
+import { FormattedMessage } from 'react-intl';
 import { getTeam, useApi } from '../api';
 import TeamList from './TeamList';
 
@@ -7,11 +8,19 @@ export default function Team() {
   return (
     <>
       <div className='content-block'>
-        <h1>Current team</h1>
+        <FormattedMessage
+          defaultMessage='Current team'
+          description='Team listing group title'
+          tagName='h1'
+        />
         <TeamList current={true} teamApi={teamApi} />
       </div>
       <div className='content-block'>
-        <h1>Alumni</h1>
+        <FormattedMessage
+          defaultMessage='Alumni'
+          description='Team listing group title'
+          tagName='h1'
+        />
         <TeamList current={false} teamApi={teamApi} />
       </div>
     </>

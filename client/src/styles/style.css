@@ -554,31 +554,31 @@ tr.sticky > th:last-child::after {
     font-weight: bold;
 }
 
-.strong-rejection {
+.review-score--3 {
     color: #f22;
 }
 
-.rejection {
+.review-score--2 {
     color: #f44;
 }
 
-.light-rejection {
+.review-score--1 {
     color: #f66;
 }
 
-.no-preference {
+.review-score-0 {
     color: #fa2;
 }
 
-.light-support {
+.review-score-1 {
     color: #5a5;
 }
 
-.support {
+.review-score-2 {
     color: #3a3;
 }
 
-.strong-support {
+.review-score-3 {
     color: #1a1;
 }
 
