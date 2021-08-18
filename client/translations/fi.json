@@ -183,10 +183,6 @@
     "defaultMessage": "Lähetä",
     "description": "Submit button"
   },
-  "P/DMly": {
-    "defaultMessage": "Pistemäärä <help>Väliaikainen tapa järjestää tätä listausta. Pistemäärä = Suosikkeja × 50 + Pelikertoja</help>",
-    "description": "Submissions table header"
-  },
   "PpxIZP": {
     "defaultMessage": "vahvasti vastaan",
     "description": "-3 review score. Fits into {score} of the review line"
@@ -362,6 +358,10 @@
   "tCV6dl": {
     "defaultMessage": "Kieli: {selector}",
     "description": "Selector in site header to change language"
+  },
+  "tdZae7": {
+    "defaultMessage": "Pistemäärä <help>Väliaikainen tapa järjestää tätä listausta. Pistemäärä{definition}</help>",
+    "description": "Submissions table header"
   },
   "uNpYlX": {
     "defaultMessage": "Hylätty",
