@@ -7,7 +7,18 @@ import { ChangeEvent } from 'react';
 import { GameMode, IReview } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import { isCaptainForMode } from '../permissions';
-import { FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+
+const messages = defineMessages({
+  favorites: {
+    defaultMessage: 'Favs',
+    description: 'Submissions table header',
+  },
+  plays: {
+    defaultMessage: 'Plays',
+    description: 'Submissions table header',
+  },
+});
 
 export default function SubmissionListingContainer() {
   const history = useHistory();
@@ -64,6 +75,7 @@ interface SubmissionListingProps {
 }
 
 function SubmissionListing({ gameMode }: SubmissionListingProps) {
+  const intl = useIntl();
   const authUser = useOsuAuth().user;
   const [submissionsInfo, submissionsInfoError, setSubmissionsInfo] = useApi(getSubmissions, [gameMode]);
 
@@ -125,23 +137,16 @@ function SubmissionListing({ gameMode }: SubmissionListingProps) {
             tagName='th'
           />
           <FormattedMessage
-            defaultMessage='Score <help>A placeholder method to sort this listing. Score = Favorites × 50 + Plays</help>'
+            defaultMessage='Score <help>A placeholder method to sort this listing. Score{definition}</help>'
             description='Submissions table header'
             tagName='th'
             values={{
+              definition: ` = ${intl.formatMessage(messages.favorites)} × 50 + ${intl.formatMessage(messages.plays)}`,
               help: (c: string) => <Help text={c} />,
             }}
           />
-          <FormattedMessage
-            defaultMessage='Plays'
-            description='Submissions table header'
-            tagName='th'
-          />
-          <FormattedMessage
-            defaultMessage='Favs'
-            description='Submissions table header'
-            tagName='th'
-          />
+          <th>{intl.formatMessage(messages.plays)}</th>
+          <th>{intl.formatMessage(messages.favorites)}</th>
           <FormattedMessage
             defaultMessage='Year'
             description='Submissions table header'

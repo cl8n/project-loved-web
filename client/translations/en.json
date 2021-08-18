@@ -183,10 +183,6 @@
     "defaultMessage": "Submit",
     "description": "Submit button"
   },
-  "P/DMly": {
-    "defaultMessage": "Score <help>A placeholder method to sort this listing. Score = Favorites × 50 + Plays</help>",
-    "description": "Submissions table header"
-  },
   "PpxIZP": {
     "defaultMessage": "strong rejection",
     "description": "-3 review score. Fits into {score} of the review line"
@@ -362,6 +358,10 @@
   "tCV6dl": {
     "defaultMessage": "Language: {selector}",
     "description": "Selector in site header to change language"
+  },
+  "tdZae7": {
+    "defaultMessage": "Score <help>A placeholder method to sort this listing. Score{definition}</help>",
+    "description": "Submissions table header"
   },
   "uNpYlX": {
     "defaultMessage": "Rejected",
