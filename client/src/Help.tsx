@@ -1,14 +1,13 @@
-type HelpProps = {
+import Tooltip from './Tooltip';
+
+interface HelpProps {
   text: string;
-};
+}
 
 export default function Help({ text }: HelpProps) {
   return (
-    <span
-      className='fake-a help'
-      title={text}
-    >
-      [?]
-    </span>
+    <Tooltip content={text}>
+      <span className='fake-a help'>[?]</span>
+    </Tooltip>
   );
 }

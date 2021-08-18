@@ -610,3 +610,33 @@ tr.sticky > th:last-child::after {
 .locale-selector > option {
     color: initial;
 }
+
+.tooltip {
+    display: inline-block;
+    position: relative;
+}
+
+.tooltip-content {
+    background-color: #fff0f8;
+    border: 1px solid #333;
+    bottom: 100%;
+    font-weight: normal;
+    left: 50%;
+    margin-bottom: 0.5em;
+    padding: 0.5em;
+    position: absolute;
+    transform: translateX(-50%);
+    width: max-content;
+}
+
+.tooltip-triangle {
+    background-color: #fff0f8;
+    border-bottom: 1px solid #333;
+    border-right: 1px solid #333;
+    height: 10px;
+    left: 50%;
+    position: absolute;
+    top: calc(100% + 1px);
+    transform: translateX(-50%) translateY(-50%) rotateZ(45deg);
+    width: 10px;
+}
