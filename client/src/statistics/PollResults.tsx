@@ -70,43 +70,47 @@ export default function PollResults() {
         </select>
       </div>
       <table className='main-table'>
-        <tr className='sticky'>
-          <th>Round</th>
-          {gameMode == null &&
-            <th>Game mode</th>
-          }
-          <th>Beatmapset</th>
-          {showPercent
-            ? (
-              <>
-                <th>Percent</th>
-                <th>Total</th>
-              </>
-            ) : (
-              <>
-                <th>Yes</th>
-                <th>No</th>
-              </>
-            )
-          }
-          <th>Poll topic</th>
-        </tr>
-        {displayPolls.map((poll) => (
-          <tr key={poll.id}>
-            <td>{poll.round}</td>
+        <thead>
+          <tr className='sticky'>
+            <th>Round</th>
             {gameMode == null &&
-              <td>{gameModeLongName(poll.game_mode)}</td>
+              <th>Game mode</th>
             }
-            <td className='normal-wrap'>
-              {poll.beatmapset == null
-                ? <i>Deleted beatmapset</i>
-                : <BeatmapInline beatmapset={poll.beatmapset} gameMode={poll.game_mode} showCreator />
-              }
-            </td>
-            <ResultCells poll={poll} showPercent={showPercent} />
-            <td><a href={`https://osu.ppy.sh/community/forums/topics/${poll.topic_id}`}>#{poll.topic_id}</a></td>
+            <th>Beatmapset</th>
+            {showPercent
+              ? (
+                <>
+                  <th>Percent</th>
+                  <th>Total</th>
+                </>
+              ) : (
+                <>
+                  <th>Yes</th>
+                  <th>No</th>
+                </>
+              )
+            }
+            <th>Poll topic</th>
           </tr>
-        ))}
+        </thead>
+        <tbody>
+          {displayPolls.map((poll) => (
+            <tr key={poll.id}>
+              <td>{poll.round}</td>
+              {gameMode == null &&
+                <td>{gameModeLongName(poll.game_mode)}</td>
+              }
+              <td className='normal-wrap'>
+                {poll.beatmapset == null
+                  ? <i>Deleted beatmapset</i>
+                  : <BeatmapInline beatmapset={poll.beatmapset} gameMode={poll.game_mode} showCreator />
+                }
+              </td>
+              <ResultCells poll={poll} showPercent={showPercent} />
+              <td><a href={`https://osu.ppy.sh/community/forums/topics/${poll.topic_id}`}>#{poll.topic_id}</a></td>
+            </tr>
+          ))}
+        </tbody>
       </table>
     </>
   );
