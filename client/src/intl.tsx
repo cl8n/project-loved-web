@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useEffect, useMemo, useState } from 'react';
+import { createContext, PropsWithChildren, useMemo, useState } from 'react';
 import { IntlProvider, MessageFormatElement } from 'react-intl';
 import { useRequiredContext } from './react-helpers';
 
@@ -6,10 +6,12 @@ type IntlContextValue = [string, (locale: string) => void];
 
 const intlContext = createContext<IntlContextValue | undefined>(undefined);
 
-function loadMessages(locale: string) {
-  return import(`./compiled-translations/${locale}.json`)
-    .then((module) => module.default)
-    .catch(() => ({}));
+function loadMessages(locale: string): Record<string, MessageFormatElement[]> {
+  try {
+    return require(`./compiled-translations/${locale}.json`);
+  } catch {
+    return {};
+  }
 }
 
 export const locales = [
@@ -20,21 +22,18 @@ export const locales = [
 ] as const;
 
 export function IntlProviderWrapper({ children }: PropsWithChildren<{}>) {
-  // TODO: Default based on browser/OS setting
-  const [locale, setLocale] = useState(localStorage.getItem('locale') ?? 'en');
-  const [messages, setMessages] = useState<Record<string, MessageFormatElement[]>>();
-
+  const [[locale, messages], setLocaleAndMessages] = useState(() => {
+    // TODO: Default based on browser/OS setting
+    const initialLocale = localStorage.getItem('locale') ?? 'en';
+    return [initialLocale, loadMessages(initialLocale)];
+  });
   const contextValue: IntlContextValue = useMemo(() => [
     locale,
     (newLocale) => {
-      setLocale(newLocale);
       localStorage.setItem('locale', newLocale);
+      setLocaleAndMessages([newLocale, loadMessages(newLocale)]);
     },
   ], [locale]);
-
-  useEffect(() => {
-    loadMessages(locale).then(setMessages);
-  }, [locale]);
 
   return (
     <intlContext.Provider value={contextValue}>
