@@ -104,7 +104,7 @@
     "description": "Review line"
   },
   "EqGiDp": {
-    "defaultMessage": "Mitä kirjoitat tähän lomakkeen tulee näkymään julkisesti, joten älä kirjoita mitään, mitä et halua muiden näkevän. You don't have to fill in the reason field if you don't want to.",
+    "defaultMessage": "Mitä kirjoitat tähän lomakkeen tulee näkymään julkisesti, joten älä kirjoita mitään, mitä et halua muiden näkevän. Et tarvitse kirjoittaa syy-kenttään mitään, jos et halua.",
     "description": "Submission form list item 1"
   },
   "H65rvb": {
