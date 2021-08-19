@@ -445,17 +445,6 @@ tr.sticky > th:last-child::after {
     margin-bottom: 0;
 }
 
-.submissions {
-    margin-top: 0.5em;
-    margin-bottom: 1em;
-    padding-left: 2em;
-}
-
-.submission-reason {
-    margin-top: 0.25em;
-    margin-bottom: 0.5em;
-}
-
 .beatmap {
     display: inline-block;
 }
@@ -575,4 +564,46 @@ tr.sticky > th:last-child::after {
 
 .beatmapset-consents th:nth-child(3) {
     width: 60%;
+}
+
+.submissions-table {
+    border-collapse: collapse;
+}
+
+table.submissions-table th {
+    padding-top: 0.25em;
+    padding-bottom: 0.5em;
+}
+
+.submissions-table th:not(:last-child) {
+    padding-right: 1em;
+}
+
+.submission-beatmapset:not(:first-child) {
+    border-top: 1px solid #bbb;
+}
+
+.submission-beatmapset > td {
+    padding-top: 0.5em;
+}
+
+.submission-beatmapset.closed:not(:last-child) > td {
+    padding-bottom: 0.5em;
+}
+
+.submission-beatmapset > td:not(:last-child) {
+    padding-right: 1em;
+}
+
+.submissions > ul {
+    margin: 0;
+    padding: 0 2em;
+}
+
+.submissions > ul > li {
+    margin: 0.5em 0;
+}
+
+.submission-reason {
+    margin-top: 0.25em;
 }

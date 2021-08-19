@@ -118,7 +118,7 @@ function SubmissionListing({ gameMode }: SubmissionListingProps) {
   };
 
   return (
-    <table className='main-table'>
+    <table className='main-table submissions-table'>
       <thead>
         <tr className='sticky'>
           <FormattedMessage

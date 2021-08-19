@@ -62,7 +62,7 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, 
 
   return (
     <>
-      <tr>
+      <tr className={`submission-beatmapset${expanded ? '' : ' closed'}`}>
         <td className='normal-wrap'><Beatmap beatmapset={beatmapset} /></td>
         <td><UserInline name={beatmapset.creator_name} user={usersById[beatmapset.creator_id]} /></td>
         <PriorityCell beatmapset={beatmapset} />
@@ -95,7 +95,7 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, 
       </tr>
       {expanded && (
         <tr>
-          <td className='normal-wrap' colSpan={10}>
+          <td className='normal-wrap submissions' colSpan={canReview ? 11 : 10}>
             <SubmissionsDropdown
               reviews={beatmapset.reviews}
               submissions={beatmapset.submissions}

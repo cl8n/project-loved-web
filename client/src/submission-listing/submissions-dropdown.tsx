@@ -11,7 +11,7 @@ interface Props {
 
 export default function SubmissionsDropdown({ reviews, submissions, usersById }: Props) {
   return (
-    <ul className='submissions'>
+    <ul>
       {reviews.map((review) => (
         <Review
           key={'r' + review.id}
@@ -21,7 +21,6 @@ export default function SubmissionsDropdown({ reviews, submissions, usersById }:
           }}
         />
       ))}
-      {reviews.length > 0 && submissions.length > 0 && <hr />}
       {submissions.map((submission) => (
         <Submission
           key={submission.id}
