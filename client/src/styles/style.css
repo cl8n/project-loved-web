@@ -144,20 +144,6 @@ input[type=checkbox]:focus, input[type=radio]:focus {
     margin-bottom: 1em;
 }
 
-/*
-@pink-lighter: #ffddee;
-@pink-light: #ff99cc;
-@pink: #ff66aa;
-@pink-dark: #cc5288;
-@pink-darker: #bb1177;
-
-@blue-lighter: #ddffff;
-@blue-light: #99eeff;
-@blue: #66ccff;
-@blue-dark: #44aadd;
-@blue-darker: #2299bb;
-*/
-
 .big-center {
     margin-left: auto;
     margin-right: auto;
@@ -284,74 +270,6 @@ hr {
     margin-top: 1em;
     border-top: 1px solid #f9c;
     padding-top: 1em;
-}
-
-.filters {
-    background-color: #fde;
-    border-left: 3px solid #f6a;
-    padding: 0.5em;
-}
-
-.filters a {
-    margin-left: 0.25em;
-}
-
-.filters a.selected {
-    font-weight: bold;
-    color: #f6a;
-}
-
-.maps-big-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 0;
-}
-
-.maps-big-header .count {
-    font-size: 16px;
-}
-
-table.maps {
-    margin: 0 auto 1em;
-    table-layout: fixed;
-    width: calc(100% - 2em);
-    border-spacing: 0;
-}
-
-table.maps th {
-    text-align: left;
-    position: sticky;
-    top: 0;
-    padding: 1em 0 0.5em;
-    background-color: #fff;
-    border-bottom: 3px solid #f6a;
-}
-
-table.maps td {
-    padding: 0.25em 0;
-}
-
-table.maps tbody tr:first-child td {
-    padding-top: 0.5em;
-}
-
-table.maps th:nth-child(1) { width: 72px; }
-table.maps th:nth-child(2) { width: 550px; }
-table.maps th:nth-child(3) { width: 65px; }
-table.maps th:nth-child(4) { width: 125px; }
-table.maps th:nth-child(5) { width: 125px; }
-table.maps th:nth-child(6) { width: 85px; }
-table.maps th:nth-child(7) { width: 50px; }
-
-table.maps td:nth-child(7) { text-align: right; }
-
-table.maps .status {
-    display: inline-block;
-    background-color: #44aadd;
-    border-radius: 0.25em;
-    padding: 0 0.5em;
-    color: #fff;
 }
 
 .box {
