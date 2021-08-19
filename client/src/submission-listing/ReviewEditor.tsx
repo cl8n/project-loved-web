@@ -36,7 +36,7 @@ export default function ReviewEditor({ beatmapset, gameMode, onReviewUpdate, rev
           onClick={() => setModalOpen(true)}
           className={`fake-a${review?.score ? '' : ' important-bad'}`}
         >
-          {review == null ? 'Add review' : 'Update review'}
+          Review
         </button>
       </td>
       <Modal
