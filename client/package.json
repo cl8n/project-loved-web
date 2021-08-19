@@ -83,9 +83,8 @@
     "start": "node scripts/start.js",
     "build": "npm run compile-translations && node scripts/build.js",
     "test": "node scripts/test.js",
-
     "extract-translations": "formatjs extract --flatten --ignore 'src/**/*.d.ts' --out-file translations/en.json -- 'src/**/*.{ts,tsx}'",
-    "compile-translations": "formatjs compile-folder --ast translations src/compiled-translations && rm src/compiled-translations/en.json"
+    "compile-translations": "rm -rf src/compiled-translations && formatjs compile-folder --ast translations src/compiled-translations && rm -f src/compiled-translations/en.json"
   },
   "eslintConfig": {
     "extends": [
