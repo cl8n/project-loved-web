@@ -3,6 +3,11 @@ import { defineMessages, useIntl } from 'react-intl';
 import { GetSubmissionsResponseBody } from '../api';
 import Beatmap from '../Beatmap';
 import { dateFromString } from '../date-format';
+import calendarIcon from '../images/icons8/calendar.png';
+import circleIcon from '../images/icons8/circle.png';
+import heartIcon from '../images/icons8/heart.png';
+import musicalNotesIcon from '../images/icons8/musical-notes.png';
+import playIcon from '../images/icons8/play.png';
 import { GameMode, IReview } from '../interfaces';
 import { UserInline } from '../UserInline';
 import { displayRange } from './helpers';
@@ -67,14 +72,14 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, 
         <td><UserInline name={beatmapset.creator_name} user={usersById[beatmapset.creator_id]} /></td>
         <PriorityCell beatmapset={beatmapset} />
         <td>{intl.formatNumber(beatmapset.score)}</td>
-        <td>{intl.formatNumber(beatmapset.play_count)}</td>
-        <td>{intl.formatNumber(beatmapset.favorite_count)}</td>
-        <td>{year}</td>
+        <td><img alt='' src={playIcon} /> {intl.formatNumber(beatmapset.play_count)}</td>
+        <td><img alt='' src={heartIcon} /> {intl.formatNumber(beatmapset.favorite_count)}</td>
+        <td><img alt='' src={calendarIcon} /> {year}</td>
         <td>
-          {intl.formatNumber(beatmapCountThisMode)}
+          <img alt='' src={circleIcon} /> {intl.formatNumber(beatmapCountThisMode)}
           {beatmapCountOtherModes > 0 && ` (+${intl.formatNumber(beatmapCountOtherModes)})`}
         </td>
-        <td>{intl.formatNumber(beatmapset.beatmap_info[gameMode].modal_bpm)}</td>
+        <td><img alt='' src={musicalNotesIcon} /> {intl.formatNumber(beatmapset.beatmap_info[gameMode].modal_bpm)}</td>
         <td>
           <button
             type='button'

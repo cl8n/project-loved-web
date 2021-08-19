@@ -587,6 +587,10 @@ table.submissions-table th {
     padding-top: 0.5em;
 }
 
+.submission-beatmapset > td > img {
+    opacity: 0.4;
+}
+
 .submission-beatmapset.closed:not(:last-child) > td {
     padding-bottom: 0.5em;
 }
