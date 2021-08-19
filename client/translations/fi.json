@@ -3,6 +3,10 @@
     "defaultMessage": "Ei vastausta",
     "description": "Mapper consent shown in mapper consents table"
   },
+  "+9RCG/": {
+    "defaultMessage": "Muut ikonit: {author}",
+    "description": "Credit in site footer"
+  },
   "+d4ZcX": {
     "defaultMessage": "Moderaattorit",
     "description": "Team listing title"
@@ -183,6 +187,10 @@
     "defaultMessage": "Lähetä",
     "description": "Submit button"
   },
+  "PCZJkZ": {
+    "defaultMessage": "Lähdekoodi ja ongelmien seuranta",
+    "description": "Link to GitHub repository in site footer"
+  },
   "PpxIZP": {
     "defaultMessage": "vahvasti vastaan",
     "description": "-3 review score. Fits into {score} of the review line"
@@ -242,6 +250,10 @@
   "ZEsdcm": {
     "defaultMessage": "Foorumiaihe",
     "description": "Poll results table header"
+  },
+  "ZMV3ed": {
+    "defaultMessage": "Lippuikonit: {author1} ja {author2}",
+    "description": "Credit in site footer"
   },
   "ZWbq0S": {
     "defaultMessage": "Vuosi",
@@ -326,6 +338,10 @@
   "mhBW5h": {
     "defaultMessage": "Mappaaja",
     "description": "Submissions table header"
+  },
+  "nWt/xH": {
+    "defaultMessage": "Tämä listaus ei ole vielä aktiivisesti käytössä. Ehdotukset Google Forms -dokumentista tulevat siirtymään tänne, ja siitä lähtien kapteenit voivat käyttää tätä sivua Google Sheets -dokumentin sijasta. Voit nykyhetkellä lähettää ehdotuksesi tämän sivun tai Google Forms -dokumentin kautta.",
+    "description": "Warning box above submissions table"
   },
   "nn9fFb": {
     "defaultMessage": "BPM",
