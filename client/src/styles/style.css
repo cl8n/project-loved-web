@@ -592,7 +592,8 @@ table.submissions-table th {
     padding-top: 0.5em;
 }
 
-.submission-beatmapset > td > img {
+.submission-beatmapset > td > img,
+.submission-beatmapset .icon-label-container > img {
     opacity: 0.4;
 }
 
@@ -615,4 +616,13 @@ table.submissions-table th {
 
 .submission-reason {
     margin-top: 0.25em;
+}
+
+.icon-label-container {
+    display: inline-flex;
+    align-items: center;
+}
+
+.icon-label-container > img {
+    padding-right: 0.35em;
 }

@@ -10,7 +10,6 @@ import musicalNotesIcon from '../images/icons8/musical-notes.png';
 import playIcon from '../images/icons8/play.png';
 import { GameMode, IReview } from '../interfaces';
 import { UserInline } from '../UserInline';
-import { displayRange } from './helpers';
 import ReviewEditor from './ReviewEditor';
 import SubmissionsList from './submissions-list';
 
@@ -57,13 +56,22 @@ interface SubmissionBeatmapsetProps {
 export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, onReviewUpdate, review, usersById }: SubmissionBeatmapsetProps) {
   const intl = useIntl();
   const [expanded, setExpanded] = useState(false);
-  const year = useMemo(() => displayRange([
-    dateFromString(beatmapset.submitted_at).getFullYear(),
-    dateFromString(beatmapset.updated_at).getFullYear(),
-  ]), [beatmapset]);
+  const year = useMemo(() => {
+    const submittedAt = dateFromString(beatmapset.submitted_at).getFullYear();
+    const updatedAt = dateFromString(beatmapset.updated_at).getFullYear();
 
-  const beatmapCountThisMode = beatmapset.beatmap_info[gameMode].beatmap_count;
-  const beatmapCountOtherModes = Object.values(beatmapset.beatmap_info).reduce((sum, info) => sum += info.beatmap_count, 0) - beatmapCountThisMode;
+    return submittedAt === updatedAt
+      ? <span>{submittedAt}</span>
+      : <span>{submittedAt}<br />{updatedAt}</span>;
+  }, [beatmapset]);
+  const diffCount = useMemo(() => {
+    const inThisMode = beatmapset.beatmap_info[gameMode].beatmap_count;
+    const inOtherModes = Object.values(beatmapset.beatmap_info).reduce((sum, info) => sum += info.beatmap_count, 0) - inThisMode;
+
+    return inOtherModes === 0
+      ? <span>{intl.formatNumber(inThisMode)}</span>
+      : <span>{intl.formatNumber(inThisMode)}<br />(+{intl.formatNumber(inOtherModes)})</span>;
+  }, [beatmapset, gameMode, intl]);
 
   return (
     <>
@@ -74,10 +82,17 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, 
         <td>{intl.formatNumber(beatmapset.score)}</td>
         <td><img alt='' src={playIcon} /> {intl.formatNumber(beatmapset.play_count)}</td>
         <td><img alt='' src={heartIcon} /> {intl.formatNumber(beatmapset.favorite_count)}</td>
-        <td><img alt='' src={calendarIcon} /> {year}</td>
         <td>
-          <img alt='' src={circleIcon} /> {intl.formatNumber(beatmapCountThisMode)}
-          {beatmapCountOtherModes > 0 && ` (+${intl.formatNumber(beatmapCountOtherModes)})`}
+          <div className='icon-label-container'>
+            <img alt='' src={calendarIcon} />
+            {year}
+          </div>
+        </td>
+        <td>
+          <div className='icon-label-container'>
+            <img alt='' src={circleIcon} />
+            {diffCount}
+          </div>
         </td>
         <td><img alt='' src={musicalNotesIcon} /> {intl.formatNumber(beatmapset.beatmap_info[gameMode].modal_bpm)}</td>
         <td>
