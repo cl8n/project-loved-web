@@ -45,6 +45,16 @@ export default function SubmissionListingContainer() {
         description='Submissions table title'
         tagName='h1'
       />
+      <div className='warning-box'>
+        <FormattedMessage
+          defaultMessage='
+            This listing is not yet in active use by captains. The submissions made to the Google forms will be migrated
+            here soon, and from then on captains will be using this instead of the Google sheets. Currently you can use
+            either this website or the Google forms to make new submissions.
+          '
+          description='Warning box above submissions table'
+        />
+      </div>
       <p className='flex-left'>
         <FormattedMessage
           defaultMessage='<label>Game mode:</label> {selector}'
