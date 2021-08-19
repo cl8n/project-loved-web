@@ -640,3 +640,21 @@ tr.sticky > th:last-child::after {
     transform: translateX(-50%) translateY(-50%) rotateZ(45deg);
     width: 10px;
 }
+
+.beatmapset-consents {
+    margin: 0 3em;
+    table-layout: fixed;
+    width: 80%;
+}
+
+.beatmapset-consents th:nth-child(1) {
+    width: 30%;
+}
+
+.beatmapset-consents th:nth-child(2) {
+    width: 10%;
+}
+
+.beatmapset-consents th:nth-child(3) {
+    width: 60%;
+}
