@@ -3,6 +3,10 @@
     "defaultMessage": "Inget svar",
     "description": "Mapper consent shown in mapper consents table"
   },
+  "+9RCG/": {
+    "defaultMessage": "Andra ikoner av {author}",
+    "description": "Credit in site footer"
+  },
   "+d4ZcX": {
     "defaultMessage": "Moderatorer",
     "description": "Team listing title"
@@ -183,6 +187,10 @@
     "defaultMessage": "Skicka in",
     "description": "Submit button"
   },
+  "PCZJkZ": {
+    "defaultMessage": "Källkod och problemspårning",
+    "description": "Link to GitHub repository in site footer"
+  },
   "PpxIZP": {
     "defaultMessage": "stark avvisning",
     "description": "-3 review score. Fits into {score} of the review line"
@@ -242,6 +250,10 @@
   "ZEsdcm": {
     "defaultMessage": "Forumämne",
     "description": "Poll results table header"
+  },
+  "ZMV3ed": {
+    "defaultMessage": "Flaggikoner av {author1} och {author2}",
+    "description": "Credit in site footer"
   },
   "ZWbq0S": {
     "defaultMessage": "År",
@@ -326,6 +338,10 @@
   "mhBW5h": {
     "defaultMessage": "Mappare",
     "description": "Submissions table header"
+  },
+  "nWt/xH": {
+    "defaultMessage": "Denna listning används inte än aktivt av kaptener. Inlämningar via Google Forms kommer snart att flyttas hit, och därefter kommer kaptener kunna använda denna sida istället för Google Sheets. Just nu kan du använda antingen denna sida eller Google Forms för att skicka in maps.",
+    "description": "Warning box above submissions table"
   },
   "nn9fFb": {
     "defaultMessage": "BPM",
