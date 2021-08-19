@@ -339,6 +339,10 @@
     "defaultMessage": "Mapper",
     "description": "Submissions table header"
   },
+  "nWt/xH": {
+    "defaultMessage": "This listing is not yet in active use by captains. The submissions made to the Google forms will be migrated here soon, and from then on captains will be using this instead of the Google sheets. Currently you can use either this website or the Google forms to make new submissions.",
+    "description": "Warning box above submissions table"
+  },
   "nn9fFb": {
     "defaultMessage": "BPM",
     "description": "Submissions table header"
