@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
-import { dateFromString } from '../date-format';
-import SubmissionsDropdown from './submissions-dropdown';
-import { displayRange } from './helpers';
-import Beatmap from '../Beatmap';
-import { UserInline } from '../UserInline';
-import { GetSubmissionsResponseBody } from '../api';
-import ReviewEditor from './ReviewEditor';
-import { GameMode, IReview } from '../interfaces';
 import { defineMessages, useIntl } from 'react-intl';
+import { GetSubmissionsResponseBody } from '../api';
+import Beatmap from '../Beatmap';
+import { dateFromString } from '../date-format';
+import { GameMode, IReview } from '../interfaces';
+import { UserInline } from '../UserInline';
+import { displayRange } from './helpers';
+import ReviewEditor from './ReviewEditor';
+import SubmissionsList from './submissions-list';
 
 const messages = defineMessages({
   close: {
@@ -95,8 +95,8 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, 
       </tr>
       {expanded && (
         <tr>
-          <td className='normal-wrap submissions' colSpan={canReview ? 11 : 10}>
-            <SubmissionsDropdown
+          <td className='normal-wrap' colSpan={canReview ? 11 : 10}>
+            <SubmissionsList
               reviews={beatmapset.reviews}
               submissions={beatmapset.submissions}
               usersById={usersById}

@@ -595,12 +595,12 @@ table.submissions-table th {
     padding-right: 1em;
 }
 
-.submissions > ul {
+.submissions {
     margin: 0;
     padding: 0 2em;
 }
 
-.submissions > ul > li {
+.submissions > li {
     margin: 0.5em 0;
 }
 

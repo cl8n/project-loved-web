@@ -3,15 +3,15 @@ import { IReview, ISubmission } from '../interfaces';
 import Review from './Review';
 import Submission from './submission';
 
-interface Props {
+interface SubmissionsListProps {
   reviews: IReview[];
   submissions: ISubmission[];
   usersById: GetSubmissionsResponseBody['usersById'];
 }
 
-export default function SubmissionsDropdown({ reviews, submissions, usersById }: Props) {
+export default function SubmissionsList({ reviews, submissions, usersById }: SubmissionsListProps) {
   return (
-    <ul>
+    <ul className='submissions'>
       {reviews.map((review) => (
         <Review
           key={'r' + review.id}
