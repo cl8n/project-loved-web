@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import { render } from 'react-dom';
+import { FormattedMessage } from 'react-intl';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { registerTextareaAutoHeightTrigger } from './auto-height';
 import ForumOptIn from './forum-opt-in';
@@ -42,6 +43,29 @@ render(
               <Route path='*'><NoRoute /></Route>
             </Switch>
           </main>
+          <footer>
+            <FormattedMessage
+              defaultMessage='Flag icons by {author1} and {author2}'
+              description='Credit in site footer'
+              values={{
+                author1: <a href='http://famfamfam.com'>Mark James</a>,
+                author2: <a href='https://clayton.cc'>Clayton</a>,
+              }}
+            />
+            {' | '}
+            <FormattedMessage
+              defaultMessage='Other icons by {author}'
+              description='Credit in site footer'
+              values={{ author: <a href='https://icons8.com'>Icons8</a> }}
+            />
+            {' | '}
+            <a href='https://github.com/cl8n/project-loved-web'>
+              <FormattedMessage
+                defaultMessage='Source code and issue tracker'
+                description='Link to GitHub repository in site footer'
+              />
+            </a>
+          </footer>
         </IntlProviderWrapper>
       </OsuAuthProvider>
     </BrowserRouter>

@@ -261,6 +261,11 @@ hr {
     margin: 0.5em 0;
 }
 
+footer {
+    margin: 1em 0;
+    text-align: center;
+}
+
 .center-block {
     margin-left: auto;
     margin-right: auto;

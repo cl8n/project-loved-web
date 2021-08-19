@@ -3,6 +3,10 @@
     "defaultMessage": "No reply",
     "description": "Mapper consent shown in mapper consents table"
   },
+  "+9RCG/": {
+    "defaultMessage": "Other icons by {author}",
+    "description": "Credit in site footer"
+  },
   "+d4ZcX": {
     "defaultMessage": "Moderators",
     "description": "Team listing title"
@@ -183,6 +187,10 @@
     "defaultMessage": "Submit",
     "description": "Submit button"
   },
+  "PCZJkZ": {
+    "defaultMessage": "Source code and issue tracker",
+    "description": "Link to GitHub repository in site footer"
+  },
   "PpxIZP": {
     "defaultMessage": "strong rejection",
     "description": "-3 review score. Fits into {score} of the review line"
@@ -242,6 +250,10 @@
   "ZEsdcm": {
     "defaultMessage": "Poll topic",
     "description": "Poll results table header"
+  },
+  "ZMV3ed": {
+    "defaultMessage": "Flag icons by {author1} and {author2}",
+    "description": "Credit in site footer"
   },
   "ZWbq0S": {
     "defaultMessage": "Year",
