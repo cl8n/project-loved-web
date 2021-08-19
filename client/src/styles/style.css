@@ -403,6 +403,7 @@ tr.sticky > th {
     position: sticky;
     top: 0;
     padding-bottom: 0.25em;
+    z-index: 1;
 }
 
 tr.sticky > th::after {
