@@ -225,22 +225,3 @@ module.exports = new MysqlPool({
     return string === '0' ? false : string === '1' ? true : null;
   },
 });
-
-module.exports.pageQuery = function (request) {
-  const params = { ...request.query, ...request.body };
-  let limit, offset;
-
-  if (params.limit != null) {
-    limit = params.limit;
-    offset = 0;
-  } else if (params.page != null) {
-    const perPage = params.perPage;
-
-    limit = perPage;
-    offset = (page - 1) * perPage;
-  } else {
-    return '';
-  }
-
-  return `LIMIT ${limit} OFFSET ${offset}`;
-};

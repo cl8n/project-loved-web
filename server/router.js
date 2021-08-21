@@ -95,7 +95,6 @@ router.get('/rounds', asyncHandler(async (req, res) => {
     ) AS nomination_counts
       ON rounds.id = nomination_counts.round_id
     ORDER BY rounds.id ASC
-    ${db.pageQuery(req)}
   `);
 
   res.json({
