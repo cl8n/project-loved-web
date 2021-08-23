@@ -27,6 +27,12 @@ router.post('/submit', asyncHandler(async (req, res) => {
     return res.status(422).json({ error: 'Invalid beatmapset ID' });
   }
 
+  // TODO: This should allow cases where the set is Loved but at least one
+  //       difficulty in each requested mode is Pending/WIP/Graveyard
+  if (beatmapset.ranked_status > 0) {
+    return res.status(422).json({ error: 'Beatmapset is already Ranked/Loved/Qualified' });
+  }
+
   const missingGameModes = new Set(req.body.gameModes);
 
   for (const gameMode of beatmapset.game_modes) {
