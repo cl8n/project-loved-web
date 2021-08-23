@@ -65,8 +65,8 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, 
       : <span>{submittedAt}<br />{updatedAt}</span>;
   }, [beatmapset]);
   const diffCount = useMemo(() => {
-    const inThisMode = beatmapset.beatmap_info[gameMode].beatmap_count;
-    const inOtherModes = Object.values(beatmapset.beatmap_info).reduce((sum, info) => sum += info.beatmap_count, 0) - inThisMode;
+    const inThisMode = beatmapset.beatmap_counts[gameMode];
+    const inOtherModes = Object.values(beatmapset.beatmap_counts).reduce((sum, count) => sum += count, 0) - inThisMode;
 
     return inOtherModes === 0
       ? <span>{intl.formatNumber(inThisMode)}</span>
@@ -94,7 +94,7 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, 
             {diffCount}
           </div>
         </td>
-        <td><img alt='' src={musicalNotesIcon} /> {intl.formatNumber(beatmapset.beatmap_info[gameMode].modal_bpm)}</td>
+        <td><img alt='' src={musicalNotesIcon} /> {intl.formatNumber(beatmapset.modal_bpm)}</td>
         <td>
           <button
             type='button'

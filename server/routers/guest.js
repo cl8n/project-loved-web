@@ -114,7 +114,7 @@ router.get('/submissions', asyncHandler(async (req, res) => {
   `, [[...beatmapsetIds]]);
   const beatmapsByBeatmapsetId = groupBy(
     await db.query(`
-      SELECT beatmapset_id, bpm, game_mode
+      SELECT beatmapset_id, bpm, game_mode, play_count
       FROM beatmaps
       WHERE beatmapset_id IN (?)
     `, [[...beatmapsetIds]]),
@@ -124,22 +124,22 @@ router.get('/submissions', asyncHandler(async (req, res) => {
   const submissionsByBeatmapsetId = groupBy(submissions, 'beatmapset_id');
 
   for (const beatmapset of beatmapsets) {
+    const beatmaps = groupBy(beatmapsByBeatmapsetId[beatmapset.id] || [], 'game_mode');
+    const beatmapsForGameMode = beatmaps[gameMode]?.sort((a, b) => a.bpm - b.bpm) || [];
+
     beatmapset.reviews = reviewsByBeatmapsetId[beatmapset.id] || [];
     beatmapset.submissions = submissionsByBeatmapsetId[beatmapset.id] || [];
 
+    beatmapset.modal_bpm = modeBy(beatmapsForGameMode, 'bpm');
+    beatmapset.play_count = beatmapsForGameMode.reduce((sum, beatmap) => sum + beatmap.play_count, 0);
     beatmapset.review_score = beatmapset.reviews.length > 0
       ? beatmapset.reviews.reduce((sum, review) => sum + review.score, 0)
       : -1000; // Can't -Infinity because JSON
     beatmapset.score = beatmapset.favorite_count * 75 + beatmapset.play_count;
 
-    beatmapset.beatmap_info = groupBy(beatmapsByBeatmapsetId[beatmapset.id] || [], 'game_mode');
+    beatmapset.beatmap_counts = {};
     for (const gameMode of [0, 1, 2, 3]) {
-      const beatmaps = beatmapset.beatmap_info[gameMode]?.sort((a, b) => a.bpm - b.bpm) || [];
-
-      beatmapset.beatmap_info[gameMode] = {
-        beatmap_count: beatmaps.length,
-        modal_bpm: modeBy(beatmaps, 'bpm'),
-      };
+      beatmapset.beatmap_counts[gameMode] = beatmaps[gameMode]?.length ?? 0;
     }
 
     userIds.add(beatmapset.creator_id);

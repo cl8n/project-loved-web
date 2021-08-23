@@ -119,10 +119,8 @@ export function getLogs(): Response<ILog[]> {
 
 export type GetSubmissionsResponseBody = {
   beatmapsets: (IBeatmapset & {
-    beatmap_info: Record<GameMode, {
-      beatmap_count: number;
-      modal_bpm: number;
-    }>;
+    beatmap_counts: Record<GameMode, number>;
+    modal_bpm: number;
     review_score: number;
     reviews: IReview[];
     score: number;
