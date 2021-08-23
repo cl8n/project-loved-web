@@ -1,0 +1,11 @@
+.drop-bar {
+  &-top {
+    border-top: 4px dashed var(--control);
+    margin-top: 1em;
+  }
+
+  &-bottom {
+    border-bottom: 4px dashed var(--control);
+    margin-bottom: 1em;
+  }
+}

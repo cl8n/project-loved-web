@@ -1,0 +1,29 @@
+.tooltip {
+  display: inline-block;
+  position: relative;
+
+  &-content {
+    background-color: var(--accent-background);
+    border: 1px solid var(--content);
+    bottom: 100%;
+    font-weight: normal;
+    left: 50%;
+    margin-bottom: 0.5em;
+    padding: 0.5em;
+    position: absolute;
+    transform: translateX(-50%);
+    width: max-content;
+  }
+
+  &-triangle {
+    background-color: var(--accent-background);
+    border-bottom: 1px solid var(--content);
+    border-right: 1px solid var(--content);
+    height: 10px;
+    left: 50%;
+    position: absolute;
+    top: calc(100% + 1px);
+    transform: translateX(-50%) translateY(-50%) rotateZ(45deg);
+    width: 10px;
+  }
+}

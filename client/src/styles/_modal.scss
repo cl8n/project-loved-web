@@ -1,0 +1,22 @@
+.modal {
+  background-color: var(--background);
+  max-width: 800px;
+  padding: 1em;
+
+  &-overlay {
+    background-color: #0008;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+
+    &.modal-open {
+      display: flex;
+    }
+  }
+}
