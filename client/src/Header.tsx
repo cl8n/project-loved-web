@@ -1,5 +1,6 @@
 import { FormattedMessage } from 'react-intl';
 import { NavLink, Link } from 'react-router-dom';
+import globeIcon from './images/icons8/globe.png';
 import { locales, useLocaleState } from './intl';
 import { loginUrl, useOsuAuth } from './osuAuth';
 import { canReadAs } from './permissions';
@@ -17,10 +18,12 @@ export function Header() {
             description='Site title'
           />
         </Link>
-        <span>
+        <span className='icon-label-container'>
+          <img alt='' src={globeIcon} style={{ filter: 'invert(1)' }} />
           <FormattedMessage
             defaultMessage='Language: {selector}'
             description='Selector in site header to change language'
+            tagName='span'
             values={{ selector: <LocaleSelector /> }}
           />
         </span>
