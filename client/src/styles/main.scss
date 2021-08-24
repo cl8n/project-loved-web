@@ -501,6 +501,16 @@ tr.sticky > th {
     border-top: 1px solid #bbb;
   }
 
+  [data-beatmapset-id]::before {
+    // Not sure where the 3px comes from, but this looks the best.
+    $offset: calc(2.25em + 3px);
+
+    content: '';
+    display: block;
+    height: $offset;
+    margin-top: calc(-1 * #{$offset});
+  }
+
   > td {
     padding-top: 0.5em;
 

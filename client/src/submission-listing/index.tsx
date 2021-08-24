@@ -1,9 +1,9 @@
 import { apiErrorMessage, getSubmissions, useApi } from '../api';
 import SubmissionBeatmapset from './submission-beatmapset';
 import Help from '../Help';
-import { Redirect, useHistory, useParams } from 'react-router-dom';
+import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import { gameModeFromShortName, gameModeLongName, gameModes, gameModeShortName } from '../osu-helpers';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useEffect } from 'react';
 import { GameMode, IReview } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import { isCaptainForMode } from '../permissions';
@@ -85,9 +85,21 @@ interface SubmissionListingProps {
 }
 
 function SubmissionListing({ gameMode }: SubmissionListingProps) {
+  const history = useHistory();
   const intl = useIntl();
+  const { pathname: locationPath, state: submittedBeatmapsetId } = useLocation<number | undefined>();
   const authUser = useOsuAuth().user;
   const [submissionsInfo, submissionsInfoError, setSubmissionsInfo] = useApi(getSubmissions, [gameMode]);
+
+  useEffect(() => {
+    if (submissionsInfo == null || submittedBeatmapsetId == null)
+      return;
+
+    document
+      .querySelector(`[data-beatmapset-id="${submittedBeatmapsetId}"]`)
+      ?.scrollIntoView();
+    history.replace(locationPath);
+  }, [history, locationPath, submissionsInfo, submittedBeatmapsetId]);
 
   if (submissionsInfoError != null)
     return <span className='panic'>Failed to load submissions: {apiErrorMessage(submissionsInfoError)}</span>;

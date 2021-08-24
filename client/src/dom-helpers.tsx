@@ -1,4 +1,4 @@
-import { Dispatch, FormEvent, PropsWithChildren, SetStateAction, useEffect, useRef } from 'react';
+import { Dispatch, FormEvent, MouseEvent, PropsWithChildren, SetStateAction, useEffect, useRef, useState } from 'react';
 import { dateFromString, mySqlDateTime } from './date-format';
 
 function setFormDisabled(form: HTMLFormElement, disabled: boolean) {
@@ -42,6 +42,7 @@ export function Form({
   keepAfterSubmit,
   onSubmit,
 }: FormProps) {
+  const [submitValue, setSubmitValue] = useState<string>();
   const ref = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -57,6 +58,10 @@ export function Form({
     const controls = form.elements;
     const controlsCount = controls.length;
     const values: Record<string, any> = {};
+
+    if (submitValue != null) {
+      values.submitValue = submitValue;
+    }
 
     for (let i = 0; i < controlsCount; i++) {
       const control = controls[i] as any; // TODO: typing
@@ -95,9 +100,16 @@ export function Form({
       maybePromise.finally(() => setBusy(false));
   };
 
+  const handleSubmitButtonClick = (event: MouseEvent) => {
+    if (event.target instanceof HTMLButtonElement && event.target.type === 'submit') {
+      setSubmitValue(event.target.dataset.submitValue || undefined);
+    }
+  };
+
   return (
     <form
       className={className}
+      onClick={handleSubmitButtonClick}
       onSubmit={handleSubmit}
       ref={ref}
     >

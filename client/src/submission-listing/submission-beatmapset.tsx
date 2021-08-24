@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+import { useLocation } from 'react-router-dom';
 import { GetSubmissionsResponseBody } from '../api';
 import Beatmap from '../Beatmap';
 import { dateFromString } from '../date-format';
@@ -55,7 +56,8 @@ interface SubmissionBeatmapsetProps {
 
 export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, onReviewUpdate, review, usersById }: SubmissionBeatmapsetProps) {
   const intl = useIntl();
-  const [expanded, setExpanded] = useState(false);
+  const { state: submittedBeatmapsetId } = useLocation<number | undefined>();
+  const [expanded, setExpanded] = useState(submittedBeatmapsetId === beatmapset.id);
   const year = useMemo(() => {
     const submittedAt = dateFromString(beatmapset.submitted_at).getFullYear();
     const updatedAt = dateFromString(beatmapset.updated_at).getFullYear();
@@ -76,7 +78,10 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, 
   return (
     <>
       <tr className={`submission-beatmapset${expanded ? '' : ' closed'}`}>
-        <td className='normal-wrap'><Beatmap beatmapset={beatmapset} /></td>
+        <td className='normal-wrap'>
+          <div data-beatmapset-id={beatmapset.id} />
+          <Beatmap beatmapset={beatmapset} />
+        </td>
         <td><UserInline name={beatmapset.creator_name} user={usersById[beatmapset.creator_id]} /></td>
         <PriorityCell beatmapset={beatmapset} />
         <td>{intl.formatNumber(beatmapset.score)}</td>

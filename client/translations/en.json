@@ -31,6 +31,10 @@
     "defaultMessage": "Notes",
     "description": "Mapper consents table header"
   },
+  "2YTMfX": {
+    "defaultMessage": "Submit and stay on page",
+    "description": "Submit button that doesn't navigate to the submissions page afterward"
+  },
   "2dOoEc": {
     "defaultMessage": "Metadata reviewers",
     "description": "Team listing title"
