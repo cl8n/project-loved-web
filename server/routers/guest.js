@@ -135,9 +135,10 @@ router.get('/submissions', asyncHandler(async (req, res) => {
     'beatmapset_id',
   );
   // TODO: Scope to complete polls when incomplete polls are stored in poll_results
-  const failedPollTopicIdByBeatmapsetId = groupBy(
+  const pollByBeatmapsetId = groupBy(
     await db.query(`
-      SELECT poll_results.beatmapset_id, poll_results.topic_id
+      SELECT poll_results.beatmapset_id, poll_results.topic_id,
+        poll_results.result_yes / (poll_results.result_no + poll_results.result_yes) >= round_game_modes.voting_threshold AS passed
       FROM poll_results
       INNER JOIN round_game_modes
         ON poll_results.round = round_game_modes.round_id
@@ -149,10 +150,9 @@ router.get('/submissions', asyncHandler(async (req, res) => {
         GROUP BY beatmapset_id
       )
         AND poll_results.beatmapset_id IN (?)
-        AND poll_results.result_yes / (poll_results.result_no + poll_results.result_yes) < round_game_modes.voting_threshold
     `, [gameMode, [...beatmapsetIds]]),
     'beatmapset_id',
-    'topic_id',
+    undefined,
     true,
   );
   const reviewsByBeatmapsetId = groupBy(reviews, 'beatmapset_id');
@@ -165,12 +165,17 @@ router.get('/submissions', asyncHandler(async (req, res) => {
     beatmapset.reviews = reviewsByBeatmapsetId[beatmapset.id] || [];
     beatmapset.submissions = submissionsByBeatmapsetId[beatmapset.id] || [];
 
-    beatmapset.failed_poll_topic_id = failedPollTopicIdByBeatmapsetId[beatmapset.id] ?? null;
     beatmapset.modal_bpm = modeBy(beatmapsForGameMode, 'bpm');
     beatmapset.play_count = beatmapsForGameMode.reduce((sum, beatmap) => sum + beatmap.play_count, 0);
+    beatmapset.poll = pollByBeatmapsetId[beatmapset.id];
     beatmapset.poll_in_progress = beatmapsetIdsWithPollInProgress.has(beatmapset.id);
     beatmapset.review_score = beatmapset.reviews.reduce((sum, review) => sum + review.score, 0);
     beatmapset.score = beatmapset.favorite_count * 75 + beatmapset.play_count;
+
+    if (beatmapset.poll != null) {
+      delete beatmapset.poll.beatmapset_id;
+      beatmapset.poll.passed = beatmapset.poll.passed > 0;
+    }
 
     beatmapset.beatmap_counts = {};
     for (const gameMode of [0, 1, 2, 3]) {
@@ -184,7 +189,7 @@ router.get('/submissions', asyncHandler(async (req, res) => {
     .sort((a, b) => b.score - a.score)
     .sort((a, b) => b.review_score - a.review_score)
     .sort((a, b) => +(a.reviews.length === 0) - +(b.reviews.length === 0))
-    .sort((a, b) => +(a.failed_poll_topic_id != null) - +(b.failed_poll_topic_id != null))
+    .sort((a, b) => +(a.poll != null && !a.poll.passed) - +(b.poll != null && !b.poll.passed))
     .sort((a, b) => +b.poll_in_progress - +a.poll_in_progress);
 
   // Should never happen

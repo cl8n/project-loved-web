@@ -168,10 +168,10 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
     return <td className='priority high'>{intl.formatMessage(messages.inVoting)}</td>;
   }
 
-  if (beatmapset.failed_poll_topic_id != null) {
+  if (beatmapset.poll != null && !beatmapset.poll.passed) {
     return (
       <td className='priority'>
-        <a href={`https://osu.ppy.sh/community/forums/topics/${beatmapset.failed_poll_topic_id}`}>
+        <a href={`https://osu.ppy.sh/community/forums/topics/${beatmapset.poll.topic_id}`}>
           {intl.formatMessage(messages.failedVoting)}
         </a>
       </td>
