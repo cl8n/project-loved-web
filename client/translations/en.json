@@ -175,6 +175,10 @@
     "defaultMessage": "Project Loved",
     "description": "Site title"
   },
+  "MLkhaQ": {
+    "defaultMessage": "In voting",
+    "description": "Aggregate review score shown on submissions table for maps currently in community voting"
+  },
   "MUDTXQ": {
     "defaultMessage": "Beatmapset link or ID",
     "description": "Submission form beatmapset input prompt"

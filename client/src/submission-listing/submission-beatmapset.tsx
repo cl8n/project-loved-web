@@ -24,6 +24,10 @@ const messages = defineMessages({
     defaultMessage: 'Expand',
     description: 'Button to expand dropdowns',
   },
+  inVoting: {
+    defaultMessage: 'In voting',
+    description: 'Aggregate review score shown on submissions table for maps currently in community voting',
+  },
   high: {
     defaultMessage: 'High',
     description: 'Aggregate review score shown on submissions table',
@@ -152,6 +156,10 @@ interface PriorityCellProps {
 
 function PriorityCell({ beatmapset }: PriorityCellProps) {
   const intl = useIntl();
+
+  if (beatmapset.poll_in_progress) {
+    return <td className='priority high'>{intl.formatMessage(messages.inVoting)}</td>;
+  }
 
   if (beatmapset.reviews.length === 0) {
     return <td className='priority low'>{intl.formatMessage(messages.pending)}</td>;

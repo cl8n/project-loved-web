@@ -121,6 +121,7 @@ export type GetSubmissionsResponseBody = {
   beatmapsets: (IBeatmapset & {
     beatmap_counts: Record<GameMode, number>;
     modal_bpm: number;
+    poll_in_progress: boolean;
     review_score: number;
     reviews: IReview[];
     score: number;

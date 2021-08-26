@@ -112,6 +112,20 @@ router.get('/submissions', asyncHandler(async (req, res) => {
     FROM beatmapsets
     WHERE id IN (?)
   `, [[...beatmapsetIds]]);
+  const beatmapsetIdsWithPollInProgress = new Set((
+    await db.query(`
+      SELECT beatmapsets.id
+      FROM beatmapsets
+      INNER JOIN nominations
+        ON beatmapsets.id = nominations.beatmapset_id
+      INNER JOIN rounds
+        ON nominations.round_id = rounds.id
+      WHERE beatmapsets.id IN (?)
+        AND nominations.game_mode = ?
+        AND NOW() >= rounds.polls_started_at
+        AND NOW() < rounds.polls_ended_at
+    `, [[...beatmapsetIds], gameMode])
+  ).map((row) => row.id));
   const beatmapsByBeatmapsetId = groupBy(
     await db.query(`
       SELECT beatmapset_id, bpm, game_mode, play_count
@@ -132,6 +146,7 @@ router.get('/submissions', asyncHandler(async (req, res) => {
 
     beatmapset.modal_bpm = modeBy(beatmapsForGameMode, 'bpm');
     beatmapset.play_count = beatmapsForGameMode.reduce((sum, beatmap) => sum + beatmap.play_count, 0);
+    beatmapset.poll_in_progress = beatmapsetIdsWithPollInProgress.has(beatmapset.id);
     beatmapset.review_score = beatmapset.reviews.length > 0
       ? beatmapset.reviews.reduce((sum, review) => sum + review.score, 0)
       : -1000; // Can't -Infinity because JSON
@@ -147,7 +162,8 @@ router.get('/submissions', asyncHandler(async (req, res) => {
 
   beatmapsets
     .sort((a, b) => b.score - a.score)
-    .sort((a, b) => b.review_score - a.review_score);
+    .sort((a, b) => b.review_score - a.review_score)
+    .sort((a, b) => +b.poll_in_progress - +a.poll_in_progress);
 
   // Should never happen
   if (userIds.size === 0) {
