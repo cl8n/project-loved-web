@@ -147,9 +147,7 @@ router.get('/submissions', asyncHandler(async (req, res) => {
     beatmapset.modal_bpm = modeBy(beatmapsForGameMode, 'bpm');
     beatmapset.play_count = beatmapsForGameMode.reduce((sum, beatmap) => sum + beatmap.play_count, 0);
     beatmapset.poll_in_progress = beatmapsetIdsWithPollInProgress.has(beatmapset.id);
-    beatmapset.review_score = beatmapset.reviews.length > 0
-      ? beatmapset.reviews.reduce((sum, review) => sum + review.score, 0)
-      : -1000; // Can't -Infinity because JSON
+    beatmapset.review_score = beatmapset.reviews.reduce((sum, review) => sum + review.score, 0);
     beatmapset.score = beatmapset.favorite_count * 75 + beatmapset.play_count;
 
     beatmapset.beatmap_counts = {};
@@ -163,6 +161,7 @@ router.get('/submissions', asyncHandler(async (req, res) => {
   beatmapsets
     .sort((a, b) => b.score - a.score)
     .sort((a, b) => b.review_score - a.review_score)
+    .sort((a, b) => +(a.reviews.length === 0) - +(b.reviews.length === 0))
     .sort((a, b) => +b.poll_in_progress - +a.poll_in_progress);
 
   // Should never happen
