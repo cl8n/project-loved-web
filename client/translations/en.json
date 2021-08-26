@@ -59,13 +59,17 @@
     "defaultMessage": "Ascending",
     "description": "Round order option for poll results table"
   },
+  "3RdYB+": {
+    "defaultMessage": "Game mode:",
+    "description": "Selector to change game mode"
+  },
+  "5NZbY5": {
+    "defaultMessage": "Result display:",
+    "description": "Selector to change result display in poll results table"
+  },
   "5OS21f": {
     "defaultMessage": "External:",
     "description": "Nav separator"
-  },
-  "5jbut3": {
-    "defaultMessage": "<label>Round order:</label> {selector}",
-    "description": "Selector to change round order in poll results table"
   },
   "5oqovx": {
     "defaultMessage": "Submit a map",
@@ -143,9 +147,9 @@
     "defaultMessage": "Current team",
     "description": "Team listing group title"
   },
-  "IvOUKt": {
-    "defaultMessage": "<label>Game mode:</label> {selector}",
-    "description": "Selector to change game mode"
+  "JHNIy2": {
+    "defaultMessage": "Round order:",
+    "description": "Selector to change round order in poll results table"
   },
   "JPKVz4": {
     "defaultMessage": "Beatmapset",
@@ -302,10 +306,6 @@
   "e6WZri": {
     "defaultMessage": "support",
     "description": "+2 review score. Fits into {score} of the review line"
-  },
-  "gDomEP": {
-    "defaultMessage": "<label>Result display:</label> {selector}",
-    "description": "Selector to change result display in poll results table"
   },
   "gLG6dL": {
     "defaultMessage": "Submitted maps",

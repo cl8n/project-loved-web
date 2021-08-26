@@ -51,13 +51,17 @@
     "defaultMessage": "Nouseva",
     "description": "Round order option for poll results table"
   },
+  "3RdYB+": {
+    "defaultMessage": "Pelimuoto:",
+    "description": "Selector to change game mode"
+  },
+  "5NZbY5": {
+    "defaultMessage": "Tulosnäyttö:",
+    "description": "Selector to change result display in poll results table"
+  },
   "5OS21f": {
     "defaultMessage": "Ulkoiset:",
     "description": "Nav separator"
-  },
-  "5jbut3": {
-    "defaultMessage": "<label>Sarjojen järjestys:</label> {selector}",
-    "description": "Selector to change round order in poll results table"
   },
   "5oqovx": {
     "defaultMessage": "Ehdota mappi",
@@ -135,9 +139,9 @@
     "defaultMessage": "Nykyinen tiimi",
     "description": "Team listing group title"
   },
-  "IvOUKt": {
-    "defaultMessage": "<label>Pelimuoto:</label> {selector}",
-    "description": "Selector to change game mode"
+  "JHNIy2": {
+    "defaultMessage": "Sarjojen järjestys:",
+    "description": "Selector to change round order in poll results table"
   },
   "JPKVz4": {
     "defaultMessage": "Beatmapsetti",
@@ -294,10 +298,6 @@
   "e6WZri": {
     "defaultMessage": "puolesta",
     "description": "+2 review score. Fits into {score} of the review line"
-  },
-  "gDomEP": {
-    "defaultMessage": "<label>Tulosnäyttö:</label> {selector}",
-    "description": "Selector to change result display in poll results table"
   },
   "gLG6dL": {
     "defaultMessage": "Ehdotetut mapit",

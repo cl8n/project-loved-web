@@ -23,6 +23,10 @@ const messages = defineMessages({
     defaultMessage: 'Favs',
     description: 'Submissions table header',
   },
+  gameMode: {
+    defaultMessage: 'Game mode:',
+    description: 'Selector to change game mode',
+  },
   playCount: {
     defaultMessage: 'Plays',
     description: 'Submissions table header',
@@ -93,24 +97,16 @@ export default function SubmissionListingContainer() {
         />
       </div>
       <div className='flex-left'>
-        <FormattedMessage
-          defaultMessage='<label>Game mode:</label> {selector}'
-          description='Selector to change game mode'
-          values={{
-            label: (c: string) => <label htmlFor='gameMode'>{c}</label>,
-            selector: (
-              <select
-                name='gameMode'
-                value={gameMode}
-                onChange={onGameModeChange}
-              >
-                {gameModes.map((m) => (
-                  <option key={m} value={m}>{gameModeLongName(m)}</option>
-                ))}
-              </select>
-            ),
-          }}
-        />
+        <label htmlFor='gameMode'>{intl.formatMessage(messages.gameMode)}</label>
+        <select
+          name='gameMode'
+          value={gameMode}
+          onChange={onGameModeChange}
+        >
+          {gameModes.map((m) => (
+            <option key={m} value={m}>{gameModeLongName(m)}</option>
+          ))}
+        </select>
         <FormattedMessage
           defaultMessage='Columns:'
           description='Title for options to show or hide columns'

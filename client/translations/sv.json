@@ -51,13 +51,17 @@
     "defaultMessage": "Stigande",
     "description": "Round order option for poll results table"
   },
+  "3RdYB+": {
+    "defaultMessage": "Spelläge:",
+    "description": "Selector to change game mode"
+  },
+  "5NZbY5": {
+    "defaultMessage": "Resultatsdisplay:",
+    "description": "Selector to change result display in poll results table"
+  },
   "5OS21f": {
     "defaultMessage": "Externt:",
     "description": "Nav separator"
-  },
-  "5jbut3": {
-    "defaultMessage": "<label>Ordning av rundor:</label> {selector}",
-    "description": "Selector to change round order in poll results table"
   },
   "5oqovx": {
     "defaultMessage": "Skicka in en map",
@@ -135,9 +139,9 @@
     "defaultMessage": "Nuvarande team",
     "description": "Team listing group title"
   },
-  "IvOUKt": {
-    "defaultMessage": "<label>Spelläge:</label> {selector}",
-    "description": "Selector to change game mode"
+  "JHNIy2": {
+    "defaultMessage": "Ordning av rundor:",
+    "description": "Selector to change round order in poll results table"
   },
   "JPKVz4": {
     "defaultMessage": "Beatmapset",
@@ -294,10 +298,6 @@
   "e6WZri": {
     "defaultMessage": "stöd",
     "description": "+2 review score. Fits into {score} of the review line"
-  },
-  "gDomEP": {
-    "defaultMessage": "<label>Resultatsdisplay:</label> {selector}",
-    "description": "Selector to change result display in poll results table"
   },
   "gLG6dL": {
     "defaultMessage": "Inlämnade maps",

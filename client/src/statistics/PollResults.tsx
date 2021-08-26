@@ -22,6 +22,14 @@ const messages = defineMessages({
     defaultMessage: 'Percent and total',
     description: 'Result display option for poll results table',
   },
+  resultDisplay: {
+    defaultMessage: 'Result display:',
+    description: 'Selector to change result display in poll results table',
+  },
+  roundOrder: {
+    defaultMessage: 'Round order:',
+    description: 'Selector to change round order in poll results table',
+  },
   yesAndNo: {
     defaultMessage: 'Yes and no',
     description: 'Result display option for poll results table',
@@ -30,6 +38,10 @@ const messages = defineMessages({
   deletedBeatmapset: {
     defaultMessage: 'Deleted beatmapset',
     description: 'Placeholder for beatmapsets that were deleted from osu!',
+  },
+  gameMode: {
+    defaultMessage: 'Game mode:',
+    description: 'Selector to change game mode',
   },
 });
 
@@ -69,59 +81,35 @@ export default function PollResults() {
   return (
     <>
       <div className='flex-left'>
-        <FormattedMessage
-          defaultMessage='<label>Game mode:</label> {selector}'
-          description='Selector to change game mode'
-          values={{
-            label: (c: string) => <label htmlFor='gameMode'>{c}</label>,
-            selector: (
-              <select
-                name='gameMode'
-                value={gameMode ?? 'all'}
-                onChange={onGameModeChange}
-              >
-                <option value='all'>{intl.formatMessage(messages.all)}</option>
-                {gameModes.map((m) => (
-                  <option key={m} value={m}>{gameModeLongName(m)}</option>
-                ))}
-              </select>
-            ),
-          }}
-        />
-        <FormattedMessage
-          defaultMessage='<label>Round order:</label> {selector}'
-          description='Selector to change round order in poll results table'
-          values={{
-            label: (c: string) => <label htmlFor='roundOrder'>{c}</label>,
-            selector: (
-              <select
-                name='roundOrder'
-                value={roundOrderAsc ? '1' : '0'}
-                onChange={(event) => setRoundOrderAsc(event.currentTarget.value === '1')}
-              >
-                <option value='0'>{intl.formatMessage(messages.descending)}</option>
-                <option value='1'>{intl.formatMessage(messages.ascending)}</option>
-              </select>
-            ),
-          }}
-        />
-        <FormattedMessage
-          defaultMessage='<label>Result display:</label> {selector}'
-          description='Selector to change result display in poll results table'
-          values={{
-            label: (c: string) => <label htmlFor='resultDisplay'>{c}</label>,
-            selector: (
-              <select
-                name='resultDisplay'
-                value={showPercent ? '0' : '1'}
-                onChange={(event) => setShowPercent(event.currentTarget.value === '0')}
-              >
-                <option value='0'>{intl.formatMessage(messages.percentAndTotal)}</option>
-                <option value='1'>{intl.formatMessage(messages.yesAndNo)}</option>
-              </select>
-            ),
-          }}
-        />
+        <label htmlFor='gameMode'>{intl.formatMessage(messages.gameMode)}</label>
+        <select
+          name='gameMode'
+          value={gameMode ?? 'all'}
+          onChange={onGameModeChange}
+        >
+          <option value='all'>{intl.formatMessage(messages.all)}</option>
+          {gameModes.map((m) => (
+            <option key={m} value={m}>{gameModeLongName(m)}</option>
+          ))}
+        </select>
+        <label htmlFor='roundOrder'>{intl.formatMessage(messages.roundOrder)}</label>
+        <select
+          name='roundOrder'
+          value={roundOrderAsc ? '1' : '0'}
+          onChange={(event) => setRoundOrderAsc(event.currentTarget.value === '1')}
+        >
+          <option value='0'>{intl.formatMessage(messages.descending)}</option>
+          <option value='1'>{intl.formatMessage(messages.ascending)}</option>
+        </select>
+        <label htmlFor='resultDisplay'>{intl.formatMessage(messages.resultDisplay)}</label>
+        <select
+          name='resultDisplay'
+          value={showPercent ? '0' : '1'}
+          onChange={(event) => setShowPercent(event.currentTarget.value === '0')}
+        >
+          <option value='0'>{intl.formatMessage(messages.percentAndTotal)}</option>
+          <option value='1'>{intl.formatMessage(messages.yesAndNo)}</option>
+        </select>
       </div>
       <table className='main-table'>
         <thead>
