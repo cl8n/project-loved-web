@@ -226,7 +226,6 @@ function SubmissionListing({ columns, gameMode }: SubmissionListingProps) {
           {columns.difficultyCount && <th>{intl.formatMessage(messages.difficultyCount)}</th>}
           {columns.bpm && <th>{intl.formatMessage(messages.bpm)}</th>}
           <th />
-          {canReview && <th />}
         </tr>
       </thead>
       <tbody>

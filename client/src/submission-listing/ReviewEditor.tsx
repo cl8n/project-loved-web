@@ -30,15 +30,13 @@ export default function ReviewEditor({ beatmapset, gameMode, onReviewUpdate, rev
 
   return (
     <>
-      <td>
-        <button
-          type='button'
-          onClick={() => setModalOpen(true)}
-          className={`fake-a${review?.score ? '' : ' important-bad'}`}
-        >
-          Review
-        </button>
-      </td>
+      <button
+        type='button'
+        onClick={() => setModalOpen(true)}
+        className={`fake-a${review?.score ? '' : ' important-bad'}`}
+      >
+        Review
+      </button>
       <Modal
         close={() => setModalOpen(false)}
         open={modalOpen}

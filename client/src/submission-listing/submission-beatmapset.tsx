@@ -122,15 +122,18 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, columns, g
           >
             {intl.formatMessage(expanded ? messages.close : messages.expand)}
           </button>
+          {canReview && (
+            <>
+              <br />
+              <ReviewEditor
+                beatmapset={beatmapset}
+                gameMode={gameMode}
+                onReviewUpdate={onReviewUpdate}
+                review={review}
+              />
+            </>
+          )}
         </td>
-        {canReview && (
-          <ReviewEditor
-            beatmapset={beatmapset}
-            gameMode={gameMode}
-            onReviewUpdate={onReviewUpdate}
-            review={review}
-          />
-        )}
       </tr>
       {expanded && (
         <tr>
