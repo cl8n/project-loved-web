@@ -215,9 +215,13 @@ function SubmissionListing({ columns, gameMode }: SubmissionListingProps) {
           />
           {columns.score && (
             <th>
-              {intl.formatMessage(messages.score)} <Help text={intl.formatMessage(messages.scoreHelp, {
-                definition: `${intl.formatMessage(messages.score)} = ${intl.formatMessage(messages.favoriteCount)} × 75 + ${intl.formatMessage(messages.playCount)}`,
-              })} />
+              {intl.formatMessage(messages.score)}
+              {' '}
+              <Help>
+                {intl.formatMessage(messages.scoreHelp, {
+                  definition: `${intl.formatMessage(messages.score)} = ${intl.formatMessage(messages.favoriteCount)} × 75 + ${intl.formatMessage(messages.playCount)}`,
+                })}
+              </Help>
             </th>
           )}
           {columns.playCount && <th>{intl.formatMessage(messages.playCount)}</th>}

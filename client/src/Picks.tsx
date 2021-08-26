@@ -252,7 +252,7 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
         <input type='number' name='beatmapsetId' required data-value-type='int' />
         <span>
           <label htmlFor='parentId'>Parent nomination ID </label>
-          <Help text="If this map is being nominated because another mode's captains picked it first, set this field to the original mode's nomination ID" />
+          <Help>If this map is being nominated because another mode's captains picked it first, set this field to the original mode's nomination ID</Help>
         </span>
         <input type='number' name='parentId' data-value-type='int' />
         <button type='submit'>
@@ -550,7 +550,7 @@ function EditMetadata({ metadataStarted, nomination, onNominationUpdate }: EditM
                   Creators
                 </label>
                 {' '}
-                <Help text='Do not list creators for excluded difficulties or other game modes. Even the mapset host can be removed if necessary.' />
+                <Help>Do not list creators for excluded difficulties or other game modes. Even the mapset host can be removed if necessary.</Help>
               </td>
               <td>
                 <ListInput
@@ -771,7 +771,7 @@ function GodMenu({ nomination, onNominationUpdate }: GodMenuProps) {
         <h3>
           Use different beatmapset
           {' '}
-          <Help text="Only do this if an accident caused linking to the wrong mapset or deletion of the mapset. There should be no normal case where it's necessary" />
+          <Help>Only do this if an accident caused linking to the wrong mapset or deletion of the mapset. There should be no normal case where it's necessary</Help>
         </h3>
         <Form busyState={[busy, setBusy]} onSubmit={onChangeBeatmapsetSubmit}>
           <p className='flex-left'>

@@ -360,6 +360,10 @@ button.angry {
 
 .help {
   cursor: help;
+
+  &:hover {
+    text-decoration: none;
+  }
 }
 
 .no-wrap {

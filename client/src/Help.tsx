@@ -1,12 +1,9 @@
+import { PropsWithChildren } from 'react';
 import Tooltip from './Tooltip';
 
-interface HelpProps {
-  text: string;
-}
-
-export default function Help({ text }: HelpProps) {
+export default function Help({ children }: PropsWithChildren<{}>) {
   return (
-    <Tooltip content={text}>
+    <Tooltip content={children}>
       <span className='fake-a help'>[?]</span>
     </Tooltip>
   );
