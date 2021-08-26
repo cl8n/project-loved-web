@@ -127,6 +127,10 @@
     "defaultMessage": "Poistettu beatmapsetti",
     "description": "Placeholder for beatmapsets that were deleted from osu!"
   },
+  "IO8Ye2": {
+    "defaultMessage": "Pistemäärä",
+    "description": "Submissions table header"
+  },
   "IiYTWb": {
     "defaultMessage": "Nykyinen tiimi",
     "description": "Team listing group title"
@@ -339,6 +343,10 @@
     "defaultMessage": "Mappaaja",
     "description": "Submissions table header"
   },
+  "mucI2W": {
+    "defaultMessage": "Väliaikainen tapa järjestää tätä listausta. {definition}",
+    "description": "Help text for \"Score\" submissions table header"
+  },
   "nWt/xH": {
     "defaultMessage": "Tämä listaus ei ole vielä aktiivisesti käytössä. Ehdotukset Google Forms -dokumentista tulevat siirtymään tänne, ja siitä lähtien kapteenit voivat käyttää tätä sivua Google Sheets -dokumentin sijasta. Voit nykyhetkellä lähettää ehdotuksesi tämän sivun tai Google Forms -dokumentin kautta.",
     "description": "Warning box above submissions table"
@@ -374,10 +382,6 @@
   "tCV6dl": {
     "defaultMessage": "Kieli: {selector}",
     "description": "Selector in site header to change language"
-  },
-  "tdZae7": {
-    "defaultMessage": "Pistemäärä <help>Väliaikainen tapa järjestää tätä listausta. Pistemäärä{definition}</help>",
-    "description": "Submissions table header"
   },
   "uNpYlX": {
     "defaultMessage": "Hylätty",

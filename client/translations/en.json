@@ -7,6 +7,10 @@
     "defaultMessage": "Other icons by {author}",
     "description": "Credit in site footer"
   },
+  "+bCbtl": {
+    "defaultMessage": "Columns:",
+    "description": "Title for options to show or hide columns"
+  },
   "+d4ZcX": {
     "defaultMessage": "Moderators",
     "description": "Team listing title"
@@ -130,6 +134,10 @@
   "HvpI7B": {
     "defaultMessage": "Deleted beatmapset",
     "description": "Placeholder for beatmapsets that were deleted from osu!"
+  },
+  "IO8Ye2": {
+    "defaultMessage": "Score",
+    "description": "Submissions table header"
   },
   "IiYTWb": {
     "defaultMessage": "Current team",
@@ -343,6 +351,10 @@
     "defaultMessage": "Mapper",
     "description": "Submissions table header"
   },
+  "mucI2W": {
+    "defaultMessage": "A placeholder method to sort this listing. {definition}",
+    "description": "Help text for \"Score\" submissions table header"
+  },
   "nWt/xH": {
     "defaultMessage": "This listing is not yet in active use by captains. The submissions made to the Google forms will be migrated here soon, and from then on captains will be using this instead of the Google sheets. Currently you can use either this website or the Google forms to make new submissions.",
     "description": "Warning box above submissions table"
@@ -378,10 +390,6 @@
   "tCV6dl": {
     "defaultMessage": "Language: {selector}",
     "description": "Selector in site header to change language"
-  },
-  "tdZae7": {
-    "defaultMessage": "Score <help>A placeholder method to sort this listing. Score{definition}</help>",
-    "description": "Submissions table header"
   },
   "uNpYlX": {
     "defaultMessage": "Rejected",

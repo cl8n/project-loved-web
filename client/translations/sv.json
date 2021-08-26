@@ -127,6 +127,10 @@
     "defaultMessage": "Borttaget beatmapset",
     "description": "Placeholder for beatmapsets that were deleted from osu!"
   },
+  "IO8Ye2": {
+    "defaultMessage": "Poäng",
+    "description": "Submissions table header"
+  },
   "IiYTWb": {
     "defaultMessage": "Nuvarande team",
     "description": "Team listing group title"
@@ -339,6 +343,10 @@
     "defaultMessage": "Mappare",
     "description": "Submissions table header"
   },
+  "mucI2W": {
+    "defaultMessage": "Tillfälligt sätt att sortera denna listning. {definition}",
+    "description": "Help text for \"Score\" submissions table header"
+  },
   "nWt/xH": {
     "defaultMessage": "Denna listning används inte än aktivt av kaptener. Inlämningar via Google Forms kommer snart att flyttas hit, och därefter kommer kaptener kunna använda denna sida istället för Google Sheets. Just nu kan du använda antingen denna sida eller Google Forms för att skicka in maps.",
     "description": "Warning box above submissions table"
@@ -374,10 +382,6 @@
   "tCV6dl": {
     "defaultMessage": "Språk: {selector}",
     "description": "Selector in site header to change language"
-  },
-  "tdZae7": {
-    "defaultMessage": "Poäng <help>Tillfälligt sätt att sortera denna listning. Poäng{definition}</help>",
-    "description": "Submissions table header"
   },
   "uNpYlX": {
     "defaultMessage": "Avvisad",
