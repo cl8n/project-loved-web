@@ -12,7 +12,7 @@ On the first run of the database container, the `project_loved` user will be cre
 
 ### Live data
 
-Regular data exports (sans `logs`, `log_values`, and `sessions`) are posted to <https://loved.sh/exports>.
+Regular data exports (sans `logs`, `log_values`, and `sessions`) are posted to <https://loved.sh/exports>. **This will drop and re-create all other tables!**
 
 ```sh
 # Latest export is used with no argument
