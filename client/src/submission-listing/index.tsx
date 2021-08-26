@@ -3,28 +3,65 @@ import SubmissionBeatmapset from './submission-beatmapset';
 import Help from '../Help';
 import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import { gameModeFromShortName, gameModeLongName, gameModes, gameModeShortName } from '../osu-helpers';
-import { ChangeEvent, useEffect } from 'react';
+import { ChangeEvent, useEffect, useReducer } from 'react';
 import { GameMode, IReview } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import { isCaptainForMode } from '../permissions';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import { ToggleableColumn, toggleableColumns, ToggleableColumnsState } from './helpers';
 
 const messages = defineMessages({
-  favorites: {
+  bpm: {
+    defaultMessage: 'BPM',
+    description: 'Submissions table header',
+  },
+  difficultyCount: {
+    defaultMessage: 'Diffs',
+    description: 'Submissions table header',
+  },
+  favoriteCount: {
     defaultMessage: 'Favs',
     description: 'Submissions table header',
   },
-  plays: {
+  playCount: {
     defaultMessage: 'Plays',
+    description: 'Submissions table header',
+  },
+  score: {
+    defaultMessage: 'Score',
+    description: 'Submissions table header',
+  },
+  scoreHelp: {
+    defaultMessage: 'A placeholder method to sort this listing. {definition}',
+    description: 'Help text for "Score" submissions table header',
+  },
+  year: {
+    defaultMessage: 'Year',
     description: 'Submissions table header',
   },
 });
 
+function columnsReducer(prevState: ToggleableColumnsState, column: ToggleableColumn): ToggleableColumnsState {
+  return {
+    ...prevState,
+    [column]: !prevState[column],
+  };
+}
+
 export default function SubmissionListingContainer() {
   const history = useHistory();
+  const intl = useIntl();
   const params = useParams<{ gameMode: string; }>();
+  const [columns, toggleColumn] = useReducer(columnsReducer, {
+    bpm: true,
+    difficultyCount: true,
+    favoriteCount: true,
+    playCount: true,
+    score: true,
+    year: true,
+  });
 
-  let gameMode = gameModeFromShortName(params.gameMode);
+  const gameMode = gameModeFromShortName(params.gameMode);
 
   if (gameMode == null) {
     return <Redirect to='/submissions/osu' />;
@@ -55,7 +92,7 @@ export default function SubmissionListingContainer() {
           description='Warning box above submissions table'
         />
       </div>
-      <p className='flex-left'>
+      <div className='flex-left'>
         <FormattedMessage
           defaultMessage='<label>Game mode:</label> {selector}'
           description='Selector to change game mode'
@@ -74,17 +111,35 @@ export default function SubmissionListingContainer() {
             ),
           }}
         />
-      </p>
-      <SubmissionListing gameMode={gameMode} />
+        <FormattedMessage
+          defaultMessage='Columns:'
+          description='Title for options to show or hide columns'
+          tagName='span'
+        />
+        <span className='flex-text'>
+          {toggleableColumns.map((column) => (
+            <button
+              key={column}
+              type='button'
+              className={`fake-a${columns[column] ? ' underline' : ''}`}
+              onClick={() => toggleColumn(column)}
+            >
+              {intl.formatMessage(messages[column])}
+            </button>
+          ))}
+        </span>
+      </div>
+      <SubmissionListing columns={columns} gameMode={gameMode} />
     </>
   );
 }
 
 interface SubmissionListingProps {
+  columns: ToggleableColumnsState;
   gameMode: GameMode;
 }
 
-function SubmissionListing({ gameMode }: SubmissionListingProps) {
+function SubmissionListing({ columns, gameMode }: SubmissionListingProps) {
   const history = useHistory();
   const intl = useIntl();
   const { pathname: locationPath, state: submittedBeatmapsetId } = useLocation<number | undefined>();
@@ -158,32 +213,18 @@ function SubmissionListing({ gameMode }: SubmissionListingProps) {
             description='Submissions table header'
             tagName='th'
           />
-          <FormattedMessage
-            defaultMessage='Score <help>A placeholder method to sort this listing. Score{definition}</help>'
-            description='Submissions table header'
-            tagName='th'
-            values={{
-              definition: ` = ${intl.formatMessage(messages.favorites)} × 75 + ${intl.formatMessage(messages.plays)}`,
-              help: (c: string) => <Help text={c} />,
-            }}
-          />
-          <th>{intl.formatMessage(messages.plays)}</th>
-          <th>{intl.formatMessage(messages.favorites)}</th>
-          <FormattedMessage
-            defaultMessage='Year'
-            description='Submissions table header'
-            tagName='th'
-          />
-          <FormattedMessage
-            defaultMessage='Diffs'
-            description='Submissions table header'
-            tagName='th'
-          />
-          <FormattedMessage
-            defaultMessage='BPM'
-            description='Submissions table header'
-            tagName='th'
-          />
+          {columns.score && (
+            <th>
+              {intl.formatMessage(messages.score)} <Help text={intl.formatMessage(messages.scoreHelp, {
+                definition: `${intl.formatMessage(messages.score)} = ${intl.formatMessage(messages.favoriteCount)} × 75 + ${intl.formatMessage(messages.playCount)}`,
+              })} />
+            </th>
+          )}
+          {columns.playCount && <th>{intl.formatMessage(messages.playCount)}</th>}
+          {columns.favoriteCount && <th>{intl.formatMessage(messages.favoriteCount)}</th>}
+          {columns.year && <th>{intl.formatMessage(messages.year)}</th>}
+          {columns.difficultyCount && <th>{intl.formatMessage(messages.difficultyCount)}</th>}
+          {columns.bpm && <th>{intl.formatMessage(messages.bpm)}</th>}
           <th />
           {canReview && <th />}
         </tr>
@@ -194,6 +235,7 @@ function SubmissionListing({ gameMode }: SubmissionListingProps) {
             key={beatmapset.id}
             beatmapset={beatmapset}
             canReview={canReview}
+            columns={columns}
             gameMode={gameMode}
             onReviewUpdate={onReviewUpdate}
             review={canReview ? beatmapset.reviews.find((review) => review.captain_id === authUser!.id) : undefined}

@@ -1,5 +1,9 @@
 import { defineMessages } from 'react-intl';
 
+export type ToggleableColumn = 'bpm' | 'difficultyCount' | 'favoriteCount' | 'playCount' | 'score' | 'year';
+export type ToggleableColumnsState = Record<ToggleableColumn, boolean>;
+export const toggleableColumns = ['score', 'playCount', 'favoriteCount', 'year', 'difficultyCount', 'bpm'] as const;
+
 const messages = defineMessages({
   strongRejection: {
     defaultMessage: 'strong rejection',

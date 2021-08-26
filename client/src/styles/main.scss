@@ -286,6 +286,14 @@ footer {
   }
 }
 
+.flex-text {
+  display: flex;
+
+  > :not(:first-child) {
+    margin-left: 0.35em;
+  }
+}
+
 .success {
   color: var(--rating-3);
 }
@@ -548,4 +556,8 @@ tr.sticky > th {
   > img {
     padding-right: 0.35em;
   }
+}
+
+.underline {
+  text-decoration: underline;
 }

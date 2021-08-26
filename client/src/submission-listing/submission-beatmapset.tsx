@@ -11,6 +11,7 @@ import musicalNotesIcon from '../images/icons8/musical-notes.png';
 import playIcon from '../images/icons8/play.png';
 import { GameMode, IReview } from '../interfaces';
 import { UserInline } from '../UserInline';
+import { ToggleableColumnsState } from './helpers';
 import ReviewEditor from './ReviewEditor';
 import SubmissionsList from './submissions-list';
 
@@ -48,13 +49,14 @@ const messages = defineMessages({
 interface SubmissionBeatmapsetProps {
   beatmapset: GetSubmissionsResponseBody['beatmapsets'][0];
   canReview: boolean;
+  columns: ToggleableColumnsState;
   gameMode: GameMode;
   onReviewUpdate: (review: IReview) => void;
   review?: IReview;
   usersById: GetSubmissionsResponseBody['usersById'];
 }
 
-export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, onReviewUpdate, review, usersById }: SubmissionBeatmapsetProps) {
+export default function SubmissionBeatmapset({ beatmapset, canReview, columns, gameMode, onReviewUpdate, review, usersById }: SubmissionBeatmapsetProps) {
   const intl = useIntl();
   const { state: submittedBeatmapsetId } = useLocation<number | undefined>();
   const [expanded, setExpanded] = useState(submittedBeatmapsetId === beatmapset.id);
@@ -84,22 +86,26 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, gameMode, 
         </td>
         <td><UserInline name={beatmapset.creator_name} user={usersById[beatmapset.creator_id]} /></td>
         <PriorityCell beatmapset={beatmapset} />
-        <td>{intl.formatNumber(beatmapset.score)}</td>
-        <td><img alt='' src={playIcon} /> {intl.formatNumber(beatmapset.play_count)}</td>
-        <td><img alt='' src={heartIcon} /> {intl.formatNumber(beatmapset.favorite_count)}</td>
-        <td>
-          <div className='icon-label-container'>
-            <img alt='' src={calendarIcon} />
-            {year}
-          </div>
-        </td>
-        <td>
-          <div className='icon-label-container'>
-            <img alt='' src={circleIcon} />
-            {diffCount}
-          </div>
-        </td>
-        <td><img alt='' src={musicalNotesIcon} /> {intl.formatNumber(beatmapset.modal_bpm)}</td>
+        {columns.score && <td>{intl.formatNumber(beatmapset.score)}</td>}
+        {columns.playCount && <td><img alt='' src={playIcon} /> {intl.formatNumber(beatmapset.play_count)}</td>}
+        {columns.favoriteCount && <td><img alt='' src={heartIcon} /> {intl.formatNumber(beatmapset.favorite_count)}</td>}
+        {columns.year && (
+          <td>
+            <div className='icon-label-container'>
+              <img alt='' src={calendarIcon} />
+              {year}
+            </div>
+          </td>
+        )}
+        {columns.difficultyCount && (
+          <td>
+            <div className='icon-label-container'>
+              <img alt='' src={circleIcon} />
+              {diffCount}
+            </div>
+          </td>
+        )}
+        {columns.bpm && <td><img alt='' src={musicalNotesIcon} /> {intl.formatNumber(beatmapset.modal_bpm)}</td>}
         <td>
           <button
             type='button'
