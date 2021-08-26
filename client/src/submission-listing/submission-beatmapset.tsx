@@ -24,6 +24,10 @@ const messages = defineMessages({
     defaultMessage: 'Expand',
     description: 'Button to expand dropdowns',
   },
+  failedVoting: {
+    defaultMessage: 'Failed voting',
+    description: 'Aggregate review score shown on submissions table for maps that failed community voting',
+  },
   inVoting: {
     defaultMessage: 'In voting',
     description: 'Aggregate review score shown on submissions table for maps currently in community voting',
@@ -159,6 +163,16 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
 
   if (beatmapset.poll_in_progress) {
     return <td className='priority high'>{intl.formatMessage(messages.inVoting)}</td>;
+  }
+
+  if (beatmapset.failed_poll_topic_id != null) {
+    return (
+      <td className='priority'>
+        <a href={`https://osu.ppy.sh/community/forums/topics/${beatmapset.failed_poll_topic_id}`}>
+          {intl.formatMessage(messages.failedVoting)}
+        </a>
+      </td>
+    );
   }
 
   if (beatmapset.reviews.length === 0) {

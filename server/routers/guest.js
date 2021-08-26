@@ -134,6 +134,27 @@ router.get('/submissions', asyncHandler(async (req, res) => {
     `, [[...beatmapsetIds]]),
     'beatmapset_id',
   );
+  // TODO: Scope to complete polls when incomplete polls are stored in poll_results
+  const failedPollTopicIdByBeatmapsetId = groupBy(
+    await db.query(`
+      SELECT poll_results.beatmapset_id, poll_results.topic_id
+      FROM poll_results
+      INNER JOIN round_game_modes
+        ON poll_results.round = round_game_modes.round_id
+          AND poll_results.game_mode = round_game_modes.game_mode
+      WHERE poll_results.id IN (
+        SELECT MAX(id)
+        FROM poll_results
+        WHERE game_mode = ?
+        GROUP BY beatmapset_id
+      )
+        AND poll_results.beatmapset_id IN (?)
+        AND poll_results.result_yes / (poll_results.result_no + poll_results.result_yes) < round_game_modes.voting_threshold
+    `, [gameMode, [...beatmapsetIds]]),
+    'beatmapset_id',
+    'topic_id',
+    true,
+  );
   const reviewsByBeatmapsetId = groupBy(reviews, 'beatmapset_id');
   const submissionsByBeatmapsetId = groupBy(submissions, 'beatmapset_id');
 
@@ -144,6 +165,7 @@ router.get('/submissions', asyncHandler(async (req, res) => {
     beatmapset.reviews = reviewsByBeatmapsetId[beatmapset.id] || [];
     beatmapset.submissions = submissionsByBeatmapsetId[beatmapset.id] || [];
 
+    beatmapset.failed_poll_topic_id = failedPollTopicIdByBeatmapsetId[beatmapset.id] ?? null;
     beatmapset.modal_bpm = modeBy(beatmapsForGameMode, 'bpm');
     beatmapset.play_count = beatmapsForGameMode.reduce((sum, beatmap) => sum + beatmap.play_count, 0);
     beatmapset.poll_in_progress = beatmapsetIdsWithPollInProgress.has(beatmapset.id);
@@ -162,6 +184,7 @@ router.get('/submissions', asyncHandler(async (req, res) => {
     .sort((a, b) => b.score - a.score)
     .sort((a, b) => b.review_score - a.review_score)
     .sort((a, b) => +(a.reviews.length === 0) - +(b.reviews.length === 0))
+    .sort((a, b) => +(a.failed_poll_topic_id != null) - +(b.failed_poll_topic_id != null))
     .sort((a, b) => +b.poll_in_progress - +a.poll_in_progress);
 
   // Should never happen

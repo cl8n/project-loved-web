@@ -339,6 +339,10 @@
     "defaultMessage": "light rejection",
     "description": "-1 review score. Fits into {score} of the review line"
   },
+  "lULo+e": {
+    "defaultMessage": "Failed voting",
+    "description": "Aggregate review score shown on submissions table for maps that failed community voting"
+  },
   "lbC8H+": {
     "defaultMessage": "Mapper",
     "description": "Mapper consents table header"
