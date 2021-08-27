@@ -518,6 +518,10 @@ tr.sticky > th {
 }
 
 .submission-beatmapset {
+  &.in-voting, &.in-voting:not(.closed) + tr {
+    background-color: var(--rating-3-background);
+  }
+
   &:not(:first-child) {
     border-top: 1px solid #bbb;
   }

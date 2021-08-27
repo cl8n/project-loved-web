@@ -109,7 +109,7 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, columns, g
 
   return (
     <>
-      <tr className={`submission-beatmapset${expanded ? '' : ' closed'}`}>
+      <tr className={`submission-beatmapset${expanded ? '' : ' closed'}${beatmapset.poll_in_progress ? ' in-voting' : ''}`}>
         <td className='normal-wrap'>
           <div data-beatmapset-id={beatmapset.id} />
           <Beatmap beatmapset={beatmapset} />
