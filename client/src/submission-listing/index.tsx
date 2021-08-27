@@ -185,6 +185,9 @@ function SubmissionListing({ columns, gameMode, showStatus }: SubmissionListingP
   if (submissionsInfo == null || displayBeatmapsets == null)
     return <span>Loading submissions...</span>;
 
+  if (displayBeatmapsets.length === 0)
+    return <p><b>No submissions to show!</b></p>;
+
   const canReview = authUser != null && isCaptainForMode(authUser, gameMode);
   const onReviewUpdate = (review: IReview) => {
     setSubmissionsInfo((prev) => {
