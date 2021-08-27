@@ -1,16 +1,22 @@
 import { ChangeEvent, useEffect, useMemo, useReducer, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
-import { apiErrorMessage, getSubmissions, useApi } from '../api';
+import { apiErrorMessage, getSubmissions, GetSubmissionsResponseBody, useApi } from '../api';
+import { dateFromString } from '../date-format';
 import Help from '../Help';
 import { GameMode, IReview } from '../interfaces';
 import { gameModeFromShortName, gameModeLongName, gameModes, gameModeShortName } from '../osu-helpers';
 import { useOsuAuth } from '../osuAuth';
 import { isCaptainForMode } from '../permissions';
 import { ToggleableColumn, toggleableColumns, ToggleableColumnsState } from './helpers';
+import SortButton from './SortButton';
 import SubmissionBeatmapset from './SubmissionBeatmapset';
 
 const messages = defineMessages({
+  artist: {
+    defaultMessage: 'Artist',
+    description: 'Submissions table sort option',
+  },
   bpm: {
     defaultMessage: 'BPM',
     description: 'Submissions table header',
@@ -47,6 +53,10 @@ const messages = defineMessages({
     defaultMessage: 'Status',
     description: 'Submissions table header',
   },
+  title: {
+    defaultMessage: 'Title',
+    description: 'Submissions table sort option',
+  },
   year: {
     defaultMessage: 'Year',
     description: 'Submissions table header',
@@ -58,6 +68,33 @@ function columnsReducer(prevState: ToggleableColumnsState, column: ToggleableCol
     ...prevState,
     [column]: !prevState[column],
   };
+}
+
+type Sort = 'artist' | 'favoriteCount' | 'playCount' | 'priority' | 'score' | 'title' | 'year';
+type SortState = [[Sort, boolean], [Sort, boolean]];
+const allSorts = ['artist', 'title', 'priority', 'score', 'playCount', 'favoriteCount', 'year'] as const;
+const defaultAscendingSorts = new Set<Sort>(['artist', 'title', 'year']);
+
+function sortReducer(prevState: SortState, action: [0 | 1, 'sort', Sort] | [0 | 1, 'order']): SortState {
+  // TODO: Prevent selecting duplicate sorts and hide the option for duplicate sort in the second selector
+  let state = [...prevState] as SortState;
+
+  if (action[1] === 'order') {
+    state[action[0]] = [state[action[0]][0], !state[action[0]][1]];
+  } else {
+    if (action[0] === 0) {
+      const secondSort = action[2] === 'score' ? 'priority' : 'score';
+
+      state = [
+        [action[2], defaultAscendingSorts.has(action[2])],
+        [secondSort, defaultAscendingSorts.has(secondSort)],
+      ];
+    } else {
+      state[1] = [action[2], defaultAscendingSorts.has(action[2])];
+    }
+  }
+
+  return state;
 }
 
 export default function SubmissionListingContainer() {
@@ -73,6 +110,7 @@ export default function SubmissionListingContainer() {
     year: true,
   });
   const [showStatus, setShowStatus] = useState(false);
+  const [sorts, changeSort] = useReducer(sortReducer, [['priority', false], ['score', false]]);
 
   const gameMode = gameModeFromShortName(params.gameMode);
 
@@ -88,6 +126,7 @@ export default function SubmissionListingContainer() {
     }
   };
 
+  // TODO: Controls break on languages with longer column names (fi, sv)
   return (
     <>
       <FormattedMessage
@@ -133,6 +172,39 @@ export default function SubmissionListingContainer() {
             </button>
           ))}
         </span>
+        <FormattedMessage
+          defaultMessage='Sort by:'
+          description='Title for sorting options'
+          tagName='span'
+        />
+        <span>
+          <select
+            value={sorts[0][0]}
+            onChange={(event) => changeSort([0, 'sort', event.currentTarget.value as Sort])}
+          >
+            {allSorts.map((sort) => (
+              <option key={sort} value={sort}>
+                {intl.formatMessage(messages[sort])}
+              </option>
+            ))}
+          </select>
+          {' '}
+          <SortButton ascending={sorts[0][1]} toggle={() => changeSort([0, 'order'])} />
+        </span>
+        <span>
+          <select
+            value={sorts[1][0]}
+            onChange={(event) => changeSort([1, 'sort', event.currentTarget.value as Sort])}
+          >
+            {allSorts.map((sort) => (
+              <option key={sort} value={sort}>
+                {intl.formatMessage(messages[sort])}
+              </option>
+            ))}
+          </select>
+          {' '}
+          <SortButton ascending={sorts[1][1]} toggle={() => changeSort([1, 'order'])} />
+        </span>
         <button
           type='button'
           className='push-right'
@@ -144,18 +216,44 @@ export default function SubmissionListingContainer() {
           }
         </button>
       </div>
-      <SubmissionListing columns={columns} gameMode={gameMode} showStatus={showStatus} />
+      <SubmissionListing
+        columns={columns}
+        gameMode={gameMode}
+        showStatus={showStatus}
+        sorts={sorts}
+      />
     </>
   );
+}
+
+type _Beatmapset = GetSubmissionsResponseBody['beatmapsets'][number];
+const beatmapsetSortFns: Record<Sort, (a: _Beatmapset, b: _Beatmapset) => number> = {
+  artist: (a, b) => a.artist.toLowerCase().localeCompare(b.artist.toLowerCase()),
+  favoriteCount: (a, b) => a.favorite_count - b.favorite_count,
+  playCount: (a, b) => a.play_count - b.play_count,
+  priority: (a, b) => {
+    // TODO: Add or update this sorting to put Loved maps on top when showing Status instead of Priority
+    return +(b.poll != null && !b.poll.passed) - +(a.poll != null && !a.poll.passed) ||
+      +(b.reviews.length === 0) - +(a.reviews.length === 0) ||
+      a.review_score - b.review_score;
+  },
+  score: (a, b) => a.score - b.score,
+  title: (a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()),
+  year: (a, b) => dateFromString(a.submitted_at).getFullYear() - dateFromString(b.submitted_at).getFullYear(),
+};
+
+function beatmapsetSortFn([sort, ascending]: [Sort, boolean]): (a: _Beatmapset, b: _Beatmapset) => number {
+  return (a, b) => (ascending ? 1 : -1) * beatmapsetSortFns[sort](a, b);
 }
 
 interface SubmissionListingProps {
   columns: ToggleableColumnsState;
   gameMode: GameMode;
   showStatus: boolean;
+  sorts: SortState;
 }
 
-function SubmissionListing({ columns, gameMode, showStatus }: SubmissionListingProps) {
+function SubmissionListing({ columns, gameMode, showStatus, sorts }: SubmissionListingProps) {
   const history = useHistory();
   const intl = useIntl();
   const { pathname: locationPath, state: submittedBeatmapsetId } = useLocation<number | undefined>();
@@ -165,9 +263,13 @@ function SubmissionListing({ columns, gameMode, showStatus }: SubmissionListingP
     if (submissionsInfo == null)
       return null;
 
+    // Beatmapsets come from API sorted by score descending
     return submissionsInfo.beatmapsets
-      .filter((beatmapset) => showStatus ? beatmapset.ranked_status > 0 : beatmapset.ranked_status <= 0);
-  }, [showStatus, submissionsInfo]);
+      .filter((beatmapset) => showStatus ? beatmapset.ranked_status > 0 : beatmapset.ranked_status <= 0)
+      .sort(beatmapsetSortFn(sorts[1]))
+      .sort(beatmapsetSortFn(sorts[0]))
+      .sort((a, b) => +b.poll_in_progress - +a.poll_in_progress);
+  }, [showStatus, sorts, submissionsInfo]);
 
   useEffect(() => {
     if (submissionsInfo == null || submittedBeatmapsetId == null)
@@ -211,11 +313,9 @@ function SubmissionListing({ columns, gameMode, showStatus }: SubmissionListingP
         prev!.usersById[review.captain_id] = { ...authUser!, alumni: authUser!.roles.alumni };
       }
 
-      // TODO: Re-sort beatmapsets?
-
       return {
-        beatmapsets: prev!.beatmapsets,
-        usersById: prev!.usersById,
+        beatmapsets: [...prev!.beatmapsets],
+        usersById: {...prev!.usersById},
       };
     });
   };

@@ -185,12 +185,7 @@ router.get('/submissions', asyncHandler(async (req, res) => {
     userIds.add(beatmapset.creator_id);
   }
 
-  beatmapsets
-    .sort((a, b) => b.score - a.score)
-    .sort((a, b) => b.review_score - a.review_score)
-    .sort((a, b) => +(a.reviews.length === 0) - +(b.reviews.length === 0))
-    .sort((a, b) => +(a.poll != null && !a.poll.passed) - +(b.poll != null && !b.poll.passed))
-    .sort((a, b) => +b.poll_in_progress - +a.poll_in_progress);
+  beatmapsets.sort((a, b) => b.score - a.score);
 
   // Should never happen
   if (userIds.size === 0) {
