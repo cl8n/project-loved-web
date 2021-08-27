@@ -3,11 +3,11 @@ import { dateFromString } from '../date-format';
 import { ISubmission, IUserWithoutRoles } from '../interfaces';
 import { UserInline } from '../UserInline';
 
-interface Props {
+interface SubmissionProps {
   submission: ISubmission & { submitter: IUserWithoutRoles | null };
 }
 
-export default function Submission({ submission }: Props) {
+export default function Submission({ submission }: SubmissionProps) {
   return (
     <li>
       <FormattedMessage

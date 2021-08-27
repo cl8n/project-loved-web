@@ -1,14 +1,14 @@
-import { apiErrorMessage, getSubmissions, useApi } from '../api';
-import SubmissionBeatmapset from './submission-beatmapset';
-import Help from '../Help';
-import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
-import { gameModeFromShortName, gameModeLongName, gameModes, gameModeShortName } from '../osu-helpers';
 import { ChangeEvent, useEffect, useMemo, useReducer, useState } from 'react';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
+import { apiErrorMessage, getSubmissions, useApi } from '../api';
+import Help from '../Help';
 import { GameMode, IReview } from '../interfaces';
+import { gameModeFromShortName, gameModeLongName, gameModes, gameModeShortName } from '../osu-helpers';
 import { useOsuAuth } from '../osuAuth';
 import { isCaptainForMode } from '../permissions';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { ToggleableColumn, toggleableColumns, ToggleableColumnsState } from './helpers';
+import SubmissionBeatmapset from './SubmissionBeatmapset';
 
 const messages = defineMessages({
   bpm: {

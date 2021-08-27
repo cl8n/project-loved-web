@@ -1,7 +1,7 @@
 import { GetSubmissionsResponseBody } from '../api';
 import { IReview, ISubmission } from '../interfaces';
 import Review from './Review';
-import Submission from './submission';
+import Submission from './Submission';
 
 interface SubmissionsListProps {
   reviews: IReview[];

@@ -14,7 +14,7 @@ import { Never } from '../Never';
 import { UserInline } from '../UserInline';
 import { ToggleableColumnsState } from './helpers';
 import ReviewEditor from './ReviewEditor';
-import SubmissionsList from './submissions-list';
+import SubmissionsList from './SubmissionsList';
 
 const messages = defineMessages({
   close: {
