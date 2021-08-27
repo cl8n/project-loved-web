@@ -264,7 +264,7 @@ function SubmissionListing({ columns, gameMode, showStatus }: SubmissionListingP
           <SubmissionBeatmapset
             key={beatmapset.id}
             beatmapset={beatmapset}
-            canReview={canReview}
+            canReview={canReview && !showStatus}
             columns={columns}
             gameMode={gameMode}
             onReviewUpdate={onReviewUpdate}
