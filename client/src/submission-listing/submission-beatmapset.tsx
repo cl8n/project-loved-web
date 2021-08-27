@@ -10,6 +10,7 @@ import heartIcon from '../images/icons8/heart.png';
 import musicalNotesIcon from '../images/icons8/musical-notes.png';
 import playIcon from '../images/icons8/play.png';
 import { GameMode, IReview } from '../interfaces';
+import { Never } from '../Never';
 import { UserInline } from '../UserInline';
 import { ToggleableColumnsState } from './helpers';
 import ReviewEditor from './ReviewEditor';
@@ -52,6 +53,26 @@ const messages = defineMessages({
     defaultMessage: 'Pending',
     description: 'Aggregate review score shown on submissions table for maps with no reviews',
   },
+  lovedByVoting: {
+    defaultMessage: 'Loved by vote',
+    description: 'Beatmap status shown on submissions table for maps that passed community voting',
+  },
+  ranked: {
+    defaultMessage: 'Ranked',
+    description: 'Beatmap status',
+  },
+  approved: {
+    defaultMessage: 'Approved',
+    description: 'Beatmap status',
+  },
+  qualified: {
+    defaultMessage: 'Qualified',
+    description: 'Beatmap status',
+  },
+  loved: {
+    defaultMessage: 'Loved',
+    description: 'Beatmap status',
+  },
 });
 
 interface SubmissionBeatmapsetProps {
@@ -61,10 +82,11 @@ interface SubmissionBeatmapsetProps {
   gameMode: GameMode;
   onReviewUpdate: (review: IReview) => void;
   review?: IReview;
+  showStatus: boolean;
   usersById: GetSubmissionsResponseBody['usersById'];
 }
 
-export default function SubmissionBeatmapset({ beatmapset, canReview, columns, gameMode, onReviewUpdate, review, usersById }: SubmissionBeatmapsetProps) {
+export default function SubmissionBeatmapset({ beatmapset, canReview, columns, gameMode, onReviewUpdate, review, showStatus, usersById }: SubmissionBeatmapsetProps) {
   const intl = useIntl();
   const { state: submittedBeatmapsetId } = useLocation<number | undefined>();
   const [expanded, setExpanded] = useState(submittedBeatmapsetId === beatmapset.id);
@@ -93,7 +115,10 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, columns, g
           <Beatmap beatmapset={beatmapset} />
         </td>
         <td><UserInline name={beatmapset.creator_name} user={usersById[beatmapset.creator_id]} /></td>
-        <PriorityCell beatmapset={beatmapset} />
+        {showStatus
+          ? <StatusCell beatmapset={beatmapset} />
+          : <PriorityCell beatmapset={beatmapset} />
+        }
         {columns.score && <td>{intl.formatNumber(beatmapset.score)}</td>}
         {columns.playCount && <td><img alt='' src={playIcon} /> {intl.formatNumber(beatmapset.play_count)}</td>}
         {columns.favoriteCount && <td><img alt='' src={heartIcon} /> {intl.formatNumber(beatmapset.favorite_count)}</td>}
@@ -189,4 +214,41 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
       {intl.formatMessage(priorityMessage)} ({intl.formatNumber(beatmapset.review_score, { signDisplay: 'exceptZero' })})
     </td>
   );
+}
+
+interface StatusCellProps {
+  beatmapset: GetSubmissionsResponseBody['beatmapsets'][0];
+}
+
+function StatusCell({ beatmapset }: StatusCellProps) {
+  const intl = useIntl();
+
+  // TODO: Support per-mode status for maps loved in only one mode or etc
+  if (beatmapset.ranked_status === 4) {
+    if (beatmapset.poll?.passed) {
+      return (
+        <td className='priority'>
+          <a href={`https://osu.ppy.sh/community/forums/topics/${beatmapset.poll.topic_id}`}>
+            {intl.formatMessage(messages.lovedByVoting)}
+          </a>
+        </td>
+      );
+    }
+
+    return <td className='priority high'>{intl.formatMessage(messages.loved)}</td>;
+  }
+
+  if (beatmapset.ranked_status === 3) {
+    return <td className='priority low'>{intl.formatMessage(messages.qualified)}</td>;
+  }
+
+  if (beatmapset.ranked_status === 2) {
+    return <td className='priority medium'>{intl.formatMessage(messages.approved)}</td>;
+  }
+
+  if (beatmapset.ranked_status === 1) {
+    return <td className='priority medium'>{intl.formatMessage(messages.ranked)}</td>;
+  }
+
+  return <td><Never /></td>;
 }

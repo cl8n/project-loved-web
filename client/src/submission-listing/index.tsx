@@ -3,7 +3,7 @@ import SubmissionBeatmapset from './submission-beatmapset';
 import Help from '../Help';
 import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import { gameModeFromShortName, gameModeLongName, gameModes, gameModeShortName } from '../osu-helpers';
-import { ChangeEvent, useEffect, useReducer } from 'react';
+import { ChangeEvent, useEffect, useMemo, useReducer, useState } from 'react';
 import { GameMode, IReview } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import { isCaptainForMode } from '../permissions';
@@ -31,6 +31,10 @@ const messages = defineMessages({
     defaultMessage: 'Plays',
     description: 'Submissions table header',
   },
+  priority: {
+    defaultMessage: 'Priority',
+    description: 'Submissions table header',
+  },
   score: {
     defaultMessage: 'Score',
     description: 'Submissions table header',
@@ -38,6 +42,10 @@ const messages = defineMessages({
   scoreHelp: {
     defaultMessage: 'A placeholder method to sort this listing. {definition}',
     description: 'Help text for "Score" submissions table header',
+  },
+  status: {
+    defaultMessage: 'Status',
+    description: 'Submissions table header',
   },
   year: {
     defaultMessage: 'Year',
@@ -64,6 +72,7 @@ export default function SubmissionListingContainer() {
     score: true,
     year: true,
   });
+  const [showStatus, setShowStatus] = useState(false);
 
   const gameMode = gameModeFromShortName(params.gameMode);
 
@@ -124,8 +133,18 @@ export default function SubmissionListingContainer() {
             </button>
           ))}
         </span>
+        <button
+          type='button'
+          className='push-right'
+          onClick={() => setShowStatus((prev) => !prev)}
+        >
+          {showStatus
+            ? 'Show pending'
+            : 'Show approved'
+          }
+        </button>
       </div>
-      <SubmissionListing columns={columns} gameMode={gameMode} />
+      <SubmissionListing columns={columns} gameMode={gameMode} showStatus={showStatus} />
     </>
   );
 }
@@ -133,14 +152,22 @@ export default function SubmissionListingContainer() {
 interface SubmissionListingProps {
   columns: ToggleableColumnsState;
   gameMode: GameMode;
+  showStatus: boolean;
 }
 
-function SubmissionListing({ columns, gameMode }: SubmissionListingProps) {
+function SubmissionListing({ columns, gameMode, showStatus }: SubmissionListingProps) {
   const history = useHistory();
   const intl = useIntl();
   const { pathname: locationPath, state: submittedBeatmapsetId } = useLocation<number | undefined>();
   const authUser = useOsuAuth().user;
   const [submissionsInfo, submissionsInfoError, setSubmissionsInfo] = useApi(getSubmissions, [gameMode]);
+  const displayBeatmapsets = useMemo(() => {
+    if (submissionsInfo == null)
+      return null;
+
+    return submissionsInfo.beatmapsets
+      .filter((beatmapset) => showStatus ? beatmapset.ranked_status > 0 : beatmapset.ranked_status <= 0);
+  }, [showStatus, submissionsInfo]);
 
   useEffect(() => {
     if (submissionsInfo == null || submittedBeatmapsetId == null)
@@ -155,7 +182,7 @@ function SubmissionListing({ columns, gameMode }: SubmissionListingProps) {
   if (submissionsInfoError != null)
     return <span className='panic'>Failed to load submissions: {apiErrorMessage(submissionsInfoError)}</span>;
 
-  if (submissionsInfo == null)
+  if (submissionsInfo == null || displayBeatmapsets == null)
     return <span>Loading submissions...</span>;
 
   const canReview = authUser != null && isCaptainForMode(authUser, gameMode);
@@ -204,11 +231,12 @@ function SubmissionListing({ columns, gameMode }: SubmissionListingProps) {
             description='Submissions table header'
             tagName='th'
           />
-          <FormattedMessage
-            defaultMessage='Priority'
-            description='Submissions table header'
-            tagName='th'
-          />
+          <th>
+            {showStatus
+              ? intl.formatMessage(messages.status)
+              : intl.formatMessage(messages.priority)
+            }
+          </th>
           {columns.score && (
             <th>
               {intl.formatMessage(messages.score)}
@@ -229,7 +257,7 @@ function SubmissionListing({ columns, gameMode }: SubmissionListingProps) {
         </tr>
       </thead>
       <tbody>
-        {submissionsInfo.beatmapsets.map((beatmapset) => (
+        {displayBeatmapsets.map((beatmapset) => (
           <SubmissionBeatmapset
             key={beatmapset.id}
             beatmapset={beatmapset}
@@ -238,6 +266,7 @@ function SubmissionListing({ columns, gameMode }: SubmissionListingProps) {
             gameMode={gameMode}
             onReviewUpdate={onReviewUpdate}
             review={canReview ? beatmapset.reviews.find((review) => review.captain_id === authUser!.id) : undefined}
+            showStatus={showStatus}
             usersById={submissionsInfo.usersById}
           />
         ))}

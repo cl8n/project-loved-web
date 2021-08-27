@@ -284,6 +284,10 @@ footer {
   > :not(:first-child) {
     margin-left: 1em;
   }
+
+  > .push-right {
+    margin-left: auto;
+  }
 }
 
 .flex-text {
