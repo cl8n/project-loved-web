@@ -178,6 +178,7 @@ router.get('/rounds-available', asyncHandler(async (_, res) => {
   );
 }));
 
+// TODO probably isn't needed given how often updates occur now
 router.post('/update-beatmapsets', asyncHandler(async (req, res) => {
   if (req.body.roundId == null)
     return res.status(422).json({ error: 'Missing round ID' });
