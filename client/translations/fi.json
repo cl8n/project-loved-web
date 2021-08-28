@@ -7,6 +7,10 @@
     "defaultMessage": "Muut ikonit: {author}",
     "description": "Credit in site footer"
   },
+  "+bCbtl": {
+    "defaultMessage": "Sarakkeita:",
+    "description": "Title for options to show or hide columns"
+  },
   "+d4ZcX": {
     "defaultMessage": "Moderaattorit",
     "description": "Team listing title"
@@ -30,6 +34,10 @@
   "2SX61V": {
     "defaultMessage": "Huomautukset",
     "description": "Mapper consents table header"
+  },
+  "2YTMfX": {
+    "defaultMessage": "Lähetä ja pysy sivulla",
+    "description": "Submit button that doesn't navigate to the submissions page afterward"
   },
   "2dOoEc": {
     "defaultMessage": "Metatietotarkistajat",
@@ -166,6 +174,10 @@
   "Lm++cZ": {
     "defaultMessage": "Project Loved",
     "description": "Site title"
+  },
+  "MLkhaQ": {
+    "defaultMessage": "Äänestyksessä",
+    "description": "Aggregate review score shown on submissions table for maps currently in community voting"
   },
   "MUDTXQ": {
     "defaultMessage": "Beatmapsetin linkki tai ID",
@@ -326,6 +338,10 @@
   "lRk8DP": {
     "defaultMessage": "heikosti vastaan",
     "description": "-1 review score. Fits into {score} of the review line"
+  },
+  "lULo+e": {
+    "defaultMessage": "Äänestetty pois",
+    "description": "Aggregate review score shown on submissions table for maps that failed community voting"
   },
   "lbC8H+": {
     "defaultMessage": "Mappaaja",
