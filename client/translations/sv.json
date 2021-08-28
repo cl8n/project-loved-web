@@ -7,6 +7,10 @@
     "defaultMessage": "Andra ikoner av {author}",
     "description": "Credit in site footer"
   },
+  "+bCbtl": {
+    "defaultMessage": "Kolumner:",
+    "description": "Title for options to show or hide columns"
+  },
   "+d4ZcX": {
     "defaultMessage": "Moderatorer",
     "description": "Team listing title"
@@ -30,6 +34,10 @@
   "2SX61V": {
     "defaultMessage": "Noteringar",
     "description": "Mapper consents table header"
+  },
+  "2YTMfX": {
+    "defaultMessage": "Skicka och stanna kvar på sidan",
+    "description": "Submit button that doesn't navigate to the submissions page afterward"
   },
   "2dOoEc": {
     "defaultMessage": "Metadata-granskare",
@@ -166,6 +174,10 @@
   "Lm++cZ": {
     "defaultMessage": "Project Loved",
     "description": "Site title"
+  },
+  "MLkhaQ": {
+    "defaultMessage": "I votering",
+    "description": "Aggregate review score shown on submissions table for maps currently in community voting"
   },
   "MUDTXQ": {
     "defaultMessage": "Beatmapset-länk eller -ID",
@@ -326,6 +338,10 @@
   "lRk8DP": {
     "defaultMessage": "svag avvisning",
     "description": "-1 review score. Fits into {score} of the review line"
+  },
+  "lULo+e": {
+    "defaultMessage": "Bortröstad",
+    "description": "Aggregate review score shown on submissions table for maps that failed community voting"
   },
   "lbC8H+": {
     "defaultMessage": "Mappare",
