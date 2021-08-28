@@ -100,7 +100,7 @@ function sortReducer(prevState: SortState, action: [0 | 1, 'sort', Sort] | [0 | 
 export default function SubmissionListingContainer() {
   const history = useHistory();
   const intl = useIntl();
-  const params = useParams<{ gameMode: string; }>();
+  const params = useParams<{ gameMode: string | undefined; }>();
   const [columns, toggleColumn] = useReducer(columnsReducer, {
     bpm: true,
     difficultyCount: true,
@@ -112,7 +112,7 @@ export default function SubmissionListingContainer() {
   const [showStatus, setShowStatus] = useState(false);
   const [sorts, changeSort] = useReducer(sortReducer, [['priority', false], ['score', false]]);
 
-  const gameMode = gameModeFromShortName(params.gameMode);
+  const gameMode = params.gameMode == null ? null : gameModeFromShortName(params.gameMode);
 
   if (gameMode == null) {
     return <Redirect to='/submissions/osu' />;

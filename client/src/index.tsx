@@ -30,7 +30,7 @@ render(
           <main className='big-center'>
             <Switch>
               <Redirect exact from='/' to='/submissions/osu' />
-              <Route path='/submissions/:gameMode'><SubmissionListingContainer /></Route>
+              <Route path='/submissions/:gameMode?'><SubmissionListingContainer /></Route>
               <Route path='/submit'><SubmissionForm /></Route>
               <Route path='/mappers'><MapperConsents /></Route>
               <Route path='/team'><Team /></Route>
