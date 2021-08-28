@@ -178,42 +178,6 @@ router.get('/rounds-available', asyncHandler(async (_, res) => {
   );
 }));
 
-// TODO probably isn't needed given how often updates occur now
-router.post('/update-beatmapsets', asyncHandler(async (req, res) => {
-  if (req.body.roundId == null)
-    return res.status(422).json({ error: 'Missing round ID' });
-
-  if ((await db.queryOne('SELECT 1 FROM rounds WHERE id = ?', req.body.roundId)) == null)
-    return res.status(422).json({ error: 'Invalid round ID' });
-
-  const beatmapsets = await db.query(`
-    SELECT beatmapsets.id
-    FROM beatmapsets
-    INNER JOIN nominations
-      ON beatmapsets.id = nominations.beatmapset_id
-    WHERE nominations.round_id = ?
-  `, req.body.roundId);
-  const beatmapsetIds = [...new Set(beatmapsets.map((beatmapset) => beatmapset.id))];
-  const messages = [];
-
-  const osu = new Osu();
-  await osu.getClientCredentialsToken();
-
-  for (let i = 0; i < beatmapsetIds.length; i++) {
-    const beatmapset = await osu.createOrRefreshBeatmapset(beatmapsetIds[i], true);
-
-    if (beatmapset == null)
-      messages.push(`Failed to update beatmapset #${beatmapsetIds[i]}`);
-    else
-      messages.push(`Updated beatmapset #${beatmapsetIds[i]}`);
-
-    if (i < beatmapsetIds.length - 1)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-  }
-
-  res.json(messages);
-}));
-
 router.post('/results-post-ids', asyncHandler(async (req, res) => {
   if (req.body.roundId == null)
     return res.status(422).json({ error: 'Missing round ID' });
