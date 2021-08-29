@@ -60,7 +60,7 @@ export default function InnerForm() {
           />
         </label>
       </h2>
-      <input type='text' name='beatmapset' required pattern='(?:/(?:beatmapset)?s/|^)\d+' />
+      <input type='text' name='beatmapset' required pattern='(?:.*/(?:beatmapset)?s/)?\d+.*' size={51} />
       <h2>
         <label htmlFor='gameModes'>
           <FormattedMessage
