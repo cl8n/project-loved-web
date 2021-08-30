@@ -127,6 +127,7 @@ router.get('/data', asyncHandler(async (req, res) => {
       process.env.DISCORD_WEBHOOK_MANIA || null,
     ],
     nominations,
+    // TODO may break when not all game modes are present
     results_post_ids: lastRoundResultsPostIds,
     round,
   });
