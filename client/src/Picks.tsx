@@ -10,7 +10,7 @@ import { AssigneeType, DescriptionState, GameMode, ICaptain, INomination, INomin
 import { Modal } from './Modal';
 import { Never } from './Never';
 import { Orderable } from './Orderable';
-import { gameModeLongName, gameModes } from './osu-helpers';
+import { gameModeLongName } from './osu-helpers';
 import { useOsuAuth } from './osuAuth';
 import { canWriteAs, isCaptainForMode } from './permissions';
 import Header from './round/Header';
@@ -150,6 +150,7 @@ export function Picks() {
   };
   const canOrder = canAdd;
 
+  const roundGameModes: GameMode[] = Object.keys(round.game_modes).map((gameMode) => parseInt(gameMode, 10));
   const pollsOpened = round.polls_started_at != null && new Date() > dateFromString(round.polls_started_at);
 
   return (
@@ -159,7 +160,7 @@ export function Picks() {
         onRoundUpdate={onRoundUpdate}
         round={round}
       />
-      {gameModes.map((gameMode) => (
+      {roundGameModes.map((gameMode) => (
         <div key={gameMode} className='content-block'>
           <h2>
             {gameModeLongName(gameMode)}
