@@ -20,13 +20,15 @@ export function Modal(props: ModalProps) {
   }, []);
 
   useEffect(() => {
-    if (!hasOpened && props.open) {
-      setHasOpened(true);
+    if (props.open) {
+      if (hasOpened) {
+        modalContainerRef.current.querySelector<HTMLDivElement>('.modal')!.focus();
+      } else {
+        setHasOpened(true);
+      }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.open]);
+  }, [hasOpened, props.open]);
 
-  // TODO not working
   const handleEsc = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== 'Escape')
       return;
@@ -54,6 +56,7 @@ export function Modal(props: ModalProps) {
       <div
         className='modal content-block'
         onKeyDown={handleEsc}
+        tabIndex={0}
       >
         {props.children}
       </div>

@@ -3,6 +3,10 @@
   max-width: 800px;
   padding: 1em;
 
+  &:focus, &:focus-visible {
+    outline: none;
+  }
+
   &-overlay {
     background-color: #0008;
     display: none;
