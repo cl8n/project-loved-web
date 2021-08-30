@@ -201,6 +201,7 @@ router.post('/results-post-ids', asyncHandler(async (req, res) => {
         SET results_post_id = ?
         WHERE round_id = ?
           AND game_mode = ?
+          AND results_post_id IS NULL
       `, [
         postId,
         req.body.roundId,
