@@ -27,6 +27,10 @@
     "defaultMessage": "If the map you submit is either very unpopular or completely unplayable, captains may never check it. Please only submit maps that you believe would add genuine value to the Loved category.",
     "description": "Submission form list item 2"
   },
+  "06WpMi": {
+    "defaultMessage": "Ranked",
+    "description": "Beatmap status"
+  },
   "0Vz3c/": {
     "defaultMessage": "Percent and total",
     "description": "Result display option for poll results table"
@@ -123,6 +127,10 @@
     "defaultMessage": "What you write on this form will be visible publicly, so don't write something that you don't want others to see. You don't have to fill in the reason field if you don't want to.",
     "description": "Submission form list item 1"
   },
+  "F1tQfW": {
+    "defaultMessage": "Title",
+    "description": "Submissions table sort option"
+  },
   "H65rvb": {
     "defaultMessage": "You aren't cool enough to see this page.",
     "description": "Error message shown when logged in but not having permission to view a page"
@@ -215,9 +223,17 @@
     "defaultMessage": "strong rejection",
     "description": "-3 review score. Fits into {score} of the review line"
   },
+  "R0gvL0": {
+    "defaultMessage": "Artist",
+    "description": "Submissions table sort option"
+  },
   "RHg+09": {
     "defaultMessage": "For which game modes do you want this map to be Loved?",
     "description": "Submission form game mode input prompt"
+  },
+  "RL5Qu1": {
+    "defaultMessage": "Approved",
+    "description": "Beatmap status"
   },
   "RuFprR": {
     "defaultMessage": "Other",
@@ -263,6 +279,10 @@
     "defaultMessage": "Descending",
     "description": "Round order option for poll results table"
   },
+  "VYIbMd": {
+    "defaultMessage": "Loved by vote",
+    "description": "Beatmap status shown on submissions table for maps that passed community voting"
+  },
   "WEpxnj": {
     "defaultMessage": "Plays",
     "description": "Submissions table header"
@@ -307,6 +327,10 @@
     "defaultMessage": "Pending",
     "description": "Aggregate review score shown on submissions table for maps with no reviews"
   },
+  "dG9/uH": {
+    "defaultMessage": "Qualified",
+    "description": "Beatmap status"
+  },
   "e6WZri": {
     "defaultMessage": "support",
     "description": "+2 review score. Fits into {score} of the review line"
@@ -330,6 +354,10 @@
   "kr2W+L": {
     "defaultMessage": "<p>Filling out this form helps <teamLink>captains</teamLink> decide which maps to nominate for Loved in the monthly polls. Even if a map has already been <submissionsLink>submitted</submissionsLink>, you can add your thoughts about the map here.</p> <p>Some things to keep in mind:</p>",
     "description": "Submission form intro"
+  },
+  "l39agD": {
+    "defaultMessage": "Status",
+    "description": "Submissions table header"
   },
   "lMSjPi": {
     "defaultMessage": "This isn't available to you yet. Check back soon!",
@@ -387,6 +415,10 @@
     "defaultMessage": "Submissions",
     "description": "Nav link"
   },
+  "qYCjeT": {
+    "defaultMessage": "Loved",
+    "description": "Beatmap status"
+  },
   "qfEiSZ": {
     "defaultMessage": "Total",
     "description": "Poll results table header"
@@ -426,5 +458,9 @@
   "y+BE4P": {
     "defaultMessage": "All",
     "description": "Game mode option for poll results table"
+  },
+  "zn6DBN": {
+    "defaultMessage": "Sort by:",
+    "description": "Title for sorting options"
   }
 }
