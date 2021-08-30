@@ -79,14 +79,14 @@ interface SubmissionBeatmapsetProps {
   beatmapset: GetSubmissionsResponseBody['beatmapsets'][0];
   canReview: boolean;
   columns: ToggleableColumnsState;
+  filterToApproved: boolean;
   gameMode: GameMode;
   onReviewUpdate: (review: IReview) => void;
   review?: IReview;
-  showStatus: boolean;
   usersById: GetSubmissionsResponseBody['usersById'];
 }
 
-export default function SubmissionBeatmapset({ beatmapset, canReview, columns, gameMode, onReviewUpdate, review, showStatus, usersById }: SubmissionBeatmapsetProps) {
+export default function SubmissionBeatmapset({ beatmapset, canReview, columns, filterToApproved, gameMode, onReviewUpdate, review, usersById }: SubmissionBeatmapsetProps) {
   const intl = useIntl();
   const { state: submittedBeatmapsetId } = useLocation<number | undefined>();
   const [expanded, setExpanded] = useState(submittedBeatmapsetId === beatmapset.id);
@@ -115,7 +115,7 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, columns, g
           <Beatmap beatmapset={beatmapset} />
         </td>
         <td><UserInline name={beatmapset.creator_name} user={usersById[beatmapset.creator_id]} /></td>
-        {showStatus
+        {filterToApproved
           ? <StatusCell beatmapset={beatmapset} />
           : <PriorityCell beatmapset={beatmapset} />
         }
