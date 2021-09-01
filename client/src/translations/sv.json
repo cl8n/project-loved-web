@@ -1,430 +1,323 @@
 {
   "+3rK3I": {
-    "defaultMessage": "Inget svar",
-    "description": "Mapper consent shown in mapper consents table"
+    "defaultMessage": "Inget svar"
   },
   "+9RCG/": {
-    "defaultMessage": "Andra ikoner av {author}",
-    "description": "Credit in site footer"
+    "defaultMessage": "Andra ikoner av {author}"
   },
   "+bCbtl": {
-    "defaultMessage": "Kolumner:",
-    "description": "Title for options to show or hide columns"
+    "defaultMessage": "Kolumner:"
   },
   "+d4ZcX": {
-    "defaultMessage": "Moderatorer",
-    "description": "Team listing title"
+    "defaultMessage": "Moderatorer"
   },
   "/CNHO3": {
-    "defaultMessage": "Logga in med osu!",
-    "description": "Button in site header to log in"
+    "defaultMessage": "Logga in med osu!"
   },
   "/SSCZX": {
-    "defaultMessage": "Ja",
-    "description": "Poll results table header"
+    "defaultMessage": "Ja"
   },
   "0+S3hP": {
-    "defaultMessage": "Om mappen du skickar in är antingen väldigt opopulär eller omöjlig att spela, kan det vara att kaptener inte tittar på den. Var god bara skicka in maps som du tycker skulle ge värde till Loved-kategorin.",
-    "description": "Submission form list item 2"
+    "defaultMessage": "Om mappen du skickar in är antingen väldigt opopulär eller omöjlig att spela, kan det vara att kaptener inte tittar på den. Var god bara skicka in maps som du tycker skulle ge värde till Loved-kategorin."
   },
   "0Vz3c/": {
-    "defaultMessage": "Procent och summa",
-    "description": "Result display option for poll results table"
+    "defaultMessage": "Procent och summa"
   },
   "2SX61V": {
-    "defaultMessage": "Noteringar",
-    "description": "Mapper consents table header"
+    "defaultMessage": "Noteringar"
   },
   "2YTMfX": {
-    "defaultMessage": "Skicka och stanna kvar på sidan",
-    "description": "Submit button that doesn't navigate to the submissions page afterward"
+    "defaultMessage": "Skicka och stanna kvar på sidan"
   },
   "2dOoEc": {
-    "defaultMessage": "Metadata-granskare",
-    "description": "Team listing title"
+    "defaultMessage": "Metadata-granskare"
   },
   "39zfVl": {
-    "defaultMessage": "svagt stöd",
-    "description": "+1 review score. Fits into {score} of the review line"
+    "defaultMessage": "svagt stöd"
   },
   "3E4vRf": {
-    "defaultMessage": "Låg",
-    "description": "Aggregate review score shown on submissions table"
+    "defaultMessage": "Låg"
   },
   "3J+k4U": {
-    "defaultMessage": "Forum",
-    "description": "Nav link"
+    "defaultMessage": "Forum"
   },
   "3Kch6P": {
-    "defaultMessage": "Stigande",
-    "description": "Round order option for poll results table"
+    "defaultMessage": "Stigande"
   },
   "3RdYB+": {
-    "defaultMessage": "Spelläge:",
-    "description": "Selector to change game mode"
+    "defaultMessage": "Spelläge:"
   },
   "5NZbY5": {
-    "defaultMessage": "Resultatsdisplay:",
-    "description": "Selector to change result display in poll results table"
+    "defaultMessage": "Resultatsdisplay:"
   },
   "5OS21f": {
-    "defaultMessage": "Externt:",
-    "description": "Nav separator"
+    "defaultMessage": "Externt:"
   },
   "5oqovx": {
-    "defaultMessage": "Skicka in en map",
-    "description": "Nav link"
+    "defaultMessage": "Skicka in en map"
   },
   "7CJMwD": {
-    "defaultMessage": "Prioritet",
-    "description": "Submissions table header"
+    "defaultMessage": "Prioritet"
   },
   "8bAHuK": {
-    "defaultMessage": "Stäng",
-    "description": "Button to close forms, dropdowns, modals, etc."
+    "defaultMessage": "Stäng"
   },
   "8l6BC0": {
-    "defaultMessage": "Mapparnas samtycke",
-    "description": "Mapper consents page title"
+    "defaultMessage": "Mapparnas samtycke"
   },
   "9cv8r4": {
-    "defaultMessage": "Beatmapset",
-    "description": "Poll results table header"
+    "defaultMessage": "Beatmapset"
   },
   "AGzOYr": {
-    "defaultMessage": "Skicka in en map för Loved!",
-    "description": "Submission form title"
+    "defaultMessage": "Skicka in en map för Loved!"
   },
   "BGA5hC": {
-    "defaultMessage": "Utvecklare",
-    "description": "Team listing title"
+    "defaultMessage": "Utvecklare"
   },
   "BSKWqB": {
-    "defaultMessage": "Team",
-    "description": "Nav link"
+    "defaultMessage": "Team"
   },
   "Be0kKF": {
-    "defaultMessage": "Mappen du skickar in kanske aldrig blir nominerad för Loved, även om den har merit. Vid tillfället kan maps inte ges Loved-status hur snabbt som helst, så det kan hända att kaptener hela tiden hittar bättre kandidater än dem du skickar in.",
-    "description": "Submission form list item 3"
+    "defaultMessage": "Mappen du skickar in kanske aldrig blir nominerad för Loved, även om den har merit. Vid tillfället kan maps inte ges Loved-status hur snabbt som helst, så det kan hända att kaptener hela tiden hittar bättre kandidater än dem du skickar in."
   },
   "CIAu6S": {
-    "defaultMessage": "Wiki",
-    "description": "Nav link"
+    "defaultMessage": "Wiki"
   },
   "CxsxoI": {
-    "defaultMessage": "Skickar in...",
-    "description": "Submit button when in progress"
+    "defaultMessage": "Skickar in..."
   },
   "Do+EPJ": {
-    "defaultMessage": "{user} röstade med {score} {timestamp, date, long}",
-    "description": "Review line"
+    "defaultMessage": "{user} röstade med {score} {timestamp, date, long}"
   },
   "EqGiDp": {
-    "defaultMessage": "Det du skriver i detta formulär kommer synas offentligt, så skriv inget som du inte vill att andra ska se. Du behöver inte skriva något i anledningsfältet om du inte vill.",
-    "description": "Submission form list item 1"
+    "defaultMessage": "Det du skriver i detta formulär kommer synas offentligt, så skriv inget som du inte vill att andra ska se. Du behöver inte skriva något i anledningsfältet om du inte vill."
   },
   "H65rvb": {
-    "defaultMessage": "Du är inte tillräckligt cool för att se denna sida.",
-    "description": "Error message shown when logged in but not having permission to view a page"
+    "defaultMessage": "Du är inte tillräckligt cool för att se denna sida."
   },
   "HVzPRU": {
-    "defaultMessage": "Nej",
-    "description": "Poll results table header"
+    "defaultMessage": "Nej"
   },
   "Hf1vPz": {
-    "defaultMessage": "Val",
-    "description": "Nav link"
+    "defaultMessage": "Val"
   },
   "HvpI7B": {
-    "defaultMessage": "Borttaget beatmapset",
-    "description": "Placeholder for beatmapsets that were deleted from osu!"
+    "defaultMessage": "Borttaget beatmapset"
   },
   "IO8Ye2": {
-    "defaultMessage": "Poäng",
-    "description": "Submissions table header"
+    "defaultMessage": "Poäng"
   },
   "IiYTWb": {
-    "defaultMessage": "Nuvarande team",
-    "description": "Team listing group title"
+    "defaultMessage": "Nuvarande team"
   },
   "JHNIy2": {
-    "defaultMessage": "Ordning av rundor:",
-    "description": "Selector to change round order in poll results table"
+    "defaultMessage": "Ordning av rundor:"
   },
   "JPKVz4": {
-    "defaultMessage": "Beatmapset",
-    "description": "Mapper beatmapset consents table header"
+    "defaultMessage": "Beatmapset"
   },
   "JPSkxB": {
-    "defaultMessage": "{country} flagga",
-    "description": "Country flag image alt text"
+    "defaultMessage": "{country} flagga"
   },
   "Jy6JW8": {
-    "defaultMessage": "Jag vet inte vem du är! Försök <a>logga in</a> först.",
-    "description": "Error message shown when trying to view a protected page before logging in"
+    "defaultMessage": "Jag vet inte vem du är! Försök <a>logga in</a> först."
   },
   "LBBZpt": {
-    "defaultMessage": "Spelläge",
-    "description": "Poll results table header"
+    "defaultMessage": "Spelläge"
   },
   "Ll1LUO": {
-    "defaultMessage": "starkt stöd",
-    "description": "+3 review score. Fits into {score} of the review line"
+    "defaultMessage": "starkt stöd"
   },
   "Lm++cZ": {
-    "defaultMessage": "Project Loved",
-    "description": "Site title"
+    "defaultMessage": "Project Loved"
   },
   "MLkhaQ": {
-    "defaultMessage": "I votering",
-    "description": "Aggregate review score shown on submissions table for maps currently in community voting"
+    "defaultMessage": "I votering"
   },
   "MUDTXQ": {
-    "defaultMessage": "Beatmapset-länk eller -ID",
-    "description": "Submission form beatmapset input prompt"
+    "defaultMessage": "Beatmapset-länk eller -ID"
   },
   "MoR8Of": {
-    "defaultMessage": "Mapparnas samtycke",
-    "description": "Nav link"
+    "defaultMessage": "Mapparnas samtycke"
   },
   "N4xf2i": {
-    "defaultMessage": "Favoriter",
-    "description": "Submissions table header"
+    "defaultMessage": "Favoriter"
   },
   "NG8X9U": {
-    "defaultMessage": "Under konstruktion",
-    "description": "Title of page not yet ready for public access"
+    "defaultMessage": "Under konstruktion"
   },
   "NjIKQe": {
-    "defaultMessage": "Kan ej nås",
-    "description": "Mapper consent shown in mapper consents table"
+    "defaultMessage": "Kan ej nås"
   },
   "O2IvSs": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} skickade in denna map {timestamp, date, long}} other{{user} skickade in denna map}}",
-    "description": "Submission line"
+    "defaultMessage": "{hasTimestamp,select,true{{user} skickade in denna map {timestamp, date, long}} other{{user} skickade in denna map}}"
   },
   "Oep6va": {
-    "defaultMessage": "Skicka in",
-    "description": "Submit button"
+    "defaultMessage": "Skicka in"
   },
   "PCZJkZ": {
-    "defaultMessage": "Källkod och problemspårning",
-    "description": "Link to GitHub repository in site footer"
+    "defaultMessage": "Källkod och problemspårning"
   },
   "PpxIZP": {
-    "defaultMessage": "stark avvisning",
-    "description": "-3 review score. Fits into {score} of the review line"
+    "defaultMessage": "stark avvisning"
   },
   "RHg+09": {
-    "defaultMessage": "Vilka spellägen av denna map tycker du borde hamna i Loved?",
-    "description": "Submission form game mode input prompt"
+    "defaultMessage": "Vilka spellägen av denna map tycker du borde hamna i Loved?"
   },
   "RuFprR": {
-    "defaultMessage": "Annat",
-    "description": "Team listing title for any role not explicitly listed"
+    "defaultMessage": "Annat"
   },
   "ScBgfg": {
-    "defaultMessage": "ingen preferens",
-    "description": "0 review score. Fits into {score} of the review line"
+    "defaultMessage": "ingen preferens"
   },
   "Sti+Y3": {
-    "defaultMessage": "Efter att du skickat in en map kan du se dess status på <submissionsLink>\"Inlämningar\"-sidan</submissionsLink>.",
-    "description": "Submission form list item 4"
+    "defaultMessage": "Efter att du skickat in en map kan du se dess status på <submissionsLink>\"Inlämningar\"-sidan</submissionsLink>."
   },
   "Tf7XH9": {
-    "defaultMessage": "Noteringar",
-    "description": "Mapper beatmapset consents table header"
+    "defaultMessage": "Noteringar"
   },
   "TqI9fE": {
-    "defaultMessage": "Admin:",
-    "description": "Nav separator"
+    "defaultMessage": "Admin:"
   },
   "TrDD+Y": {
-    "defaultMessage": "Du måste <a>logga in</a> för att fylla ut formuläret.",
-    "description": "Submission form login prompt"
+    "defaultMessage": "Du måste <a>logga in</a> för att fylla ut formuläret."
   },
   "U1fcdw": {
-    "defaultMessage": "Nyhetsredaktörer / Managers",
-    "description": "Team listing title"
+    "defaultMessage": "Nyhetsredaktörer / Managers"
   },
   "UjLvid": {
-    "defaultMessage": "Expandera",
-    "description": "Button to expand dropdowns"
+    "defaultMessage": "Expandera"
   },
   "UxNmCh": {
-    "defaultMessage": "Medium",
-    "description": "Aggregate review score shown on submissions table"
+    "defaultMessage": "Medium"
   },
   "V5W+3b": {
-    "defaultMessage": "Samtycke",
-    "description": "Mapper beatmapset consents table header"
+    "defaultMessage": "Samtycke"
   },
   "VHEp9G": {
-    "defaultMessage": "Fallande",
-    "description": "Round order option for poll results table"
+    "defaultMessage": "Fallande"
   },
   "WEpxnj": {
-    "defaultMessage": "Spelningar",
-    "description": "Submissions table header"
+    "defaultMessage": "Spelningar"
   },
   "ZEsdcm": {
-    "defaultMessage": "Forumämne",
-    "description": "Poll results table header"
+    "defaultMessage": "Forumämne"
   },
   "ZMV3ed": {
-    "defaultMessage": "Flaggikoner av {author1} och {author2}",
-    "description": "Credit in site footer"
+    "defaultMessage": "Flaggikoner av {author1} och {author2}"
   },
   "ZWbq0S": {
-    "defaultMessage": "År",
-    "description": "Submissions table header"
+    "defaultMessage": "År"
   },
   "ZZqLxU": {
-    "defaultMessage": "Svårighetsgrader",
-    "description": "Submissions table header"
+    "defaultMessage": "Svårighetsgrader"
   },
   "aHJR9F": {
-    "defaultMessage": "Samtycke",
-    "description": "Mapper consents table header"
+    "defaultMessage": "Samtycke"
   },
   "bKfIQC": {
-    "defaultMessage": "Varför vill du se denna map i Loved? <fade>(frivillig)</fade>",
-    "description": "Submission form reason input prompt"
+    "defaultMessage": "Varför vill du se denna map i Loved? <fade>(frivillig)</fade>"
   },
   "c/0N4+": {
-    "defaultMessage": "avvisning",
-    "description": "-2 review score. Fits into {score} of the review line"
+    "defaultMessage": "avvisning"
   },
   "c2UCNp": {
-    "defaultMessage": "Procent",
-    "description": "Poll results table header"
+    "defaultMessage": "Procent"
   },
   "ccf+6T": {
-    "defaultMessage": "{gameMode}-kaptener",
-    "description": "Team listing title"
+    "defaultMessage": "{gameMode}-kaptener"
   },
   "cwgho6": {
-    "defaultMessage": "Inväntar röster",
-    "description": "Aggregate review score shown on submissions table for maps with no reviews"
+    "defaultMessage": "Inväntar röster"
   },
   "e6WZri": {
-    "defaultMessage": "stöd",
-    "description": "+2 review score. Fits into {score} of the review line"
+    "defaultMessage": "stöd"
   },
   "gLG6dL": {
-    "defaultMessage": "Inlämnade maps",
-    "description": "Submissions table title"
+    "defaultMessage": "Inlämnade maps"
   },
   "gvLZL5": {
-    "defaultMessage": "Logga ut",
-    "description": "Button in site header to log out"
+    "defaultMessage": "Logga ut"
   },
   "iCkWun": {
-    "defaultMessage": "Runda",
-    "description": "Poll results table header"
+    "defaultMessage": "Runda"
   },
   "jlkqJz": {
-    "defaultMessage": "Hantera",
-    "description": "Nav link"
+    "defaultMessage": "Hantera"
   },
   "kr2W+L": {
-    "defaultMessage": "<p>Att fylla ut denna formulär hjälper <teamLink>kaptener</teamLink> välja vilka maps att nominera till Loved i röstningarna varje månad. Även om en map har redan <submissionsLink>skickats in</submissionsLink>, kan du tycka till om den här.</p> <p>Några saker att tänka på:</p>",
-    "description": "Submission form intro"
+    "defaultMessage": "<p>Att fylla ut denna formulär hjälper <teamLink>kaptener</teamLink> välja vilka maps att nominera till Loved i röstningarna varje månad. Även om en map har redan <submissionsLink>skickats in</submissionsLink>, kan du tycka till om den här.</p> <p>Några saker att tänka på:</p>"
   },
   "lMSjPi": {
-    "defaultMessage": "Detta är inte tillgängligt till dig än. Kom tillbaka senare!",
-    "description": "Body of page not yet ready for public access"
+    "defaultMessage": "Detta är inte tillgängligt till dig än. Kom tillbaka senare!"
   },
   "lRk8DP": {
-    "defaultMessage": "svag avvisning",
-    "description": "-1 review score. Fits into {score} of the review line"
+    "defaultMessage": "svag avvisning"
   },
   "lULo+e": {
-    "defaultMessage": "Bortröstad",
-    "description": "Aggregate review score shown on submissions table for maps that failed community voting"
+    "defaultMessage": "Bortröstad"
   },
   "lbC8H+": {
-    "defaultMessage": "Mappare",
-    "description": "Mapper consents table header"
+    "defaultMessage": "Mappare"
   },
   "lz1fkx": {
-    "defaultMessage": "Ja",
-    "description": "Boolean"
+    "defaultMessage": "Ja"
   },
   "me3BjX": {
-    "defaultMessage": "Statistik",
-    "description": "Nav link"
+    "defaultMessage": "Statistik"
   },
   "mhBW5h": {
-    "defaultMessage": "Mappare",
-    "description": "Submissions table header"
+    "defaultMessage": "Mappare"
   },
   "mucI2W": {
-    "defaultMessage": "Tillfälligt sätt att sortera denna listning. {definition}",
-    "description": "Help text for \"Score\" submissions table header"
+    "defaultMessage": "Tillfälligt sätt att sortera denna listning. {definition}"
   },
   "nWt/xH": {
-    "defaultMessage": "Denna listning används inte än aktivt av kaptener. Inlämningar via Google Forms kommer snart att flyttas hit, och därefter kommer kaptener kunna använda denna sida istället för Google Sheets. Just nu kan du använda antingen denna sida eller Google Forms för att skicka in maps.",
-    "description": "Warning box above submissions table"
+    "defaultMessage": "Denna listning används inte än aktivt av kaptener. Inlämningar via Google Forms kommer snart att flyttas hit, och därefter kommer kaptener kunna använda denna sida istället för Google Sheets. Just nu kan du använda antingen denna sida eller Google Forms för att skicka in maps."
   },
   "nn9fFb": {
-    "defaultMessage": "BPM",
-    "description": "Submissions table header"
+    "defaultMessage": "BPM"
   },
   "pLUxkj": {
-    "defaultMessage": "Nej",
-    "description": "Boolean"
+    "defaultMessage": "Nej"
   },
   "pXOU6C": {
-    "defaultMessage": "Det finns inget här =(",
-    "description": "Body of \"not found\" page"
+    "defaultMessage": "Det finns inget här =("
   },
   "phKBIX": {
-    "defaultMessage": "Okänt land",
-    "description": "Shown in flag image alt text for the \"?\" flag"
+    "defaultMessage": "Okänt land"
   },
   "pvfxi+": {
-    "defaultMessage": "Inlämningar",
-    "description": "Nav link"
+    "defaultMessage": "Inlämningar"
   },
   "qfEiSZ": {
-    "defaultMessage": "Summa",
-    "description": "Poll results table header"
+    "defaultMessage": "Summa"
   },
   "sG6ons": {
-    "defaultMessage": "Loved-listning",
-    "description": "Nav link"
+    "defaultMessage": "Loved-listning"
   },
   "tCV6dl": {
-    "defaultMessage": "Språk: {selector}",
-    "description": "Selector in site header to change language"
+    "defaultMessage": "Språk: {selector}"
   },
   "uNpYlX": {
-    "defaultMessage": "Avvisad",
-    "description": "Aggregate review score shown on submissions table"
+    "defaultMessage": "Avvisad"
   },
   "urIF1D": {
-    "defaultMessage": "Beatmapset",
-    "description": "Submissions table header"
+    "defaultMessage": "Beatmapset"
   },
   "vDQerf": {
-    "defaultMessage": "Röstningsresultat",
-    "description": "Poll results title"
+    "defaultMessage": "Röstningsresultat"
   },
   "wGcwBN": {
-    "defaultMessage": "Hög",
-    "description": "Aggregate review score shown on submissions table"
+    "defaultMessage": "Hög"
   },
   "wOZypU": {
-    "defaultMessage": "Alumni",
-    "description": "Team listing group title"
+    "defaultMessage": "Alumni"
   },
   "xv9aUB": {
-    "defaultMessage": "Ja och nej",
-    "description": "Result display option for poll results table"
+    "defaultMessage": "Ja och nej"
   },
   "y+BE4P": {
-    "defaultMessage": "Alla",
-    "description": "Game mode option for poll results table"
+    "defaultMessage": "Alla"
   }
 }
