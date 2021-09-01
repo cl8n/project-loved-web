@@ -18,6 +18,7 @@ export const locales = [
   { code: 'en', name: 'English' },
   { code: 'fi', name: 'Suomi' },
   { code: 'sv', name: 'Svenska' },
+  { code: 'tr', name: 'Türkçe' },
 ] as const;
 
 export function IntlProviderWrapper({ children }: PropsWithChildren<{}>) {
