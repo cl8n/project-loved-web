@@ -68,6 +68,8 @@
     "sass": "^1.38.2",
     "sass-loader": "^10.2.0",
     "semver": "7.3.5",
+    "slate": "^0.65.3",
+    "slate-react": "^0.65.3",
     "style-loader": "1.3.0",
     "superagent": "^6.1.0",
     "terser-webpack-plugin": "4.2.3",
@@ -84,8 +86,8 @@
     "start": "node scripts/start.js",
     "build": "npm run compile-translations && node scripts/build.js",
     "test": "node scripts/test.js",
-    "extract-translations": "formatjs extract --flatten --ignore 'src/**/*.d.ts' --out-file translations/en.json -- 'src/**/*.{ts,tsx}'",
-    "compile-translations": "rm -rf src/compiled-translations && formatjs compile-folder --ast translations src/compiled-translations && rm -f src/compiled-translations/en.json"
+    "extract-translations": "formatjs extract --flatten --ignore 'src/**/*.d.ts' --out-file src/translations/en.json -- 'src/**/*.{ts,tsx}'",
+    "compile-translations": "rm -rf src/compiled-translations && formatjs compile-folder --ast src/translations src/compiled-translations && rm -f src/compiled-translations/en.json"
   },
   "eslintConfig": {
     "extends": [

@@ -334,9 +334,6 @@ module.exports = function (webpackEnv) {
           'scheduler/tracing': 'scheduler/tracing-profiling',
         }),
         ...(modules.webpackAliases || {}),
-
-        // Removes unnecessary code for parsing messages, since they are compiled in advance
-        '@formatjs/icu-messageformat-parser': '@formatjs/icu-messageformat-parser/no-parser',
       },
       plugins: [
         // Adds support for installing with Plug'n'Play, leading to faster installs and adding

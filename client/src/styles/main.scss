@@ -1,5 +1,6 @@
 @use 'colors';
 @use 'drop-bar';
+@use 'messageformat';
 @use 'modal';
 @use 'tooltip';
 
@@ -77,7 +78,7 @@ button:not(.fake-a) {
   }
 }
 
-input, select, textarea {
+input, select, textarea, .slate-editor.editable {
   background: none;
   color: inherit;
   font: inherit;
@@ -577,4 +578,20 @@ tr.sticky > th {
 
 .underline {
   text-decoration: underline;
+}
+
+.message {
+  > h3 {
+    margin-bottom: 0.5em;
+  }
+
+  &-reference {
+    margin: 0.5em 0;
+    padding-left: 0.25em;
+  }
+
+  &-warning {
+    border-left: 2px solid var(--rating--3);
+    padding-left: 0.5em;
+  }
 }

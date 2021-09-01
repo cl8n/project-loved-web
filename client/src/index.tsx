@@ -6,6 +6,7 @@ import { registerTextareaAutoHeightTrigger } from './auto-height';
 import ForumOptIn from './forum-opt-in';
 import { Header } from './Header';
 import { IntlProviderWrapper } from './intl';
+import Localization from './localization';
 import { Manage } from './Manage';
 import MapperConsents from './mapper-consents';
 import { NoRoute } from './NoRoute';
@@ -40,6 +41,7 @@ render(
               <ProtectedRoute path='/admin/picks/:round' role='any'><Picks /></ProtectedRoute>
               <ProtectedRoute path='/admin/manage' role='any'><Manage /></ProtectedRoute>
               <ProtectedRoute path='/admin/forum-opt-in' role='captain'><ForumOptIn /></ProtectedRoute>
+              <Route path='/localization/:locale?'><Localization /></Route>
               <Route path='*'><NoRoute /></Route>
             </Switch>
           </main>

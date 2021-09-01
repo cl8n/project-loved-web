@@ -1,0 +1,19 @@
+.messageformat {
+  color: var(--content);
+
+  &-variable {
+    color: var(--accent);
+  }
+
+  &-variable-format {
+    color: var(--accent);
+  }
+
+  &-pound {
+    color: var(--secondary-accent);
+  }
+
+  &-tag {
+    color: var(--secondary-accent);
+  }
+}
