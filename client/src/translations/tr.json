@@ -1,0 +1,350 @@
+{
+  "+3rK3I": {
+    "defaultMessage": "Yanıt yok"
+  },
+  "+9RCG/": {
+    "defaultMessage": "Diğer ikonlar {author} "
+  },
+  "+bCbtl": {
+    "defaultMessage": "Sütunlar:"
+  },
+  "+d4ZcX": {
+    "defaultMessage": "Moderatörler"
+  },
+  "/CNHO3": {
+    "defaultMessage": "osu! ile giriş yap"
+  },
+  "/SSCZX": {
+    "defaultMessage": "Evet"
+  },
+  "0+S3hP": {
+    "defaultMessage": "Eğer gönderdiğiniz map yeterince popüler değilse ya da tamamen oynanamaz bir haldeyse, kaptanlar onu asla kontrol etmeyebilir. Lütfen yalnızca Loved kategorisine gerçekten değer katacağına inandığınız mapleri gönderin."
+  },
+  "06WpMi": {
+    "defaultMessage": "Dereceli"
+  },
+  "0Vz3c/": {
+    "defaultMessage": "Yüzdelik ve toplam"
+  },
+  "2SX61V": {
+    "defaultMessage": "Notlar"
+  },
+  "2YTMfX": {
+    "defaultMessage": "Gönder ve sayfada kal"
+  },
+  "2dOoEc": {
+    "defaultMessage": "Metaveri denetçileri"
+  },
+  "39zfVl": {
+    "defaultMessage": "zayıf destek"
+  },
+  "3E4vRf": {
+    "defaultMessage": "Düşük"
+  },
+  "3J+k4U": {
+    "defaultMessage": "Forum"
+  },
+  "3Kch6P": {
+    "defaultMessage": "Düşükten yükseğe"
+  },
+  "3RdYB+": {
+    "defaultMessage": "Oyun modu:"
+  },
+  "5NZbY5": {
+    "defaultMessage": "Sonuç görünümü:"
+  },
+  "5OS21f": {
+    "defaultMessage": "Harici:"
+  },
+  "5oqovx": {
+    "defaultMessage": "Bir map gönder"
+  },
+  "7CJMwD": {
+    "defaultMessage": "Öncelik"
+  },
+  "8bAHuK": {
+    "defaultMessage": "Kapat"
+  },
+  "8l6BC0": {
+    "defaultMessage": "Mapper izinleri"
+  },
+  "9cv8r4": {
+    "defaultMessage": "Beatmap seti"
+  },
+  "AGzOYr": {
+    "defaultMessage": "Loved için bir map gönder!"
+  },
+  "BGA5hC": {
+    "defaultMessage": "Geliştiriciler"
+  },
+  "BSKWqB": {
+    "defaultMessage": "Takım"
+  },
+  "Be0kKF": {
+    "defaultMessage": "Her ne kadar biraz öneme sahip olsa da, gönderdiğiniz map Loved için asla aday gösterilmeyebilir. Şu anda Loved kategorisine eklenen maplerin oranı sınırlı, dolayısıyla kaptanların sürekli olarak gönderdiğiniz mapten daha iyilerini seçmesi daha olasıdır."
+  },
+  "CIAu6S": {
+    "defaultMessage": "Wiki"
+  },
+  "CxsxoI": {
+    "defaultMessage": "Gönderiliyor..."
+  },
+  "Do+EPJ": {
+    "defaultMessage": "{timestamp, date, long} tarihinde {user} kullanıcısı {score} ile gözden geçirdi"
+  },
+  "EqGiDp": {
+    "defaultMessage": "Formda yazdıklarınız herkese açık bir şekilde görünür olacak, bu yüzden başkalarının görmesini istemediğiniz herhangi bir şey yazmayın. Doldurmak istemiyorsanız sebep kutucuğunu boş bırakabilirsiniz."
+  },
+  "F1tQfW": {
+    "defaultMessage": "Başlık"
+  },
+  "H65rvb": {
+    "defaultMessage": "Bu sayfayı görüntüleyebilecek kadar havalı değilsiniz."
+  },
+  "HVzPRU": {
+    "defaultMessage": "Hayır"
+  },
+  "Hf1vPz": {
+    "defaultMessage": "Seçimler"
+  },
+  "HvpI7B": {
+    "defaultMessage": "Silinmiş beatmap seti"
+  },
+  "IO8Ye2": {
+    "defaultMessage": "Skor"
+  },
+  "IiYTWb": {
+    "defaultMessage": "Mevcut takım"
+  },
+  "JHNIy2": {
+    "defaultMessage": "Tur sırası:"
+  },
+  "JPKVz4": {
+    "defaultMessage": "Beatmap seti"
+  },
+  "JPSkxB": {
+    "defaultMessage": "{country} bayrağı"
+  },
+  "Jy6JW8": {
+    "defaultMessage": "Sizin kim olduğunuzu bilmiyorum! Önce <a>giriş yapmayı</a> deneyin."
+  },
+  "LBBZpt": {
+    "defaultMessage": "Oyun modu"
+  },
+  "Ll1LUO": {
+    "defaultMessage": "güçlü destek"
+  },
+  "Lm++cZ": {
+    "defaultMessage": "Project Loved"
+  },
+  "MLkhaQ": {
+    "defaultMessage": "Oylanıyor"
+  },
+  "MUDTXQ": {
+    "defaultMessage": "Beatmap seti bağlantısı veya ID'si"
+  },
+  "MoR8Of": {
+    "defaultMessage": "Mapper izinleri"
+  },
+  "N4xf2i": {
+    "defaultMessage": "Favlar"
+  },
+  "NG8X9U": {
+    "defaultMessage": "İnşaat halinde"
+  },
+  "NjIKQe": {
+    "defaultMessage": "Ulaşılamıyor"
+  },
+  "O2IvSs": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} kullanıcısı {timestamp, date, long} tarihinde bu mapi gönderdi} other{{user} kullanıcısı bu mapi gönderdi}}"
+  },
+  "Oep6va": {
+    "defaultMessage": "Gönder"
+  },
+  "PCZJkZ": {
+    "defaultMessage": "Kaynak kodu ve sorun izleyici"
+  },
+  "PpxIZP": {
+    "defaultMessage": "güçlü red"
+  },
+  "R0gvL0": {
+    "defaultMessage": "Sanatçı"
+  },
+  "RHg+09": {
+    "defaultMessage": "Mapin hangi oyun modları için Loved olmasını istiyorsunuz?"
+  },
+  "RL5Qu1": {
+    "defaultMessage": "Onaylı"
+  },
+  "RuFprR": {
+    "defaultMessage": "Diğer"
+  },
+  "ScBgfg": {
+    "defaultMessage": "tercih yok"
+  },
+  "Sti+Y3": {
+    "defaultMessage": "Bir map gönderdikten sonra, <submissionsLink>\"Gönderimler\" sayfasından</submissionsLink> durumunu kontrol edebilirsiniz."
+  },
+  "Tf7XH9": {
+    "defaultMessage": "Notlar"
+  },
+  "TqI9fE": {
+    "defaultMessage": "Yönetici:"
+  },
+  "TrDD+Y": {
+    "defaultMessage": "Formu doldurmak için <a>giriş yapmalısınız</a>."
+  },
+  "U1fcdw": {
+    "defaultMessage": "Haber editörleri / Menajerler"
+  },
+  "UjLvid": {
+    "defaultMessage": "Genişlet"
+  },
+  "UxNmCh": {
+    "defaultMessage": "Orta"
+  },
+  "V5W+3b": {
+    "defaultMessage": "İzin"
+  },
+  "VHEp9G": {
+    "defaultMessage": "Yüksekten düşüğe"
+  },
+  "VYIbMd": {
+    "defaultMessage": "Oylama sonucu Loved oldu"
+  },
+  "WEpxnj": {
+    "defaultMessage": "Oynanmalar"
+  },
+  "ZEsdcm": {
+    "defaultMessage": "Oylama konusu"
+  },
+  "ZMV3ed": {
+    "defaultMessage": "Bayrak ikonları {author1} ve {author2}"
+  },
+  "ZWbq0S": {
+    "defaultMessage": "Yıl"
+  },
+  "ZZqLxU": {
+    "defaultMessage": "Zorluklar"
+  },
+  "aHJR9F": {
+    "defaultMessage": "İzin"
+  },
+  "bKfIQC": {
+    "defaultMessage": "Bu mapin neden Loved olmasını istiyorsunuz? <fade>(isteğe bağlı)</fade>"
+  },
+  "c/0N4+": {
+    "defaultMessage": "red"
+  },
+  "c2UCNp": {
+    "defaultMessage": "Yüzdelik"
+  },
+  "ccf+6T": {
+    "defaultMessage": "{gameMode} kaptanları"
+  },
+  "cwgho6": {
+    "defaultMessage": "Beklemede"
+  },
+  "dG9/uH": {
+    "defaultMessage": "Nitelikli"
+  },
+  "e6WZri": {
+    "defaultMessage": "destek"
+  },
+  "gLG6dL": {
+    "defaultMessage": "Gönderilmiş mapler"
+  },
+  "gvLZL5": {
+    "defaultMessage": "Çıkış yap"
+  },
+  "iCkWun": {
+    "defaultMessage": "Tur"
+  },
+  "jlkqJz": {
+    "defaultMessage": "Yönet"
+  },
+  "kr2W+L": {
+    "defaultMessage": "<p>Bu formu doldurmanız <teamLink>kaptanların</teamLink> hangi maplerin aylık oylamalarda Loved için aday gösterileceğine karar vermelerine yardımcı olacaktır. Eğer bir map zaten <submissionsLink>gönderilmişse</submissionsLink>, map ile ilgili düşüncelerinizi buradan ekleyebilirsiniz.</p> <p>Aklınızda bulundurmanız gereken bazı şeyler şunlardır:</p>"
+  },
+  "l39agD": {
+    "defaultMessage": "Durum"
+  },
+  "lMSjPi": {
+    "defaultMessage": "Bu henüz sizin için mevcut değil. Daha sonra tekrar kontrol edin!"
+  },
+  "lRk8DP": {
+    "defaultMessage": "zayıf red"
+  },
+  "lULo+e": {
+    "defaultMessage": "Oylama sonucu başarısız oldu"
+  },
+  "lbC8H+": {
+    "defaultMessage": "Mapper"
+  },
+  "lz1fkx": {
+    "defaultMessage": "Evet"
+  },
+  "me3BjX": {
+    "defaultMessage": "İstatistikler"
+  },
+  "mhBW5h": {
+    "defaultMessage": "Mapper"
+  },
+  "mucI2W": {
+    "defaultMessage": "Bu listeyi sıralamak için bir yer tutucu metodu. {definition}"
+  },
+  "necy1Q": {
+    "defaultMessage": "Bu liste yalnızca bu web sitesi aracılığıyla gönderilen gönderimleri içermektedir. Eskiden kullanılan Google tablolardaki girdiler yakın zamanda buraya taşınacak, ve sonrasında ise Google tablolar artık kullanılmayacak."
+  },
+  "nn9fFb": {
+    "defaultMessage": "BPM"
+  },
+  "pLUxkj": {
+    "defaultMessage": "Hayır"
+  },
+  "pXOU6C": {
+    "defaultMessage": "Burada hiçbir şey yok =("
+  },
+  "phKBIX": {
+    "defaultMessage": "Bilinmeyen ülke"
+  },
+  "pvfxi+": {
+    "defaultMessage": "Gönderimler"
+  },
+  "qYCjeT": {
+    "defaultMessage": "Loved"
+  },
+  "qfEiSZ": {
+    "defaultMessage": "Toplam"
+  },
+  "sG6ons": {
+    "defaultMessage": "Loved listesi"
+  },
+  "tCV6dl": {
+    "defaultMessage": "Dil: {selector}"
+  },
+  "uNpYlX": {
+    "defaultMessage": "Reddedildi"
+  },
+  "urIF1D": {
+    "defaultMessage": "Beatmap seti"
+  },
+  "vDQerf": {
+    "defaultMessage": "Oylama sonuçları"
+  },
+  "wGcwBN": {
+    "defaultMessage": "Yüksek"
+  },
+  "wOZypU": {
+    "defaultMessage": "Mezun"
+  },
+  "xv9aUB": {
+    "defaultMessage": "Evet ve hayır"
+  },
+  "y+BE4P": {
+    "defaultMessage": "Tümü"
+  },
+  "zn6DBN": {
+    "defaultMessage": "Şuna göre sırala:"
+  }
+}
