@@ -1,0 +1,350 @@
+{
+  "+3rK3I": {
+    "defaultMessage": "Sin respuesta"
+  },
+  "+9RCG/": {
+    "defaultMessage": "Otros íconos hechos por {author}"
+  },
+  "+bCbtl": {
+    "defaultMessage": "Columnas"
+  },
+  "+d4ZcX": {
+    "defaultMessage": "Moderadores"
+  },
+  "/CNHO3": {
+    "defaultMessage": "Conectarse con osu!"
+  },
+  "/SSCZX": {
+    "defaultMessage": "Si"
+  },
+  "06WpMi": {
+    "defaultMessage": "Clasificado"
+  },
+  "0Vz3c/": {
+    "defaultMessage": "Porcentaje y total"
+  },
+  "2SX61V": {
+    "defaultMessage": "Notas"
+  },
+  "2YTMfX": {
+    "defaultMessage": "Enviar y quedarse en la página"
+  },
+  "2dOoEc": {
+    "defaultMessage": "Verificadores de metadatos"
+  },
+  "0+S3hP": {
+    "defaultMessage": "Si el mapa que envías es poco popular o completamente injugable, es posible que los Capitanes nunca lo revisen. Por favor, solo envía mapas que de verdad son de valor para la categoría de mapas Amados"
+  },
+  "39zfVl": {
+    "defaultMessage": "Apoyo leve"
+  },
+  "3E4vRf": {
+    "defaultMessage": "Bajo"
+  },
+  "3J+k4U": {
+    "defaultMessage": "Foro"
+  },
+  "3Kch6P": {
+    "defaultMessage": "Ascendente"
+  },
+  "3RdYB+": {
+    "defaultMessage": "Modo de juego:"
+  },
+  "5OS21f": {
+    "defaultMessage": "Enlace externo:"
+  },
+  "5oqovx": {
+    "defaultMessage": "Enviar un mapa"
+  },
+  "7CJMwD": {
+    "defaultMessage": "Prioridad"
+  },
+  "8bAHuK": {
+    "defaultMessage": "Cerrar"
+  },
+  "8l6BC0": {
+    "defaultMessage": "Consentimiento de los mapeadores"
+  },
+  "9cv8r4": {
+    "defaultMessage": "Mapa"
+  },
+  "AGzOYr": {
+    "defaultMessage": "Envía un mapa a la sección de Amados!"
+  },
+  "BGA5hC": {
+    "defaultMessage": "Desarrolladores"
+  },
+  "BSKWqB": {
+    "defaultMessage": "Equipo"
+  },
+  "Be0kKF": {
+    "defaultMessage": "El mapa que envíes puede no llegar a ser nominado a la sección de Amados, incluso si lo amerita. Ahora mismo, la velocidad a la que los mapas pueden entrar a la sección de Amados es limitada, por lo que es posible que los Capitanes encuentren otros mapas con mayor prioridad al que envías."
+  },
+  "CIAu6S": {
+    "defaultMessage": "Wiki"
+  },
+  "CxsxoI": {
+    "defaultMessage": "Enviando..."
+  },
+  "Do+EPJ": {
+    "defaultMessage": "{user} lo reseñó con {score} puntos el día {timestamp, date, long}"
+  },
+  "EqGiDp": {
+    "defaultMessage": "Lo que escribas en este formulario va a ser visible de manera pública, así que no escribas algo que no quieras que el resto vea. No es necesario que llenes el campo de \"Razones\" si no lo deseas."
+  },
+  "F1tQfW": {
+    "defaultMessage": "Título"
+  },
+  "H65rvb": {
+    "defaultMessage": "No eres lo suficientemente genial para ver esta página."
+  },
+  "HVzPRU": {
+    "defaultMessage": "No"
+  },
+  "Hf1vPz": {
+    "defaultMessage": "Selecciones"
+  },
+  "HvpI7B": {
+    "defaultMessage": "Mapa borrado"
+  },
+  "IO8Ye2": {
+    "defaultMessage": "Puntaje"
+  },
+  "IiYTWb": {
+    "defaultMessage": "Equipo actual"
+  },
+  "JHNIy2": {
+    "defaultMessage": "Orden de Rondas"
+  },
+  "JPKVz4": {
+    "defaultMessage": "Mapa"
+  },
+  "JPSkxB": {
+    "defaultMessage": "Bandera de {country}"
+  },
+  "Jy6JW8": {
+    "defaultMessage": "No sé quien eres! Primero intenta <a>conectarte</a>"
+  },
+  "LBBZpt": {
+    "defaultMessage": "Modo de juego"
+  },
+  "Ll1LUO": {
+    "defaultMessage": "Apoyo alto"
+  },
+  "Lm++cZ": {
+    "defaultMessage": "Project Loved"
+  },
+  "MLkhaQ": {
+    "defaultMessage": "Actualmente en fase de votación"
+  },
+  "MUDTXQ": {
+    "defaultMessage": "Enlace al mapa (o ID de éste)"
+  },
+  "MoR8Of": {
+    "defaultMessage": "Consentimientos de los mapeadores"
+  },
+  "N4xf2i": {
+    "defaultMessage": "Favoritos"
+  },
+  "NG8X9U": {
+    "defaultMessage": "Página en construcción"
+  },
+  "NjIKQe": {
+    "defaultMessage": "No se puede contactar con el usuario."
+  },
+  "O2IvSs": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} ha enviado este mapa el {timestamp, date, long}} other{{user} ha enviado este mapa}}"
+  },
+  "Oep6va": {
+    "defaultMessage": "Enviar"
+  },
+  "PCZJkZ": {
+    "defaultMessage": "Codigo fuente y seguimiento de problemas"
+  },
+  "PpxIZP": {
+    "defaultMessage": "Rechazo alto"
+  },
+  "R0gvL0": {
+    "defaultMessage": "Artista"
+  },
+  "RHg+09": {
+    "defaultMessage": "En que modos de juego te gustaría que este mapa fuese Amado?"
+  },
+  "RL5Qu1": {
+    "defaultMessage": "Aprobado"
+  },
+  "RuFprR": {
+    "defaultMessage": "Otros"
+  },
+  "ScBgfg": {
+    "defaultMessage": "Sin preferencia"
+  },
+  "Sti+Y3": {
+    "defaultMessage": "Después de enviar un mapa, puedes ver su estado en <submissionsLink>la página de \"Mapas enviados\"</submissionsLink>"
+  },
+  "Tf7XH9": {
+    "defaultMessage": "Notas"
+  },
+  "TqI9fE": {
+    "defaultMessage": "Administración:"
+  },
+  "TrDD+Y": {
+    "defaultMessage": "Debes <a>conectarte</a> para completar este formulario."
+  },
+  "U1fcdw": {
+    "defaultMessage": "Redactores de noticias / Administradores"
+  },
+  "UjLvid": {
+    "defaultMessage": "Expandir"
+  },
+  "UxNmCh": {
+    "defaultMessage": "Media"
+  },
+  "V5W+3b": {
+    "defaultMessage": "Consentimiento"
+  },
+  "VHEp9G": {
+    "defaultMessage": "Descendente"
+  },
+  "VYIbMd": {
+    "defaultMessage": "Amado mediante votación"
+  },
+  "WEpxnj": {
+    "defaultMessage": "Recuento de jugadas"
+  },
+  "ZEsdcm": {
+    "defaultMessage": "Asunto de la encuesta"
+  },
+  "ZMV3ed": {
+    "defaultMessage": "Íconos de banderas hechos por {author1} y {author2}"
+  },
+  "ZWbq0S": {
+    "defaultMessage": "Año"
+  },
+  "ZZqLxU": {
+    "defaultMessage": "Cantidad de dificultades"
+  },
+  "aHJR9F": {
+    "defaultMessage": "Consentimiento"
+  },
+  "bKfIQC": {
+    "defaultMessage": "Por que te gustaría que este mapa fuese Amado? <fade>(campo opcional)</fade>"
+  },
+  "c/0N4+": {
+    "defaultMessage": "Rechazo"
+  },
+  "c2UCNp": {
+    "defaultMessage": "Porcentaje"
+  },
+  "ccf+6T": {
+    "defaultMessage": "Capitanes de {gameMode}"
+  },
+  "cwgho6": {
+    "defaultMessage": "Pendiente"
+  },
+  "dG9/uH": {
+    "defaultMessage": "Calificado"
+  },
+  "e6WZri": {
+    "defaultMessage": "Apoyo"
+  },
+  "gLG6dL": {
+    "defaultMessage": "Mapas enviados"
+  },
+  "gvLZL5": {
+    "defaultMessage": "Desconectarse"
+  },
+  "iCkWun": {
+    "defaultMessage": "Ronda"
+  },
+  "jlkqJz": {
+    "defaultMessage": "Administrar"
+  },
+  "kr2W+L": {
+    "defaultMessage": "<p>Llenar este formulario ayuda a que los <teamLink>capitanes</teamLink> decidan que mapas nominar a la sección de Amados para cada encuesta mensual. Incluso si el mapa ha sido <submissionsLink>enviado antes</submissionsLink>, puedes añadir tu opinión sobre el mapa acá.</p> <p>Algunas cosas que deberias tomar en cuenta son:</p>"
+  },
+  "l39agD": {
+    "defaultMessage": "Estado"
+  },
+  "lMSjPi": {
+    "defaultMessage": "Esta página no esta disponible para ti aún. Revisa mas tarde!"
+  },
+  "lRk8DP": {
+    "defaultMessage": "Rechazo leve"
+  },
+  "lULo+e": {
+    "defaultMessage": "Falló en la votación"
+  },
+  "lbC8H+": {
+    "defaultMessage": "Mapeador"
+  },
+  "lz1fkx": {
+    "defaultMessage": "Si"
+  },
+  "me3BjX": {
+    "defaultMessage": "Estadísticas"
+  },
+  "mhBW5h": {
+    "defaultMessage": "Mapeador"
+  },
+  "mucI2W": {
+    "defaultMessage": "Este puntaje es un método primitivo realizado para ordenar esta lista. {definition}"
+  },
+  "necy1Q": {
+    "defaultMessage": "Esta lista actualmente solo incluye mapas enviados desde este sitio. Aquellos mapas enviados a las antiguas planillas de Google Sheets van a ser exportadas acá pronto, para después descontinuar el uso de esas planillas."
+  },
+  "nn9fFb": {
+    "defaultMessage": "BPM"
+  },
+  "pLUxkj": {
+    "defaultMessage": "No"
+  },
+  "pXOU6C": {
+    "defaultMessage": "No hay nada acá =("
+  },
+  "phKBIX": {
+    "defaultMessage": "País desconocido"
+  },
+  "pvfxi+": {
+    "defaultMessage": "Mapas enviados"
+  },
+  "qYCjeT": {
+    "defaultMessage": "Amado"
+  },
+  "qfEiSZ": {
+    "defaultMessage": "Total"
+  },
+  "sG6ons": {
+    "defaultMessage": "Lista de mapas Amados"
+  },
+  "tCV6dl": {
+    "defaultMessage": "Idioma: {selector}"
+  },
+  "uNpYlX": {
+    "defaultMessage": "Rechazado"
+  },
+  "urIF1D": {
+    "defaultMessage": "Mapa"
+  },
+  "vDQerf": {
+    "defaultMessage": "Resultados de la encuesta"
+  },
+  "wGcwBN": {
+    "defaultMessage": "Alto"
+  },
+  "wOZypU": {
+    "defaultMessage": "Alumni"
+  },
+  "xv9aUB": {
+    "defaultMessage": "Votos Si y No"
+  },
+  "y+BE4P": {
+    "defaultMessage": "Todos"
+  },
+  "zn6DBN": {
+    "defaultMessage": "Ordenar por:"
+  },
+  "5NZbY5": {
+    "defaultMessage": "Mostrar resultados como:"
+  }
+}
