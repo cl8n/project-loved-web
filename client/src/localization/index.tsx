@@ -36,6 +36,10 @@ export default function Localization() {
             <a href='https://github.com/cl8n/project-loved-web'>project-loved-web</a> and open a pull
             request, or send it to someone else who can do that for you
           </li>
+          <li>
+            Keep in mind that (for now) this page doesn't save any of your work. Anything you type
+            into the boxes will be cleared when you close the page or navigate away.
+          </li>
         </ul>
         <div className='flex-bar'>
           <div className='flex-left'>
