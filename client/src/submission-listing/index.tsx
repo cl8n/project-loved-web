@@ -188,9 +188,8 @@ export default function SubmissionListingContainer() {
       <div className='warning-box'>
         <FormattedMessage
           defaultMessage='
-            This listing is not yet in active use by captains. The submissions made to the Google forms will be migrated
-            here soon, and from then on captains will be using this instead of the Google sheets. Currently you can use
-            either this website or the Google forms to make new submissions.
+            This listing only includes submissions sent from this website. Entries from the old
+            Google sheets will be moved here soon, and then the Google sheets will be retired.
           '
           description='Warning box above submissions table'
         />
