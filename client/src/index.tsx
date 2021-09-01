@@ -35,7 +35,7 @@ render(
               <Route path='/submit'><SubmissionForm /></Route>
               <Route path='/mappers'><MapperConsents /></Route>
               <Route path='/team'><Team /></Route>
-              <Redirect from='/captains' to='/team' />
+              <Redirect exact from='/captains' to='/team' />
               <Route path='/statistics'><Statistics /></Route>
               <ProtectedRoute exact path='/admin/picks' role='any'><PicksRoundListing /></ProtectedRoute>
               <ProtectedRoute path='/admin/picks/:round' role='any'><Picks /></ProtectedRoute>
