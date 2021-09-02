@@ -120,6 +120,7 @@ export function getLogs(): Response<ILog[]> {
 export type GetSubmissionsResponseBody = {
   beatmapsets: (IBeatmapset & {
     beatmap_counts: Record<GameMode, number>;
+    consent: boolean | null;
     modal_bpm: number;
     poll?: {
       passed: boolean;

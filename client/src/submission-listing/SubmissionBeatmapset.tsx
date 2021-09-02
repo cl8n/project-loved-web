@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { GetSubmissionsResponseBody } from '../api';
 import Beatmap from '../Beatmap';
 import { dateFromString } from '../date-format';
+import Help from '../Help';
 import calendarIcon from '../images/icons8/calendar.png';
 import circleIcon from '../images/icons8/circle.png';
 import heartIcon from '../images/icons8/heart.png';
@@ -32,6 +33,14 @@ const messages = defineMessages({
   inVoting: {
     defaultMessage: 'In voting',
     description: 'Aggregate review score shown on submissions table for maps currently in community voting',
+  },
+  notAllowed: {
+    defaultMessage: 'Not allowed',
+    description: 'Aggregate review score shown on submissions table for maps that cannot be Loved',
+  },
+  notAllowedNoConsent: {
+    defaultMessage: 'The mapper has requested for this map to not be involved with the Loved category.',
+    description: 'Help text explaining that a map cannot be Loved due to its mapper not consenting to it',
   },
   high: {
     defaultMessage: 'High',
@@ -191,6 +200,16 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
 
   if (beatmapset.poll_in_progress) {
     return <td className='priority high'>{intl.formatMessage(messages.inVoting)}</td>;
+  }
+
+  if (beatmapset.consent === false) {
+    return (
+      <td className='priority rejected'>
+        {intl.formatMessage(messages.notAllowed)}
+        {' '}
+        <Help>{intl.formatMessage(messages.notAllowedNoConsent)}</Help>
+      </td>
+    );
   }
 
   if (beatmapset.poll != null && !beatmapset.poll.passed) {

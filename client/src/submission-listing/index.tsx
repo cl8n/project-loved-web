@@ -269,6 +269,7 @@ const beatmapsetSortFns: Record<Sort | 'status', (a: _Beatmapset, b: _Beatmapset
   favoriteCount: (a, b) => a.favorite_count - b.favorite_count,
   playCount: (a, b) => a.play_count - b.play_count,
   priority: (a, b) => (
+    +(b.consent === false) - +(a.consent === false) ||
     +(b.poll != null && !b.poll.passed) - +(a.poll != null && !a.poll.passed) ||
     +(b.reviews.length === 0) - +(a.reviews.length === 0) ||
     a.review_score - b.review_score

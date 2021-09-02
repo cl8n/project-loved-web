@@ -158,13 +158,40 @@ router.get('/submissions', asyncHandler(async (req, res) => {
   const reviewsByBeatmapsetId = groupBy(reviews, 'beatmapset_id');
   const submissionsByBeatmapsetId = groupBy(submissions, 'beatmapset_id');
 
+  const beatmapsetConsentByBeatmapsetUserKey = groupBy(
+    await db.query(`
+      SELECT consent, CONCAT(beatmapset_id, '-', user_id) as beatmapset_user
+      FROM mapper_consent_beatmapsets
+      WHERE beatmapset_id IN (?)
+    `, [[...beatmapsetIds]]),
+    'beatmapset_user',
+    'consent',
+    true,
+  );
+  const consentByUserId = groupBy(
+    await db.query(`
+      SELECT consent, id
+      FROM mapper_consents
+      WHERE id IN (
+        SELECT creator_id
+        FROM beatmapsets
+        WHERE id IN (?)
+      )
+    `, [[...beatmapsetIds]]),
+    'id',
+    'consent',
+    true,
+  );
+
   for (const beatmapset of beatmapsets) {
     const beatmaps = groupBy(beatmapsByBeatmapsetId[beatmapset.id] || [], 'game_mode');
     const beatmapsForGameMode = beatmaps[gameMode]?.sort((a, b) => a.bpm - b.bpm) || [];
+    const consent = beatmapsetConsentByBeatmapsetUserKey[`${beatmapset.id}-${beatmapset.creator_id}`] ?? consentByUserId[beatmapset.creator_id];
 
     beatmapset.reviews = reviewsByBeatmapsetId[beatmapset.id] || [];
     beatmapset.submissions = submissionsByBeatmapsetId[beatmapset.id] || [];
 
+    beatmapset.consent = consent == null || consent > 1 ? null : consent > 0;
     beatmapset.modal_bpm = modeBy(beatmapsForGameMode, 'bpm');
     beatmapset.play_count = beatmapsForGameMode.reduce((sum, beatmap) => sum + beatmap.play_count, 0);
     beatmapset.poll = pollByBeatmapsetId[beatmapset.id];
