@@ -95,7 +95,6 @@ router.get('/submissions', asyncHandler(async (req, res) => {
   `, gameMode);
 
   for (const review of reviews) {
-    // This shouldn't be necessary, but is included in case there somehow ends up a mapset with a review but no submissions
     beatmapsetIds.add(review.beatmapset_id);
     userIds.add(review.captain_id);
   }
