@@ -130,6 +130,7 @@ export type GetSubmissionsResponseBody = {
     review_score: number;
     reviews: IReview[];
     score: number;
+    strictly_rejected: boolean;
     submissions: ISubmission[];
   })[];
   usersById: Record<

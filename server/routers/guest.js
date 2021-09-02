@@ -195,8 +195,9 @@ router.get('/submissions', asyncHandler(async (req, res) => {
     beatmapset.play_count = beatmapsForGameMode.reduce((sum, beatmap) => sum + beatmap.play_count, 0);
     beatmapset.poll = pollByBeatmapsetId[beatmapset.id];
     beatmapset.poll_in_progress = beatmapsetIdsWithPollInProgress.has(beatmapset.id);
-    beatmapset.review_score = beatmapset.reviews.reduce((sum, review) => sum + review.score, 0);
+    beatmapset.review_score = beatmapset.reviews.reduce((sum, review) => review.score < -3 ? sum : sum + review.score, 0);
     beatmapset.score = beatmapset.favorite_count * 75 + beatmapset.play_count;
+    beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
 
     if (beatmapset.poll != null) {
       delete beatmapset.poll.beatmapset_id;

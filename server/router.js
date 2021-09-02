@@ -31,13 +31,18 @@ router.post('/review', asyncHandler(async (req, res) => {
     return res.status(422).json({ error: 'Invalid reason' });
   }
 
-  if (typeof req.body.score !== 'number' || req.body.score === 0 || Math.abs(req.body.score) > 3) {
+  if (typeof req.body.score !== 'number' || req.body.score === 0 || req.body.score < -4 || req.body.score > 3) {
     return res.status(422).json({ error: 'Invalid score' });
   }
 
   const roles = guards.roles(req, res);
 
   if (!roles.gameModes[req.body.gameMode]) {
+    return res.status(403).send();
+  }
+
+  // TODO: Not dumb workaround for God role
+  if (req.body.score >= -3 && !res.locals.user.roles.captain) {
     return res.status(403).send();
   }
 

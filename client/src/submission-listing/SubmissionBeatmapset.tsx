@@ -202,6 +202,10 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
     return <td className='priority high'>{intl.formatMessage(messages.inVoting)}</td>;
   }
 
+  if (beatmapset.strictly_rejected) {
+    return <td className='priority rejected'>{intl.formatMessage(messages.notAllowed)}</td>;
+  }
+
   if (beatmapset.consent === false) {
     return (
       <td className='priority rejected'>

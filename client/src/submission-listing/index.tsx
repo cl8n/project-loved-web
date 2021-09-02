@@ -269,6 +269,7 @@ const beatmapsetSortFns: Record<Sort | 'status', (a: _Beatmapset, b: _Beatmapset
   favoriteCount: (a, b) => a.favorite_count - b.favorite_count,
   playCount: (a, b) => a.play_count - b.play_count,
   priority: (a, b) => (
+    +b.strictly_rejected - +a.strictly_rejected ||
     +(b.consent === false) - +(a.consent === false) ||
     +(b.poll != null && !b.poll.passed) - +(a.poll != null && !a.poll.passed) ||
     +(b.reviews.length === 0) - +(a.reviews.length === 0) ||
@@ -334,17 +335,17 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
       const existingReview = beatmapset.reviews.find((existing) => existing.id === review.id);
 
       if (existingReview != null) {
-        beatmapset.review_score += review.score - existingReview.score;
+        beatmapset.review_score -= existingReview.score;
         Object.assign(existingReview, review);
       } else {
-        if (beatmapset.reviews.length > 0) {
-          beatmapset.review_score += review.score;
-        } else {
-          beatmapset.review_score = review.score;
-        }
-
         beatmapset.reviews.push(review);
       }
+
+      if (review.score >= -3) {
+        beatmapset.review_score += review.score;
+      }
+
+      beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
 
       if (prev!.usersById[review.captain_id] == null) {
         prev!.usersById[review.captain_id] = { ...authUser!, alumni: authUser!.roles.alumni };

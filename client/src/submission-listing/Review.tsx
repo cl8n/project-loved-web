@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { dateFromString } from '../date-format';
 import { IReview, IUserWithoutRoles } from '../interfaces';
@@ -10,7 +11,25 @@ interface ReviewProps {
 
 export default function Review({ review }: ReviewProps) {
   const intl = useIntl();
-  const scoreClass = reviewScoreClasses[review.score + 3];
+  const scoreClass = reviewScoreClasses[review.score < -3 ? 0 : review.score + 3];
+
+  if (review.score < -3) {
+    return (
+      <li>
+        <FormattedMessage
+          defaultMessage='{user} marked as <score>not allowed</score> on {timestamp, date, long}'
+          description='Review line for marking the map as not allowed'
+          tagName='div'
+          values={{
+            score: (c: ReactNode) => <span className={'review ' + scoreClass}>{c}</span>,
+            timestamp: dateFromString(review.reviewed_at),
+            user: <b><UserInline user={review.captain} /></b>,
+          }}
+        />
+        <div className={'submission-reason ' + scoreClass}>"{review.reason}"</div>
+      </li>
+    );
+  }
 
   return (
     <li>
