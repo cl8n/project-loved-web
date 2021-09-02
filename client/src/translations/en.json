@@ -131,6 +131,10 @@
     "defaultMessage": "Title",
     "description": "Submissions table sort option"
   },
+  "G1mG5h": {
+    "defaultMessage": "The mapper has requested for this map to not be involved with the Loved category.",
+    "description": "Help text explaining that a map cannot be Loved due to its mapper not consenting to it"
+  },
   "H65rvb": {
     "defaultMessage": "You aren't cool enough to see this page.",
     "description": "Error message shown when logged in but not having permission to view a page"
@@ -154,6 +158,10 @@
   "IiYTWb": {
     "defaultMessage": "Current team",
     "description": "Team listing group title"
+  },
+  "Ipzb3R": {
+    "defaultMessage": "Not allowed",
+    "description": "Aggregate review score shown on submissions table for maps that cannot be Loved"
   },
   "JHNIy2": {
     "defaultMessage": "Round order:",
@@ -422,6 +430,10 @@
   "qfEiSZ": {
     "defaultMessage": "Total",
     "description": "Poll results table header"
+  },
+  "rv3gh8": {
+    "defaultMessage": "{user} marked as <score>not allowed</score> on {timestamp, date, long}",
+    "description": "Review line for marking the map as not allowed"
   },
   "sG6ons": {
     "defaultMessage": "Loved listing",
