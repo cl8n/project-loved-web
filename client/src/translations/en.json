@@ -359,6 +359,10 @@
     "defaultMessage": "Manage",
     "description": "Nav link"
   },
+  "jlqkv1": {
+    "defaultMessage": "Nominated",
+    "description": "Aggregate review score shown on submissions table for maps nominated by captains for future voting"
+  },
   "kr2W+L": {
     "defaultMessage": "<p>Filling out this form helps <teamLink>captains</teamLink> decide which maps to nominate for Loved in the monthly polls. Even if a map has already been <submissionsLink>submitted</submissionsLink>, you can add your thoughts about the map here.</p> <p>Some things to keep in mind:</p>",
     "description": "Submission form intro"
@@ -410,6 +414,10 @@
   "pLUxkj": {
     "defaultMessage": "No",
     "description": "Boolean"
+  },
+  "pNwB5k": {
+    "defaultMessage": "New!",
+    "description": "Indicator for content recently updated"
   },
   "pXOU6C": {
     "defaultMessage": "There's nothing here =(",
@@ -470,6 +478,10 @@
   "y+BE4P": {
     "defaultMessage": "All",
     "description": "Game mode option for poll results table"
+  },
+  "yQeX5q": {
+    "defaultMessage": "Theme: {selector}",
+    "description": "Selector in site header to change theme"
   },
   "zn6DBN": {
     "defaultMessage": "Sort by:",
