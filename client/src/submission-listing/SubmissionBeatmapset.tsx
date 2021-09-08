@@ -35,6 +35,10 @@ const messages = defineMessages({
     defaultMessage: 'In voting',
     description: 'Aggregate review score shown on submissions table for maps currently in community voting',
   },
+  nominated: {
+    defaultMessage: 'Nominated',
+    description: 'Aggregate review score shown on submissions table for maps nominated by captains for future voting',
+  },
   notAllowed: {
     defaultMessage: 'Not allowed',
     description: 'Aggregate review score shown on submissions table for maps that cannot be Loved',
@@ -209,6 +213,10 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
 
   if (beatmapset.poll_in_progress) {
     return <td className='priority high'>{intl.formatMessage(messages.inVoting)}</td>;
+  }
+
+  if (beatmapset.nominated) {
+    return <td className='priority high'>{intl.formatMessage(messages.nominated)}</td>;
   }
 
   if (beatmapset.strictly_rejected) {

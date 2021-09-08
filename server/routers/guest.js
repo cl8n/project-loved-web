@@ -133,6 +133,18 @@ router.get('/submissions', asyncHandler(async (req, res) => {
     `, [[...beatmapsetIds]]),
     'beatmapset_id',
   );
+  const futureNominationsByBeatmapsetId = groupBy(
+    await db.query(`
+      SELECT nominations.beatmapset_id
+      FROM nominations
+      INNER JOIN rounds
+        ON nominations.round_id = rounds.id
+      WHERE nominations.beatmapset_id IN (?)
+        AND nominations.game_mode = ?
+        AND rounds.done = 0
+    `, [[...beatmapsetIds], gameMode]),
+    'beatmapset_id',
+  );
   // TODO: Scope to complete polls when incomplete polls are stored in poll_results
   const pollByBeatmapsetId = groupBy(
     await db.query(`
@@ -192,6 +204,7 @@ router.get('/submissions', asyncHandler(async (req, res) => {
 
     beatmapset.consent = consent == null || consent > 1 ? null : consent > 0;
     beatmapset.modal_bpm = modeBy(beatmapsForGameMode, 'bpm');
+    beatmapset.nominated = futureNominationsByBeatmapsetId[beatmapset.id] == null ? false : true;
     beatmapset.play_count = beatmapsForGameMode.reduce((sum, beatmap) => sum + beatmap.play_count, 0);
     beatmapset.poll = pollByBeatmapsetId[beatmapset.id];
     beatmapset.poll_in_progress = beatmapsetIdsWithPollInProgress.has(beatmapset.id);

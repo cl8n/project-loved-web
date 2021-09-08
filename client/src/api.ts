@@ -122,6 +122,7 @@ export type GetSubmissionsResponseBody = {
     beatmap_counts: Record<GameMode, number>;
     consent: boolean | null;
     modal_bpm: number;
+    nominated: boolean;
     poll?: {
       passed: boolean;
       topic_id: number;
