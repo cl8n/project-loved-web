@@ -1,5 +1,6 @@
 @use 'colors';
 @use 'drop-bar';
+@use 'dropdown';
 @use 'messageformat';
 @use 'modal';
 @use 'tooltip';
@@ -205,6 +206,21 @@ nav {
 
   span {
     padding: 0.25em 0.5em 0.25em 1em;
+  }
+
+  > .dropdown-container {
+    margin-left: auto;
+    margin-right: -1em;
+    padding: 0.25em 1em;
+
+    > .dropdown {
+      background-color: var(--accent-light);
+    }
+
+    a {
+      margin-right: 0;
+      margin-bottom: 0.5em;
+    }
   }
 }
 

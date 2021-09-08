@@ -1,0 +1,33 @@
+.dropdown {
+  background-color: var(--background);
+  display: none;
+  padding: 1em;
+  position: absolute;
+  top: 100%;
+  width: max-content;
+
+  &.open {
+    display: block;
+  }
+
+  &.left {
+    left: 0;
+  }
+
+  &.right {
+    right: 0;
+  }
+
+  &-container {
+    cursor: default;
+    position: relative;
+  }
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+}

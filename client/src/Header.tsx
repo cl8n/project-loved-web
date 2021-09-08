@@ -127,6 +127,16 @@ export function Header() {
             description='Nav link'
           />
         </a>
+        {/* TODO: <Dropdown align='right' data-clayton-websites>
+          <h3>My websites</h3>
+          <Link className='active' to='/'>
+            <FormattedMessage
+              defaultMessage='Project Loved'
+              description='Site title'
+            />
+            {' — loved.sh'}
+          </Link>
+        </Dropdown>*/}
       </nav>
     </header>
   );
