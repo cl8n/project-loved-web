@@ -149,6 +149,15 @@ header {
     color: inherit;
   }
 
+  select {
+    border: none;
+    padding: 0;
+
+    > option {
+      color: initial;
+    }
+  }
+
   .info {
     display: flex;
     align-items: center;
@@ -475,15 +484,6 @@ tr.sticky > th {
     &.#{$name} {
       color: var(--rating-#{$rating});
     }
-  }
-}
-
-.locale-selector {
-  border: none;
-  padding: 0;
-
-  > option {
-    color: initial;
   }
 }
 

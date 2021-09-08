@@ -137,8 +137,7 @@ function LocaleSelector() {
 
   return (
     <select
-      className='locale-selector'
-      onChange={(e) => setLocale(e.target.value)}
+      onChange={(event) => setLocale(event.target.value)}
       value={locale}
     >
       {locales.map(({ code, name }) => (
