@@ -29,6 +29,7 @@ export default function ReviewEditor({ beatmapset, gameMode, onReviewUpdate, rev
   const [busy, setBusy] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const actuallyCaptain = authUser.roles.captain; // TODO: Not dumb workaround for God role
   const onSubmit: FormSubmitHandler = (form, then) => {
     if (form.score < -3 && !window.confirm('The "Not allowed" score rejects the map regardless of what other captains have said. Are you sure you want to do this?'))
       return null;
@@ -45,7 +46,7 @@ export default function ReviewEditor({ beatmapset, gameMode, onReviewUpdate, rev
       <button
         type='button'
         onClick={() => setModalOpen(true)}
-        className={`fake-a${review?.score ? '' : ' important-bad'}`}
+        className={`fake-a${!actuallyCaptain || review?.score ? '' : ' important-bad'}`}
       >
         Review
       </button>
@@ -71,7 +72,7 @@ export default function ReviewEditor({ beatmapset, gameMode, onReviewUpdate, rev
                     key={review?.score /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */}
                   >
                     <option hidden value=''>Select a score</option>
-                    {authUser.roles.captain /* TODO: Not dumb workaround for God role */ && selectableReviewScores.map((score) => (
+                    {actuallyCaptain && selectableReviewScores.map((score) => (
                       <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
                         {intl.formatMessage(reviewScoreMessages[score + 3])} ({intl.formatNumber(score, { signDisplay: 'exceptZero' })})
                       </option>
