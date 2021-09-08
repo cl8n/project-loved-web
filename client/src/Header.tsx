@@ -1,6 +1,8 @@
+import { ChangeEvent, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink, Link } from 'react-router-dom';
 import globeIcon from './images/icons8/globe.png';
+import sunIcon from './images/icons8/sun.png';
 import { locales, useLocaleState } from './intl';
 import { loginUrl, useOsuAuth } from './osuAuth';
 import { canReadAs } from './permissions';
@@ -19,7 +21,16 @@ export function Header() {
           />
         </Link>
         <span className='icon-label-container'>
-          <img alt='' src={globeIcon} style={{ filter: 'invert(1)' }} />
+          <img alt='' src={sunIcon} className='invert-icon' />
+          <FormattedMessage
+            defaultMessage='Theme: {selector}'
+            description='Selector in site header to change theme'
+            tagName='span'
+            values={{ selector: <ThemeSelector /> }}
+          />
+        </span>
+        <span className='icon-label-container'>
+          <img alt='' src={globeIcon} className='invert-icon' />
           <FormattedMessage
             defaultMessage='Language: {selector}'
             description='Selector in site header to change language'
@@ -153,6 +164,31 @@ function LocaleSelector() {
       {locales.map(({ code, name }) => (
         <option key={code} value={code}>{name}</option>
       ))}
+    </select>
+  );
+}
+
+function ThemeSelector() {
+  const [theme, setTheme] = useState(
+    localStorage.getItem('theme') ??
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+  );
+  const onThemeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    localStorage.setItem('theme', event.target.value);
+    setTheme(event.target.value);
+  };
+
+  useEffect(() => {
+    document.querySelector('html')!.dataset.theme = theme;
+  }, [theme]);
+
+  return (
+    <select
+      onChange={onThemeChange}
+      value={theme}
+    >
+      <option value='dark'>Dark</option>
+      <option value='light'>Light</option>
     </select>
   );
 }

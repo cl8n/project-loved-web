@@ -611,3 +611,15 @@ tr.sticky > th {
     padding-left: 0.5em;
   }
 }
+
+.content-icon {
+  @include colors.darkTheme {
+    filter: invert(1);
+  }
+}
+
+.invert-icon {
+  @include colors.lightTheme {
+    filter: invert(1);
+  }
+}

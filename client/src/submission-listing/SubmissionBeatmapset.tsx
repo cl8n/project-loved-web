@@ -129,12 +129,12 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, columns, f
           : <PriorityCell beatmapset={beatmapset} />
         }
         {columns.score && <td>{intl.formatNumber(beatmapset.score)}</td>}
-        {columns.playCount && <td><img alt='' src={playIcon} /> {intl.formatNumber(beatmapset.play_count)}</td>}
-        {columns.favoriteCount && <td><img alt='' src={heartIcon} /> {intl.formatNumber(beatmapset.favorite_count)}</td>}
+        {columns.playCount && <td><img alt='' src={playIcon} className='content-icon' /> {intl.formatNumber(beatmapset.play_count)}</td>}
+        {columns.favoriteCount && <td><img alt='' src={heartIcon} className='content-icon' /> {intl.formatNumber(beatmapset.favorite_count)}</td>}
         {columns.year && (
           <td>
             <div className='icon-label-container'>
-              <img alt='' src={calendarIcon} />
+              <img alt='' src={calendarIcon} className='content-icon' />
               {year}
             </div>
           </td>
@@ -142,12 +142,12 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, columns, f
         {columns.difficultyCount && (
           <td>
             <div className='icon-label-container'>
-              <img alt='' src={circleIcon} />
+              <img alt='' src={circleIcon} className='content-icon' />
               {diffCount}
             </div>
           </td>
         )}
-        {columns.bpm && <td><img alt='' src={musicalNotesIcon} /> {intl.formatNumber(beatmapset.modal_bpm)}</td>}
+        {columns.bpm && <td><img alt='' src={musicalNotesIcon} className='content-icon' /> {intl.formatNumber(beatmapset.modal_bpm)}</td>}
         <td>
           <button
             type='button'

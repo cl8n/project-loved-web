@@ -1,6 +1,16 @@
-// TODO: Handle light/dark theme here
+@mixin darkTheme {
+  html[data-theme=dark] & {
+    @content;
+  }
+}
 
-html {
+@mixin lightTheme {
+  html[data-theme=light] & {
+    @content;
+  }
+}
+
+@mixin _light-colors {
   --accent: #f6a;
   --accent-background: #fff0f8;
   --accent-hover: #fde;
@@ -19,4 +29,30 @@ html {
   --rating-3-background: #1a11;
   --secondary-accent: rgb(236, 94, 255);
   --secondary-accent-hover: rgb(248, 207, 253);
+}
+
+html {
+  // TODO: This should be the dark theme colors
+  --accent: #f6a;
+  --accent-background: #fff0f8;
+  --accent-hover: #fde;
+  --accent-light: #f9c;
+  --background: #fff;
+  --content: #333;
+  --control: #9cf;
+  --rating--3: #f22;
+  --rating--3-hover: #fbb;
+  --rating--2: #f44;
+  --rating--1: #f66;
+  --rating-0: #fa2;
+  --rating-1: #5a5;
+  --rating-2: #3a3;
+  --rating-3: #1a1;
+  --rating-3-background: #1a11;
+  --secondary-accent: rgb(236, 94, 255);
+  --secondary-accent-hover: rgb(248, 207, 253);
+
+  &[data-theme=light] {
+    @include _light-colors;
+  }
 }
