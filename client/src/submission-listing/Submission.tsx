@@ -19,7 +19,6 @@ export default function Submission({ submission }: SubmissionProps) {
           }
         '
         description='Submission line'
-        tagName='div'
         values={{
           hasTimestamp: submission.submitted_at != null,
           timestamp: dateFromString(submission.submitted_at),

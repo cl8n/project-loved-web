@@ -19,7 +19,6 @@ export default function Review({ review }: ReviewProps) {
         <FormattedMessage
           defaultMessage='{user} marked as <score>not allowed</score> on {timestamp, date, long}'
           description='Review line for marking the map as not allowed'
-          tagName='div'
           values={{
             score: (c: ReactNode) => <span className={'review ' + scoreClass}>{c}</span>,
             timestamp: dateFromString(review.reviewed_at),
@@ -36,7 +35,6 @@ export default function Review({ review }: ReviewProps) {
       <FormattedMessage
         defaultMessage='{user} reviewed with {score} on {timestamp, date, long}'
         description='Review line'
-        tagName='div'
         values={{
           score: <span className={'review ' + scoreClass}>{intl.formatMessage(reviewScoreMessages[review.score + 3])}</span>,
           timestamp: dateFromString(review.reviewed_at),
