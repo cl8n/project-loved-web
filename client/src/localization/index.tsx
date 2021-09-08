@@ -47,6 +47,7 @@ export default function Localization() {
               list='locales'
               value={localeInput}
               onChange={(event) => setLocaleInput(event.target.value)}
+              placeholder='Locale code'
             />
             <datalist id="locales">
               {locales.map(({ code, name }) => (

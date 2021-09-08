@@ -70,7 +70,7 @@ export default function ReviewEditor({ beatmapset, gameMode, onReviewUpdate, rev
                     data-value-type='int'
                     key={review?.score /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */}
                   >
-                    <option hidden />
+                    <option hidden value=''>Select a score</option>
                     {authUser.roles.captain /* TODO: Not dumb workaround for God role */ && selectableReviewScores.map((score) => (
                       <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
                         {intl.formatMessage(reviewScoreMessages[score + 3])} ({intl.formatNumber(score, { signDisplay: 'exceptZero' })})
