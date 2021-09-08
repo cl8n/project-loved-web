@@ -625,6 +625,7 @@ tr.sticky > th {
   }
 }
 
+/* TODO uncomment when theme colors are a thing
 .content-icon {
   @include colors.darkTheme {
     filter: invert(1);
@@ -635,4 +636,10 @@ tr.sticky > th {
   @include colors.lightTheme {
     filter: invert(1);
   }
+}
+*/
+
+// TODO remove when theme colors are a thing
+.invert-icon {
+  filter: invert(1);
 }
