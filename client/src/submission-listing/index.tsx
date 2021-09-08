@@ -263,16 +263,21 @@ export default function SubmissionListingContainer() {
   );
 }
 
+function compareOrFallback<T>(a: T, b: T, hasProperty: (item: T) => boolean): number | null {
+  const aHasProperty = hasProperty(a);
+  return +aHasProperty - +hasProperty(b) || (aHasProperty ? 0 : null);
+}
+
 type _Beatmapset = GetSubmissionsResponseBody['beatmapsets'][number];
 const beatmapsetSortFns: Record<Sort | 'status', (a: _Beatmapset, b: _Beatmapset) => number> = {
   artist: (a, b) => a.artist.toLowerCase().localeCompare(b.artist.toLowerCase()),
   favoriteCount: (a, b) => a.favorite_count - b.favorite_count,
   playCount: (a, b) => a.play_count - b.play_count,
   priority: (a, b) => (
-    +b.strictly_rejected - +a.strictly_rejected ||
-    +(b.consent === false) - +(a.consent === false) ||
-    +(b.poll != null && !b.poll.passed) - +(a.poll != null && !a.poll.passed) ||
-    +(b.reviews.length === 0) - +(a.reviews.length === 0) ||
+    compareOrFallback(a, b, (beatmapset) => beatmapset.nominated) ??
+    compareOrFallback(b, a, (beatmapset) => beatmapset.strictly_rejected || beatmapset.consent === false) ??
+    compareOrFallback(b, a, (beatmapset) => beatmapset.poll != null && !beatmapset.poll.passed) ??
+    compareOrFallback(b, a, (beatmapset) => beatmapset.reviews.length === 0) ??
     a.review_score - b.review_score
   ),
   score: (a, b) => a.score - b.score,
