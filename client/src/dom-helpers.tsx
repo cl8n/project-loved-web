@@ -1,6 +1,13 @@
 import { Dispatch, FormEvent, MouseEvent, PropsWithChildren, SetStateAction, useEffect, useRef, useState } from 'react';
 import { dateFromString, mySqlDateTime } from './date-format';
 
+export function classNames(classOptions: Record<string, boolean>): string {
+  return Object.entries(classOptions)
+    .filter((entry) => entry[1])
+    .map((entry) => entry[0])
+    .join(' ');
+}
+
 function setFormDisabled(form: HTMLFormElement, disabled: boolean) {
   const controls = form.elements as any; // TODO: typing
   const controlsCount = controls.length;

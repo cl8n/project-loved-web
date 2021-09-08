@@ -535,6 +535,14 @@ tr.sticky > th {
 }
 
 .submission-beatmapset {
+  &.new, &.new:not(.closed) + tr {
+    background-color: var(--control-background);
+  }
+
+  &.low-favorites, &.low-favorites:not(.closed) + tr {
+    background-color: var(--rating--3-background);
+  }
+
   &.in-voting, &.in-voting:not(.closed) + tr {
     background-color: var(--rating-3-background);
   }
@@ -576,6 +584,11 @@ tr.sticky > th {
 
   > li {
     margin: 0.5em 0;
+
+    .new {
+      color: var(--control-heavy);
+      font-weight: bold;
+    }
   }
 }
 

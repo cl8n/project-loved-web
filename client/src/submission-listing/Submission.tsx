@@ -2,6 +2,7 @@ import { FormattedMessage } from 'react-intl';
 import { dateFromString } from '../date-format';
 import { ISubmission, IUserWithoutRoles } from '../interfaces';
 import { UserInline } from '../UserInline';
+import { submissionIsNew } from './helpers';
 
 interface SubmissionProps {
   submission: ISubmission & { submitter: IUserWithoutRoles | null };
@@ -27,6 +28,16 @@ export default function Submission({ submission }: SubmissionProps) {
             : <UserInline user={submission.submitter} />,
         }}
       />
+      {submissionIsNew(submission) && (
+        <span className='new'>
+          {' ('}
+          <FormattedMessage
+            defaultMessage='New!'
+            description='Indicator for content recently updated'
+          />
+          )
+        </span>
+      )}
       {submission.reason != null && (
         <div className='submission-reason'>"{submission.reason}"</div>
       )}

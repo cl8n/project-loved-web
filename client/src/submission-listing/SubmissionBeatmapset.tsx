@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { GetSubmissionsResponseBody } from '../api';
 import Beatmap from '../Beatmap';
 import { dateFromString } from '../date-format';
+import { classNames } from '../dom-helpers';
 import Help from '../Help';
 import calendarIcon from '../images/icons8/calendar.png';
 import circleIcon from '../images/icons8/circle.png';
@@ -13,7 +14,7 @@ import playIcon from '../images/icons8/play.png';
 import { GameMode, IReview } from '../interfaces';
 import { Never } from '../Never';
 import { UserInline } from '../UserInline';
-import { ToggleableColumnsState } from './helpers';
+import { submissionIsNew, ToggleableColumnsState } from './helpers';
 import ReviewEditor from './ReviewEditor';
 import SubmissionsList from './SubmissionsList';
 
@@ -118,7 +119,15 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, columns, f
 
   return (
     <>
-      <tr className={`submission-beatmapset${expanded ? '' : ' closed'}${beatmapset.poll_in_progress ? ' in-voting' : ''}`}>
+      <tr
+        className={classNames({
+          closed: !expanded,
+          'in-voting': beatmapset.poll_in_progress,
+          'low-favorites': gameMode === GameMode.osu && beatmapset.favorite_count < 30,
+          new: beatmapset.submissions.some(submissionIsNew),
+          'submission-beatmapset': true,
+        })}
+      >
         <td className='normal-wrap'>
           <div data-beatmapset-id={beatmapset.id} />
           <Beatmap beatmapset={beatmapset} />
