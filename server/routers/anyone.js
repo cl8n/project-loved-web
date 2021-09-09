@@ -17,6 +17,8 @@ router.post('/submit', asyncHandler(async (req, res) => {
     return res.status(422).json({ error: 'Invalid game modes' });
   }
 
+  // Checking for exactly null to validate input
+  // eslint-disable-next-line eqeqeq
   if (req.body.reason !== null && typeof req.body.reason !== 'string') {
     return res.status(422).json({ error: 'Invalid reason' });
   }

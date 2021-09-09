@@ -2,7 +2,6 @@ const { Router } = require('express');
 const db = require('../db');
 const { asyncHandler } = require('../express-helpers');
 const { groupBy } = require('../helpers');
-const { Osu } = require('../osu');
 
 const router = Router();
 

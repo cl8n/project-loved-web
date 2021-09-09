@@ -323,11 +323,7 @@ class Osu {
         return currentInDb;
     }
 
-    let user;
-    try {
-      user = await this._getUser(userIdOrName, byName);
-    } catch {}
-
+    const user = await this._getUser(userIdOrName, byName).catch(() => null);
     let dbFields;
     let dbFieldsWithPK;
 

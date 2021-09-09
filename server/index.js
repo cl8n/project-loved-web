@@ -146,7 +146,9 @@ app.use(function (_, response) {
   response.status(404).json({ error: 'Not found' });
 });
 
-app.use(function (error, _, response, _) {
+// Express relies on there being 4 arguments in the signature of error handlers
+// eslint-disable-next-line no-unused-vars
+app.use(function (error, _request, response, _next) {
   // TODO: can probably do better than these logs
   //log(logTypes.error, `{plain}${error}`);
   console.error(error);
