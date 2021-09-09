@@ -1,0 +1,15 @@
+{
+  "root": true,
+  "extends": [
+    "eslint:recommended",
+    "../.eslintrc.json"
+  ],
+  "env": {
+    "es2020": true,
+    "node": true
+  },
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "requireConfigFile": false
+  }
+}

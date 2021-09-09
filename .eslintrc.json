@@ -1,0 +1,20 @@
+{
+  "root": true,
+  "extends": [
+    "plugin:prettier/recommended"
+  ],
+  "rules": {
+    "eqeqeq": ["error", "always", { "null": "never" }]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts?(x)"],
+      "rules": {
+        "@typescript-eslint/consistent-indexed-object-style": "error",
+        "@typescript-eslint/consistent-type-definitions": "error",
+        "@typescript-eslint/consistent-type-imports": "error",
+        "@typescript-eslint/prefer-as-const": "error"
+      }
+    }
+  ]
+}

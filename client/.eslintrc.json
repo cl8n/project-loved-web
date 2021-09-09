@@ -2,10 +2,9 @@
   "root": true,
   "extends": [
     "react-app",
-    "plugin:prettier/recommended"
+    "../.eslintrc.json"
   ],
   "rules": {
-    "eqeqeq": ["error", "always", { "null": "never" }],
     "import/newline-after-import": "error",
     "import/order": [
       "error",
@@ -15,16 +14,5 @@
         "warnOnUnassignedImports": true
       }
     ]
-  },
-  "overrides": [
-    {
-      "files": ["**/*.ts?(x)"],
-      "rules": {
-        "@typescript-eslint/consistent-indexed-object-style": "error",
-        "@typescript-eslint/consistent-type-definitions": "error",
-        "@typescript-eslint/consistent-type-imports": "error",
-        "@typescript-eslint/prefer-as-const": "error"
-      }
-    }
-  ]
+  }
 }
