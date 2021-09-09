@@ -1,8 +1,11 @@
 import { parse, TYPE } from '@formatjs/icu-messageformat-parser';
-import { KeyboardEvent, TextareaHTMLAttributes, useMemo } from 'react';
-import { MessageFormatElement } from 'react-intl';
-import { createEditor, Element, NodeEntry, Path, Range, Text } from 'slate';
-import { Editable, RenderLeafProps, Slate, withReact } from 'slate-react';
+import type { KeyboardEvent, TextareaHTMLAttributes} from 'react';
+import { useMemo } from 'react';
+import type { MessageFormatElement } from 'react-intl';
+import type { Element, NodeEntry, Path, Range} from 'slate';
+import { createEditor, Text } from 'slate';
+import type { RenderLeafProps} from 'slate-react';
+import { Editable, Slate, withReact } from 'slate-react';
 
 function addRanges(ranges: Range[], path: Path, elements: MessageFormatElement[]): void {
   for (const element of elements) {

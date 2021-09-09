@@ -1,16 +1,18 @@
-import { GameMode, INomination, IUserWithoutRoles, PartialWithId } from '../interfaces';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { ResponseError } from 'superagent';
+import type { Dispatch, SetStateAction} from 'react';
+import { useState } from 'react';
+import type { ResponseError } from 'superagent';
 import { apiErrorMessage, updateNominators } from '../api';
-import { Form, FormSubmitHandler } from '../dom-helpers';
+import type { FormSubmitHandler } from '../dom-helpers';
+import { Form } from '../dom-helpers';
+import type { GameMode, INomination, IUserWithoutRoles, PartialWithId } from '../interfaces';
 import { Modal } from '../Modal';
 import { UserInline } from '../UserInline';
 
-type EditNominatorsProps = {
+interface EditNominatorsProps {
   captainsApi: readonly [{ [P in GameMode]?: IUserWithoutRoles[] } | undefined, ResponseError | undefined];
   nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
-};
+}
 
 export default function EditNominators(props: EditNominatorsProps) {
   const [modalOpen, setModalOpen] = useState(false);

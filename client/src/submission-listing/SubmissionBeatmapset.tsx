@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
-import { GetSubmissionsResponseBody } from '../api';
+import type { GetSubmissionsResponseBody } from '../api';
 import Beatmap from '../Beatmap';
 import { dateFromString } from '../date-format';
 import { classNames } from '../dom-helpers';
@@ -11,10 +11,12 @@ import circleIcon from '../images/icons8/circle.png';
 import heartIcon from '../images/icons8/heart.png';
 import musicalNotesIcon from '../images/icons8/musical-notes.png';
 import playIcon from '../images/icons8/play.png';
-import { GameMode, IReview } from '../interfaces';
+import type { IReview } from '../interfaces';
+import { GameMode } from '../interfaces';
 import { Never } from '../Never';
 import { UserInline } from '../UserInline';
-import { submissionIsNew, ToggleableColumnsState } from './helpers';
+import type { ToggleableColumnsState } from './helpers';
+import { submissionIsNew } from './helpers';
 import ReviewEditor from './ReviewEditor';
 import SubmissionsList from './SubmissionsList';
 

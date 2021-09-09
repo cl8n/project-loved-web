@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { apiErrorMessage, updateRound } from '../api';
 import { autoHeightRef } from '../auto-height';
-import { Form, FormSubmitHandler } from '../dom-helpers';
-import { IRound, PartialWithId } from '../interfaces';
 import { inputDateTime } from '../date-format';
+import type { FormSubmitHandler } from '../dom-helpers';
+import { Form } from '../dom-helpers';
+import type { IRound, PartialWithId } from '../interfaces';
 
-type RoundEditorProps = {
+interface RoundEditorProps {
   close: () => void;
   onRoundUpdate: (round: PartialWithId<IRound>) => void;
   round: IRound;
-};
+}
 
 export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditorProps) {
   const [busy, setBusy] = useState(false);

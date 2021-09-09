@@ -1,27 +1,29 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ResponseError } from 'superagent';
+import type { ResponseError } from 'superagent';
 import { addNomination, apiErrorMessage, deleteNomination, getAssignees, getCaptains, getNominations, lockNominations, updateApiObject, updateExcludedBeatmaps, updateNominationAssignees, updateNominationBeatmapset, updateNominationDescription, updateNominationMetadata, updateNominationOrder, useApi } from './api';
 import { autoHeightRef } from './auto-height';
 import { BBCode } from './BBCode';
 import { BeatmapInline } from './BeatmapInline';
-import { Form, FormSubmitHandler } from './dom-helpers';
-import { AssigneeType, DescriptionState, GameMode, ICaptain, INomination, INominationWithPollResult, IRound, IUser, IUserWithoutRoles, MetadataState, ModeratorState, PartialWithId } from './interfaces';
+import { dateFromString } from './date-format';
+import type { FormSubmitHandler } from './dom-helpers';
+import { Form } from './dom-helpers';
+import Help from "./Help";
+import type { GameMode, ICaptain, INomination, INominationWithPollResult, IRound, IUser, IUserWithoutRoles, PartialWithId } from './interfaces';
+import { AssigneeType, DescriptionState, MetadataState, ModeratorState } from './interfaces';
+import ListInline from './ListInline';
+import ListInput from './ListInput';
 import { Modal } from './Modal';
 import { Never } from './Never';
+import EditModeration from './nomination/EditModeration';
+import EditNominators from './nomination/EditNominators';
+import StatusLine from './nomination/StatusLine';
 import { Orderable } from './Orderable';
 import { gameModeLongName } from './osu-helpers';
 import { useOsuAuth } from './osuAuth';
 import { canWriteAs, isCaptainForMode } from './permissions';
 import Header from './round/Header';
 import { UserInline } from './UserInline';
-import Help from "./Help";
-import EditNominators from './nomination/EditNominators';
-import ListInput from './ListInput';
-import ListInline from './ListInline';
-import StatusLine from './nomination/StatusLine';
-import { dateFromString } from './date-format';
-import EditModeration from './nomination/EditModeration';
 
 export function Picks() {
   const authUser = useOsuAuth().user;
@@ -61,7 +63,7 @@ export function Picks() {
     });
   };
   const onNominationMove = (gameMode: GameMode, oldIndex: number, newIndex: number) => {
-    const orders: { [nominationId: number]: number } = {};
+    const orders: Record<number, number> = {};
 
     nominationsByGameMode[gameMode].forEach((nomination, index) => {
       if (index === oldIndex)
@@ -223,7 +225,7 @@ export function Picks() {
   );
 }
 
-type AddNominationProps = {
+interface AddNominationProps {
   gameMode: GameMode;
   onNominationAdd: (nomination: INomination) => void;
   roundId: number;
@@ -264,7 +266,7 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
   );
 }
 
-type NominationProps = {
+interface NominationProps {
   assigneesApi: readonly [IUser[] | undefined, IUser[] | undefined, ResponseError | undefined];
   captainsApi: readonly [{ [P in GameMode]?: ICaptain[] } | undefined, ResponseError | undefined];
   locked: boolean;
@@ -274,7 +276,7 @@ type NominationProps = {
   parentGameMode?: GameMode;
   pollsOpened: boolean;
   round: IRound;
-};
+}
 
 function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominationDelete, onNominationUpdate, parentGameMode, pollsOpened, round }: NominationProps) {
   const authUser = useOsuAuth().user;
@@ -478,11 +480,11 @@ function Nomination({ assigneesApi, captainsApi, locked, nomination, onNominatio
   );
 }
 
-type EditMetadataProps = {
+interface EditMetadataProps {
   metadataStarted: boolean;
   nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
-};
+}
 
 function nameFromUser(user: IUserWithoutRoles) {
   return user.name;
@@ -580,13 +582,13 @@ const assigneeTypeNames = {
   [AssigneeType.moderator]: 'Moderator',
 } as const;
 
-type EditAssigneesProps = {
+interface EditAssigneesProps {
   assignees: IUserWithoutRoles[];
   candidatesApi: readonly [IUserWithoutRoles[] | undefined, ResponseError | undefined];
   nominationId: number;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   type: AssigneeType;
-};
+}
 
 function EditAssignees({ assignees, candidatesApi, nominationId, onNominationUpdate, type }: EditAssigneesProps) {
   const [busy, setBusy] = useState(false);
@@ -656,10 +658,10 @@ function EditAssignees({ assignees, candidatesApi, nominationId, onNominationUpd
   );
 }
 
-type EditDifficultiesProps = {
+interface EditDifficultiesProps {
   nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
-};
+}
 
 function EditDifficulties({ nomination, onNominationUpdate }: EditDifficultiesProps) {
   const [busy, setBusy] = useState(false);
@@ -719,10 +721,10 @@ function EditDifficulties({ nomination, onNominationUpdate }: EditDifficultiesPr
   );
 }
 
-type GodMenuProps = {
+interface GodMenuProps {
   nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
-};
+}
 
 function GodMenu({ nomination, onNominationUpdate }: GodMenuProps) {
   const [busy, setBusy] = useState(false);
@@ -788,13 +790,13 @@ function GodMenu({ nomination, onNominationUpdate }: GodMenuProps) {
   );
 }
 
-type DescriptionProps = {
+interface DescriptionProps {
   author?: IUserWithoutRoles;
   canEdit: boolean;
   nominationId: number;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   text?: string;
-};
+}
 
 function Description({ author, canEdit, nominationId, onNominationUpdate, text }: DescriptionProps) {
   const [busy, setBusy] = useState(false);

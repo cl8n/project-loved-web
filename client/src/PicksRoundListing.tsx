@@ -1,11 +1,11 @@
 import { Link, useHistory } from 'react-router-dom';
+import type { ResponseError } from 'superagent';
 import { addRound, apiErrorMessage, getRounds, useApi } from './api';
 import type { IRound } from './interfaces';
 import { Never } from './Never';
 import { useOsuAuth } from './osuAuth';
 import { canWriteAs } from './permissions';
 import PostDate from './round/PostDate';
-import { ResponseError } from 'superagent';
 
 type RoundProps = IRound & {
   nomination_count: number;
@@ -37,7 +37,7 @@ function Round(round: RoundProps) {
         */
 }
 
-type PicksRoundListingInnerProps = {
+interface PicksRoundListingInnerProps {
   rounds: RoundProps[] | undefined;
   roundsError: ResponseError | undefined;
 }

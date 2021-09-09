@@ -1,4 +1,5 @@
-import { HTMLAttributes, PropsWithChildren, useState } from 'react';
+import type { HTMLAttributes, PropsWithChildren} from 'react';
+import { useState } from 'react';
 
 interface DropdownProps {
   align: 'left' | 'right';

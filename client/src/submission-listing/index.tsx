@@ -1,14 +1,17 @@
-import { ChangeEvent, useEffect, useMemo, useReducer } from 'react';
+import type { ChangeEvent} from 'react';
+import { useEffect, useMemo, useReducer } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
-import { apiErrorMessage, getSubmissions, GetSubmissionsResponseBody, useApi } from '../api';
+import type { GetSubmissionsResponseBody} from '../api';
+import { apiErrorMessage, getSubmissions, useApi } from '../api';
 import { dateFromString } from '../date-format';
 import Help from '../Help';
-import { GameMode, IReview } from '../interfaces';
+import type { GameMode, IReview } from '../interfaces';
 import { gameModeFromShortName, gameModeLongName, gameModes, gameModeShortName } from '../osu-helpers';
 import { useOsuAuth } from '../osuAuth';
 import { isCaptainForMode } from '../permissions';
-import { ToggleableColumn, toggleableColumns, ToggleableColumnsState } from './helpers';
+import type { ToggleableColumn, ToggleableColumnsState } from './helpers';
+import { toggleableColumns } from './helpers';
 import SortButton from './SortButton';
 import SubmissionBeatmapset from './SubmissionBeatmapset';
 
@@ -81,7 +84,7 @@ type SortsAndFiltersReducerAction = {
   action: 'toggleOrder';
   index: 0 | 1;
 };
-type SortsAndFiltersState = {
+interface SortsAndFiltersState {
   filterToApproved: boolean;
   sorts: [
     {
@@ -93,7 +96,7 @@ type SortsAndFiltersState = {
       sort: Sort;
     },
   ];
-};
+}
 
 const allSorts: Sort[] = ['artist', 'title', 'priority', 'score', 'playCount', 'favoriteCount', 'year'];
 const defaultAscendingSorts = new Set<Sort>(['artist', 'title', 'year']);

@@ -1,6 +1,7 @@
 import { FormattedMessage } from 'react-intl';
-import { Route, RouteProps } from 'react-router-dom';
-import { IRole } from './interfaces';
+import type { RouteProps } from 'react-router-dom';
+import { Route } from 'react-router-dom';
+import type { IRole } from './interfaces';
 import { loginUrl, useOsuAuth } from './osuAuth';
 import { canReadAs } from './permissions';
 

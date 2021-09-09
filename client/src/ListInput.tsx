@@ -1,6 +1,7 @@
-import { Key, ReactNode, useEffect, useState } from 'react';
+import type { Key, ReactNode} from 'react';
+import { useEffect, useState } from 'react';
 
-type ListInputProps<T, VT extends Key> = {
+interface ListInputProps<T, VT extends Key> {
   items: T[];
   itemValue: (item: T) => VT;
   itemRender: (item: T) => ReactNode;
@@ -8,7 +9,7 @@ type ListInputProps<T, VT extends Key> = {
   placeholder: string;
   type: string;
   valueType: string;
-};
+}
 
 let nextKey = 0;
 

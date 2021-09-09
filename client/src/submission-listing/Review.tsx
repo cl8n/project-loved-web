@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { dateFromString } from '../date-format';
-import { IReview, IUserWithoutRoles } from '../interfaces';
+import type { IReview, IUserWithoutRoles } from '../interfaces';
 import { UserInline } from '../UserInline';
 import { reviewScoreClasses, reviewScoreMessages } from './helpers';
 

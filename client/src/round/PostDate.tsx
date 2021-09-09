@@ -1,9 +1,9 @@
-import { IRound } from '../interfaces';
 import { dateFromString } from '../date-format';
+import type { IRound } from '../interfaces';
 
-type PostDateProps = {
+interface PostDateProps {
   round: IRound;
-};
+}
 
 export default function PostDate({ round }: PostDateProps) {
   const date = dateFromString(round.news_posted_at);

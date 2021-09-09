@@ -1,6 +1,6 @@
 import { FormattedMessage } from 'react-intl';
 import { dateFromString } from '../date-format';
-import { ISubmission, IUserWithoutRoles } from '../interfaces';
+import type { ISubmission, IUserWithoutRoles } from '../interfaces';
 import { UserInline } from '../UserInline';
 import { submissionIsNew } from './helpers';
 

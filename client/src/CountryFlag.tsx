@@ -16,9 +16,9 @@ const messages = defineMessages({
   },
 });
 
-type CountryFlagProps = {
+interface CountryFlagProps {
   country: string;
-};
+}
 
 export default function CountryFlag({ country }: CountryFlagProps) {
   const intl = useIntl();

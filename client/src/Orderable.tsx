@@ -1,10 +1,11 @@
-import { DragEvent, ReactElement, useState } from 'react';
+import type { DragEvent, ReactElement} from 'react';
+import { useState } from 'react';
 
-type OrderableProps = {
+interface OrderableProps {
   children: ReactElement[];
   enabled: boolean;
   onMoveChild: (oldIndex: number, newIndex: number) => void;
-};
+}
 
 export function Orderable({ children, enabled, onMoveChild }: OrderableProps) {
   const [draggedIndex, setDraggedIndex] = useState<number>();

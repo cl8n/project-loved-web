@@ -1,4 +1,5 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import type { ChangeEvent} from 'react';
+import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink, Link } from 'react-router-dom';
 import globeIcon from './images/icons8/globe.png';

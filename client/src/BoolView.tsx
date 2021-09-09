@@ -11,10 +11,10 @@ const messages = defineMessages({
   },
 });
 
-type BoolViewProps = {
+interface BoolViewProps {
   noColor?: boolean;
   value: boolean;
-};
+}
 
 export function BoolView({ noColor, value }: BoolViewProps) {
   const intl = useIntl();

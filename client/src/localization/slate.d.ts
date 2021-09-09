@@ -1,6 +1,6 @@
-import { TYPE } from '@formatjs/icu-messageformat-parser';
-import { BaseEditor, BaseText } from 'slate';
-import { ReactEditor } from 'slate-react';
+import type { TYPE } from '@formatjs/icu-messageformat-parser';
+import type { BaseEditor, BaseText } from 'slate';
+import type { ReactEditor } from 'slate-react';
 
 declare module 'slate' {
   interface CustomTypes {

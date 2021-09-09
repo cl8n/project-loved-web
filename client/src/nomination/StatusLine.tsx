@@ -1,4 +1,5 @@
-import { DescriptionState, INominationWithPollResult, MetadataState, ModeratorState } from '../interfaces';
+import type { INominationWithPollResult} from '../interfaces';
+import { DescriptionState, MetadataState, ModeratorState } from '../interfaces';
 import ListInline from '../ListInline';
 
 function descriptionClass(description: string | undefined, state: DescriptionState) {
@@ -51,12 +52,12 @@ function votingClass(opened: boolean, result: boolean | undefined) {
   return result ? 'success' : 'panic';
 }
 
-type StatusLineProps = {
+interface StatusLineProps {
   ignoreModeratorChecks: boolean;
   nomination: INominationWithPollResult;
   pollsOpened: boolean;
   votingResult: boolean | undefined;
-};
+}
 
 export default function StatusLine({ ignoreModeratorChecks, nomination, pollsOpened, votingResult }: StatusLineProps) {
   const infoArray = [

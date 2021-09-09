@@ -1,10 +1,10 @@
-import { GameMode, IBeatmapset } from './interfaces';
+import type { GameMode, IBeatmapset } from './interfaces';
 import { gameModeShortName } from './osu-helpers';
 
-type BeatmapProps = {
+interface BeatmapProps {
   beatmapset: IBeatmapset;
   gameMode?: GameMode;
-};
+}
 
 export default function Beatmap({ beatmapset, gameMode }: BeatmapProps) {
   let link = `https://osu.ppy.sh/beatmapsets/${beatmapset.id}`;

@@ -1,15 +1,17 @@
-import { INomination, ModeratorState, PartialWithId } from '../interfaces';
 import { useState } from 'react';
 import { apiErrorMessage, updateNominationModeration } from '../api';
-import { Form, FormSubmitHandler } from '../dom-helpers';
-import { Modal } from '../Modal';
 import { BeatmapInline } from '../BeatmapInline';
+import type { FormSubmitHandler } from '../dom-helpers';
+import { Form } from '../dom-helpers';
+import type { INomination, PartialWithId } from '../interfaces';
+import { ModeratorState } from '../interfaces';
+import { Modal } from '../Modal';
 
-type EditModerationProps = {
+interface EditModerationProps {
   moderationStarted: boolean;
   nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
-};
+}
 
 export default function EditModeration({ moderationStarted, nomination, onNominationUpdate }: EditModerationProps) {
   const [busy, setBusy] = useState(false);

@@ -1,4 +1,5 @@
-import { PropsWithChildren, ReactNode, useState } from 'react';
+import type { PropsWithChildren, ReactNode} from 'react';
+import { useState } from 'react';
 
 interface TooltipProps {
   content: ReactNode;

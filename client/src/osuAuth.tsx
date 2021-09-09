@@ -1,7 +1,8 @@
-import { createContext, PropsWithChildren, useMemo } from 'react';
+import type { PropsWithChildren} from 'react';
+import { createContext, useMemo } from 'react';
 import superagent from 'superagent';
 import { apiErrorMessage, authRemember, useApi } from './api';
-import { IUser } from './interfaces';
+import type { IUser } from './interfaces';
 import { useRequiredContext } from './react-helpers';
 
 interface OsuAuthContextValue {

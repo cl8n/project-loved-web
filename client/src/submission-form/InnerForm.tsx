@@ -1,10 +1,11 @@
-import { Form, FormSubmitHandler } from '../dom-helpers';
 import { useState } from 'react';
-import { addSubmission, apiErrorMessage } from '../api';
-import { gameModeLongName, gameModes, gameModeShortName } from '../osu-helpers';
-import { autoHeightRef } from '../auto-height';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useHistory } from 'react-router-dom';
+import { addSubmission, apiErrorMessage } from '../api';
+import { autoHeightRef } from '../auto-height';
+import type { FormSubmitHandler } from '../dom-helpers';
+import { Form } from '../dom-helpers';
+import { gameModeLongName, gameModes, gameModeShortName } from '../osu-helpers';
 
 const messages = defineMessages({
   submit: {

@@ -1,6 +1,8 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import superagent, { Response as SuperAgentResponse, ResponseError } from 'superagent';
-import {
+import type { Dispatch, SetStateAction} from 'react';
+import { useEffect, useState } from 'react';
+import type { Response as SuperAgentResponse, ResponseError } from 'superagent';
+import superagent from 'superagent';
+import type {
   AssigneeType,
   GameMode,
   IBeatmapset,
@@ -26,10 +28,10 @@ interface SuperAgentResponseWithBody<BodyType> extends SuperAgentResponse {
 }
 type Response<BodyType = undefined> = Promise<SuperAgentResponseWithBody<BodyType>>;
 
-type ApiObjectTypes = {
+interface ApiObjectTypes {
   beatmapset: IBeatmapset;
   user: IUser;
-};
+}
 type ApiObjectType = keyof ApiObjectTypes;
 
 export function isApiObjectType(type: any): type is ApiObjectType {
@@ -102,10 +104,10 @@ export function getPollResults(): Response<IPollResult[]> {
     .get('/api/stats/polls');
 }
 
-type GetRoundsResponseBody = {
+interface GetRoundsResponseBody {
   complete_rounds: (IRound & { nomination_count: number; })[];
   incomplete_rounds: (IRound & { nomination_count: number; })[];
-};
+}
 
 export function getRounds(): Response<GetRoundsResponseBody> {
   return superagent
@@ -117,7 +119,7 @@ export function getLogs(): Response<ILog[]> {
     .get('/api/logs');
 }
 
-export type GetSubmissionsResponseBody = {
+export interface GetSubmissionsResponseBody {
   beatmapsets: (IBeatmapset & {
     beatmap_counts: Record<GameMode, number>;
     consent: boolean | null;
@@ -140,7 +142,7 @@ export type GetSubmissionsResponseBody = {
       alumni: boolean | null;
     }
   >;
-};
+}
 
 export function getSubmissions(gameMode: GameMode): Response<GetSubmissionsResponseBody> {
   return superagent
@@ -148,10 +150,10 @@ export function getSubmissions(gameMode: GameMode): Response<GetSubmissionsRespo
     .query({ gameMode });
 }
 
-export type GetTeamResponseBody = {
+export interface GetTeamResponseBody {
   alumni: { [P in GameMode | 'dev' | 'metadata' | 'moderator' | 'news' | 'other' ]?: IUserWithoutRoles[]; };
   current: { [P in GameMode | 'dev' | 'metadata' | 'moderator' | 'news' | 'other' ]?: IUserWithoutRoles[]; };
-};
+}
 
 export function getTeam(): Response<GetTeamResponseBody> {
   return superagent
@@ -222,7 +224,7 @@ export function updateNominationModeration(nominationId: number, state: Moderato
     .send({nominationId, state });
 }
 
-export function updateNominationOrder(orders: { [nominationId: number]: number }): Response {
+export function updateNominationOrder(orders: Record<number, number>): Response {
   return superagent
     .post('/api/update-nomination-order')
     .send(orders);

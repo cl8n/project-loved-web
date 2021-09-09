@@ -1,6 +1,7 @@
 import { defineMessages, useIntl } from 'react-intl';
-import { ResponseError } from 'superagent';
-import { apiErrorMessage, GetTeamResponseBody } from '../api';
+import type { ResponseError } from 'superagent';
+import type { GetTeamResponseBody } from '../api';
+import { apiErrorMessage } from '../api';
 import { gameModeLongName, gameModes } from '../osu-helpers';
 import UserList from './UserList';
 
@@ -31,10 +32,10 @@ const messages = defineMessages({
   },
 });
 
-type TeamListProps = {
+interface TeamListProps {
   current: boolean;
   teamApi: readonly [GetTeamResponseBody | undefined, ResponseError | undefined, unknown];
-};
+}
 
 export default function TeamList({ current, teamApi }: TeamListProps) {
   const intl = useIntl();

@@ -1,5 +1,7 @@
-import { createContext, PropsWithChildren, useMemo, useState } from 'react';
-import { IntlProvider, MessageFormatElement } from 'react-intl';
+import type { PropsWithChildren} from 'react';
+import { createContext, useMemo, useState } from 'react';
+import type { MessageFormatElement } from 'react-intl';
+import { IntlProvider } from 'react-intl';
 import { useRequiredContext } from './react-helpers';
 
 type IntlContextValue = [string, (locale: string) => void];

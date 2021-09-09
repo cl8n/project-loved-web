@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { apiErrorMessage, getMapperConsents, useApi } from '../api';
 import { BeatmapInline } from '../BeatmapInline';
-import { IMapperConsent } from '../interfaces';
+import type { IMapperConsent } from '../interfaces';
 import { UserInline } from '../UserInline';
 
 const messages = defineMessages({

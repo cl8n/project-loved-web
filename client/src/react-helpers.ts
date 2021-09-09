@@ -1,4 +1,5 @@
-import { Context, Dispatch, SetStateAction, useContext, useEffect, useRef } from 'react';
+import type { Context, Dispatch, SetStateAction} from 'react';
+import { useContext, useEffect, useRef } from 'react';
 
 export function setProperty<T, K extends keyof T>(
   setter: Dispatch<SetStateAction<T>>,

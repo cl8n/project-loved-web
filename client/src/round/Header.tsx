@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { IRound, PartialWithId } from '../interfaces';
+import type { IRound, PartialWithId } from '../interfaces';
 import Markdown from '../Markdown';
 import PostDate from './PostDate';
 import RoundEditor from './RoundEditor';
 
-type HeaderProps = {
+interface HeaderProps {
   canEdit: boolean;
   onRoundUpdate: (round: PartialWithId<IRound>) => void;
   round: IRound;
-};
+}
 
 export default function Header({ canEdit, onRoundUpdate, round }: HeaderProps) {
   const [editing, setEditing] = useState(false);

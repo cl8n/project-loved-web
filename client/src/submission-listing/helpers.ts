@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl';
 import { dateFromString } from '../date-format';
-import { ISubmission } from '../interfaces';
+import type { ISubmission } from '../interfaces';
 
 export type ToggleableColumn = 'bpm' | 'difficultyCount' | 'favoriteCount' | 'playCount' | 'score' | 'year';
 export type ToggleableColumnsState = Record<ToggleableColumn, boolean>;

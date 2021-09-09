@@ -1,4 +1,5 @@
-import { ChangeEvent, ChangeEventHandler, RefObject, useRef, useState } from 'react';
+import type { ChangeEvent, ChangeEventHandler, RefObject} from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   addUser,
@@ -11,22 +12,24 @@ import {
   updateUserRoles,
   useApi
 } from './api';
+import {autoHeightRef} from "./auto-height";
 import { BoolView } from './BoolView';
-import { Form, FormSubmitHandler } from './dom-helpers';
-import { ILog, IUser, LogType } from './interfaces';
+import type { FormSubmitHandler } from './dom-helpers';
+import { Form } from './dom-helpers';
+import type { ILog, IUser} from './interfaces';
+import { LogType } from './interfaces';
 import { Modal } from './Modal';
 import { Never } from './Never';
 import { gameModeLongName, gameModes } from './osu-helpers';
 import { useOsuAuth } from './osuAuth';
 import { canReadAs, canWriteAs } from './permissions';
 import { UserInline } from './UserInline';
-import {autoHeightRef} from "./auto-height";
 
-type ApiObjectUpdateLog = {
+interface ApiObjectUpdateLog {
   id: number;
   type: string;
   success: boolean;
-};
+}
 
 function ApiObjectMenu() {
   const [busy, setBusy] = useState(false);
@@ -239,9 +242,9 @@ function PermissionsMenu() {
   );
 }
 
-type AddUserProps = {
+interface AddUserProps {
   onUserAdd: (user: IUser) => void;
-};
+}
 
 function AddUser({ onUserAdd }: AddUserProps) {
   const [busy, setBusy] = useState(false);
@@ -267,10 +270,10 @@ function AddUser({ onUserAdd }: AddUserProps) {
   );
 }
 
-type PermissionsMenuUserEditorProps = {
+interface PermissionsMenuUserEditorProps {
   setRoles: (roles: IUser['roles']) => void;
   user: IUser;
-};
+}
 
 function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditorProps) {
   const [busy, setBusy] = useState(false);
@@ -422,12 +425,12 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
   );
 }
 
-type BoolRadioCellProps = {
+interface BoolRadioCellProps {
   defaultChecked: boolean;
   name: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
   refs?: readonly [RefObject<HTMLInputElement>, RefObject<HTMLInputElement>];
-};
+}
 
 function BoolRadioCell({ defaultChecked, name, onChange, refs }: BoolRadioCellProps) {
   return (

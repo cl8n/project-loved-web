@@ -1,6 +1,6 @@
-import { PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 import CountryFlag from './CountryFlag';
-import { IUserWithoutRoles } from './interfaces';
+import type { IUserWithoutRoles } from './interfaces';
 
 const anonymousUser = {
   id: 4294967296,

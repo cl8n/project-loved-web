@@ -1,4 +1,4 @@
-import { GameMode } from './interfaces';
+import type { GameMode } from './interfaces';
 
 export const gameModes = [0, 1, 2, 3] as const;
 const gameModeShortNames = ['osu', 'taiko', 'fruits', 'mania'] as const;

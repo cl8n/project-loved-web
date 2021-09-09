@@ -1,5 +1,5 @@
-import { GetSubmissionsResponseBody } from '../api';
-import { IReview, ISubmission } from '../interfaces';
+import type { GetSubmissionsResponseBody } from '../api';
+import type { IReview, ISubmission } from '../interfaces';
 import Review from './Review';
 import Submission from './Submission';
 

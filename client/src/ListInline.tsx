@@ -1,4 +1,4 @@
-import { ReactChild } from 'react';
+import type { ReactChild } from 'react';
 
 type ListInlineRenderProps<T> = {
   array: T[];

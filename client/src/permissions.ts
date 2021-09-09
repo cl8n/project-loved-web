@@ -1,4 +1,4 @@
-import { GameMode, IRole, IUser } from './interfaces';
+import type { GameMode, IRole, IUser } from './interfaces';
 
 export function canReadAs(user: IUser, role: IRole | 'any') {
   if (role === 'any')

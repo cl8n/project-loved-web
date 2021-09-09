@@ -1,4 +1,5 @@
-import { KeyboardEvent, MouseEvent, PropsWithChildren, useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent, MouseEvent, PropsWithChildren} from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 type ModalProps = PropsWithChildren<{

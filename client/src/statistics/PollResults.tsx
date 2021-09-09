@@ -1,8 +1,9 @@
-import { ChangeEvent, useMemo, useState } from 'react';
+import type { ChangeEvent} from 'react';
+import { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { apiErrorMessage, getPollResults, useApi } from '../api';
 import { BeatmapInline } from '../BeatmapInline';
-import { GameMode, IPollResult } from '../interfaces';
+import type { GameMode, IPollResult } from '../interfaces';
 import { gameModeLongName, gameModes } from '../osu-helpers';
 
 const messages = defineMessages({
@@ -190,10 +191,10 @@ export default function PollResults() {
   );
 }
 
-type ResultCellsProps = {
+interface ResultCellsProps {
   poll: IPollResult;
   showPercent: boolean;
-};
+}
 
 function ResultCells({ poll, showPercent }: ResultCellsProps) {
   const intl = useIntl();
