@@ -12,27 +12,39 @@ export function Orderable({ children, enabled, onMoveChild }: OrderableProps) {
   const [dropIndex, setDropIndex] = useState<number>();
 
   const getClassName = (index: number) => {
-    if (index !== dropIndex || draggedIndex == null) return;
+    if (index !== dropIndex || draggedIndex == null) {
+      return;
+    }
 
-    if (index < draggedIndex) return 'drop-bar-top';
+    if (index < draggedIndex) {
+      return 'drop-bar-top';
+    }
 
-    if (index > draggedIndex) return 'drop-bar-bottom';
+    if (index > draggedIndex) {
+      return 'drop-bar-bottom';
+    }
   };
 
   const onDragEnter = (index: number) => {
-    if (draggedIndex == null) return;
+    if (draggedIndex == null) {
+      return;
+    }
 
     setDropIndex(index);
   };
 
   const onDragOver = (event: DragEvent) => {
-    if (draggedIndex == null) return;
+    if (draggedIndex == null) {
+      return;
+    }
 
     event.preventDefault();
   };
 
   const onDrop = (event: DragEvent) => {
-    if (draggedIndex == null || dropIndex == null || draggedIndex === dropIndex) return;
+    if (draggedIndex == null || dropIndex == null || draggedIndex === dropIndex) {
+      return;
+    }
 
     event.preventDefault();
     onMoveChild(draggedIndex, dropIndex);

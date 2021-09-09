@@ -3,7 +3,9 @@ import { DescriptionState, MetadataState, ModeratorState } from '../interfaces';
 import ListInline from '../ListInline';
 
 function descriptionClass(description: string | undefined, state: DescriptionState) {
-  if (state === DescriptionState.reviewed) return 'success';
+  if (state === DescriptionState.reviewed) {
+    return 'success';
+  }
 
   return description == null ? 'error' : 'pending';
 }
@@ -45,7 +47,9 @@ function moderationClass(state: ModeratorState) {
 }
 
 function votingClass(opened: boolean, result: boolean | undefined) {
-  if (result == null) return opened ? 'pending' : 'error';
+  if (result == null) {
+    return opened ? 'pending' : 'error';
+  }
 
   return result ? 'success' : 'panic';
 }
@@ -73,8 +77,9 @@ export default function StatusLine({
     </span>,
   ];
 
-  if (!ignoreModeratorChecks)
+  if (!ignoreModeratorChecks) {
     infoArray.push(<span className={moderationClass(nomination.moderator_state)}>Moderation</span>);
+  }
 
   return (
     <div>

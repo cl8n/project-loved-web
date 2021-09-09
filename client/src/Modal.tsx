@@ -31,20 +31,26 @@ export function Modal(props: ModalProps) {
   }, [hasOpened, props.open]);
 
   const handleEsc = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key !== 'Escape') return;
+    if (event.key !== 'Escape') {
+      return;
+    }
 
     event.preventDefault();
     props.close();
   };
 
   const handleOverlayClick = (event: MouseEvent<HTMLDivElement>) => {
-    if ((event.target as Element).closest('.modal') != null) return;
+    if ((event.target as Element).closest('.modal') != null) {
+      return;
+    }
 
     event.preventDefault();
     props.close();
   };
 
-  if (!hasOpened) return null;
+  if (!hasOpened) {
+    return null;
+  }
 
   return createPortal(
     <div

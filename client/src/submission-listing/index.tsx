@@ -351,7 +351,9 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
     gameMode,
   ]);
   const displayBeatmapsets = useMemo(() => {
-    if (submissionsInfo == null) return null;
+    if (submissionsInfo == null) {
+      return null;
+    }
 
     // Beatmapsets come from API sorted by score descending
     return submissionsInfo.beatmapsets
@@ -366,28 +368,33 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
   }, [sortsAndFilters, submissionsInfo]);
 
   useEffect(() => {
-    if (submissionsInfo == null || submittedBeatmapsetId == null) return;
+    if (submissionsInfo == null || submittedBeatmapsetId == null) {
+      return;
+    }
 
     document.querySelector(`[data-beatmapset-id="${submittedBeatmapsetId}"]`)?.scrollIntoView();
     history.replace(locationPath);
   }, [history, locationPath, submissionsInfo, submittedBeatmapsetId]);
 
-  if (submissionsInfoError != null)
+  if (submissionsInfoError != null) {
     return (
       <span className='panic'>
         Failed to load submissions: {apiErrorMessage(submissionsInfoError)}
       </span>
     );
+  }
 
-  if (submissionsInfo == null || displayBeatmapsets == null)
+  if (submissionsInfo == null || displayBeatmapsets == null) {
     return <span>Loading submissions...</span>;
+  }
 
-  if (displayBeatmapsets.length === 0)
+  if (displayBeatmapsets.length === 0) {
     return (
       <p>
         <b>No submissions to show!</b>
       </p>
     );
+  }
 
   const canReview = authUser != null && isCaptainForMode(authUser, gameMode);
   const onReviewUpdate = (review: IReview) => {

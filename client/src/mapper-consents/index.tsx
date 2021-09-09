@@ -87,12 +87,15 @@ function MapperBeatmapsetConsents({ consent }: { consent: IMapperConsent }) {
 export default function MapperConsents() {
   const [consents, consentError] = useApi(getMapperConsents);
 
-  if (consentError != null)
+  if (consentError != null) {
     return (
       <span className='panic'>Failed to load mapper consents: {apiErrorMessage(consentError)}</span>
     );
+  }
 
-  if (consents == null) return <span>Loading mapper consents...</span>;
+  if (consents == null) {
+    return <span>Loading mapper consents...</span>;
+  }
 
   return (
     <div className='content-block'>

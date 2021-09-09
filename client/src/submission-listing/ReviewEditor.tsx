@@ -42,8 +42,9 @@ export default function ReviewEditor({
       !window.confirm(
         'The "Not allowed" score rejects the map regardless of what other captains have said. Are you sure you want to do this?',
       )
-    )
+    ) {
       return null;
+    }
 
     return addOrUpdateReview(beatmapset.id, gameMode, form.reason, form.score)
       .then((response) => onReviewUpdate(response.body))

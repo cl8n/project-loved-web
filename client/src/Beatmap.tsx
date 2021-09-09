@@ -9,7 +9,9 @@ interface BeatmapProps {
 export default function Beatmap({ beatmapset, gameMode }: BeatmapProps) {
   let link = `https://osu.ppy.sh/beatmapsets/${beatmapset.id}`;
 
-  if (gameMode != null) link += `#${gameModeShortName(gameMode)}`;
+  if (gameMode != null) {
+    link += `#${gameModeShortName(gameMode)}`;
+  }
 
   return (
     <a className='beatmap' href={link}>

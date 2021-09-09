@@ -20,7 +20,9 @@ export function BoolView({ noColor, value }: BoolViewProps) {
   const intl = useIntl();
   let className: string | undefined;
 
-  if (!noColor) className = value ? 'success' : 'error';
+  if (!noColor) {
+    className = value ? 'success' : 'error';
+  }
 
   return (
     <span className={className}>{intl.formatMessage(value ? messages.yes : messages.no)}</span>

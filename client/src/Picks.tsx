@@ -73,16 +73,21 @@ export function Picks() {
   // TODO: Split by gamemode
   const [ordering, setOrdering] = useState(false);
 
-  if (authUser == null) return <Never />;
+  if (authUser == null) {
+    return <Never />;
+  }
 
-  if (roundInfoError != null)
+  if (roundInfoError != null) {
     return (
       <span className='panic'>
         Failed to load round and nominations: {apiErrorMessage(roundInfoError)}
       </span>
     );
+  }
 
-  if (roundInfo == null) return <span>Loading round and nominations...</span>;
+  if (roundInfo == null) {
+    return <span>Loading round and nominations...</span>;
+  }
 
   const { nominations, round } = roundInfo;
   const nominationsByGameMode: { [K in GameMode]: INominationWithPollResult[] } = {
@@ -92,8 +97,9 @@ export function Picks() {
     3: [],
   };
 
-  for (const nomination of nominations)
+  for (const nomination of nominations) {
     nominationsByGameMode[nomination.game_mode].push(nomination);
+  }
 
   // TODO: useReducer or useCallback
   const onNominationAdd = (nomination: INomination) => {
@@ -111,9 +117,13 @@ export function Picks() {
     const orders: Record<number, number> = {};
 
     nominationsByGameMode[gameMode].forEach((nomination, index) => {
-      if (index === oldIndex) index = newIndex;
-      else if (oldIndex < index && index <= newIndex) index--;
-      else if (newIndex <= index && index < oldIndex) index++;
+      if (index === oldIndex) {
+        index = newIndex;
+      } else if (oldIndex < index && index <= newIndex) {
+        index--;
+      } else if (newIndex <= index && index < oldIndex) {
+        index++;
+      }
 
       orders[nomination.id] = index;
     });
@@ -124,7 +134,9 @@ export function Picks() {
           return {
             nominations: prev!.nominations
               .map((nomination) => {
-                if (nomination.game_mode === gameMode) nomination.order = orders[nomination.id];
+                if (nomination.game_mode === gameMode) {
+                  nomination.order = orders[nomination.id];
+                }
 
                 return nomination;
               })
@@ -290,7 +302,7 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
     return addNomination(form.beatmapsetId, gameMode, form.parentId, roundId)
       .then((response) => onNominationAdd(response.body))
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error
+      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
   };
 
   // TODO class should probably go on the form itself
@@ -339,10 +351,14 @@ function Nomination({
 }: NominationProps) {
   const authUser = useOsuAuth().user;
 
-  if (authUser == null) return <Never />;
+  if (authUser == null) {
+    return <Never />;
+  }
 
   const deleteSelf = () => {
-    if (!window.confirm('Are you sure you want to delete this nomination?')) return;
+    if (!window.confirm('Are you sure you want to delete this nomination?')) {
+      return;
+    }
 
     deleteNomination(nomination.id)
       .then(() => onNominationDelete(nomination.id))
@@ -706,15 +722,19 @@ function EditAssignees({
 
   // TODO: check performance of creating this every render
   const FormOrError = () => {
-    if (candidatesApi[1] != null)
+    if (candidatesApi[1] != null) {
       return (
         <span className='panic'>Failed to load assignees: {apiErrorMessage(candidatesApi[1])}</span>
       );
+    }
 
-    if (candidatesApi[0] == null) return <span>Loading assignees...</span>;
+    if (candidatesApi[0] == null) {
+      return <span>Loading assignees...</span>;
+    }
 
-    if (candidatesApi[0].length === 0)
+    if (candidatesApi[0].length === 0) {
       return <span>There is nobody with this role to assign.</span>;
+    }
 
     return (
       <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>

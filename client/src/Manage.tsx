@@ -41,7 +41,9 @@ function ApiObjectMenu() {
     const id = form.id;
     const type = form.type;
 
-    if (isNaN(id) || !isApiObjectType(type)) return null;
+    if (isNaN(id) || !isApiObjectType(type)) {
+      return null;
+    }
 
     return updateApiObject(type, id)
       .then(() => addLog({ id, type, success: true }))
@@ -103,7 +105,9 @@ function ApiObjectBulkMenu() {
     const ids = (form.ids as string).trim();
     const type = form.type;
 
-    if (!isApiObjectType(type) || ids.match(/[\d\n]+/) == null) return null;
+    if (!isApiObjectType(type) || ids.match(/[\d\n]+/) == null) {
+      return null;
+    }
 
     const numericIds = ids.split('\n').map((id) => parseInt(id));
 
@@ -183,12 +187,17 @@ function PermissionsMenu() {
     });
   };
 
-  if (authUser == null) return <Never />;
+  if (authUser == null) {
+    return <Never />;
+  }
 
-  if (usersError != null)
+  if (usersError != null) {
     return <span className='panic'>Failed to load users: {apiErrorMessage(usersError)}</span>;
+  }
 
-  if (users == null) return <span>Loading users...</span>;
+  if (users == null) {
+    return <span>Loading users...</span>;
+  }
 
   return (
     <>
@@ -297,8 +306,12 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
   };
 
   const onAlumniChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (alumniGameModeRef.current != null && event.target.checked !== (event.target.value === '1'))
+    if (
+      alumniGameModeRef.current != null &&
+      event.target.checked !== (event.target.value === '1')
+    ) {
       alumniGameModeRef.current.value = 'none';
+    }
   };
 
   const onAlumniGameModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -314,9 +327,11 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
 
   const onCaptainChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (captainGameModeRef.current != null) {
-      if (event.target.checked !== (event.target.value === '1'))
+      if (event.target.checked !== (event.target.value === '1')) {
         captainGameModeRef.current.value = 'none';
-      else if (captainGameModeRef.current.value === 'none') captainGameModeRef.current.value = '0';
+      } else if (captainGameModeRef.current.value === 'none') {
+        captainGameModeRef.current.value = '0';
+      }
     }
   };
 
@@ -458,10 +473,13 @@ function BoolRadioCell({ defaultChecked, name, onChange, refs }: BoolRadioCellPr
 function Logs() {
   const [logs, logsError] = useApi(getLogs);
 
-  if (logsError != null)
+  if (logsError != null) {
     return <span className='panic'>Failed to load logs: {apiErrorMessage(logsError)}</span>;
+  }
 
-  if (logs == null) return <span>Loading logs...</span>;
+  if (logs == null) {
+    return <span>Loading logs...</span>;
+  }
 
   return (
     <table>
@@ -480,7 +498,9 @@ function Logs() {
 }
 
 function LogMessage(log: ILog) {
-  if (log.message.startsWith('{plain}')) return <span>{log.message.slice(7)}</span>;
+  if (log.message.startsWith('{plain}')) {
+    return <span>{log.message.slice(7)}</span>;
+  }
 
   const elements: JSX.Element[] = [];
   const regex = /{creator}|{([^{}]+)}{([^{}]+)}/g;
@@ -488,8 +508,9 @@ function LogMessage(log: ILog) {
   let lastMatchEnd = 0;
 
   while ((match = regex.exec(log.message)) != null) {
-    if (lastMatchEnd !== match.index)
+    if (lastMatchEnd !== match.index) {
       elements.push(<span>{log.message.slice(lastMatchEnd, match.index)}</span>);
+    }
 
     elements.push(
       match[1] != null ? (
@@ -508,8 +529,9 @@ function LogMessage(log: ILog) {
     lastMatchEnd = regex.lastIndex;
   }
 
-  if (lastMatchEnd !== log.message.length)
+  if (lastMatchEnd !== log.message.length) {
     elements.push(<span>{log.message.slice(lastMatchEnd)}</span>);
+  }
 
   return <>elements</>;
 }

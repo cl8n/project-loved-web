@@ -27,7 +27,9 @@ export default function CountryFlag({ country }: CountryFlagProps) {
   const [src, setSrc] = useState(flags?.[country]);
 
   useEffect(() => {
-    if (src == null) flagsPromise.then(() => setSrc(flags?.[country]));
+    if (src == null) {
+      flagsPromise.then(() => setSrc(flags?.[country]));
+    }
   }, [country, src]);
 
   return src == null ? (

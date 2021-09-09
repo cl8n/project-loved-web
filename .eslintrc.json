@@ -4,6 +4,7 @@
     "plugin:prettier/recommended"
   ],
   "rules": {
+    "curly": "error",
     "eqeqeq": ["error", "always", { "null": "never" }]
   },
   "overrides": [

@@ -45,17 +45,21 @@ function EditNominatorsForm({
 }: EditNominatorsFormProps) {
   const [busy, setBusy] = useState(false);
 
-  if (captainsApi[1] != null)
+  if (captainsApi[1] != null) {
     return (
       <span className='panic'>Failed to load captains: {apiErrorMessage(captainsApi[1])}</span>
     );
+  }
 
-  if (captainsApi[0] == null) return <span>Loading captains...</span>;
+  if (captainsApi[0] == null) {
+    return <span>Loading captains...</span>;
+  }
 
   const captains = captainsApi[0][nomination.game_mode];
 
-  if (captains == null || captains.length === 0)
+  if (captains == null || captains.length === 0) {
     return <span>There are no captains for this game mode.</span>;
+  }
 
   const onSubmit: FormSubmitHandler = (form, then) => {
     return updateNominators(nomination.id, form.nominatorIds)

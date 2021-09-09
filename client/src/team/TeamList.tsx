@@ -41,10 +41,13 @@ export default function TeamList({ current, teamApi }: TeamListProps) {
   const intl = useIntl();
   const [team, teamError] = teamApi;
 
-  if (teamError != null)
+  if (teamError != null) {
     return <span className='panic'>Failed to load team members: {apiErrorMessage(teamError)}</span>;
+  }
 
-  if (team == null) return <span>Loading team members...</span>;
+  if (team == null) {
+    return <span>Loading team members...</span>;
+  }
 
   const teamUsers = current ? team.current : team.alumni;
 

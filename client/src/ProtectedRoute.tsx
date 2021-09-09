@@ -18,7 +18,7 @@ export function ProtectedRoute(props: ProtectedRouteProps) {
       children={undefined}
       component={undefined}
       render={() => {
-        if (authUser == null)
+        if (authUser == null) {
           return (
             <FormattedMessage
               defaultMessage="I don't know who you are! Try <a>logging in</a> first."
@@ -29,8 +29,11 @@ export function ProtectedRoute(props: ProtectedRouteProps) {
               }}
             />
           );
+        }
 
-        if (props.role == null || canReadAs(authUser, props.role)) return props.children;
+        if (props.role == null || canReadAs(authUser, props.role)) {
+          return props.children;
+        }
 
         return (
           <FormattedMessage

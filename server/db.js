@@ -12,8 +12,9 @@ class MysqlConnection {
   query(sql, values) {
     return new Promise((resolve, reject) => {
       this.#connection.query(sql, values, function (error, results) {
-        if (error)
+        if (error) {
           return reject(error);
+        }
 
         resolve(results);
       });
@@ -25,8 +26,9 @@ class MysqlConnection {
   }
 
   async queryWithGroups(sql, values) {
-    if (this.#columnsByTable == null)
+    if (this.#columnsByTable == null) {
       throw 'Columns not loaded yet';
+    }
 
     const selects = sql
       .slice(sql.indexOf('SELECT') + 6, sql.indexOf('FROM'))
@@ -38,23 +40,19 @@ class MysqlConnection {
     for (const select of selects) {
       const parts = select.split(':');
 
-      if (parts.length === 1 || select.match(/\s+AS\s+/i) != null)
+      if (parts.length === 1 || select.match(/\s+AS\s+/i) != null) {
         normalSelects.push(select);
-      else {
+      } else {
         const joinMatch = sql.match(new RegExp(`JOIN\\s+(\\S+)\\s+AS\\s+${parts[0]}`, 'i'));
 
-        specialSelectInfo.push([
-          parts[0],
-          parts[1],
-          joinMatch == null ? parts[0] : joinMatch[1],
-        ]);
+        specialSelectInfo.push([parts[0], parts[1], joinMatch == null ? parts[0] : joinMatch[1]]);
       }
     }
 
-    const specialSelectsSqls = specialSelectInfo.map(
-      ([fromTable, toTable, realFromTable]) => this.#columnsByTable[realFromTable].map(
-        (column) => `\`${fromTable}\`.\`${column}\` AS '${toTable}:${column}'`
-      )
+    const specialSelectsSqls = specialSelectInfo.map(([fromTable, toTable, realFromTable]) =>
+      this.#columnsByTable[realFromTable].map(
+        (column) => `\`${fromTable}\`.\`${column}\` AS '${toTable}:${column}'`,
+      ),
     );
 
     sql =
@@ -71,34 +69,38 @@ class MysqlConnection {
       Object.entries(row).forEach(function ([column, value]) {
         const parts = column.split(':');
 
-        if (parts.length === 1)
+        if (parts.length === 1) {
           grouped[column] = value;
-        else {
+        } else {
           if (grouped[parts[0]] == null) {
             grouped[parts[0]] = { _allNull: true };
             groups.push(parts[0]);
           }
 
-          if (grouped[parts[0]]._allNull && value != null)
+          if (grouped[parts[0]]._allNull && value != null) {
             grouped[parts[0]]._allNull = false;
+          }
 
           grouped[parts[0]][parts[1]] = value;
         }
       });
 
-      for (const group of groups)
-        if (grouped[group]._allNull)
+      for (const group of groups) {
+        if (grouped[group]._allNull) {
           grouped[group] = null;
-        else
+        } else {
           delete grouped[group]._allNull;
+        }
+      }
 
       return grouped;
     });
   }
 
   async queryOneWithGroups(sql, values) {
-    if (this.#columnsByTable == null)
+    if (this.#columnsByTable == null) {
       throw 'Columns not loaded yet';
+    }
 
     return (await this.queryWithGroups(sql, values))[0] ?? null;
   }
@@ -131,13 +133,15 @@ class MysqlPool {
   }
 
   close() {
-    if (this.#closed)
+    if (this.#closed) {
       return Promise.resolve();
+    }
 
     return new Promise((resolve, reject) => {
       this.#pool.end((error) => {
-        if (error)
+        if (error) {
           return reject(error);
+        }
 
         this.#closed = true;
 
@@ -156,14 +160,14 @@ class MysqlPool {
         `,
         process.env.DB_DATABASE,
       )
-    )
-      .reduce((prev, column) => {
-        if (prev[column.TABLE_NAME] == null)
-          prev[column.TABLE_NAME] = [];
+    ).reduce((prev, column) => {
+      if (prev[column.TABLE_NAME] == null) {
+        prev[column.TABLE_NAME] = [];
+      }
 
-        prev[column.TABLE_NAME].push(column.COLUMN_NAME);
-        return prev;
-      }, {});
+      prev[column.TABLE_NAME].push(column.COLUMN_NAME);
+      return prev;
+    }, {});
   }
 
   query(...args) {
@@ -175,15 +179,17 @@ class MysqlPool {
   }
 
   queryWithGroups(...args) {
-    if (this.#columnsByTable == null)
+    if (this.#columnsByTable == null) {
       return Promise.reject('Columns not loaded yet');
+    }
 
     return this.useConnection((connection) => connection.queryWithGroups(...args));
   }
 
   queryOneWithGroups(...args) {
-    if (this.#columnsByTable == null)
+    if (this.#columnsByTable == null) {
       return Promise.reject('Columns not loaded yet');
+    }
 
     return this.useConnection((connection) => connection.queryOneWithGroups(...args));
   }
@@ -193,13 +199,15 @@ class MysqlPool {
   }
 
   useConnection(fn) {
-    if (this.#closed)
+    if (this.#closed) {
       return Promise.reject('Connection pool has been closed');
+    }
 
     return new Promise((resolve, reject) => {
       this.#pool.getConnection((error, connection) => {
-        if (error)
+        if (error) {
           return reject(error);
+        }
 
         fn(new MysqlConnection(connection, this.#columnsByTable))
           .then(resolve, reject)
@@ -217,8 +225,9 @@ module.exports = new MysqlPool({
   user: process.env.DB_USER,
 
   typeCast: function (field, next) {
-    if (field.type !== 'TINY' || field.length !== 1)
+    if (field.type !== 'TINY' || field.length !== 1) {
       return next();
+    }
 
     const string = field.string();
 

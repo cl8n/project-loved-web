@@ -17,12 +17,16 @@ type ListInlineProps<T> = ListInlineRenderProps<T> & {
 export default function ListInline<T>(props: ListInlineProps<T>) {
   const length = props.array.length;
 
-  if (length === 0) return <>{props.none ?? 'None'}</>;
+  if (length === 0) {
+    return <>{props.none ?? 'None'}</>;
+  }
 
   const separator = props.onlyCommas
     ? () => ', '
     : (indexBefore: number) => {
-        if (indexBefore === length - 2) return length > 2 ? ', and ' : ' and ';
+        if (indexBefore === length - 2) {
+          return length > 2 ? ', and ' : ' and ';
+        }
 
         return ', ';
       };

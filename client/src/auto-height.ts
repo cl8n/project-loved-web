@@ -7,10 +7,14 @@ function autoHeight(element: HTMLElement) {
 
 export function registerTextareaAutoHeightTrigger() {
   document.addEventListener('input', (event) => {
-    if (event.target instanceof HTMLTextAreaElement) autoHeight(event.target);
+    if (event.target instanceof HTMLTextAreaElement) {
+      autoHeight(event.target);
+    }
   });
 }
 
 export function autoHeightRef(element: HTMLElement | null) {
-  if (element != null) autoHeight(element);
+  if (element != null) {
+    autoHeight(element);
+  }
 }

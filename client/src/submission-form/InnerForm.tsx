@@ -44,8 +44,9 @@ export default function InnerForm() {
 
     return addSubmission(beatmapsetId, form.gameModes, form.reason)
       .then(() => {
-        if (form.submitValue)
+        if (form.submitValue) {
           history.push(`/submissions/${gameModeShortName(form.gameModes[0])}`, beatmapsetId);
+        }
       })
       .then(then)
       .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better

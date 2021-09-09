@@ -27,7 +27,9 @@ export function usePrevious<T>(value: T) {
 export function useRequiredContext<T>(context: Context<T | undefined>): T {
   const contextValue = useContext(context);
 
-  if (contextValue == null) throw new Error('Missing context provider');
+  if (contextValue == null) {
+    throw new Error('Missing context provider');
+  }
 
   return contextValue;
 }

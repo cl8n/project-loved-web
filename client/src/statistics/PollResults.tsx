@@ -53,23 +53,32 @@ export default function PollResults() {
   const [roundOrderAsc, setRoundOrderAsc] = useState(false);
   const [showPercent, setShowPercent] = useState(true);
   const displayPolls = useMemo(() => {
-    if (polls == null) return undefined;
+    if (polls == null) {
+      return undefined;
+    }
 
     let displayPolls = [...polls];
 
-    if (gameMode != null) displayPolls = displayPolls.filter((poll) => poll.game_mode === gameMode);
+    if (gameMode != null) {
+      displayPolls = displayPolls.filter((poll) => poll.game_mode === gameMode);
+    }
 
-    if (roundOrderAsc) displayPolls.sort((a, b) => a.round - b.round);
+    if (roundOrderAsc) {
+      displayPolls.sort((a, b) => a.round - b.round);
+    }
 
     return displayPolls;
   }, [gameMode, polls, roundOrderAsc]);
 
-  if (pollsError != null)
+  if (pollsError != null) {
     return (
       <span className='panic'>Failed to load poll results: {apiErrorMessage(pollsError)}</span>
     );
+  }
 
-  if (displayPolls == null) return <span>Loading poll results...</span>;
+  if (displayPolls == null) {
+    return <span>Loading poll results...</span>;
+  }
 
   const onGameModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = event.currentTarget.value;

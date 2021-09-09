@@ -8,8 +8,9 @@ export default function Localization() {
   const { locale } = useParams<{ locale: string | undefined }>();
   const [localeInput, setLocaleInput] = useState('');
 
-  if (locale != null && locale !== locale.toLowerCase())
+  if (locale != null && locale !== locale.toLowerCase()) {
     return <Redirect to={`/localization/${locale.toLowerCase()}`} />;
+  }
 
   const localeName = locales.find(({ code }) => code === locale)?.name;
   const exportMessages = () => {
@@ -65,7 +66,9 @@ export default function Localization() {
               type='button'
               disabled={!/^[a-z]{2}(?:-[a-z]{2})?$/.test(localeInput)}
               onClick={() => {
-                if (localeInput !== locale) history.push(`/localization/${localeInput}`);
+                if (localeInput !== locale) {
+                  history.push(`/localization/${localeInput}`);
+                }
 
                 setLocaleInput('');
               }}

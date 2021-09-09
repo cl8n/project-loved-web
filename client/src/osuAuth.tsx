@@ -24,8 +24,9 @@ export function OsuAuthProvider({ children }: PropsWithChildren<{}>) {
     [setUser, user],
   );
 
-  if (userError != null && userError.response?.status !== 401)
+  if (userError != null && userError.response?.status !== 401) {
     window.alert(apiErrorMessage(userError)); // TODO: show error better
+  }
 
   return <authContext.Provider value={contextValue}>{children}</authContext.Provider>;
 }

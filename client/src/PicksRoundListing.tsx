@@ -45,10 +45,13 @@ interface PicksRoundListingInnerProps {
 }
 
 function PicksRoundListingInner({ rounds, roundsError }: PicksRoundListingInnerProps) {
-  if (roundsError != null)
+  if (roundsError != null) {
     return <span className='panic'>Failed to load rounds: {apiErrorMessage(roundsError)}</span>;
+  }
 
-  if (rounds == null) return <span>Loading rounds...</span>;
+  if (rounds == null) {
+    return <span>Loading rounds...</span>;
+  }
 
   return (
     <>
@@ -63,7 +66,9 @@ function AddRound() {
   const history = useHistory();
 
   const onClick = () => {
-    if (!window.confirm('Are you sure you want to create a new round?')) return;
+    if (!window.confirm('Are you sure you want to create a new round?')) {
+      return;
+    }
 
     addRound()
       .then((response) => history.push(`/admin/picks/${response.body.id}`))
@@ -83,7 +88,9 @@ export function PicksRoundListing() {
   const authUser = useOsuAuth().user;
   const [rounds, roundsError] = useApi(getRounds);
 
-  if (authUser == null) return <Never />;
+  if (authUser == null) {
+    return <Never />;
+  }
 
   return (
     <>

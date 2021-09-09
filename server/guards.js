@@ -12,8 +12,9 @@ function hasRole(method, user, roles) {
 
 function hasRoleMiddleware(roles, errorMessage) {
   return function (request, response, next) {
-    if (!hasRole(request.method, response.locals.user, roles))
+    if (!hasRole(request.method, response.locals.user, roles)) {
       return response.status(403).json({ error: errorMessage });
+    }
 
     next();
   };
@@ -29,11 +30,13 @@ function timingSafeStringEqual(a, b) {
 module.exports.hasLocalInteropKey = function (request, response, next) {
   const key = request.get('X-Loved-InteropKey');
 
-  if (key == null)
+  if (key == null) {
     return response.status(422).json({ error: 'Missing key' });
+  }
 
-  if (!timingSafeStringEqual(process.env.LOCAL_INTEROP_SECRET, key))
+  if (!timingSafeStringEqual(process.env.LOCAL_INTEROP_SECRET, key)) {
     return response.status(401).json({ error: 'Invalid key' });
+  }
 
   next();
 };
@@ -42,18 +45,23 @@ module.exports.isCaptainForGameMode = function (request, response, next) {
   const gameMode = request.param('gameMode');
   const user = response.locals.user;
 
-  if (gameMode == null)
+  if (gameMode == null) {
     return response.status(400).json({ error: 'No game mode provided' });
+  }
 
-  if (!isGod(request.method, user) && user.roles.captain_game_mode !== gameMode)
+  if (!isGod(request.method, user) && user.roles.captain_game_mode !== gameMode) {
     return response.status(403).json({ error: `Must be a captain for mode ${gameMode}` });
+  }
 
   next();
 };
 
 module.exports.roles = function (request, response) {
   function isCaptain(gameMode) {
-    return isGod(request.method, response.locals.user) || response.locals.user.roles.captain_game_mode === gameMode;
+    return (
+      isGod(request.method, response.locals.user) ||
+      response.locals.user.roles.captain_game_mode === gameMode
+    );
   }
 
   const roles = {

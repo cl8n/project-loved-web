@@ -12,7 +12,9 @@ interface BeatmapInlineProps {
 export function BeatmapInline(props: BeatmapInlineProps) {
   let link = `https://osu.ppy.sh/beatmapsets/${props.beatmapset.id}`;
 
-  if (props.gameMode != null) link += `#${gameModeShortName(props.gameMode)}`;
+  if (props.gameMode != null) {
+    link += `#${gameModeShortName(props.gameMode)}`;
+  }
 
   return (
     <span>
