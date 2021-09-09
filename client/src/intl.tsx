@@ -1,4 +1,4 @@
-import type { PropsWithChildren} from 'react';
+import type { PropsWithChildren } from 'react';
 import { createContext, useMemo, useState } from 'react';
 import type { MessageFormatElement } from 'react-intl';
 import { IntlProvider } from 'react-intl';
@@ -30,13 +30,16 @@ export function IntlProviderWrapper({ children }: PropsWithChildren<{}>) {
     const initialLocale = localStorage.getItem('locale') ?? 'en';
     return [initialLocale, loadMessages(initialLocale)];
   });
-  const contextValue: IntlContextValue = useMemo(() => [
-    locale,
-    (newLocale) => {
-      localStorage.setItem('locale', newLocale);
-      setLocaleAndMessages([newLocale, loadMessages(newLocale)]);
-    },
-  ], [locale]);
+  const contextValue: IntlContextValue = useMemo(
+    () => [
+      locale,
+      (newLocale) => {
+        localStorage.setItem('locale', newLocale);
+        setLocaleAndMessages([newLocale, loadMessages(newLocale)]);
+      },
+    ],
+    [locale],
+  );
 
   return (
     <intlContext.Provider value={contextValue}>

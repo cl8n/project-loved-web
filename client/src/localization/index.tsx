@@ -5,7 +5,7 @@ import Messages from './Messages';
 
 export default function Localization() {
   const history = useHistory();
-  const { locale } = useParams<{ locale: string | undefined; }>();
+  const { locale } = useParams<{ locale: string | undefined }>();
   const [localeInput, setLocaleInput] = useState('');
 
   if (locale != null && locale !== locale.toLowerCase())
@@ -24,17 +24,19 @@ export default function Localization() {
         <h1>Localization</h1>
         <p>To translate this website:</p>
         <ul>
-          <li>Select your locale below, or manually input the BCP 47 tag if it doesn't exist yet</li>
           <li>
-            Translate the messages (you don't have to do all at once). Keep any colored text verbatim
-            from the English messages. If you need to use special language for plural types, gendered
-            words, etc., look up how to use ICU MessageFormat to do this.
+            Select your locale below, or manually input the BCP 47 tag if it doesn't exist yet
+          </li>
+          <li>
+            Translate the messages (you don't have to do all at once). Keep any colored text
+            verbatim from the English messages. If you need to use special language for plural
+            types, gendered words, etc., look up how to use ICU MessageFormat to do this.
           </li>
           <li>Click "Export messages"</li>
           <li>
-            Either commit the resulting file to a fork of {' '}
-            <a href='https://github.com/cl8n/project-loved-web'>project-loved-web</a> and open a pull
-            request, or send it to someone else who can do that for you
+            Either commit the resulting file to a fork of{' '}
+            <a href='https://github.com/cl8n/project-loved-web'>project-loved-web</a> and open a
+            pull request, or send it to someone else who can do that for you
           </li>
           <li>
             Keep in mind that (for now) this page doesn't save any of your work. Anything you type
@@ -49,17 +51,21 @@ export default function Localization() {
               onChange={(event) => setLocaleInput(event.target.value)}
               placeholder='Locale code'
             />
-            <datalist id="locales">
-              {locales.map(({ code, name }) => (
-                code !== 'en' && <option key={code} value={code}>{name}</option>
-              ))}
+            <datalist id='locales'>
+              {locales.map(
+                ({ code, name }) =>
+                  code !== 'en' && (
+                    <option key={code} value={code}>
+                      {name}
+                    </option>
+                  ),
+              )}
             </datalist>
             <button
               type='button'
               disabled={!/^[a-z]{2}(?:-[a-z]{2})?$/.test(localeInput)}
               onClick={() => {
-                if (localeInput !== locale)
-                  history.push(`/localization/${localeInput}`);
+                if (localeInput !== locale) history.push(`/localization/${localeInput}`);
 
                 setLocaleInput('');
               }}
@@ -67,22 +73,20 @@ export default function Localization() {
               Change locale
             </button>
           </div>
-          <button
-            type='button'
-            onClick={exportMessages}
-          >
+          <button type='button' onClick={exportMessages}>
             Export messages
           </button>
         </div>
       </div>
       <div className='content-block'>
-        {locale == null || locale === 'en'
-          ? 'No locale selected'
-          : <>
-              <h2>{localeName != null ? `${localeName} (${locale})` : locale}</h2>
-              <Messages locale={locale} />
-            </>
-        }
+        {locale == null || locale === 'en' ? (
+          'No locale selected'
+        ) : (
+          <>
+            <h2>{localeName != null ? `${localeName} (${locale})` : locale}</h2>
+            <Messages locale={locale} />
+          </>
+        )}
       </div>
     </>
   );

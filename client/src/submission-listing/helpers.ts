@@ -2,9 +2,22 @@ import { defineMessages } from 'react-intl';
 import { dateFromString } from '../date-format';
 import type { ISubmission } from '../interfaces';
 
-export type ToggleableColumn = 'bpm' | 'difficultyCount' | 'favoriteCount' | 'playCount' | 'score' | 'year';
+export type ToggleableColumn =
+  | 'bpm'
+  | 'difficultyCount'
+  | 'favoriteCount'
+  | 'playCount'
+  | 'score'
+  | 'year';
 export type ToggleableColumnsState = Record<ToggleableColumn, boolean>;
-export const toggleableColumns = ['score', 'playCount', 'favoriteCount', 'year', 'difficultyCount', 'bpm'] as const;
+export const toggleableColumns = [
+  'score',
+  'playCount',
+  'favoriteCount',
+  'year',
+  'difficultyCount',
+  'bpm',
+] as const;
 
 const messages = defineMessages({
   strongRejection: {
@@ -41,12 +54,9 @@ export function displayRange(values: number[], displayFn?: (value: number) => st
   const max = Math.max(...values);
   const min = Math.min(...values);
 
-  if (displayFn == null)
-    displayFn = (value) => value.toString(10);
+  if (displayFn == null) displayFn = (value) => value.toString(10);
 
-  return max === min
-    ? displayFn(max)
-    : `${displayFn(min)}–${displayFn(max)}`;
+  return max === min ? displayFn(max) : `${displayFn(min)}–${displayFn(max)}`;
 }
 
 export const reviewScoreMessages = [
@@ -58,7 +68,9 @@ export const reviewScoreMessages = [
   messages.support,
   messages.strongSupport,
 ] as const;
-export const reviewScoreClasses = reviewScoreMessages.map((_, score) => `review-score-${score - 3}`);
+export const reviewScoreClasses = reviewScoreMessages.map(
+  (_, score) => `review-score-${score - 3}`,
+);
 export const selectableReviewScores = [3, 2, 1, -1, -2, -3];
 
 export function submissionIsNew(submission: ISubmission): boolean {

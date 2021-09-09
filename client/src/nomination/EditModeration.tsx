@@ -13,7 +13,11 @@ interface EditModerationProps {
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
 }
 
-export default function EditModeration({ moderationStarted, nomination, onNominationUpdate }: EditModerationProps) {
+export default function EditModeration({
+  moderationStarted,
+  nomination,
+  onNominationUpdate,
+}: EditModerationProps) {
   const [busy, setBusy] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -34,10 +38,7 @@ export default function EditModeration({ moderationStarted, nomination, onNomina
       >
         Edit moderation
       </button>
-      <Modal
-        close={() => setModalOpen(false)}
-        open={modalOpen}
-      >
+      <Modal close={() => setModalOpen(false)} open={modalOpen}>
         <h2>
           <BeatmapInline
             artist={nomination.overwrite_artist}
@@ -49,11 +50,23 @@ export default function EditModeration({ moderationStarted, nomination, onNomina
         <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
           <table>
             <tr>
-              <td><label htmlFor='state'>State</label></td>
               <td>
-                <select name='state' required defaultValue={nomination.moderator_state} data-value-type='int' key={nomination.moderator_state /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */}>
+                <label htmlFor='state'>State</label>
+              </td>
+              <td>
+                <select
+                  name='state'
+                  required
+                  defaultValue={nomination.moderator_state}
+                  data-value-type='int'
+                  key={
+                    nomination.moderator_state /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */
+                  }
+                >
                   <option value={ModeratorState.unchecked}>Not checked</option>
-                  <option value={ModeratorState.needsChange}>Needs change, posted on discussion</option>
+                  <option value={ModeratorState.needsChange}>
+                    Needs change, posted on discussion
+                  </option>
                   <option value={ModeratorState.sentToReview}>Sent to content review</option>
                   <option value={ModeratorState.good}>All good!</option>
                   <option value={ModeratorState.notAllowed}>Not allowed</option>

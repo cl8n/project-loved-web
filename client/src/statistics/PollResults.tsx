@@ -1,4 +1,4 @@
-import type { ChangeEvent} from 'react';
+import type { ChangeEvent } from 'react';
 import { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { apiErrorMessage, getPollResults, useApi } from '../api';
@@ -53,25 +53,23 @@ export default function PollResults() {
   const [roundOrderAsc, setRoundOrderAsc] = useState(false);
   const [showPercent, setShowPercent] = useState(true);
   const displayPolls = useMemo(() => {
-    if (polls == null)
-      return undefined;
+    if (polls == null) return undefined;
 
     let displayPolls = [...polls];
 
-    if (gameMode != null)
-      displayPolls = displayPolls.filter((poll) => poll.game_mode === gameMode);
+    if (gameMode != null) displayPolls = displayPolls.filter((poll) => poll.game_mode === gameMode);
 
-    if (roundOrderAsc)
-      displayPolls.sort((a, b) => a.round - b.round);
+    if (roundOrderAsc) displayPolls.sort((a, b) => a.round - b.round);
 
     return displayPolls;
   }, [gameMode, polls, roundOrderAsc]);
 
   if (pollsError != null)
-    return <span className='panic'>Failed to load poll results: {apiErrorMessage(pollsError)}</span>;
+    return (
+      <span className='panic'>Failed to load poll results: {apiErrorMessage(pollsError)}</span>
+    );
 
-  if (displayPolls == null)
-    return <span>Loading poll results...</span>;
+  if (displayPolls == null) return <span>Loading poll results...</span>;
 
   const onGameModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = event.currentTarget.value;
@@ -83,14 +81,12 @@ export default function PollResults() {
     <>
       <div className='flex-left'>
         <label htmlFor='gameMode'>{intl.formatMessage(messages.gameMode)}</label>
-        <select
-          name='gameMode'
-          value={gameMode ?? 'all'}
-          onChange={onGameModeChange}
-        >
+        <select name='gameMode' value={gameMode ?? 'all'} onChange={onGameModeChange}>
           <option value='all'>{intl.formatMessage(messages.all)}</option>
           {gameModes.map((m) => (
-            <option key={m} value={m}>{gameModeLongName(m)}</option>
+            <option key={m} value={m}>
+              {gameModeLongName(m)}
+            </option>
           ))}
         </select>
         <label htmlFor='roundOrder'>{intl.formatMessage(messages.roundOrder)}</label>
@@ -120,47 +116,45 @@ export default function PollResults() {
               description='Poll results table header'
               tagName='th'
             />
-            {gameMode == null &&
+            {gameMode == null && (
               <FormattedMessage
                 defaultMessage='Game mode'
                 description='Poll results table header'
                 tagName='th'
               />
-            }
+            )}
             <FormattedMessage
               defaultMessage='Beatmapset'
               description='Poll results table header'
               tagName='th'
             />
-            {showPercent
-              ? (
-                <>
-                  <FormattedMessage
-                    defaultMessage='Percent'
-                    description='Poll results table header'
-                    tagName='th'
-                  />
-                  <FormattedMessage
-                    defaultMessage='Total'
-                    description='Poll results table header'
-                    tagName='th'
-                  />
-                </>
-              ) : (
-                <>
-                  <FormattedMessage
-                    defaultMessage='Yes'
-                    description='Poll results table header'
-                    tagName='th'
-                  />
-                  <FormattedMessage
-                    defaultMessage='No'
-                    description='Poll results table header'
-                    tagName='th'
-                  />
-                </>
-              )
-            }
+            {showPercent ? (
+              <>
+                <FormattedMessage
+                  defaultMessage='Percent'
+                  description='Poll results table header'
+                  tagName='th'
+                />
+                <FormattedMessage
+                  defaultMessage='Total'
+                  description='Poll results table header'
+                  tagName='th'
+                />
+              </>
+            ) : (
+              <>
+                <FormattedMessage
+                  defaultMessage='Yes'
+                  description='Poll results table header'
+                  tagName='th'
+                />
+                <FormattedMessage
+                  defaultMessage='No'
+                  description='Poll results table header'
+                  tagName='th'
+                />
+              </>
+            )}
             <FormattedMessage
               defaultMessage='Poll topic'
               description='Poll results table header'
@@ -172,17 +166,24 @@ export default function PollResults() {
           {displayPolls.map((poll) => (
             <tr key={poll.id}>
               <td>{intl.formatNumber(poll.round)}</td>
-              {gameMode == null &&
-                <td>{gameModeLongName(poll.game_mode)}</td>
-              }
+              {gameMode == null && <td>{gameModeLongName(poll.game_mode)}</td>}
               <td className='normal-wrap'>
-                {poll.beatmapset == null
-                  ? <i>{intl.formatMessage(messages.deletedBeatmapset)}</i>
-                  : <BeatmapInline beatmapset={poll.beatmapset} gameMode={poll.game_mode} showCreator />
-                }
+                {poll.beatmapset == null ? (
+                  <i>{intl.formatMessage(messages.deletedBeatmapset)}</i>
+                ) : (
+                  <BeatmapInline
+                    beatmapset={poll.beatmapset}
+                    gameMode={poll.game_mode}
+                    showCreator
+                  />
+                )}
               </td>
               <ResultCells poll={poll} showPercent={showPercent} />
-              <td><a href={`https://osu.ppy.sh/community/forums/topics/${poll.topic_id}`}>#{poll.topic_id}</a></td>
+              <td>
+                <a href={`https://osu.ppy.sh/community/forums/topics/${poll.topic_id}`}>
+                  #{poll.topic_id}
+                </a>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -204,19 +205,24 @@ function ResultCells({ poll, showPercent }: ResultCellsProps) {
   const total = yes + no;
   const yesFraction = yes / total;
 
-  const className = poll.voting_threshold == null ? undefined
-    : yesFraction >= poll.voting_threshold ? 'success' : 'error';
+  const className =
+    poll.voting_threshold == null
+      ? undefined
+      : yesFraction >= poll.voting_threshold
+      ? 'success'
+      : 'error';
 
-  return showPercent
-    ? (
-      <>
-        <td className={className}>{intl.formatNumber(yesFraction, { minimumFractionDigits: 2, style: 'percent' })}</td>
-        <td>{intl.formatNumber(total)}</td>
-      </>
-    ) : (
-      <>
-        <td className={className}>{intl.formatNumber(yes)}</td>
-        <td>{intl.formatNumber(no)}</td>
-      </>
-    );
+  return showPercent ? (
+    <>
+      <td className={className}>
+        {intl.formatNumber(yesFraction, { minimumFractionDigits: 2, style: 'percent' })}
+      </td>
+      <td>{intl.formatNumber(total)}</td>
+    </>
+  ) : (
+    <>
+      <td className={className}>{intl.formatNumber(yes)}</td>
+      <td>{intl.formatNumber(no)}</td>
+    </>
+  );
 }

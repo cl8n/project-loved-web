@@ -1,4 +1,4 @@
-import type { Key, ReactNode} from 'react';
+import type { Key, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
 interface ListInputProps<T, VT extends Key> {
@@ -37,13 +37,8 @@ export default function ListInput<T, VT extends Key>(props: ListInputProps<T, VT
             value={props.itemValue(item)}
             data-value-type={props.valueType}
             data-array
-          />
-          {' '}
-          <button
-            type='button'
-            className='fake-a error'
-            onClick={() => removeItem(item)}
-          >
+          />{' '}
+          <button type='button' className='fake-a error' onClick={() => removeItem(item)}>
             [-]
           </button>
         </div>
@@ -56,22 +51,13 @@ export default function ListInput<T, VT extends Key>(props: ListInputProps<T, VT
             placeholder={props.placeholder}
             data-value-type={props.valueType}
             data-array
-          />
-          {' '}
-          <button
-            type='button'
-            className='fake-a error'
-            onClick={() => removeInput(inputKey)}
-          >
+          />{' '}
+          <button type='button' className='fake-a error' onClick={() => removeInput(inputKey)}>
             [-]
           </button>
         </div>
       ))}
-      <button
-        type='button'
-        className='fake-a success'
-        onClick={addInput}
-      >
+      <button type='button' className='fake-a success' onClick={addInput}>
         [+]
       </button>
     </>

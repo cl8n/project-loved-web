@@ -29,9 +29,7 @@ export function UserInline({ name, showId, user }: UserInlineProps) {
     <UserInlineContainer user={user}>
       <CountryFlag country={user.country} />
       {` ${name ?? user.name}`}
-      {showId &&
-        ` [#${user.id}]`
-      }
+      {showId && ` [#${user.id}]`}
     </UserInlineContainer>
   );
 }
@@ -41,7 +39,11 @@ interface UserInlineContainerProps {
 }
 
 function UserInlineContainer({ children, user }: PropsWithChildren<UserInlineContainerProps>) {
-  return user.banned
-    ? <span className='no-wrap'>{children}</span>
-    : <a className='no-wrap' href={`https://osu.ppy.sh/users/${user.id}`}>{children}</a>;
+  return user.banned ? (
+    <span className='no-wrap'>{children}</span>
+  ) : (
+    <a className='no-wrap' href={`https://osu.ppy.sh/users/${user.id}`}>
+      {children}
+    </a>
+  );
 }

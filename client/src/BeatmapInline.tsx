@@ -12,15 +12,14 @@ interface BeatmapInlineProps {
 export function BeatmapInline(props: BeatmapInlineProps) {
   let link = `https://osu.ppy.sh/beatmapsets/${props.beatmapset.id}`;
 
-  if (props.gameMode != null)
-    link += `#${gameModeShortName(props.gameMode)}`;
+  if (props.gameMode != null) link += `#${gameModeShortName(props.gameMode)}`;
 
   return (
     <span>
       <a href={link}>
         {props.artist ?? props.beatmapset.artist} - {props.title ?? props.beatmapset.title}
       </a>
-      {props.showCreator &&
+      {props.showCreator && (
         <>
           {' ('}
           <a href={`https://osu.ppy.sh/users/${props.beatmapset.creator_id}`}>
@@ -28,7 +27,7 @@ export function BeatmapInline(props: BeatmapInlineProps) {
           </a>
           )
         </>
-      }
+      )}
     </span>
   );
 }

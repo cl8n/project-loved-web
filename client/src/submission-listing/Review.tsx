@@ -6,7 +6,7 @@ import { UserInline } from '../UserInline';
 import { reviewScoreClasses, reviewScoreMessages } from './helpers';
 
 interface ReviewProps {
-  review: IReview & { captain: IUserWithoutRoles & { alumni: boolean | null; } };
+  review: IReview & { captain: IUserWithoutRoles & { alumni: boolean | null } };
 }
 
 export default function Review({ review }: ReviewProps) {
@@ -22,7 +22,11 @@ export default function Review({ review }: ReviewProps) {
           values={{
             score: (c: ReactNode) => <span className={'review ' + scoreClass}>{c}</span>,
             timestamp: dateFromString(review.reviewed_at),
-            user: <b><UserInline user={review.captain} /></b>,
+            user: (
+              <b>
+                <UserInline user={review.captain} />
+              </b>
+            ),
           }}
         />
         <div className={'submission-reason ' + scoreClass}>"{review.reason}"</div>
@@ -36,9 +40,17 @@ export default function Review({ review }: ReviewProps) {
         defaultMessage='{user} reviewed with {score} on {timestamp, date, long}'
         description='Review line'
         values={{
-          score: <span className={'review ' + scoreClass}>{intl.formatMessage(reviewScoreMessages[review.score + 3])}</span>,
+          score: (
+            <span className={'review ' + scoreClass}>
+              {intl.formatMessage(reviewScoreMessages[review.score + 3])}
+            </span>
+          ),
           timestamp: dateFromString(review.reviewed_at),
-          user: <b><UserInline user={review.captain} /></b>,
+          user: (
+            <b>
+              <UserInline user={review.captain} />
+            </b>
+          ),
         }}
       />
       <div className={'submission-reason ' + scoreClass}>"{review.reason}"</div>

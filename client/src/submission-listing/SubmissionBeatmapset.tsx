@@ -31,23 +31,28 @@ const messages = defineMessages({
   },
   failedVoting: {
     defaultMessage: 'Failed voting',
-    description: 'Aggregate review score shown on submissions table for maps that failed community voting',
+    description:
+      'Aggregate review score shown on submissions table for maps that failed community voting',
   },
   inVoting: {
     defaultMessage: 'In voting',
-    description: 'Aggregate review score shown on submissions table for maps currently in community voting',
+    description:
+      'Aggregate review score shown on submissions table for maps currently in community voting',
   },
   nominated: {
     defaultMessage: 'Nominated',
-    description: 'Aggregate review score shown on submissions table for maps nominated by captains for future voting',
+    description:
+      'Aggregate review score shown on submissions table for maps nominated by captains for future voting',
   },
   notAllowed: {
     defaultMessage: 'Not allowed',
     description: 'Aggregate review score shown on submissions table for maps that cannot be Loved',
   },
   notAllowedNoConsent: {
-    defaultMessage: 'The mapper has requested for this map to not be involved with the Loved category.',
-    description: 'Help text explaining that a map cannot be Loved due to its mapper not consenting to it',
+    defaultMessage:
+      'The mapper has requested for this map to not be involved with the Loved category.',
+    description:
+      'Help text explaining that a map cannot be Loved due to its mapper not consenting to it',
   },
   high: {
     defaultMessage: 'High',
@@ -102,7 +107,16 @@ interface SubmissionBeatmapsetProps {
   usersById: GetSubmissionsResponseBody['usersById'];
 }
 
-export default function SubmissionBeatmapset({ beatmapset, canReview, columns, filterToApproved, gameMode, onReviewUpdate, review, usersById }: SubmissionBeatmapsetProps) {
+export default function SubmissionBeatmapset({
+  beatmapset,
+  canReview,
+  columns,
+  filterToApproved,
+  gameMode,
+  onReviewUpdate,
+  review,
+  usersById,
+}: SubmissionBeatmapsetProps) {
   const intl = useIntl();
   const { state: submittedBeatmapsetId } = useLocation<number | undefined>();
   const [expanded, setExpanded] = useState(submittedBeatmapsetId === beatmapset.id);
@@ -110,17 +124,31 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, columns, f
     const submittedAt = dateFromString(beatmapset.submitted_at).getFullYear();
     const updatedAt = dateFromString(beatmapset.updated_at).getFullYear();
 
-    return submittedAt === updatedAt
-      ? <span>{submittedAt}</span>
-      : <span>{submittedAt}<br />{updatedAt}</span>;
+    return submittedAt === updatedAt ? (
+      <span>{submittedAt}</span>
+    ) : (
+      <span>
+        {submittedAt}
+        <br />
+        {updatedAt}
+      </span>
+    );
   }, [beatmapset]);
   const diffCount = useMemo(() => {
     const inThisMode = beatmapset.beatmap_counts[gameMode];
-    const inOtherModes = Object.values(beatmapset.beatmap_counts).reduce((sum, count) => sum += count, 0) - inThisMode;
+    const inOtherModes =
+      Object.values(beatmapset.beatmap_counts).reduce((sum, count) => (sum += count), 0) -
+      inThisMode;
 
-    return inOtherModes === 0
-      ? <span>{intl.formatNumber(inThisMode)}</span>
-      : <span>{intl.formatNumber(inThisMode)}<br />(+{intl.formatNumber(inOtherModes)})</span>;
+    return inOtherModes === 0 ? (
+      <span>{intl.formatNumber(inThisMode)}</span>
+    ) : (
+      <span>
+        {intl.formatNumber(inThisMode)}
+        <br />
+        (+{intl.formatNumber(inOtherModes)})
+      </span>
+    );
   }, [beatmapset, gameMode, intl]);
 
   return (
@@ -138,14 +166,27 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, columns, f
           <div data-beatmapset-id={beatmapset.id} />
           <Beatmap beatmapset={beatmapset} />
         </td>
-        <td><UserInline name={beatmapset.creator_name} user={usersById[beatmapset.creator_id]} /></td>
-        {filterToApproved
-          ? <StatusCell beatmapset={beatmapset} />
-          : <PriorityCell beatmapset={beatmapset} />
-        }
+        <td>
+          <UserInline name={beatmapset.creator_name} user={usersById[beatmapset.creator_id]} />
+        </td>
+        {filterToApproved ? (
+          <StatusCell beatmapset={beatmapset} />
+        ) : (
+          <PriorityCell beatmapset={beatmapset} />
+        )}
         {columns.score && <td>{intl.formatNumber(beatmapset.score)}</td>}
-        {columns.playCount && <td><img alt='' src={playIcon} className='content-icon' /> {intl.formatNumber(beatmapset.play_count)}</td>}
-        {columns.favoriteCount && <td><img alt='' src={heartIcon} className='content-icon' /> {intl.formatNumber(beatmapset.favorite_count)}</td>}
+        {columns.playCount && (
+          <td>
+            <img alt='' src={playIcon} className='content-icon' />{' '}
+            {intl.formatNumber(beatmapset.play_count)}
+          </td>
+        )}
+        {columns.favoriteCount && (
+          <td>
+            <img alt='' src={heartIcon} className='content-icon' />{' '}
+            {intl.formatNumber(beatmapset.favorite_count)}
+          </td>
+        )}
         {columns.year && (
           <td>
             <div className='icon-label-container'>
@@ -162,13 +203,14 @@ export default function SubmissionBeatmapset({ beatmapset, canReview, columns, f
             </div>
           </td>
         )}
-        {columns.bpm && <td><img alt='' src={musicalNotesIcon} className='content-icon' /> {intl.formatNumber(beatmapset.modal_bpm)}</td>}
+        {columns.bpm && (
+          <td>
+            <img alt='' src={musicalNotesIcon} className='content-icon' />{' '}
+            {intl.formatNumber(beatmapset.modal_bpm)}
+          </td>
+        )}
         <td>
-          <button
-            type='button'
-            className='fake-a'
-            onClick={() => setExpanded((prev) => !prev)}
-          >
+          <button type='button' className='fake-a' onClick={() => setExpanded((prev) => !prev)}>
             {intl.formatMessage(expanded ? messages.close : messages.expand)}
           </button>
           {canReview && (
@@ -228,8 +270,7 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
   if (beatmapset.consent === false) {
     return (
       <td className='priority rejected'>
-        {intl.formatMessage(messages.notAllowed)}
-        {' '}
+        {intl.formatMessage(messages.notAllowed)}{' '}
         <Help>{intl.formatMessage(messages.notAllowedNoConsent)}</Help>
       </td>
     );
@@ -249,11 +290,14 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
     return <td className='priority low'>{intl.formatMessage(messages.pending)}</td>;
   }
 
-  const [, priorityMessage, priorityClass] = priorities.find((p) => beatmapset.review_score >= p[0])!;
+  const [, priorityMessage, priorityClass] = priorities.find(
+    (p) => beatmapset.review_score >= p[0],
+  )!;
 
   return (
     <td className={'priority ' + priorityClass}>
-      {intl.formatMessage(priorityMessage)} ({intl.formatNumber(beatmapset.review_score, { signDisplay: 'exceptZero' })})
+      {intl.formatMessage(priorityMessage)} (
+      {intl.formatNumber(beatmapset.review_score, { signDisplay: 'exceptZero' })})
     </td>
   );
 }
@@ -292,5 +336,9 @@ function StatusCell({ beatmapset }: StatusCellProps) {
     return <td className='priority medium'>{intl.formatMessage(messages.ranked)}</td>;
   }
 
-  return <td><Never /></td>;
+  return (
+    <td>
+      <Never />
+    </td>
+  );
 }

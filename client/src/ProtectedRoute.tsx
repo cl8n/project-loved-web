@@ -6,7 +6,7 @@ import { loginUrl, useOsuAuth } from './osuAuth';
 import { canReadAs } from './permissions';
 
 interface ProtectedRouteProps extends RouteProps {
-  role?: IRole | 'any'
+  role?: IRole | 'any';
 }
 
 export function ProtectedRoute(props: ProtectedRouteProps) {
@@ -30,8 +30,7 @@ export function ProtectedRoute(props: ProtectedRouteProps) {
             />
           );
 
-        if (props.role == null || canReadAs(authUser, props.role))
-          return props.children;
+        if (props.role == null || canReadAs(authUser, props.role)) return props.children;
 
         return (
           <FormattedMessage

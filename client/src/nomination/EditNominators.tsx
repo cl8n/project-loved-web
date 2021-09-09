@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction} from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import type { ResponseError } from 'superagent';
 import { apiErrorMessage, updateNominators } from '../api';
@@ -9,7 +9,10 @@ import { Modal } from '../Modal';
 import { UserInline } from '../UserInline';
 
 interface EditNominatorsProps {
-  captainsApi: readonly [{ [P in GameMode]?: IUserWithoutRoles[] } | undefined, ResponseError | undefined];
+  captainsApi: readonly [
+    { [P in GameMode]?: IUserWithoutRoles[] } | undefined,
+    ResponseError | undefined,
+  ];
   nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
 }
@@ -19,17 +22,10 @@ export default function EditNominators(props: EditNominatorsProps) {
 
   return (
     <>
-      <button
-        type='button'
-        onClick={() => setModalOpen(true)}
-        className='fake-a'
-      >
+      <button type='button' onClick={() => setModalOpen(true)} className='fake-a'>
         Edit
       </button>
-      <Modal
-        close={() => setModalOpen(false)}
-        open={modalOpen}
-      >
+      <Modal close={() => setModalOpen(false)} open={modalOpen}>
         <h2>Nominators</h2>
         <EditNominatorsForm {...props} setModalOpen={setModalOpen} />
       </Modal>
@@ -41,14 +37,20 @@ interface EditNominatorsFormProps extends EditNominatorsProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-function EditNominatorsForm({ captainsApi, nomination, onNominationUpdate, setModalOpen }: EditNominatorsFormProps) {
+function EditNominatorsForm({
+  captainsApi,
+  nomination,
+  onNominationUpdate,
+  setModalOpen,
+}: EditNominatorsFormProps) {
   const [busy, setBusy] = useState(false);
 
   if (captainsApi[1] != null)
-    return <span className='panic'>Failed to load captains: {apiErrorMessage(captainsApi[1])}</span>;
+    return (
+      <span className='panic'>Failed to load captains: {apiErrorMessage(captainsApi[1])}</span>
+    );
 
-  if (captainsApi[0] == null)
-    return <span>Loading captains...</span>;
+  if (captainsApi[0] == null) return <span>Loading captains...</span>;
 
   const captains = captainsApi[0][nomination.game_mode];
 
@@ -77,7 +79,9 @@ function EditNominatorsForm({ captainsApi, nomination, onNominationUpdate, setMo
                 defaultChecked={nomination.nominators.find((n) => n.id === captain.id) != null}
               />
             </td>
-            <td><UserInline user={captain} /></td>
+            <td>
+              <UserInline user={captain} />
+            </td>
           </tr>
         ))}
       </table>

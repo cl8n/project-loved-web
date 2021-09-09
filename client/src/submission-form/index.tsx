@@ -65,17 +65,18 @@ export default function SubmissionForm() {
           values={{ submissionsLink }}
         />
       </ul>
-      {authUser == null
-        ? <FormattedMessage
-            defaultMessage='You must <a>log in</a> to fill out the form.'
-            description='Submission form login prompt'
-            tagName='b'
-            values={{
-              a: (c: ReactNode) => <a href={loginUrl}>{c}</a>,
-            }}
-          />
-        : <InnerForm />
-      }
+      {authUser == null ? (
+        <FormattedMessage
+          defaultMessage='You must <a>log in</a> to fill out the form.'
+          description='Submission form login prompt'
+          tagName='b'
+          values={{
+            a: (c: ReactNode) => <a href={loginUrl}>{c}</a>,
+          }}
+        />
+      ) : (
+        <InnerForm />
+      )}
     </>
   );
 }

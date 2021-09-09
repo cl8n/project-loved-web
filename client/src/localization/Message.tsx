@@ -13,11 +13,7 @@ function Message({ description, englishMessage, id, localeMessage, updateMessage
   return (
     <div className={`message${localeMessage ? '' : ' message-warning'}`}>
       <h3>{description}</h3>
-      <MessageFormatEditor
-        className='message-reference'
-        readOnly
-        value={englishMessage}
-      />
+      <MessageFormatEditor className='message-reference' readOnly value={englishMessage} />
       <MessageFormatEditor
         setValue={(value) => updateMessage(id, value)}
         value={localeMessage ?? ''}

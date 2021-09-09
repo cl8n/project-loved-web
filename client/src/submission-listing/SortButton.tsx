@@ -5,11 +5,7 @@ interface SortButtonProps {
 
 export default function SortButton({ ascending, toggle }: SortButtonProps) {
   return (
-    <button
-      type='button'
-      className='fake-a no-decoration'
-      onClick={toggle}
-    >
+    <button type='button' className='fake-a no-decoration' onClick={toggle}>
       {ascending ? '▲' : '▼'}
     </button>
   );

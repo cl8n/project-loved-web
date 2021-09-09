@@ -14,7 +14,7 @@ import { OsuAuthProvider } from './osuAuth';
 import { Picks } from './Picks';
 import { PicksRoundListing } from './PicksRoundListing';
 import { ProtectedRoute } from './ProtectedRoute';
-import Statistics from "./statistics";
+import Statistics from './statistics';
 import './styles/main.scss';
 import SubmissionForm from './submission-form';
 import SubmissionListingContainer from './submission-listing';
@@ -31,18 +31,40 @@ render(
           <main className='big-center'>
             <Switch>
               <Redirect exact from='/' to='/submissions/osu' />
-              <Route path='/submissions/:gameMode?'><SubmissionListingContainer /></Route>
-              <Route path='/submit'><SubmissionForm /></Route>
-              <Route path='/mappers'><MapperConsents /></Route>
-              <Route path='/team'><Team /></Route>
+              <Route path='/submissions/:gameMode?'>
+                <SubmissionListingContainer />
+              </Route>
+              <Route path='/submit'>
+                <SubmissionForm />
+              </Route>
+              <Route path='/mappers'>
+                <MapperConsents />
+              </Route>
+              <Route path='/team'>
+                <Team />
+              </Route>
               <Redirect exact from='/captains' to='/team' />
-              <Route path='/statistics'><Statistics /></Route>
-              <ProtectedRoute exact path='/admin/picks' role='any'><PicksRoundListing /></ProtectedRoute>
-              <ProtectedRoute path='/admin/picks/:round' role='any'><Picks /></ProtectedRoute>
-              <ProtectedRoute path='/admin/manage' role='any'><Manage /></ProtectedRoute>
-              <ProtectedRoute path='/admin/forum-opt-in' role='captain'><ForumOptIn /></ProtectedRoute>
-              <Route path='/localization/:locale?'><Localization /></Route>
-              <Route path='*'><NoRoute /></Route>
+              <Route path='/statistics'>
+                <Statistics />
+              </Route>
+              <ProtectedRoute exact path='/admin/picks' role='any'>
+                <PicksRoundListing />
+              </ProtectedRoute>
+              <ProtectedRoute path='/admin/picks/:round' role='any'>
+                <Picks />
+              </ProtectedRoute>
+              <ProtectedRoute path='/admin/manage' role='any'>
+                <Manage />
+              </ProtectedRoute>
+              <ProtectedRoute path='/admin/forum-opt-in' role='captain'>
+                <ForumOptIn />
+              </ProtectedRoute>
+              <Route path='/localization/:locale?'>
+                <Localization />
+              </Route>
+              <Route path='*'>
+                <NoRoute />
+              </Route>
             </Switch>
           </main>
           <footer>

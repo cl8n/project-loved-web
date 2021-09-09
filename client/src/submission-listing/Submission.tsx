@@ -22,9 +22,12 @@ export default function Submission({ submission }: SubmissionProps) {
         values={{
           hasTimestamp: submission.submitted_at != null,
           timestamp: dateFromString(submission.submitted_at),
-          user: submission.submitter == null
-            ? <i>System</i>
-            : <UserInline user={submission.submitter} />,
+          user:
+            submission.submitter == null ? (
+              <i>System</i>
+            ) : (
+              <UserInline user={submission.submitter} />
+            ),
         }}
       />
       {submissionIsNew(submission) && (
@@ -37,9 +40,7 @@ export default function Submission({ submission }: SubmissionProps) {
           )
         </span>
       )}
-      {submission.reason != null && (
-        <div className='submission-reason'>"{submission.reason}"</div>
-      )}
+      {submission.reason != null && <div className='submission-reason'>"{submission.reason}"</div>}
     </li>
   );
 }

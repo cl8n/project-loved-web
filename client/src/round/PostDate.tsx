@@ -14,8 +14,7 @@ export default function PostDate({ round }: PostDateProps) {
     <span>
       {date == null
         ? 'No post date set'
-        : `${posted ? 'Posted' : 'Posting'} on ${date.toLocaleString()}`
-      }
+        : `${posted ? 'Posted' : 'Posting'} on ${date.toLocaleString()}`}
     </span>
   );
 }

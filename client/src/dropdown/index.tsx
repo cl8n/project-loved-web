@@ -1,11 +1,15 @@
-import type { HTMLAttributes, PropsWithChildren} from 'react';
+import type { HTMLAttributes, PropsWithChildren } from 'react';
 import { useState } from 'react';
 
 interface DropdownProps {
   align: 'left' | 'right';
 }
 
-export default function Dropdown({ align, children, ...props }: PropsWithChildren<DropdownProps> & HTMLAttributes<HTMLDivElement>) {
+export default function Dropdown({
+  align,
+  children,
+  ...props
+}: PropsWithChildren<DropdownProps> & HTMLAttributes<HTMLDivElement>) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -16,9 +20,7 @@ export default function Dropdown({ align, children, ...props }: PropsWithChildre
       onMouseLeave={() => setOpen(false)}
     >
       {open ? '▲' : '▼'}
-      <div className={`dropdown ${align} ${open ? 'open' : ''}`}>
-        {children}
-      </div>
+      <div className={`dropdown ${align} ${open ? 'open' : ''}`}>{children}</div>
     </div>
   );
 }

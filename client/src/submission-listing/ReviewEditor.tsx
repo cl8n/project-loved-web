@@ -24,7 +24,12 @@ interface ReviewEditorProps {
   review?: IReview;
 }
 
-export default function ReviewEditor({ beatmapset, gameMode, onReviewUpdate, review }: ReviewEditorProps) {
+export default function ReviewEditor({
+  beatmapset,
+  gameMode,
+  onReviewUpdate,
+  review,
+}: ReviewEditorProps) {
   const authUser = useOsuAuth().user!;
   const intl = useIntl();
   const [busy, setBusy] = useState(false);
@@ -32,7 +37,12 @@ export default function ReviewEditor({ beatmapset, gameMode, onReviewUpdate, rev
 
   const actuallyCaptain = authUser.roles.captain; // TODO: Not dumb workaround for God role
   const onSubmit: FormSubmitHandler = (form, then) => {
-    if (form.score < -3 && !window.confirm('The "Not allowed" score rejects the map regardless of what other captains have said. Are you sure you want to do this?'))
+    if (
+      form.score < -3 &&
+      !window.confirm(
+        'The "Not allowed" score rejects the map regardless of what other captains have said. Are you sure you want to do this?',
+      )
+    )
       return null;
 
     return addOrUpdateReview(beatmapset.id, gameMode, form.reason, form.score)
@@ -51,10 +61,7 @@ export default function ReviewEditor({ beatmapset, gameMode, onReviewUpdate, rev
       >
         Review
       </button>
-      <Modal
-        close={() => setModalOpen(false)}
-        open={modalOpen}
-      >
+      <Modal close={() => setModalOpen(false)} open={modalOpen}>
         <h2>
           <BeatmapInline beatmapset={beatmapset} gameMode={gameMode} />
           {' review'}
@@ -63,21 +70,29 @@ export default function ReviewEditor({ beatmapset, gameMode, onReviewUpdate, rev
           <table>
             <tbody>
               <tr>
-                <td><label htmlFor='score'>Score</label></td>
+                <td>
+                  <label htmlFor='score'>Score</label>
+                </td>
                 <td>
                   <select
                     name='score'
                     required
                     defaultValue={review?.score}
                     data-value-type='int'
-                    key={review?.score /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */}
+                    key={
+                      review?.score /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */
+                    }
                   >
-                    <option hidden value=''>Select a score</option>
-                    {actuallyCaptain && selectableReviewScores.map((score) => (
-                      <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
-                        {intl.formatMessage(reviewScoreMessages[score + 3])} ({intl.formatNumber(score, { signDisplay: 'exceptZero' })})
-                      </option>
-                    ))}
+                    <option hidden value=''>
+                      Select a score
+                    </option>
+                    {actuallyCaptain &&
+                      selectableReviewScores.map((score) => (
+                        <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
+                          {intl.formatMessage(reviewScoreMessages[score + 3])} (
+                          {intl.formatNumber(score, { signDisplay: 'exceptZero' })})
+                        </option>
+                      ))}
                     <option className='review-score--3' value='-4'>
                       {intl.formatMessage(messages.notAllowed)}
                     </option>
@@ -85,7 +100,9 @@ export default function ReviewEditor({ beatmapset, gameMode, onReviewUpdate, rev
                 </td>
               </tr>
               <tr>
-                <td><label htmlFor='reason'>Reason</label></td>
+                <td>
+                  <label htmlFor='reason'>Reason</label>
+                </td>
                 <td>
                   <textarea
                     name='reason'
@@ -99,9 +116,12 @@ export default function ReviewEditor({ beatmapset, gameMode, onReviewUpdate, rev
           </table>
           <button type='submit' className='modal-submit-button'>
             {busy
-              ? (review == null ? 'Adding...' : 'Updating...')
-              : (review == null ? 'Add' : 'Update')
-            }
+              ? review == null
+                ? 'Adding...'
+                : 'Updating...'
+              : review == null
+              ? 'Add'
+              : 'Update'}
           </button>
         </Form>
       </Modal>

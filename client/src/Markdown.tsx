@@ -3,11 +3,7 @@ import remarkParse from 'remark-parse';
 import unified from 'unified';
 import visit from 'unist-util-visit';
 
-const processor = unified()
-  .use(remarkParse)
-  .use(osuWikiLinks)
-  .use(remarkHtml)
-  .freeze();
+const processor = unified().use(remarkParse).use(osuWikiLinks).use(remarkHtml).freeze();
 
 function osuWikiLinks(): unified.Transformer {
   return (tree) => {

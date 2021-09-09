@@ -3,7 +3,9 @@ import { defineMessages, useIntl } from 'react-intl';
 import missingFlag from './images/flags/__.png';
 
 let flags: Record<string, string> | undefined;
-const flagsPromise = import('./flags').then(({ default: flagsExport }) => { flags = flagsExport });
+const flagsPromise = import('./flags').then(({ default: flagsExport }) => {
+  flags = flagsExport;
+});
 
 const messages = defineMessages({
   flag: {
@@ -25,11 +27,17 @@ export default function CountryFlag({ country }: CountryFlagProps) {
   const [src, setSrc] = useState(flags?.[country]);
 
   useEffect(() => {
-    if (src == null)
-      flagsPromise.then(() => setSrc(flags?.[country]));
+    if (src == null) flagsPromise.then(() => setSrc(flags?.[country]));
   }, [country, src]);
 
-  return src == null
-    ? <img alt={intl.formatMessage(messages.flag, { country: intl.formatMessage(messages.unknownCountry) })} src={missingFlag} />
-    : <img alt={intl.formatMessage(messages.flag, { country })} src={src} />
+  return src == null ? (
+    <img
+      alt={intl.formatMessage(messages.flag, {
+        country: intl.formatMessage(messages.unknownCountry),
+      })}
+      src={missingFlag}
+    />
+  ) : (
+    <img alt={intl.formatMessage(messages.flag, { country })} src={src} />
+  );
 }

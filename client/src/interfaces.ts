@@ -129,15 +129,26 @@ export interface IReview {
   score: number;
 }
 
-export type IRole = 'alumni' | 'captain' | 'dev' | 'god' | 'god_readonly' | 'metadata' | 'moderator' | 'news';
+export type IRole =
+  | 'alumni'
+  | 'captain'
+  | 'dev'
+  | 'god'
+  | 'god_readonly'
+  | 'metadata'
+  | 'moderator'
+  | 'news';
 
 export interface IRound {
   id: number;
   done: boolean;
-  game_modes: Record<GameMode, {
-    nominations_locked: boolean;
-    voting_threshold: number;
-  }>;
+  game_modes: Record<
+    GameMode,
+    {
+      nominations_locked: boolean;
+      voting_threshold: number;
+    }
+  >;
   ignore_moderator_checks: boolean;
   polls_ended_at?: string;
   polls_started_at?: string;

@@ -1,10 +1,9 @@
-import type { INominationWithPollResult} from '../interfaces';
+import type { INominationWithPollResult } from '../interfaces';
 import { DescriptionState, MetadataState, ModeratorState } from '../interfaces';
 import ListInline from '../ListInline';
 
 function descriptionClass(description: string | undefined, state: DescriptionState) {
-  if (state === DescriptionState.reviewed)
-    return 'success';
+  if (state === DescriptionState.reviewed) return 'success';
 
   return description == null ? 'error' : 'pending';
 }
@@ -46,8 +45,7 @@ function moderationClass(state: ModeratorState) {
 }
 
 function votingClass(opened: boolean, result: boolean | undefined) {
-  if (result == null)
-    return opened ? 'pending' : 'error';
+  if (result == null) return opened ? 'pending' : 'error';
 
   return result ? 'success' : 'panic';
 }
@@ -59,9 +57,16 @@ interface StatusLineProps {
   votingResult: boolean | undefined;
 }
 
-export default function StatusLine({ ignoreModeratorChecks, nomination, pollsOpened, votingResult }: StatusLineProps) {
+export default function StatusLine({
+  ignoreModeratorChecks,
+  nomination,
+  pollsOpened,
+  votingResult,
+}: StatusLineProps) {
   const infoArray = [
-    <span className={descriptionClass(nomination.description, nomination.description_state)}>Description</span>,
+    <span className={descriptionClass(nomination.description, nomination.description_state)}>
+      Description
+    </span>,
     <span>
       <span className={metadataClass(nomination.metadata_state)}>Metadata</span>
       <i> {`(${metadataText(nomination.metadata_state)})`}</i>

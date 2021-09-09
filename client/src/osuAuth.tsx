@@ -1,4 +1,4 @@
-import type { PropsWithChildren} from 'react';
+import type { PropsWithChildren } from 'react';
 import { createContext, useMemo } from 'react';
 import superagent from 'superagent';
 import { apiErrorMessage, authRemember, useApi } from './api';
@@ -16,19 +16,18 @@ export const loginUrl = '/api/auth/begin';
 
 export function OsuAuthProvider({ children }: PropsWithChildren<{}>) {
   const [user, userError, setUser] = useApi(authRemember);
-  const contextValue = useMemo(() => ({
-    logOut: () => superagent.post('/api/auth/bye').then(() => setUser(undefined)),
-    user,
-  }), [setUser, user]);
+  const contextValue = useMemo(
+    () => ({
+      logOut: () => superagent.post('/api/auth/bye').then(() => setUser(undefined)),
+      user,
+    }),
+    [setUser, user],
+  );
 
   if (userError != null && userError.response?.status !== 401)
     window.alert(apiErrorMessage(userError)); // TODO: show error better
 
-  return (
-    <authContext.Provider value={contextValue}>
-      {children}
-    </authContext.Provider>
-  );
+  return <authContext.Provider value={contextValue}>{children}</authContext.Provider>;
 }
 
 export function useOsuAuth() {

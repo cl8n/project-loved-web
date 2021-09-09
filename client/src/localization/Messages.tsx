@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Message from './Message';
 
-type ExportedMessages = Record<string, { defaultMessage: string; description: string; }>;
+type ExportedMessages = Record<string, { defaultMessage: string; description: string }>;
 
 function formatForEditing(messages: ExportedMessages): Record<string, string> {
   const editingMessages: Record<string, string> = {};
@@ -14,11 +14,10 @@ function formatForEditing(messages: ExportedMessages): Record<string, string> {
 }
 
 function formatForExporting(messages: Record<string, string | undefined>): string {
-  const exportingMessages: Record<string, { defaultMessage: string; }> = {};
+  const exportingMessages: Record<string, { defaultMessage: string }> = {};
 
   for (const message of Object.entries(messages)) {
-    if (message[1])
-      exportingMessages[message[0]] = { defaultMessage: message[1] };
+    if (message[1]) exportingMessages[message[0]] = { defaultMessage: message[1] };
   }
 
   return JSON.stringify(exportingMessages, null, 2) + '\n';
@@ -55,8 +54,7 @@ export default function Messages({ locale }: MessagesProps) {
 
   useEffect(() => {
     const exportMessagesListener = () => {
-      if (localeMessages == null)
-        return;
+      if (localeMessages == null) return;
 
       const blob = new Blob([formatForExporting(localeMessages)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -73,8 +71,7 @@ export default function Messages({ locale }: MessagesProps) {
     return () => document.removeEventListener('exportMessages', exportMessagesListener);
   }, [locale, localeMessages]);
 
-  if (englishMessages == null || localeMessages == null)
-    return <p>Loading messages...</p>;
+  if (englishMessages == null || localeMessages == null) return <p>Loading messages...</p>;
 
   return (
     <>

@@ -61,7 +61,13 @@ export default function InnerForm() {
           />
         </label>
       </h2>
-      <input type='text' name='beatmapset' required pattern='(?:.*/(?:beatmapset)?s/)?\d+.*' size={51} />
+      <input
+        type='text'
+        name='beatmapset'
+        required
+        pattern='(?:.*/(?:beatmapset)?s/)?\d+.*'
+        size={51}
+      />
       <h2>
         <label htmlFor='gameModes'>
           <FormattedMessage
@@ -74,7 +80,9 @@ export default function InnerForm() {
         <tbody>
           {gameModes.map((gameMode) => (
             <tr key={gameMode}>
-              <td><input type='checkbox' name='gameModes' value={gameMode} data-value-type='int' /></td>
+              <td>
+                <input type='checkbox' name='gameModes' value={gameMode} data-value-type='int' />
+              </td>
               <td>{gameModeLongName(gameMode)}</td>
             </tr>
           ))}

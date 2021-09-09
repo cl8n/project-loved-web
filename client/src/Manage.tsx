@@ -1,4 +1,4 @@
-import type { ChangeEvent, ChangeEventHandler, RefObject} from 'react';
+import type { ChangeEvent, ChangeEventHandler, RefObject } from 'react';
 import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -10,13 +10,13 @@ import {
   updateApiObject,
   updateApiObjectBulk,
   updateUserRoles,
-  useApi
+  useApi,
 } from './api';
-import {autoHeightRef} from "./auto-height";
+import { autoHeightRef } from './auto-height';
 import { BoolView } from './BoolView';
 import type { FormSubmitHandler } from './dom-helpers';
 import { Form } from './dom-helpers';
-import type { ILog, IUser} from './interfaces';
+import type { ILog, IUser } from './interfaces';
 import { LogType } from './interfaces';
 import { Modal } from './Modal';
 import { Never } from './Never';
@@ -41,8 +41,7 @@ function ApiObjectMenu() {
     const id = form.id;
     const type = form.type;
 
-    if (isNaN(id) || !isApiObjectType(type))
-      return null;
+    if (isNaN(id) || !isApiObjectType(type)) return null;
 
     return updateApiObject(type, id)
       .then(() => addLog({ id, type, success: true }))
@@ -54,7 +53,9 @@ function ApiObjectMenu() {
     <Form busyState={[busy, setBusy]} keepAfterSubmit onSubmit={onSubmit}>
       <table>
         <tr>
-          <td><label htmlFor='type'>Type</label></td>
+          <td>
+            <label htmlFor='type'>Type</label>
+          </td>
           <td>
             <select name='type' required>
               <option value='beatmapset'>Beatmapset</option>
@@ -63,14 +64,16 @@ function ApiObjectMenu() {
           </td>
         </tr>
         <tr>
-          <td><label htmlFor='id'>ID</label></td>
-          <td><input type='number' name='id' required data-value-type='int' /></td>
+          <td>
+            <label htmlFor='id'>ID</label>
+          </td>
+          <td>
+            <input type='number' name='id' required data-value-type='int' />
+          </td>
         </tr>
         <tr>
           <td>
-            <button type='submit'>
-              {busy ? 'Updating...' : 'Update'}
-            </button>
+            <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>
           </td>
         </tr>
       </table>
@@ -83,14 +86,10 @@ function ApiObjectMenuUpdateLogs(props: { logs: ApiObjectUpdateLog[] }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {props.logs.map((log, logIndex) => (
-        <span
-          key={logIndex}
-          className={log.success ? 'success' : 'error'}
-        >
+        <span key={logIndex} className={log.success ? 'success' : 'error'}>
           {log.success
             ? `Updated ${log.type} #${log.id}`
-            : `Failed to update ${log.type} #${log.id}`
-          }
+            : `Failed to update ${log.type} #${log.id}`}
         </span>
       ))}
     </div>
@@ -104,12 +103,9 @@ function ApiObjectBulkMenu() {
     const ids = (form.ids as string).trim();
     const type = form.type;
 
-    if (!isApiObjectType(type) || ids.match(/[\d\n]+/) == null)
-      return null;
+    if (!isApiObjectType(type) || ids.match(/[\d\n]+/) == null) return null;
 
-    const numericIds = ids
-      .split('\n')
-      .map((id) => parseInt(id));
+    const numericIds = ids.split('\n').map((id) => parseInt(id));
 
     return updateApiObjectBulk(type, numericIds)
       .then(then)
@@ -120,7 +116,9 @@ function ApiObjectBulkMenu() {
     <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
       <table>
         <tr>
-          <td><label htmlFor='type'>Type</label></td>
+          <td>
+            <label htmlFor='type'>Type</label>
+          </td>
           <td>
             <select name='type' required>
               <option value='beatmapset'>Beatmapset</option>
@@ -129,14 +127,16 @@ function ApiObjectBulkMenu() {
           </td>
         </tr>
         <tr>
-          <td><label htmlFor='ids'>IDs</label></td>
-          <td><textarea name='ids' required ref={autoHeightRef} /></td>
+          <td>
+            <label htmlFor='ids'>IDs</label>
+          </td>
+          <td>
+            <textarea name='ids' required ref={autoHeightRef} />
+          </td>
         </tr>
         <tr>
           <td>
-            <button type='submit'>
-              {busy ? 'Updating...' : 'Update'}
-            </button>
+            <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>
           </td>
         </tr>
       </table>
@@ -159,7 +159,7 @@ const sortUsers = (users: IUser[]): IUser[] => {
     .sort((a, b) => a.name.localeCompare(b.name))
     .sort((a, b) => +a.roles.alumni - +b.roles.alumni)
     .sort((a, b) => +canReadAs(b, 'any') - +canReadAs(a, 'any'));
-}
+};
 
 function PermissionsMenu() {
   const authUser = useOsuAuth().user;
@@ -183,23 +183,19 @@ function PermissionsMenu() {
     });
   };
 
-  if (authUser == null)
-    return <Never />;
+  if (authUser == null) return <Never />;
 
   if (usersError != null)
     return <span className='panic'>Failed to load users: {apiErrorMessage(usersError)}</span>;
 
-  if (users == null)
-    return <span>Loading users...</span>;
+  if (users == null) return <span>Loading users...</span>;
 
   return (
     <>
-      {canWriteAs(authUser) &&
-        <AddUser onUserAdd={onUserAdd} />
-      }
+      {canWriteAs(authUser) && <AddUser onUserAdd={onUserAdd} />}
       <table>
         <tr>
-          {canWriteAs(authUser) && <th/>}
+          {canWriteAs(authUser) && <th />}
           <th>User</th>
           <th>Captain</th>
           {boolRoles.map((role) => (
@@ -209,20 +205,16 @@ function PermissionsMenu() {
         </tr>
         {users.map((user) => (
           <tr key={user.id} className={canReadAs(user, 'any') ? undefined : 'faded'}>
-            {canWriteAs(authUser) &&
-              <PermissionsMenuUserEditor
-                user={user}
-                setRoles={roleSetter(user.id)}
-              />
-            }
+            {canWriteAs(authUser) && (
+              <PermissionsMenuUserEditor user={user} setRoles={roleSetter(user.id)} />
+            )}
             <td>
               <UserInline user={user} />
             </td>
             <td>
               <BoolView value={user.roles.captain} />
               {user.roles.captain_game_mode != null &&
-                ` (${gameModeLongName(user.roles.captain_game_mode)})`
-              }
+                ` (${gameModeLongName(user.roles.captain_game_mode)})`}
             </td>
             {boolRoles.map((role) => (
               <td key={role}>
@@ -232,8 +224,7 @@ function PermissionsMenu() {
             <td>
               <BoolView value={user.roles.alumni} />
               {user.roles.alumni_game_mode != null &&
-                ` (${gameModeLongName(user.roles.alumni_game_mode)})`
-              }
+                ` (${gameModeLongName(user.roles.alumni_game_mode)})`}
             </td>
           </tr>
         ))}
@@ -262,9 +253,7 @@ function AddUser({ onUserAdd }: AddUserProps) {
       <p className='flex-left'>
         <label htmlFor='username'>Username</label>
         <input type='text' name='username' required />
-        <button type='submit'>
-          {busy ? 'Adding...' : 'Add'}
-        </button>
+        <button type='submit'>{busy ? 'Adding...' : 'Add'}</button>
       </p>
     </Form>
   );
@@ -284,11 +273,14 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
   const captainGameModeRef = useRef<HTMLSelectElement>(null);
 
   const onSubmit: FormSubmitHandler = (form, then) => {
-    const roles = { // TODO lol...
+    const roles = {
+      // TODO lol...
       alumni: form.alumni === '1',
-      alumni_game_mode: form.alumni_game_mode === 'none' ? undefined : parseInt(form.alumni_game_mode),
+      alumni_game_mode:
+        form.alumni_game_mode === 'none' ? undefined : parseInt(form.alumni_game_mode),
       captain: form.captain === '1',
-      captain_game_mode: form.captain_game_mode === 'none' ? undefined : parseInt(form.captain_game_mode),
+      captain_game_mode:
+        form.captain_game_mode === 'none' ? undefined : parseInt(form.captain_game_mode),
       dev: form.dev === '1',
       god: form.god === '1',
       god_readonly: form.god_readonly === '1',
@@ -310,7 +302,11 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
   };
 
   const onAlumniGameModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    if (alumniRefs[0].current != null && alumniRefs[1].current != null && event.target.value !== 'none') {
+    if (
+      alumniRefs[0].current != null &&
+      alumniRefs[1].current != null &&
+      event.target.value !== 'none'
+    ) {
       alumniRefs[0].current.checked = false;
       alumniRefs[1].current.checked = true;
     }
@@ -320,8 +316,7 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
     if (captainGameModeRef.current != null) {
       if (event.target.checked !== (event.target.value === '1'))
         captainGameModeRef.current.value = 'none';
-      else if (captainGameModeRef.current.value === 'none')
-        captainGameModeRef.current.value = '0';
+      else if (captainGameModeRef.current.value === 'none') captainGameModeRef.current.value = '0';
     }
   };
 
@@ -337,19 +332,14 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
   return (
     <>
       <td>
-        <button
-          className='fake-a'
-          onClick={() => setModalOpen(true)}
-          type='button'
-        >
+        <button className='fake-a' onClick={() => setModalOpen(true)} type='button'>
           Edit
         </button>
       </td>
-      <Modal
-        close={() => setModalOpen(false)}
-        open={modalOpen}
-      >
-        <h2>Editing <UserInline user={user} /></h2>
+      <Modal close={() => setModalOpen(false)} open={modalOpen}>
+        <h2>
+          Editing <UserInline user={user} />
+        </h2>
         <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
           <table className='center-block'>
             <tr>
@@ -374,7 +364,10 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
                   name='captain_game_mode'
                   defaultValue={user.roles.captain_game_mode ?? 'none'}
                   onChange={onCaptainGameModeChange}
-                  key={user.roles.captain_game_mode ?? 'none' /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */}
+                  key={
+                    user.roles.captain_game_mode ??
+                    'none' /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */
+                  }
                 >
                   <option value='none'>None</option>
                   {gameModes.map((gameMode) => (
@@ -406,7 +399,10 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
                   name='alumni_game_mode'
                   defaultValue={user.roles.alumni_game_mode ?? 'none'}
                   onChange={onAlumniGameModeChange}
-                  key={user.roles.alumni_game_mode ?? 'none' /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */}
+                  key={
+                    user.roles.alumni_game_mode ??
+                    'none' /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */
+                  }
                 >
                   <option value='none'>None</option>
                   {gameModes.map((gameMode) => (
@@ -465,15 +461,18 @@ function Logs() {
   if (logsError != null)
     return <span className='panic'>Failed to load logs: {apiErrorMessage(logsError)}</span>;
 
-  if (logs == null)
-    return <span>Loading logs...</span>;
+  if (logs == null) return <span>Loading logs...</span>;
 
   return (
     <table>
       {logs.map((log) => (
         <tr key={log.id}>
-          <td>{log.created_at} [#{log.id}]</td>
-          <td className={LogType[log.type]}><LogMessage {...log} /></td>
+          <td>
+            {log.created_at} [#{log.id}]
+          </td>
+          <td className={LogType[log.type]}>
+            <LogMessage {...log} />
+          </td>
         </tr>
       ))}
     </table>
@@ -481,8 +480,7 @@ function Logs() {
 }
 
 function LogMessage(log: ILog) {
-  if (log.message.startsWith('{plain}'))
-    return <span>{log.message.slice(7)}</span>;
+  if (log.message.startsWith('{plain}')) return <span>{log.message.slice(7)}</span>;
 
   const elements: JSX.Element[] = [];
   const regex = /{creator}|{([^{}]+)}{([^{}]+)}/g;
@@ -491,30 +489,27 @@ function LogMessage(log: ILog) {
 
   while ((match = regex.exec(log.message)) != null) {
     if (lastMatchEnd !== match.index)
-      elements.push(
-        <span>{log.message.slice(lastMatchEnd, match.index)}</span>
-      );
+      elements.push(<span>{log.message.slice(lastMatchEnd, match.index)}</span>);
 
     elements.push(
-      match[1] != null
-        ? (
-          match[2].startsWith('/')
-            ? <Link to={match[2]}>{match[1]}</Link>
-            : <a href={match[2]}>{match[1]}</a>
+      match[1] != null ? (
+        match[2].startsWith('/') ? (
+          <Link to={match[2]}>{match[1]}</Link>
         ) : (
-          log.creator == null
-            ? <Never />
-            : <UserInline user={log.creator} />
+          <a href={match[2]}>{match[1]}</a>
         )
+      ) : log.creator == null ? (
+        <Never />
+      ) : (
+        <UserInline user={log.creator} />
+      ),
     );
 
     lastMatchEnd = regex.lastIndex;
   }
 
   if (lastMatchEnd !== log.message.length)
-    elements.push(
-      <span>{log.message.slice(lastMatchEnd)}</span>
-    );
+    elements.push(<span>{log.message.slice(lastMatchEnd)}</span>);
 
   return <>elements</>;
 }

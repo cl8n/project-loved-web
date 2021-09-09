@@ -1,10 +1,10 @@
-import type { Context, Dispatch, SetStateAction} from 'react';
+import type { Context, Dispatch, SetStateAction } from 'react';
 import { useContext, useEffect, useRef } from 'react';
 
 export function setProperty<T, K extends keyof T>(
   setter: Dispatch<SetStateAction<T>>,
   property: K,
-  value: T[K]
+  value: T[K],
 ) {
   setter((prevState) => {
     return {
@@ -27,8 +27,7 @@ export function usePrevious<T>(value: T) {
 export function useRequiredContext<T>(context: Context<T | undefined>): T {
   const contextValue = useContext(context);
 
-  if (contextValue == null)
-    throw new Error('Missing context provider');
+  if (contextValue == null) throw new Error('Missing context provider');
 
   return contextValue;
 }

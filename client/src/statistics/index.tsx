@@ -1,5 +1,5 @@
 import { FormattedMessage } from 'react-intl';
-import PollResults from "./PollResults";
+import PollResults from './PollResults';
 
 export default function Statistics() {
   return (

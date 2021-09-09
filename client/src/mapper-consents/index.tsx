@@ -43,7 +43,7 @@ const consentMap = {
   2: [messages.unreachable, 'pending'],
 } as const;
 
-function ConsentCell({ consent }: { consent: 0 | 1 | 2 | boolean | undefined; }) {
+function ConsentCell({ consent }: { consent: 0 | 1 | 2 | boolean | undefined }) {
   const intl = useIntl();
 
   if (consent === true) {
@@ -54,14 +54,10 @@ function ConsentCell({ consent }: { consent: 0 | 1 | 2 | boolean | undefined; })
 
   const [consentMessage, className] = consentMap[consent ?? 'null'];
 
-  return (
-    <td className={className}>
-      {intl.formatMessage(consentMessage)}
-    </td>
-  );
+  return <td className={className}>{intl.formatMessage(consentMessage)}</td>;
 }
 
-function MapperBeatmapsetConsents({ consent }: { consent: IMapperConsent; }) {
+function MapperBeatmapsetConsents({ consent }: { consent: IMapperConsent }) {
   const intl = useIntl();
 
   return (
@@ -76,7 +72,9 @@ function MapperBeatmapsetConsents({ consent }: { consent: IMapperConsent; }) {
       <tbody>
         {consent.beatmapset_consents.map((beatmapsetConsent) => (
           <tr key={beatmapsetConsent.beatmapset.id}>
-            <td><BeatmapInline beatmapset={beatmapsetConsent.beatmapset} /></td>
+            <td>
+              <BeatmapInline beatmapset={beatmapsetConsent.beatmapset} />
+            </td>
             <ConsentCell consent={beatmapsetConsent.consent} />
             <td>{beatmapsetConsent.consent_reason}</td>
           </tr>
@@ -90,10 +88,11 @@ export default function MapperConsents() {
   const [consents, consentError] = useApi(getMapperConsents);
 
   if (consentError != null)
-    return <span className='panic'>Failed to load mapper consents: {apiErrorMessage(consentError)}</span>;
+    return (
+      <span className='panic'>Failed to load mapper consents: {apiErrorMessage(consentError)}</span>
+    );
 
-  if (consents == null)
-    return <span>Loading mapper consents...</span>;
+  if (consents == null) return <span>Loading mapper consents...</span>;
 
   return (
     <div className='content-block'>
@@ -126,13 +125,17 @@ export default function MapperConsents() {
           {consents.map((consent) => (
             <Fragment key={consent.id}>
               <tr>
-                <td><UserInline user={consent.mapper} /></td>
+                <td>
+                  <UserInline user={consent.mapper} />
+                </td>
                 <ConsentCell consent={consent.consent} />
                 <td>{consent.consent_reason}</td>
               </tr>
               {consent.beatmapset_consents.length > 0 && (
                 <tr>
-                  <td colSpan={3}><MapperBeatmapsetConsents consent={consent} /></td>
+                  <td colSpan={3}>
+                    <MapperBeatmapsetConsents consent={consent} />
+                  </td>
                 </tr>
               )}
             </Fragment>

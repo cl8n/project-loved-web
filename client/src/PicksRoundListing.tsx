@@ -19,7 +19,9 @@ function Round(round: RoundProps) {
   return (
     <div className='box'>
       <h2>
-        <Link to={`/admin/picks/${round.id}`}>{round.name} [#{round.id}]</Link>
+        <Link to={`/admin/picks/${round.id}`}>
+          {round.name} [#{round.id}]
+        </Link>
       </h2>
       <div className='flex-bar'>
         <PostDate round={round} />
@@ -46,18 +48,22 @@ function PicksRoundListingInner({ rounds, roundsError }: PicksRoundListingInnerP
   if (roundsError != null)
     return <span className='panic'>Failed to load rounds: {apiErrorMessage(roundsError)}</span>;
 
-  if (rounds == null)
-    return <span>Loading rounds...</span>;
+  if (rounds == null) return <span>Loading rounds...</span>;
 
-  return <>{rounds.map((round) => <Round key={round.id} {...round} />)}</>;
+  return (
+    <>
+      {rounds.map((round) => (
+        <Round key={round.id} {...round} />
+      ))}
+    </>
+  );
 }
 
 function AddRound() {
   const history = useHistory();
 
   const onClick = () => {
-    if (!window.confirm('Are you sure you want to create a new round?'))
-      return;
+    if (!window.confirm('Are you sure you want to create a new round?')) return;
 
     addRound()
       .then((response) => history.push(`/admin/picks/${response.body.id}`))
@@ -77,27 +83,18 @@ export function PicksRoundListing() {
   const authUser = useOsuAuth().user;
   const [rounds, roundsError] = useApi(getRounds);
 
-  if (authUser == null)
-    return <Never />;
+  if (authUser == null) return <Never />;
 
   return (
     <>
       <div className='content-block'>
         <h1>Current rounds</h1>
-        {canWriteAs(authUser, 'news') && (
-          <AddRound />
-        )}
-        <PicksRoundListingInner
-          rounds={rounds?.incomplete_rounds}
-          roundsError={roundsError}
-        />
+        {canWriteAs(authUser, 'news') && <AddRound />}
+        <PicksRoundListingInner rounds={rounds?.incomplete_rounds} roundsError={roundsError} />
       </div>
       <div className='content-block'>
         <h1>Past rounds</h1>
-        <PicksRoundListingInner
-          rounds={rounds?.complete_rounds}
-          roundsError={roundsError}
-        />
+        <PicksRoundListingInner rounds={rounds?.complete_rounds} roundsError={roundsError} />
       </div>
     </>
   );

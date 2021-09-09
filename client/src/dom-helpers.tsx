@@ -1,4 +1,4 @@
-import type { Dispatch, FormEvent, MouseEvent, PropsWithChildren, SetStateAction} from 'react';
+import type { Dispatch, FormEvent, MouseEvent, PropsWithChildren, SetStateAction } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { dateFromString, mySqlDateTime } from './date-format';
 
@@ -16,15 +16,18 @@ function setFormDisabled(form: HTMLFormElement, disabled: boolean) {
   for (let i = 0; i < controlsCount; i++) {
     const control = controls[i];
 
-    if ('disabled' in control)
-      control.disabled = disabled;
+    if ('disabled' in control) control.disabled = disabled;
   }
 }
 
-export type FormSubmitHandler = (values: Record<string, any>, then: () => void, inputs: HTMLFormControlsCollection) => Promise<void> | null;
+export type FormSubmitHandler = (
+  values: Record<string, any>,
+  then: () => void,
+  inputs: HTMLFormControlsCollection,
+) => Promise<void> | null;
 
 function wrapCast<T>(fn: (value: string) => T) {
-  return (value: string) => value.length === 0 ? null : fn(value);
+  return (value: string) => (value.length === 0 ? null : fn(value));
 }
 
 const valueCasts = {
@@ -54,8 +57,7 @@ export function Form({
   const ref = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    if (ref.current != null)
-      setFormDisabled(ref.current, busy);
+    if (ref.current != null) setFormDisabled(ref.current, busy);
   }, [busy]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -75,37 +77,31 @@ export function Form({
       const control = controls[i] as any; // TODO: typing
       const arrayType = !!control.dataset.array || control.type === 'checkbox';
 
-      if (control.type === 'submit')
-        continue;
+      if (control.type === 'submit') continue;
 
-      if (arrayType && values[control.name] == null)
-        values[control.name] = [];
+      if (arrayType && values[control.name] == null) values[control.name] = [];
 
-      if (!control.checked && (control.type === 'checkbox' || control.type === 'radio'))
-        continue;
+      if (!control.checked && (control.type === 'checkbox' || control.type === 'radio')) continue;
 
-      const value = valueCasts[control.dataset.valueType as keyof typeof valueCasts ?? 'string'](control.value);
+      const value = valueCasts[(control.dataset.valueType as keyof typeof valueCasts) ?? 'string'](
+        control.value,
+      );
 
       if (arrayType) {
-        if (value != null)
-          values[control.name].push(value);
-      } else
-        values[control.name] = value;
+        if (value != null) values[control.name].push(value);
+      } else values[control.name] = value;
     }
 
     const maybePromise = onSubmit(
       values,
       () => {
-        if (!keepAfterSubmit)
-          form.reset();
+        if (!keepAfterSubmit) form.reset();
       },
       controls,
     );
 
-    if (maybePromise == null)
-      setBusy(false);
-    else
-      maybePromise.finally(() => setBusy(false));
+    if (maybePromise == null) setBusy(false);
+    else maybePromise.finally(() => setBusy(false));
   };
 
   const handleSubmitButtonClick = (event: MouseEvent) => {
@@ -115,12 +111,7 @@ export function Form({
   };
 
   return (
-    <form
-      className={className}
-      onClick={handleSubmitButtonClick}
-      onSubmit={handleSubmit}
-      ref={ref}
-    >
+    <form className={className} onClick={handleSubmitButtonClick} onSubmit={handleSubmit} ref={ref}>
       {children}
     </form>
   );

@@ -27,12 +27,7 @@ export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditor
     <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
       <div className='form-grid'>
         <label htmlFor='name'>Title</label>
-        <input
-          type='text'
-          name='name'
-          defaultValue={round.name}
-          required
-        />
+        <input type='text' name='name' defaultValue={round.name} required />
         <label htmlFor='news_posted_at'>Post date (UTC)</label>
         <input
           type='datetime-local'
@@ -48,21 +43,15 @@ export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditor
           ref={autoHeightRef}
         />
         <label htmlFor='news_intro'>Intro</label>
-        <textarea
-          name='news_intro'
-          defaultValue={round.news_intro}
-          ref={autoHeightRef}
-        />
+        <textarea name='news_intro' defaultValue={round.news_intro} ref={autoHeightRef} />
         <label htmlFor='news_outro'>Outro</label>
-        <textarea
-          name='news_outro'
-          defaultValue={round.news_outro}
-          ref={autoHeightRef}
-        />
+        <textarea name='news_outro' defaultValue={round.news_outro} ref={autoHeightRef} />
       </div>
       <div className='flex-left'>
         <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>
-        <button type='button' onClick={close}>Cancel</button>
+        <button type='button' onClick={close}>
+          Cancel
+        </button>
       </div>
     </Form>
   );

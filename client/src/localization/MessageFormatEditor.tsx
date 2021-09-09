@@ -1,10 +1,10 @@
 import { parse, TYPE } from '@formatjs/icu-messageformat-parser';
-import type { KeyboardEvent, TextareaHTMLAttributes} from 'react';
+import type { KeyboardEvent, TextareaHTMLAttributes } from 'react';
 import { useMemo } from 'react';
 import type { MessageFormatElement } from 'react-intl';
-import type { Element, NodeEntry, Path, Range} from 'slate';
+import type { Element, NodeEntry, Path, Range } from 'slate';
 import { createEditor, Text } from 'slate';
-import type { RenderLeafProps} from 'slate-react';
+import type { RenderLeafProps } from 'slate-react';
 import { Editable, Slate, withReact } from 'slate-react';
 
 function addRanges(ranges: Range[], path: Path, elements: MessageFormatElement[]): void {
@@ -79,25 +79,32 @@ function renderLeaf({ attributes, children, leaf }: RenderLeafProps): JSX.Elemen
   );
 }
 
-type MessageFormatEditorProps = {
-  readOnly?: false;
-  setValue: (value: string) => void;
-  value: string;
-} | {
-  readOnly: true;
-  setValue?: undefined;
-  value: string;
-};
+type MessageFormatEditorProps =
+  | {
+      readOnly?: false;
+      setValue: (value: string) => void;
+      value: string;
+    }
+  | {
+      readOnly: true;
+      setValue?: undefined;
+      value: string;
+    };
 
-export default function MessageFormatEditor({ className, readOnly, setValue, value, ...props }: MessageFormatEditorProps & TextareaHTMLAttributes<HTMLDivElement>) {
+export default function MessageFormatEditor({
+  className,
+  readOnly,
+  setValue,
+  value,
+  ...props
+}: MessageFormatEditorProps & TextareaHTMLAttributes<HTMLDivElement>) {
   const editor = useMemo(() => withReact(createEditor()), []);
 
   return (
     <Slate
       editor={editor}
       onChange={(value) => {
-        if (!readOnly)
-          setValue!(((value[0] as Element).children[0] as Text).text);
+        if (!readOnly) setValue!(((value[0] as Element).children[0] as Text).text);
       }}
       value={[{ children: [{ text: value, type: 0 }] }]}
     >
