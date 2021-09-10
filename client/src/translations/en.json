@@ -483,6 +483,10 @@
     "defaultMessage": "Theme: {selector}",
     "description": "Selector in site header to change theme"
   },
+  "zSxa2k": {
+    "defaultMessage": "This map has been nominated for {roundName}.",
+    "description": "Help text explaining that a map has been nominated"
+  },
   "zn6DBN": {
     "defaultMessage": "Sort by:",
     "description": "Title for sorting options"
