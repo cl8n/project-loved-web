@@ -127,10 +127,25 @@ input {
 .form-grid {
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-gap: 0.5em;
+  grid-gap: 0.5em 1em;
   align-items: center;
   margin-top: 1em;
   margin-bottom: 1em;
+
+  > input {
+    &[type=text], &[type=number] {
+      width: fit-content;
+    }
+
+    &.full-width {
+      width: auto;
+    }
+  }
+
+  > label {
+    // Same height as <input> with their padding and border
+    margin: calc(0.25em + 1px) 0;
+  }
 }
 
 .big-center {

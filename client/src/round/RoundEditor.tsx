@@ -27,7 +27,7 @@ export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditor
     <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
       <div className='form-grid'>
         <label htmlFor='name'>Title</label>
-        <input type='text' name='name' defaultValue={round.name} required />
+        <input type='text' name='name' defaultValue={round.name} required size={30} />
         <label htmlFor='news_posted_at'>Post date (UTC)</label>
         <input
           type='datetime-local'
