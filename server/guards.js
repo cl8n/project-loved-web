@@ -3,11 +3,11 @@ const { createHash, timingSafeEqual } = require('crypto');
 const allRoles = ['alumni', 'captain', 'dev', 'metadata', 'moderator', 'news'];
 
 function isGod(method, user) {
-  return user.roles.god || (method === 'GET' && user.roles.god_readonly);
+  return user != null && (user.roles.god || (method === 'GET' && user.roles.god_readonly));
 }
 
 function hasRole(method, user, roles) {
-  return isGod(method, user) || roles.some((role) => user.roles[role]);
+  return user != null && (isGod(method, user) || roles.some((role) => user.roles[role]));
 }
 
 function hasRoleMiddleware(roles, errorMessage) {
@@ -49,7 +49,7 @@ module.exports.isCaptainForGameMode = function (request, response, next) {
     return response.status(400).json({ error: 'No game mode provided' });
   }
 
-  if (!isGod(request.method, user) && user.roles.captain_game_mode !== gameMode) {
+  if (!isGod(request.method, user) && user?.roles.captain_game_mode !== gameMode) {
     return response.status(403).json({ error: `Must be a captain for mode ${gameMode}` });
   }
 
@@ -57,15 +57,12 @@ module.exports.isCaptainForGameMode = function (request, response, next) {
 };
 
 module.exports.roles = function (request, response) {
-  function isCaptain(gameMode) {
-    return (
-      isGod(request.method, response.locals.user) ||
-      response.locals.user.roles.captain_game_mode === gameMode
-    );
-  }
-
   const roles = {
-    gameModes: [0, 1, 2, 3].map((gameMode) => isCaptain(gameMode)),
+    gameModes: [0, 1, 2, 3].map(
+      (gameMode) =>
+        isGod(request.method, response.locals.user) ||
+        response.locals.user?.roles.captain_game_mode === gameMode,
+    ),
   };
 
   for (const role of allRoles) {

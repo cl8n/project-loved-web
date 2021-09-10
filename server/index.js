@@ -31,8 +31,6 @@ db.initialize().then(() => {
 
   app.use(express.json());
 
-  app.use(guestRouter);
-
   app.use('/local-interop', hasLocalInteropKey, interopRouter);
 
   app.use(
@@ -108,7 +106,7 @@ db.initialize().then(() => {
   app.use(
     asyncHandler(async function (request, response, next) {
       if (!request.session.userId) {
-        return response.status(401).json({ error: 'Log in first' });
+        return next();
       }
 
       response.locals.osu = new Osu(request.session);
@@ -141,6 +139,17 @@ db.initialize().then(() => {
       next();
     }),
   );
+
+  app.use(guestRouter);
+
+  // Below here requires authentication
+  app.use((request, response, next) => {
+    if (!request.session.userId) {
+      return response.status(401).json({ error: 'Log in first' });
+    }
+
+    next();
+  });
 
   app.post(
     '/auth/bye',
