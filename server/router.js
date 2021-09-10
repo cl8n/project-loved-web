@@ -3,6 +3,7 @@ const db = require('./db');
 const { asyncHandler } = require('./express-helpers');
 const guards = require('./guards');
 const { groupBy } = require('./helpers');
+const { settings, updateSettings } = require('./settings');
 
 function getParams(object, keys) {
   const params = {};
@@ -941,6 +942,15 @@ router.post('/update-api-object-bulk', guards.isGod, (req, res) => {
   })();
 
   res.status(204).send();
+});
+
+router.get('/settings', guards.isCaptain, (_, res) => {
+  res.json(settings);
+});
+
+router.put('/settings', guards.isCaptain, (req, res) => {
+  updateSettings(req.body);
+  res.json(settings);
 });
 //#endregion
 

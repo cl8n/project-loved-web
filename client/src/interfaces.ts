@@ -159,6 +159,10 @@ export interface IRound {
   news_posted_at?: string;
 }
 
+export interface ISettings {
+  hideNominationStatus?: Record<GameMode, boolean | undefined>;
+}
+
 export interface ISubmission {
   id: number;
   beatmapset_id: number;

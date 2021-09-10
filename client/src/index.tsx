@@ -14,6 +14,7 @@ import { OsuAuthProvider } from './osuAuth';
 import { Picks } from './Picks';
 import { PicksRoundListing } from './PicksRoundListing';
 import { ProtectedRoute } from './ProtectedRoute';
+import Settings from './Settings';
 import Statistics from './statistics';
 import './styles/main.scss';
 import SubmissionForm from './submission-form';
@@ -58,6 +59,9 @@ render(
               </ProtectedRoute>
               <ProtectedRoute path='/admin/forum-opt-in' role='captain'>
                 <ForumOptIn />
+              </ProtectedRoute>
+              <ProtectedRoute path='/admin/settings' role='captain'>
+                <Settings />
               </ProtectedRoute>
               <Route path='/localization/:locale?'>
                 <Localization />

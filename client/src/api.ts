@@ -21,6 +21,7 @@ import type {
   PartialWithId,
   PartialWithoutId,
   IReview,
+  ISettings,
 } from './interfaces';
 
 interface SuperAgentResponseWithBody<BodyType> extends SuperAgentResponse {
@@ -110,6 +111,10 @@ interface GetRoundsResponseBody {
 
 export function getRounds(): Response<GetRoundsResponseBody> {
   return superagent.get('/api/rounds');
+}
+
+export function getSettings(): Response<ISettings> {
+  return superagent.get('/api/settings');
 }
 
 export function getLogs(): Response<ILog[]> {
@@ -243,6 +248,10 @@ export function updateNominators(
 
 export function updateRound(roundId: number, round: PartialWithoutId<IRound>): Response {
   return superagent.post('/api/update-round').send({ roundId, round });
+}
+
+export function updateSettings(settings: ISettings): Response<ISettings> {
+  return superagent.put('/api/settings').send(settings);
 }
 
 export function updateUserRoles(userId: number, roles: IUser['roles']): Response {

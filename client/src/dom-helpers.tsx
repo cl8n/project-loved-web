@@ -79,11 +79,17 @@ export function Form({
 
     for (let i = 0; i < controlsCount; i++) {
       const control = controls[i] as any; // TODO: typing
-      const arrayType = !!control.dataset.array || control.type === 'checkbox';
 
       if (control.type === 'submit') {
         continue;
       }
+
+      if (control.type === 'checkbox' && control.dataset.valueType === 'check') {
+        values[control.name] = control.checked;
+        continue;
+      }
+
+      const arrayType = !!control.dataset.array || control.type === 'checkbox';
 
       if (arrayType && values[control.name] == null) {
         values[control.name] = [];
