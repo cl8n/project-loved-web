@@ -1,4 +1,5 @@
 const { createHash, timingSafeEqual } = require('crypto');
+const { accessSetting } = require('./settings');
 
 const allRoles = ['alumni', 'captain', 'dev', 'metadata', 'moderator', 'news'];
 
@@ -34,7 +35,7 @@ module.exports.hasLocalInteropKey = function (request, response, next) {
     return response.status(422).json({ error: 'Missing key' });
   }
 
-  if (!timingSafeStringEqual(process.env.LOCAL_INTEROP_SECRET, key)) {
+  if (!timingSafeStringEqual(accessSetting('localInteropSecret'), key)) {
     return response.status(401).json({ error: 'Invalid key' });
   }
 

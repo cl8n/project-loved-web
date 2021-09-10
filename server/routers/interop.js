@@ -2,6 +2,7 @@ const { Router } = require('express');
 const db = require('../db');
 const { asyncHandler } = require('../express-helpers');
 const { groupBy } = require('../helpers');
+const { accessSetting } = require('../settings');
 
 const router = Router();
 
@@ -143,12 +144,9 @@ router.get(
     );
 
     res.json({
-      discord_webhooks: [
-        process.env.DISCORD_WEBHOOK_OSU || null,
-        process.env.DISCORD_WEBHOOK_TAIKO || null,
-        process.env.DISCORD_WEBHOOK_CATCH || null,
-        process.env.DISCORD_WEBHOOK_MANIA || null,
-      ],
+      discord_webhooks: [0, 1, 2, 3].map(
+        (gameMode) => accessSetting(`discordWebhook.${gameMode}`) || null,
+      ),
       nominations,
       // TODO may break when not all game modes are present
       results_post_ids: lastRoundResultsPostIds,

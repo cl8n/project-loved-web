@@ -3,7 +3,7 @@ const db = require('./db');
 const { asyncHandler } = require('./express-helpers');
 const guards = require('./guards');
 const { groupBy } = require('./helpers');
-const { settings, updateSettings } = require('./settings');
+const { settings, updateSettings, accessSetting } = require('./settings');
 
 function getParams(object, keys) {
   const params = {};
@@ -717,7 +717,7 @@ router.post('/add-round', guards.isNewsAuthor, (_, res) => {
         {
           game_mode: gameMode,
           round_id: queryResult.insertId,
-          voting_threshold: gameMode === 0 ? 0.85 : 0.8,
+          voting_threshold: accessSetting(`defaultVotingThreshold.${gameMode}`) ?? 0,
         },
       ]);
     }
