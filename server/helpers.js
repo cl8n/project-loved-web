@@ -2,7 +2,7 @@ function accessNested(object, key) {
   const keyParts = key.split('.');
   let value = object;
 
-  while (value != null && keyParts.length > 0) {
+  while (value !== undefined && keyParts.length > 0) {
     value = value[keyParts.shift()];
   }
 
