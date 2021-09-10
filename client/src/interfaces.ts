@@ -159,8 +159,13 @@ export interface IRound {
   news_posted_at?: string;
 }
 
+type ISetting<T> = T | null | undefined;
+
 export interface ISettings {
-  hideNominationStatus?: Record<GameMode, boolean | undefined>;
+  defaultVotingThreshold?: Record<GameMode, ISetting<number>>;
+  discordWebhook?: Record<GameMode, ISetting<string>>;
+  hideNominationStatus?: Record<GameMode, ISetting<boolean>>;
+  localInteropSecret?: ISetting<string>;
 }
 
 export interface ISubmission {
