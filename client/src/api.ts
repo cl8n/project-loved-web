@@ -126,7 +126,7 @@ export interface GetSubmissionsResponseBody {
     beatmap_counts: Record<GameMode, number>;
     consent: boolean | null;
     modal_bpm: number;
-    nominated: boolean;
+    nominated_round_name: string | null;
     poll?: {
       passed: boolean;
       topic_id: number;

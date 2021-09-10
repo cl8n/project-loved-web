@@ -309,7 +309,7 @@ const beatmapsetSortFns: Record<Sort | 'status', (a: _Beatmapset, b: _Beatmapset
   favoriteCount: (a, b) => a.favorite_count - b.favorite_count,
   playCount: (a, b) => a.play_count - b.play_count,
   priority: (a, b) =>
-    compareOrFallback(a, b, (beatmapset) => beatmapset.nominated) ??
+    compareOrFallback(a, b, (beatmapset) => beatmapset.nominated_round_name != null) ??
     compareOrFallback(
       b,
       a,

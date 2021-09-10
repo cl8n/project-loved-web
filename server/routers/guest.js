@@ -1,7 +1,9 @@
 const { Router } = require('express');
 const db = require('../db');
 const { asyncHandler } = require('../express-helpers');
+const guards = require('../guards');
 const { groupBy, modeBy } = require('../helpers');
+const { accessSetting } = require('../settings');
 
 const router = Router();
 
@@ -86,6 +88,9 @@ router.get(
 
     const beatmapsetIds = new Set();
     const userIds = new Set();
+    const canViewNominationStatus =
+      !accessSetting(`hideNominationStatus.${gameMode}`) ||
+      guards.roles(req, res).gameModes[gameMode];
 
     const submissions = await db.query(
       `
@@ -165,21 +170,25 @@ router.get(
       ),
       'beatmapset_id',
     );
-    const futureNominationsByBeatmapsetId = groupBy(
-      await db.query(
-        `
-          SELECT nominations.beatmapset_id
-          FROM nominations
-          INNER JOIN rounds
-            ON nominations.round_id = rounds.id
-          WHERE nominations.beatmapset_id IN (?)
-            AND nominations.game_mode = ?
-            AND rounds.done = 0
-        `,
-        [[...beatmapsetIds], gameMode],
-      ),
-      'beatmapset_id',
-    );
+    const futureNominationsByBeatmapsetId =
+      canViewNominationStatus &&
+      groupBy(
+        await db.query(
+          `
+            SELECT nominations.beatmapset_id, rounds.name
+            FROM nominations
+            INNER JOIN rounds
+              ON nominations.round_id = rounds.id
+            WHERE nominations.beatmapset_id IN (?)
+              AND nominations.game_mode = ?
+              AND rounds.done = 0
+            ORDER BY rounds.id DESC
+          `,
+          [[...beatmapsetIds], gameMode],
+        ),
+        'beatmapset_id',
+        'name',
+      );
     // TODO: Scope to complete polls when incomplete polls are stored in poll_results
     const pollByBeatmapsetId = groupBy(
       await db.query(
@@ -250,7 +259,9 @@ router.get(
 
       beatmapset.consent = consent == null || consent > 1 ? null : consent > 0;
       beatmapset.modal_bpm = modeBy(beatmapsForGameMode, 'bpm');
-      beatmapset.nominated = futureNominationsByBeatmapsetId[beatmapset.id] == null ? false : true;
+      beatmapset.nominated_round_name = canViewNominationStatus
+        ? futureNominationsByBeatmapsetId[beatmapset.id]?.[0] ?? null
+        : null;
       beatmapset.play_count = beatmapsForGameMode.reduce(
         (sum, beatmap) => sum + beatmap.play_count,
         0,

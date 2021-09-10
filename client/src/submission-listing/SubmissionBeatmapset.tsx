@@ -44,6 +44,10 @@ const messages = defineMessages({
     description:
       'Aggregate review score shown on submissions table for maps nominated by captains for future voting',
   },
+  nominatedForRound: {
+    defaultMessage: 'This map has been nominated for {roundName}.',
+    description: 'Help text explaining that a map has been nominated',
+  },
   notAllowed: {
     defaultMessage: 'Not allowed',
     description: 'Aggregate review score shown on submissions table for maps that cannot be Loved',
@@ -259,8 +263,17 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
     return <td className='priority high'>{intl.formatMessage(messages.inVoting)}</td>;
   }
 
-  if (beatmapset.nominated) {
-    return <td className='priority high'>{intl.formatMessage(messages.nominated)}</td>;
+  if (beatmapset.nominated_round_name != null) {
+    return (
+      <td className='priority high'>
+        {intl.formatMessage(messages.nominated)}{' '}
+        <Help>
+          {intl.formatMessage(messages.nominatedForRound, {
+            roundName: beatmapset.nominated_round_name,
+          })}
+        </Help>
+      </td>
+    );
   }
 
   if (beatmapset.strictly_rejected) {
