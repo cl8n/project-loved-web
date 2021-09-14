@@ -1,33 +1,47 @@
-const { Router } = require('express');
-const db = require('../db');
-const { asyncHandler } = require('../express-helpers');
-const { groupBy } = require('../helpers');
-const { accessSetting } = require('../settings');
+import { Router } from 'express';
+import db from '../db';
+import { asyncHandler } from '../express-helpers';
+import { groupBy } from '../helpers';
+import { accessSetting } from '../settings';
+import { isPollArray, isRepliesRecord } from '../type-guards';
 
-const router = Router();
+const interopRouter = Router();
+export default interopRouter;
 
-router.get(
+interopRouter.get(
   '/data',
   asyncHandler(async (req, res) => {
     if (req.query.roundId == null) {
       return res.status(422).json({ error: 'Missing round ID' });
     }
 
-    const round = await db.queryOne(
-      `
-        SELECT *
-        FROM rounds
-        WHERE id = ?
-      `,
-      req.query.roundId,
-    );
+    const round: (Round & { game_modes?: Record<GameMode, RoundGameMode> }) | null =
+      await db.queryOne<Round>(
+        `
+          SELECT *
+          FROM rounds
+          WHERE id = ?
+        `,
+        [req.query.roundId],
+      );
 
     if (round == null) {
       return res.status(404).send();
     }
 
-    const assigneesByNominationId = groupBy(
-      await db.queryWithGroups(
+    const assigneesByNominationId = groupBy<
+      Nomination['id'],
+      {
+        assignee: User;
+        assignee_type: NominationAssignee['type'];
+        nomination_id: Nomination['id'];
+      }
+    >(
+      await db.queryWithGroups<{
+        assignee: User;
+        assignee_type: NominationAssignee['type'];
+        nomination_id: Nomination['id'];
+      }>(
         `
           SELECT users:assignee, nomination_assignees.type AS assignee_type, nominations.id AS nomination_id
           FROM nominations
@@ -37,12 +51,23 @@ router.get(
             ON nomination_assignees.assignee_id = users.id
           WHERE nominations.round_id = ?
         `,
-        req.query.roundId,
+        [req.query.roundId],
       ),
       'nomination_id',
     );
-    const includesByNominationId = groupBy(
-      await db.queryWithGroups(
+    const includesByNominationId = groupBy<
+      Nomination['id'],
+      {
+        beatmap: (Beatmap & { excluded: boolean }) | null;
+        creator: User | null;
+        nomination_id: Nomination['id'];
+      }
+    >(
+      await db.queryWithGroups<{
+        beatmap: (Beatmap & { excluded: boolean }) | null;
+        creator: User | null;
+        nomination_id: Nomination['id'];
+      }>(
         `
           SELECT nominations.id AS nomination_id, creators:creator, beatmaps:beatmap,
             nomination_excluded_beatmaps.beatmap_id IS NOT NULL AS 'beatmap:excluded'
@@ -60,12 +85,12 @@ router.get(
               AND beatmaps.id = nomination_excluded_beatmaps.beatmap_id
           WHERE nominations.round_id = ?
         `,
-        req.query.roundId,
+        [req.query.roundId],
       ),
       'nomination_id',
     );
-    const nominatorsByNominationId = groupBy(
-      await db.queryWithGroups(
+    const nominatorsByNominationId = groupBy<Nomination['id'], User>(
+      await db.queryWithGroups<{ nomination_id: Nomination['id']; nominator: User }>(
         `
           SELECT users:nominator, nominations.id AS nomination_id
           FROM nominations
@@ -75,12 +100,22 @@ router.get(
             ON nomination_nominators.nominator_id = users.id
           WHERE nominations.round_id = ?
         `,
-        req.query.roundId,
+        [req.query.roundId],
       ),
       'nomination_id',
       'nominator',
     );
-    const nominations = await db.queryWithGroups(
+    const nominations: (Nomination & {
+      beatmaps?: (Beatmap & { excluded: boolean })[];
+      beatmapset: Beatmapset;
+      beatmapset_creators?: User[];
+      description_author: User | null;
+      metadata_assignees?: User[];
+      moderator_assignees?: User[];
+      nominators?: User[];
+    })[] = await db.queryWithGroups<
+      Nomination & { beatmapset: Beatmapset; description_author: User | null }
+    >(
       `
         SELECT nominations.*, beatmapsets:beatmapset, description_authors:description_author
         FROM nominations
@@ -91,17 +126,17 @@ router.get(
         WHERE nominations.round_id = ?
         ORDER BY nominations.order ASC, nominations.id ASC
       `,
-      req.query.roundId,
+      [req.query.roundId],
     );
 
-    round.game_modes = groupBy(
-      await db.query(
+    round.game_modes = groupBy<RoundGameMode['game_mode'], RoundGameMode>(
+      await db.query<RoundGameMode>(
         `
           SELECT *
           FROM round_game_modes
           WHERE round_id = ?
         `,
-        req.query.roundId,
+        [req.query.roundId],
       ),
       'game_mode',
       null,
@@ -109,14 +144,21 @@ router.get(
     );
 
     nominations.forEach((nomination) => {
-      nomination.beatmaps = includesByNominationId[nomination.id]
-        .map((include) => include.beatmap)
-        .filter((b1, i, all) => b1 != null && all.findIndex((b2) => b1.id === b2.id) === i)
+      nomination.beatmaps = (
+        includesByNominationId[nomination.id]
+          .map((include) => include.beatmap)
+          .filter(
+            (b1, i, all) => b1 != null && all.findIndex((b2) => b1.id === b2?.id) === i,
+          ) as (Beatmap & { excluded: boolean })[]
+      )
         .sort((a, b) => a.star_rating - b.star_rating)
-        .sort((a, b) => a.key_count - b.key_count);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        .sort((a, b) => a.key_count! - b.key_count!);
       nomination.beatmapset_creators = includesByNominationId[nomination.id]
         .map((include) => include.creator)
-        .filter((c1, i, all) => c1 != null && all.findIndex((c2) => c1.id === c2.id) === i);
+        .filter(
+          (c1, i, all) => c1 != null && all.findIndex((c2) => c1.id === c2?.id) === i,
+        ) as User[];
       nomination.nominators = nominatorsByNominationId[nomination.id] || [];
 
       const assignees = assigneesByNominationId[nomination.id] || [];
@@ -129,14 +171,17 @@ router.get(
         .map((a) => a.assignee);
     });
 
-    const lastRoundResultsPostIds = groupBy(
-      await db.query(
+    const lastRoundResultsPostIds = groupBy<
+      RoundGameMode['game_mode'],
+      RoundGameMode['results_post_id']
+    >(
+      await db.query<Pick<RoundGameMode, 'game_mode' | 'results_post_id'>>(
         `
           SELECT game_mode, results_post_id
           FROM round_game_modes
           WHERE round_id = ?
         `,
-        parseInt(req.query.roundId) - 1, // TODO: naive
+        [parseInt(req.query.roundId) - 1], // TODO: naive
       ),
       'game_mode',
       'results_post_id',
@@ -155,10 +200,10 @@ router.get(
   }),
 );
 
-router.get(
+interopRouter.get(
   '/poll-result-recent',
   asyncHandler(async (_, res) => {
-    const pollResult = await db.queryOne(`
+    const pollResult = await db.queryOne<Pick<Poll, 'round' | 'topic_id'>>(`
       SELECT round, topic_id
       FROM poll_results
       ORDER BY ended_at DESC
@@ -169,14 +214,14 @@ router.get(
   }),
 );
 
-router.post(
+interopRouter.post(
   '/poll-results',
   asyncHandler(async (req, res) => {
-    if (!Array.isArray(req.body)) {
+    if (!isPollArray(req.body)) {
       return res.status(422).json({ error: 'Body must be an array of poll results' });
     }
 
-    const resultsToInsert = [];
+    const resultsToInsert: [number, Date, GameMode, number, number, number, number][] = [];
 
     for (const result of req.body) {
       resultsToInsert.push([
@@ -199,11 +244,11 @@ router.post(
   }),
 );
 
-router.get(
+interopRouter.get(
   '/rounds-available',
   asyncHandler(async (_, res) => {
     res.json(
-      await db.query(`
+      await db.query<Round & { nomination_count: number }>(`
         SELECT rounds.*, IFNULL(nomination_counts.count, 0) AS nomination_count
         FROM rounds
         LEFT JOIN (
@@ -219,24 +264,24 @@ router.get(
   }),
 );
 
-router.post(
+interopRouter.post(
   '/results-post-ids',
   asyncHandler(async (req, res) => {
-    if (req.body.roundId == null) {
+    if (typeof req.body.roundId !== 'number') {
       return res.status(422).json({ error: 'Missing round ID' });
     }
 
-    if (req.body.replies == null || Object.keys(req.body.replies).length === 0) {
+    if (!isRepliesRecord(req.body.replies) || Object.keys(req.body.replies).length === 0) {
       return res.status(422).json({ error: 'Missing reply IDs' });
     }
 
-    if ((await db.queryOne('SELECT 1 FROM rounds WHERE id = ?', req.body.roundId)) == null) {
+    if ((await db.queryOne('SELECT 1 FROM rounds WHERE id = ?', [req.body.roundId])) == null) {
       return res.status(422).json({ error: 'Invalid round ID' });
     }
 
     await db.transact((connection) =>
       Promise.all(
-        Object.entries(req.body.replies).map(([gameMode, postId]) =>
+        Object.entries(req.body.replies as Record<GameMode, number>).map(([gameMode, postId]) =>
           connection.query(
             `
               UPDATE round_game_modes
@@ -254,5 +299,3 @@ router.post(
     res.status(204).send();
   }),
 );
-
-module.exports = router;

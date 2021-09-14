@@ -1,14 +1,23 @@
-const qs = require('querystring');
-const superagent = require('superagent');
-const db = require('./db');
+import qs from 'querystring';
+import type { Request, Response, SuperAgentStatic } from 'superagent';
+import superagent from 'superagent';
+import db from './db';
+
+if (
+  process.env.OSU_CLIENT_ID == null ||
+  process.env.OSU_CLIENT_REDIRECT == null ||
+  process.env.OSU_CLIENT_SECRET == null
+) {
+  throw 'Invalid osu! API client config';
+}
 
 const baseUrl = 'https://osu.ppy.sh';
-const apiBaseUrl = `${baseUrl}/api/v2`;
+const apiBaseUrl = `${baseUrl}/api/v2` as const;
 const apiScopes = 'identify public';
 const retainApiObjectsFor = 2419200000; // 28 days
 const refreshTokenThreshold = 3600000; // 1 hour
 
-function authRedirectUrl(authState) {
+export function authRedirectUrl(authState: string): string {
   return (
     `${baseUrl}/oauth/authorize?` +
     qs.stringify({
@@ -21,11 +30,11 @@ function authRedirectUrl(authState) {
   );
 }
 
-function sanitizeAvatarUrl(url) {
+function sanitizeAvatarUrl(url: string): string {
   return url.startsWith('/') ? baseUrl + url : url;
 }
 
-function serializeTokenResponse(response) {
+function serializeTokenResponse(response: Response): TokenInfo {
   if (response.body.token_type !== 'Bearer') {
     throw 'Unexpected token type from osu! API';
   }
@@ -37,16 +46,16 @@ function serializeTokenResponse(response) {
   };
 }
 
-class Osu {
-  #apiAgent;
-  #refreshToken;
-  #tokenExpiresAt;
+export class Osu {
+  #apiAgent!: SuperAgentStatic & Request;
+  #refreshToken!: string;
+  #tokenExpiresAt!: number;
 
-  constructor(tokenInfo) {
-    this._assignTokenInfo(tokenInfo);
+  constructor(tokenInfo?: TokenInfo) {
+    this.#assignTokenInfo(tokenInfo);
   }
 
-  _assignTokenInfo(tokenInfo) {
+  #assignTokenInfo(tokenInfo: TokenInfo | undefined): void {
     if (tokenInfo != null) {
       this.#apiAgent = superagent.agent().auth(tokenInfo.accessToken, { type: 'bearer' });
       this.#refreshToken = tokenInfo.refreshToken;
@@ -55,7 +64,7 @@ class Osu {
   }
 
   //#region Initializers
-  async getClientCredentialsToken() {
+  async getClientCredentialsToken(): Promise<TokenInfo> {
     const tokenInfo = serializeTokenResponse(
       await superagent.post(`${baseUrl}/oauth/token`).type('form').send({
         client_id: process.env.OSU_CLIENT_ID,
@@ -65,11 +74,11 @@ class Osu {
       }),
     );
 
-    this._assignTokenInfo(tokenInfo);
+    this.#assignTokenInfo(tokenInfo);
     return tokenInfo;
   }
 
-  async getToken(authorizationCode) {
+  async getToken(authorizationCode: string): Promise<TokenInfo> {
     const tokenInfo = serializeTokenResponse(
       await superagent.post(`${baseUrl}/oauth/token`).type('form').send({
         client_id: process.env.OSU_CLIENT_ID,
@@ -80,40 +89,43 @@ class Osu {
       }),
     );
 
-    this._assignTokenInfo(tokenInfo);
+    this.#assignTokenInfo(tokenInfo);
     return tokenInfo;
   }
 
-  async tryRefreshToken() {
+  async tryRefreshToken(): Promise<TokenInfo | void> {
     if (Date.now() >= this.#tokenExpiresAt - refreshTokenThreshold) {
       const tokenInfo = serializeTokenResponse(
-        await superagent.post(`${baseUrl}/oauth/token`).type('form').send({
-          client_id: process.env.OSU_CLIENT_ID,
-          client_secret: process.env.OSU_CLIENT_SECRET,
-          grant_type: 'refresh_token',
-          refresh_token: this.#refreshToken,
-          scope: apiScopes,
-        }),
+        await superagent
+          .post(`${baseUrl}/oauth/token`)
+          .type('form')
+          .send({
+            client_id: process.env.OSU_CLIENT_ID,
+            client_secret: process.env.OSU_CLIENT_SECRET,
+            grant_type: 'refresh_token',
+            refresh_token: this.#refreshToken,
+            scope: apiScopes,
+          }),
       );
 
-      this._assignTokenInfo(tokenInfo);
+      this.#assignTokenInfo(tokenInfo);
       return tokenInfo;
     }
   }
   //#endregion
 
   //#region API requests
-  async revokeToken() {
+  async revokeToken(): Promise<void> {
     await this.#apiAgent.delete(`${apiBaseUrl}/oauth/tokens/current`);
   }
 
-  async _getBeatmapset(beatmapsetId) {
+  async #getBeatmapset(beatmapsetId: number): Promise<OsuApiBeatmapset> {
     const response = await this.#apiAgent.get(`${apiBaseUrl}/beatmapsets/${beatmapsetId}`);
 
     return response.body;
   }
 
-  async _getUser(userIdOrName, byName) {
+  async #getUser(userIdOrName: number | string | undefined, byName: boolean): Promise<OsuApiUser> {
     const request =
       userIdOrName == null
         ? this.#apiAgent.get(`${apiBaseUrl}/me`)
@@ -127,17 +139,22 @@ class Osu {
   //#endregion
 
   //#region Application requests
-  async createOrRefreshBeatmapset(beatmapsetId, forceUpdate = false) {
+  async createOrRefreshBeatmapset(
+    beatmapsetId: number,
+    forceUpdate = false,
+  ): Promise<(Beatmapset & { game_modes: Set<GameMode> }) | null> {
     if (!forceUpdate) {
-      const currentInDb = await db.queryOne('SELECT * FROM beatmapsets WHERE id = ?', beatmapsetId);
+      const currentInDb = await db.queryOne<Beatmapset>('SELECT * FROM beatmapsets WHERE id = ?', [
+        beatmapsetId,
+      ]);
 
       if (
         currentInDb != null &&
         Date.now() <= currentInDb.api_fetched_at.getTime() + retainApiObjectsFor
       ) {
-        const beatmaps = await db.query(
+        const beatmaps = await db.query<Pick<Beatmap, 'game_mode'>>(
           'SELECT game_mode FROM beatmaps WHERE beatmapset_id = ?',
-          beatmapsetId,
+          [beatmapsetId],
         );
 
         return {
@@ -147,10 +164,9 @@ class Osu {
       }
     }
 
-    let beatmapset;
-    try {
-      beatmapset = await this._getBeatmapset(beatmapsetId);
-    } catch {
+    const beatmapset = await this.#getBeatmapset(beatmapsetId).catch(() => null);
+
+    if (beatmapset == null) {
       return null;
     }
 
@@ -172,7 +188,7 @@ class Osu {
       title: beatmapset.title,
     };
     const dbFieldsWithPK = { ...dbFields, id: beatmapset.id };
-    const gameModes = new Set();
+    const gameModes = new Set<number>();
 
     await db.transact(async (connection) => {
       await connection.query(
@@ -191,7 +207,7 @@ class Osu {
           bpm: beatmap.bpm >= 9999 ? '9999.99' : beatmap.bpm.toFixed(2),
           deleted_at: beatmap.deleted_at == null ? null : new Date(beatmap.deleted_at),
           game_mode: beatmap.mode_int,
-          key_count: beatmap.mode_int === 3 ? parseInt(beatmap.cs) : null,
+          key_count: beatmap.mode_int === GameMode.mania ? Math.round(beatmap.cs) : null,
           play_count: beatmap.playcount,
           ranked_status: beatmap.ranked,
           star_rating:
@@ -212,17 +228,17 @@ class Osu {
       }
 
       const creatorGameModes = (
-        await connection.query(
+        await connection.query<Pick<BeatmapsetCreator, 'game_mode'>>(
           `
             SELECT game_mode
             FROM beatmapset_creators
             WHERE beatmapset_id = ?
             GROUP BY game_mode
           `,
-          beatmapset.id,
+          [beatmapset.id],
         )
-      ).map((gameMode) => gameMode.game_mode);
-      const creatorsToInsert = [];
+      ).map((row) => row.game_mode);
+      const creatorsToInsert: [number, number, GameMode][] = [];
 
       for (const gameMode of gameModes) {
         if (creatorGameModes.includes(gameMode)) {
@@ -233,7 +249,10 @@ class Osu {
       }
 
       if (creatorsToInsert.length > 0) {
-        await connection.query('INSERT INTO beatmapset_creators VALUES ?', [creatorsToInsert]);
+        await connection.query(
+          'INSERT INTO beatmapset_creators (beatmapset_id, creator_id, game_mode) VALUES ?',
+          [creatorsToInsert],
+        );
       }
 
       // TODO: If force updating beatmapset, also force update all exisitng beatmapset_creators
@@ -242,8 +261,8 @@ class Osu {
       // If this map is now Loved, check if any of the incomplete rounds it
       // belongs to now only contain maps that are Loved or failed voting. If so,
       // mark the round as "done".
-      if (dbFields.ranked_status === 4) {
-        const incompleteRoundsWithBeatmapset = await connection.query(
+      if (dbFields.ranked_status === RankedStatus.loved) {
+        const incompleteRoundsWithBeatmapset = await connection.query<Pick<Round, 'id'>>(
           `
             SELECT rounds.id
             FROM rounds
@@ -259,7 +278,11 @@ class Osu {
         const roundIdsToComplete = [];
 
         for (const round of incompleteRoundsWithBeatmapset) {
-          const beatmapsets = await connection.queryWithGroups(
+          const beatmapsets = await connection.queryWithGroups<
+            Pick<Beatmapset, 'ranked_status'> & {
+              poll_result: (Poll & Pick<RoundGameMode, 'voting_threshold'>) | null;
+            }
+          >(
             `
               SELECT beatmapsets.ranked_status, poll_results:poll_result,
                 round_game_modes.voting_threshold AS 'poll_result:voting_threshold'
@@ -275,12 +298,12 @@ class Osu {
                 AND nominations.game_mode = round_game_modes.game_mode
               WHERE nominations.round_id = ?
             `,
-            round.id,
+            [round.id],
           );
           let roundDone = true;
 
           for (const beatmapset of beatmapsets) {
-            if (beatmapset.ranked_status === 4) {
+            if (beatmapset.ranked_status === RankedStatus.loved) {
               continue;
             }
 
@@ -315,12 +338,32 @@ class Osu {
     };
   }
 
-  async createOrRefreshUser(userIdOrName, options) {
+  async createOrRefreshUser(): Promise<User | null>;
+  async createOrRefreshUser(
+    userId: number,
+    options?: { byName?: false; forceUpdate?: boolean; storeBanned?: false },
+  ): Promise<User | null>;
+  async createOrRefreshUser(
+    userId: number,
+    options: { byName?: false; forceUpdate?: boolean; storeBanned: true },
+  ): Promise<User>;
+  async createOrRefreshUser(
+    userName: string,
+    options: { byName: true; forceUpdate?: boolean; storeBanned?: false },
+  ): Promise<User | null>;
+  async createOrRefreshUser(
+    userName: string,
+    options: { byName: true; forceUpdate?: boolean; storeBanned: true },
+  ): Promise<User>;
+  async createOrRefreshUser(
+    userIdOrName?: number | string,
+    options?: { byName?: boolean; forceUpdate?: boolean; storeBanned?: boolean },
+  ): Promise<User | null> {
     const { byName = false, forceUpdate = false, storeBanned = false } = options ?? {};
-    let currentInDb;
+    let currentInDb: User | null | undefined;
 
     if (!forceUpdate && userIdOrName != null) {
-      currentInDb = await db.queryOne('SELECT * FROM users WHERE ?? = ?', [
+      currentInDb = await db.queryOne<User>('SELECT * FROM users WHERE ?? = ?', [
         byName ? 'name' : 'id',
         userIdOrName,
       ]);
@@ -333,9 +376,10 @@ class Osu {
       }
     }
 
-    const user = await this._getUser(userIdOrName, byName).catch(() => null);
-    let dbFields;
-    let dbFieldsWithPK;
+    const user = await this.#getUser(userIdOrName, byName).catch(() => null);
+    let dbFields: Omit<User, 'id'>;
+    // TODO can't actually be undefined but TS doesn't see that it's assigned in transaction below
+    let dbFieldsWithPK: User | undefined;
 
     await db.transact(async (connection) => {
       if (user == null) {
@@ -344,7 +388,7 @@ class Osu {
         }
 
         if (currentInDb == null) {
-          currentInDb = await connection.queryOne('SELECT * FROM users WHERE ?? = ?', [
+          currentInDb = await connection.queryOne<User>('SELECT * FROM users WHERE ?? = ?', [
             byName ? 'name' : 'id',
             userIdOrName,
           ]);
@@ -363,22 +407,21 @@ class Osu {
           avatar_url: sanitizeAvatarUrl('/images/layout/avatar-guest.png'),
           banned: true,
           country: '__',
-        };
+        } as Omit<User, 'id'>;
 
         if (byName) {
-          const nextBannedId = (
-            await connection.queryOne(`
-              SELECT IF(COUNT(*) > 0, MAX(id) + 1, 4294000000) AS next_id
-              FROM users
-              WHERE id >= 4294000000
-            `)
-          ).next_id;
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          const nextBannedId = (await connection.queryOne<{ next_id: number }>(`
+            SELECT IF(COUNT(*) > 0, MAX(id) + 1, 4294000000) AS next_id
+            FROM users
+            WHERE id >= 4294000000
+          `))!.next_id;
 
-          dbFields.name = userIdOrName;
+          dbFields.name = userIdOrName as string;
           dbFieldsWithPK = { ...dbFields, id: nextBannedId };
         } else {
           dbFields.name = 'Banned user';
-          dbFieldsWithPK = { ...dbFields, id: userIdOrName };
+          dbFieldsWithPK = { ...dbFields, id: userIdOrName as number };
         }
       } else {
         dbFields = {
@@ -406,12 +449,8 @@ class Osu {
       );
     });
 
-    return dbFieldsWithPK;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return dbFieldsWithPK!;
   }
   //#endregion
 }
-
-module.exports = {
-  authRedirectUrl,
-  Osu,
-};

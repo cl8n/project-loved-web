@@ -3,16 +3,5 @@
   "extends": [
     "react-app",
     "../.eslintrc.json"
-  ],
-  "rules": {
-    "import/newline-after-import": "error",
-    "import/order": [
-      "error",
-      {
-        "alphabetize": { "order": "asc", "caseInsensitive": true },
-        "groups": [["builtin", "external", "internal"], "parent", "sibling"],
-        "warnOnUnassignedImports": true
-      }
-    ]
-  }
+  ]
 }

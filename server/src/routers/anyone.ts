@@ -1,24 +1,24 @@
-const { Router } = require('express');
-const db = require('../db');
-const { asyncHandler } = require('../express-helpers');
+import { Router } from 'express';
+import db from '../db';
+import { asyncHandler } from '../express-helpers';
+import { isGameModeArray } from '../type-guards';
 
-const router = Router();
+const anyoneRouter = Router();
+export default anyoneRouter;
 
-router.post(
+anyoneRouter.post(
   '/submit',
   asyncHandler(async (req, res) => {
     if (typeof req.body.beatmapsetId !== 'number') {
       return res.status(422).json({ error: 'Invalid beatmapset ID' });
     }
 
-    if (
-      !Array.isArray(req.body.gameModes) ||
-      req.body.gameModes.length === 0 ||
-      req.body.gameModes.some(
-        (gameMode) => typeof gameMode !== 'number' || gameMode < 0 || gameMode > 3,
-      )
-    ) {
+    if (!isGameModeArray(req.body.gameModes)) {
       return res.status(422).json({ error: 'Invalid game modes' });
+    }
+
+    if (req.body.gameModes.length === 0) {
+      return res.status(422).json({ error: 'No game modes selected' });
     }
 
     // Checking for exactly null to validate input
@@ -27,7 +27,7 @@ router.post(
       return res.status(422).json({ error: 'Invalid reason' });
     }
 
-    const beatmapset = await res.locals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId);
+    const beatmapset = await res.typedLocals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId);
 
     if (beatmapset == null) {
       return res.status(422).json({ error: 'Invalid beatmapset ID' });
@@ -66,11 +66,12 @@ router.post(
             gameMode,
             req.body.reason,
             now,
-            res.locals.user.id,
+            res.typedLocals.user.id,
           ]),
         ],
       );
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       if (error.code !== 'ER_DUP_ENTRY') {
         throw error;
       }
@@ -81,5 +82,3 @@ router.post(
     res.status(204).send();
   }),
 );
-
-module.exports = router;

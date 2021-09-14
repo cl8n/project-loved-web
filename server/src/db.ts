@@ -1,15 +1,40 @@
-const mysql = require('mysql');
+import type { Pool, PoolConnection, PoolConfig } from 'mysql';
+import { createPool } from 'mysql';
+
+if (
+  process.env.DB_DATABASE == null ||
+  process.env.DB_HOST == null ||
+  process.env.DB_PASSWORD == null ||
+  process.env.DB_PORT == null ||
+  process.env.DB_USER == null
+) {
+  throw 'Invalid MySQL config';
+}
+
+type Field = Date | boolean | number | string | null;
+type Row = Record<string, Field>;
+type RowWithGroups = Record<string, Field | Row>;
+type StatementInsert = `${string}INSERT INTO${string}` | `${string}INSERT IGNORE INTO${string}`;
+type StatementSelect = `${string}SELECT${string}FROM${string}`;
+type StatementUpdate = `${string}UPDATE${string}`;
 
 class MysqlConnection {
-  #columnsByTable;
-  #connection;
+  #columnsByTable: Record<string, string[]> | undefined;
+  #connection: PoolConnection;
 
-  constructor(connection, columnsByTable) {
+  constructor(connection: PoolConnection, columnsByTable: Record<string, string[]> | undefined) {
     this.#columnsByTable = columnsByTable;
     this.#connection = connection;
   }
 
-  query(sql, values) {
+  query(sql: StatementInsert, values?: unknown[]): Promise<{ insertId: number }>;
+  query<T = Row>(sql: StatementSelect, values?: unknown[]): Promise<T[]>;
+  query(sql: StatementUpdate, values?: unknown[]): Promise<{ changedRows: number }>;
+  query(sql: string, values?: unknown[]): Promise<void>;
+  query(
+    sql: string,
+    values?: unknown[],
+  ): Promise<unknown[] | { changedRows: number } | { insertId: number } | void> {
     return new Promise((resolve, reject) => {
       this.#connection.query(sql, values, function (error, results) {
         if (error) {
@@ -21,11 +46,11 @@ class MysqlConnection {
     });
   }
 
-  async queryOne(sql, values) {
-    return (await this.query(sql, values))[0] ?? null;
+  async queryOne<T = Row>(sql: StatementSelect, values?: unknown[]): Promise<T | null> {
+    return (await this.query<T>(sql, values))[0] ?? null;
   }
 
-  async queryWithGroups(sql, values) {
+  async queryWithGroups<T = RowWithGroups>(sql: StatementSelect, values?: unknown[]): Promise<T[]> {
     if (this.#columnsByTable == null) {
       throw 'Columns not loaded yet';
     }
@@ -34,8 +59,8 @@ class MysqlConnection {
       .slice(sql.indexOf('SELECT') + 6, sql.indexOf('FROM'))
       .split(',')
       .map((select) => select.trim());
-    const specialSelectInfo = [];
-    const normalSelects = [];
+    const specialSelectInfo: [string, string, string][] = [];
+    const normalSelects: string[] = [];
 
     for (const select of selects) {
       const parts = select.split(':');
@@ -50,21 +75,24 @@ class MysqlConnection {
     }
 
     const specialSelectsSqls = specialSelectInfo.map(([fromTable, toTable, realFromTable]) =>
-      this.#columnsByTable[realFromTable].map(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.#columnsByTable![realFromTable].map(
         (column) => `\`${fromTable}\`.\`${column}\` AS '${toTable}:${column}'`,
       ),
     );
 
-    sql =
-      sql.slice(0, sql.indexOf('SELECT') + 6) +
+    sql = (sql.slice(0, sql.indexOf('SELECT') + 6) +
       ' ' +
-      normalSelects.concat(specialSelectsSqls).join(', ') +
+      normalSelects.concat(...specialSelectsSqls).join(', ') +
       ' ' +
-      sql.slice(sql.indexOf('FROM'));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      sql.slice(sql.indexOf('FROM'))) as any;
 
+    // TODO typing this is a nightmare
     return (await this.query(sql, values)).map(function (row) {
-      const grouped = {};
-      const groups = [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const grouped: any = {};
+      const groups: string[] = [];
 
       Object.entries(row).forEach(function ([column, value]) {
         const parts = column.split(':');
@@ -97,15 +125,18 @@ class MysqlConnection {
     });
   }
 
-  async queryOneWithGroups(sql, values) {
+  async queryOneWithGroups<T = RowWithGroups>(
+    sql: StatementSelect,
+    values?: unknown[],
+  ): Promise<T | null> {
     if (this.#columnsByTable == null) {
       throw 'Columns not loaded yet';
     }
 
-    return (await this.queryWithGroups(sql, values))[0] ?? null;
+    return (await this.queryWithGroups<T>(sql, values))[0] ?? null;
   }
 
-  async transact(fn) {
+  async transact<T>(fn: (connection: this) => Promise<T>): Promise<T> {
     await this.query('START TRANSACTION');
 
     try {
@@ -121,18 +152,18 @@ class MysqlConnection {
 
 class MysqlPool {
   #closed = false;
-  #columnsByTable;
-  #pool;
+  #columnsByTable?: Record<string, string[]>;
+  #pool: Pool;
 
-  constructor(config) {
-    this.#pool = mysql.createPool(config);
+  constructor(config: PoolConfig) {
+    this.#pool = createPool(config);
   }
 
-  get pool() {
+  get pool(): Pool {
     return this.#pool;
   }
 
-  close() {
+  close(): Promise<void> {
     if (this.#closed) {
       return Promise.resolve();
     }
@@ -150,17 +181,17 @@ class MysqlPool {
     });
   }
 
-  async initialize() {
+  async initialize(): Promise<void> {
     this.#columnsByTable = (
-      await this.query(
+      await this.query<{ COLUMN_NAME: string; TABLE_NAME: string }>(
         `
           SELECT TABLE_NAME, COLUMN_NAME
           FROM information_schema.COLUMNS
           WHERE TABLE_SCHEMA = ?
         `,
-        process.env.DB_DATABASE,
+        [process.env.DB_DATABASE],
       )
-    ).reduce((prev, column) => {
+    ).reduce<Record<string, string[]>>((prev, column) => {
       if (prev[column.TABLE_NAME] == null) {
         prev[column.TABLE_NAME] = [];
       }
@@ -170,35 +201,34 @@ class MysqlPool {
     }, {});
   }
 
-  query(...args) {
-    return this.useConnection((connection) => connection.query(...args));
-  }
+  // Typing doesn't seem to work with overloads here
+  readonly query: MysqlConnection['query'] = (...args: unknown[]) =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.useConnection((connection: any) => connection.query(...args)) as any;
 
-  queryOne(...args) {
-    return this.useConnection((connection) => connection.queryOne(...args));
-  }
+  readonly queryOne: MysqlConnection['queryOne'] = (...args) =>
+    this.useConnection((connection) => connection.queryOne(...args));
 
-  queryWithGroups(...args) {
+  readonly queryWithGroups: MysqlConnection['queryWithGroups'] = (...args) => {
     if (this.#columnsByTable == null) {
       return Promise.reject('Columns not loaded yet');
     }
 
     return this.useConnection((connection) => connection.queryWithGroups(...args));
-  }
+  };
 
-  queryOneWithGroups(...args) {
+  readonly queryOneWithGroups: MysqlConnection['queryOneWithGroups'] = (...args) => {
     if (this.#columnsByTable == null) {
       return Promise.reject('Columns not loaded yet');
     }
 
     return this.useConnection((connection) => connection.queryOneWithGroups(...args));
-  }
+  };
 
-  transact(...args) {
-    return this.useConnection((connection) => connection.transact(...args));
-  }
+  readonly transact: MysqlConnection['transact'] = (...args) =>
+    this.useConnection((connection) => connection.transact(...args));
 
-  useConnection(fn) {
+  useConnection<T>(fn: (connection: MysqlConnection) => Promise<T>): Promise<T> {
     if (this.#closed) {
       return Promise.reject('Connection pool has been closed');
     }
@@ -217,11 +247,11 @@ class MysqlPool {
   }
 }
 
-module.exports = new MysqlPool({
+const db = new MysqlPool({
   database: process.env.DB_DATABASE,
   host: process.env.DB_HOST,
   password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+  port: parseInt(process.env.DB_PORT, 10),
   user: process.env.DB_USER,
 
   typeCast: function (field, next) {
@@ -234,3 +264,4 @@ module.exports = new MysqlPool({
     return string === '0' ? false : string === '1' ? true : null;
   },
 });
+export default db;

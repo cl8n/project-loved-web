@@ -8,5 +8,4 @@ while true; do
   sleep 1
 done
 
-nodemon -w package.json -x 'npm install' & \
-nodemon ./index.js
+npm run start

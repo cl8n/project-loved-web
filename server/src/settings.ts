@@ -1,8 +1,8 @@
-const { existsSync, mkdirSync, readFileSync, writeFileSync } = require('fs');
-const { join, isAbsolute, normalize } = require('path');
-const { accessNested } = require('./helpers');
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { join, isAbsolute, normalize } from 'path';
+import { accessNested } from './helpers';
 
-if (!isAbsolute(process.env.STORAGE_PATH ?? '')) {
+if (process.env.STORAGE_PATH == null || !isAbsolute(process.env.STORAGE_PATH)) {
   throw 'Invalid storage path';
 }
 
@@ -13,11 +13,12 @@ if (!existsSync(storagePath)) {
   mkdirSync(storagePath);
 }
 
-const settings = existsSync(settingsPath)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const settings: Record<string, any> = existsSync(settingsPath)
   ? JSON.parse(readFileSync(settingsPath, 'utf8'))
   : (writeFileSync(settingsPath, '{}'), {});
 
-function updateSettingInternal(key, value) {
+function updateSettingInternal(key: string, value: unknown): void {
   const keyParts = key.split('.');
   let modifyingScope = settings;
 
@@ -34,30 +35,23 @@ function updateSettingInternal(key, value) {
   modifyingScope[keyParts[keyParts.length - 1]] = value;
 }
 
-function writeSettings() {
+function writeSettings(): void {
   writeFileSync(settingsPath, JSON.stringify(settings));
 }
 
-function accessSetting(key) {
+export function accessSetting<T>(key: string): T {
   return accessNested(settings, key);
 }
 
-function updateSetting(key, value) {
+export function updateSetting(key: string, value: unknown): void {
   updateSettingInternal(key, value);
   writeSettings();
 }
 
-function updateSettings(newSettings) {
+export function updateSettings(newSettings: Record<string, unknown>): void {
   for (const [key, value] of Object.entries(newSettings)) {
     updateSettingInternal(key, value);
   }
 
   writeSettings();
 }
-
-module.exports = {
-  accessSetting,
-  settings,
-  updateSetting,
-  updateSettings,
-};

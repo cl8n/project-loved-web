@@ -5,7 +5,15 @@
   ],
   "rules": {
     "curly": "error",
-    "eqeqeq": ["error", "always", { "null": "never" }]
+    "eqeqeq": ["error", "always", { "null": "never" }],
+    "import/newline-after-import": "error",
+    "import/order": [
+      "error",
+      {
+        "alphabetize": { "order": "asc", "caseInsensitive": true },
+        "groups": [["builtin", "external", "internal"], "parent", "sibling"]
+      }
+    ]
   },
   "overrides": [
     {
@@ -15,6 +23,12 @@
         "@typescript-eslint/consistent-type-definitions": "error",
         "@typescript-eslint/consistent-type-imports": "error",
         "@typescript-eslint/prefer-as-const": "error"
+      }
+    },
+    {
+      "files": ["**/*.d.ts"],
+      "rules": {
+        "@typescript-eslint/consistent-type-imports": ["error", { "disallowTypeAnnotations": false }]
       }
     }
   ]

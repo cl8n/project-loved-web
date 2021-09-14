@@ -1,23 +1,25 @@
-const { Router } = require('express');
-const db = require('../db');
-const { asyncHandler } = require('../express-helpers');
-const guards = require('../guards');
-const { groupBy, modeBy } = require('../helpers');
-const { accessSetting } = require('../settings');
+import { Router } from 'express';
+import db from '../db';
+import { asyncHandler } from '../express-helpers';
+import { roles } from '../guards';
+import { groupBy, modeBy } from '../helpers';
+import { accessSetting } from '../settings';
+import { isGameMode } from '../type-guards';
 
-const router = Router();
+const guestRouter = Router();
+export default guestRouter;
 
-router.get('/', (_, res) => {
+guestRouter.get('/', (_, res) => {
   res.send('This is the API for <a href="https://loved.sh">loved.sh</a>. You shouldn\'t be here!');
 });
 
 // TODO: is not needed publicly anymore. check usage
-router.get(
+guestRouter.get(
   '/captains',
   asyncHandler(async (_, res) => {
     res.json(
-      groupBy(
-        await db.queryWithGroups(`
+      groupBy<GameMode, UserWithRoles>(
+        await db.queryWithGroups<UserWithRoles>(`
           SELECT users.*, user_roles:roles
           FROM users
           INNER JOIN user_roles
@@ -31,11 +33,14 @@ router.get(
   }),
 );
 
-router.get(
+guestRouter.get(
   '/mapper-consents',
   asyncHandler(async (_, res) => {
-    const beatmapsetConsentsByMapperId = groupBy(
-      await db.queryWithGroups(`
+    const beatmapsetConsentsByMapperId = groupBy<
+      ConsentBeatmapset['user_id'],
+      ConsentBeatmapset & { beatmapset: Beatmapset }
+    >(
+      await db.queryWithGroups<ConsentBeatmapset & { beatmapset: Beatmapset }>(`
         SELECT mapper_consent_beatmapsets.*, beatmapsets:beatmapset
         FROM mapper_consent_beatmapsets
         INNER JOIN beatmapsets
@@ -43,7 +48,10 @@ router.get(
       `),
       'user_id',
     );
-    const consents = await db.queryWithGroups(`
+    const consents: (Consent & {
+      beatmapset_consents?: (ConsentBeatmapset & { beatmapset: Beatmapset })[];
+      mapper: User;
+    })[] = await db.queryWithGroups<Consent & { mapper: User }>(`
       SELECT mapper_consents.*, mappers:mapper
       FROM mapper_consents
       INNER JOIN users AS mappers
@@ -59,11 +67,16 @@ router.get(
   }),
 );
 
-router.get(
+guestRouter.get(
   '/stats/polls',
   asyncHandler(async (_, res) => {
     res.json(
-      await db.queryWithGroups(`
+      await db.queryWithGroups<
+        Poll & {
+          beatmapset: Beatmapset | null;
+          voting_threshold: RoundGameMode['voting_threshold'] | null;
+        }
+      >(`
         SELECT poll_results.*, beatmapsets:beatmapset, round_game_modes.voting_threshold
         FROM poll_results
         LEFT JOIN beatmapsets
@@ -77,29 +90,28 @@ router.get(
   }),
 );
 
-router.get(
+guestRouter.get(
   '/submissions',
   asyncHandler(async (req, res) => {
-    const gameMode = parseInt(req.query.gameMode, 10);
+    const gameMode = parseInt(req.query.gameMode ?? '', 10);
 
-    if (isNaN(gameMode) || gameMode < 0 || gameMode > 3) {
+    if (!isGameMode(gameMode)) {
       return res.status(422).json({ error: 'Invalid game mode' });
     }
 
-    const beatmapsetIds = new Set();
-    const userIds = new Set();
+    const beatmapsetIds = new Set<number>();
+    const userIds = new Set<number>();
     const canViewNominationStatus =
-      !accessSetting(`hideNominationStatus.${gameMode}`) ||
-      guards.roles(req, res).gameModes[gameMode];
+      !accessSetting(`hideNominationStatus.${gameMode}`) || roles(req, res).gameModes[gameMode];
 
-    const submissions = await db.query(
+    const submissions = await db.query<Submission>(
       `
         SELECT *
         FROM submissions
         WHERE game_mode = ?
         ORDER BY submitted_at ASC
       `,
-      gameMode,
+      [gameMode],
     );
 
     for (const submission of submissions) {
@@ -110,14 +122,14 @@ router.get(
       }
     }
 
-    const reviews = await db.query(
+    const reviews = await db.query<Review>(
       `
         SELECT *
         FROM reviews
         WHERE game_mode = ?
         ORDER BY reviewed_at ASC
       `,
-      gameMode,
+      [gameMode],
     );
 
     for (const review of reviews) {
@@ -132,7 +144,21 @@ router.get(
       });
     }
 
-    const beatmapsets = await db.query(
+    const beatmapsets: (Beatmapset &
+      Partial<{
+        beatmap_counts: Record<GameMode, number>;
+        consent: boolean | null;
+        modal_bpm: number;
+        nominated_round_name: string | null;
+        poll: Partial<Pick<Poll, 'beatmapset_id'>> &
+          Pick<Poll, 'topic_id'> & { passed: 0 | 1 | boolean };
+        poll_in_progress: boolean;
+        review_score: number;
+        reviews: Review[];
+        score: number;
+        strictly_rejected: boolean;
+        submissions: Submission[];
+      }>)[] = await db.query<Beatmapset>(
       `
         SELECT *
         FROM beatmapsets
@@ -142,7 +168,7 @@ router.get(
     );
     const beatmapsetIdsWithPollInProgress = new Set(
       (
-        await db.query(
+        await db.query<Pick<Beatmapset, 'id'>>(
           `
             SELECT beatmapsets.id
             FROM beatmapsets
@@ -159,8 +185,11 @@ router.get(
         )
       ).map((row) => row.id),
     );
-    const beatmapsByBeatmapsetId = groupBy(
-      await db.query(
+    const beatmapsByBeatmapsetId = groupBy<
+      Beatmap['beatmapset_id'],
+      Pick<Beatmap, 'beatmapset_id' | 'bpm' | 'game_mode' | 'play_count'>
+    >(
+      await db.query<Pick<Beatmap, 'beatmapset_id' | 'bpm' | 'game_mode' | 'play_count'>>(
         `
           SELECT beatmapset_id, bpm, game_mode, play_count
           FROM beatmaps
@@ -172,8 +201,8 @@ router.get(
     );
     const futureNominationsByBeatmapsetId =
       canViewNominationStatus &&
-      groupBy(
-        await db.query(
+      groupBy<Nomination['beatmapset_id'], Round['name']>(
+        await db.query<Pick<Nomination, 'beatmapset_id'> & Pick<Round, 'name'>>(
           `
             SELECT nominations.beatmapset_id, rounds.name
             FROM nominations
@@ -190,8 +219,11 @@ router.get(
         'name',
       );
     // TODO: Scope to complete polls when incomplete polls are stored in poll_results
-    const pollByBeatmapsetId = groupBy(
-      await db.query(
+    const pollByBeatmapsetId = groupBy<
+      Poll['beatmapset_id'],
+      Pick<Poll, 'beatmapset_id' | 'topic_id'> & { passed: 0 | 1 }
+    >(
+      await db.query<Pick<Poll, 'beatmapset_id' | 'topic_id'> & { passed: 0 | 1 }>(
         `
           SELECT poll_results.beatmapset_id, poll_results.topic_id,
             poll_results.result_yes / (poll_results.result_no + poll_results.result_yes) >= round_game_modes.voting_threshold AS passed
@@ -210,14 +242,25 @@ router.get(
         [gameMode, [...beatmapsetIds]],
       ),
       'beatmapset_id',
-      undefined,
+      null,
       true,
     );
-    const reviewsByBeatmapsetId = groupBy(reviews, 'beatmapset_id');
-    const submissionsByBeatmapsetId = groupBy(submissions, 'beatmapset_id');
+    const reviewsByBeatmapsetId = groupBy<Review['beatmapset_id'], Review>(
+      reviews,
+      'beatmapset_id',
+    );
+    const submissionsByBeatmapsetId = groupBy<Submission['beatmapset_id'], Submission>(
+      submissions,
+      'beatmapset_id',
+    );
 
-    const beatmapsetConsentByBeatmapsetUserKey = groupBy(
-      await db.query(
+    const beatmapsetConsentByBeatmapsetUserKey = groupBy<
+      `${number}-${number}`,
+      ConsentBeatmapset['consent'] | undefined
+    >(
+      await db.query<
+        Pick<ConsentBeatmapset, 'consent'> & { beatmapset_user: `${number}-${number}` }
+      >(
         `
           SELECT consent, CONCAT(beatmapset_id, '-', user_id) as beatmapset_user
           FROM mapper_consent_beatmapsets
@@ -229,8 +272,8 @@ router.get(
       'consent',
       true,
     );
-    const consentByUserId = groupBy(
-      await db.query(
+    const consentByUserId = groupBy<Consent['id'], Consent['consent']>(
+      await db.query<Pick<Consent, 'consent' | 'id'>>(
         `
           SELECT consent, id
           FROM mapper_consents
@@ -248,19 +291,25 @@ router.get(
     );
 
     for (const beatmapset of beatmapsets) {
-      const beatmaps = groupBy(beatmapsByBeatmapsetId[beatmapset.id] || [], 'game_mode');
+      const beatmaps = groupBy<
+        Beatmap['game_mode'],
+        Pick<Beatmap, 'beatmapset_id' | 'bpm' | 'game_mode' | 'play_count'>
+      >(beatmapsByBeatmapsetId[beatmapset.id] || [], 'game_mode');
       const beatmapsForGameMode = beatmaps[gameMode]?.sort((a, b) => a.bpm - b.bpm) || [];
-      const consent =
+      const consent: ConsentValue | boolean | null =
         beatmapsetConsentByBeatmapsetUserKey[`${beatmapset.id}-${beatmapset.creator_id}`] ??
         consentByUserId[beatmapset.creator_id];
 
       beatmapset.reviews = reviewsByBeatmapsetId[beatmapset.id] || [];
       beatmapset.submissions = submissionsByBeatmapsetId[beatmapset.id] || [];
 
-      beatmapset.consent = consent == null || consent > 1 ? null : consent > 0;
+      beatmapset.consent =
+        consent == null || consent === ConsentValue.unreachable ? null : !!consent;
       beatmapset.modal_bpm = modeBy(beatmapsForGameMode, 'bpm');
       beatmapset.nominated_round_name = canViewNominationStatus
-        ? futureNominationsByBeatmapsetId[beatmapset.id]?.[0] ?? null
+        ? (futureNominationsByBeatmapsetId as Record<number, string[] | undefined>)[
+            beatmapset.id
+          ]?.[0] ?? null
         : null;
       beatmapset.play_count = beatmapsForGameMode.reduce(
         (sum, beatmap) => sum + beatmap.play_count,
@@ -288,7 +337,8 @@ router.get(
       userIds.add(beatmapset.creator_id);
     }
 
-    beatmapsets.sort((a, b) => b.score - a.score);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    beatmapsets.sort((a, b) => b.score! - a.score!);
 
     // Should never happen
     if (userIds.size === 0) {
@@ -298,8 +348,8 @@ router.get(
       });
     }
 
-    const usersById = groupBy(
-      await db.query(
+    const usersById = groupBy<User['id'], User & { alumni: UserRoles['alumni'] | null }>(
+      await db.query<User & { alumni: UserRoles['alumni'] | null }>(
         `
           SELECT users.*, user_roles.alumni
           FROM users
@@ -321,11 +371,11 @@ router.get(
   }),
 );
 
-router.get(
+guestRouter.get(
   '/team',
   asyncHandler(async (_, res) => {
     const team = (
-      await db.queryWithGroups(`
+      await db.queryWithGroups<UserWithRoles>(`
         SELECT users.*, user_roles:roles
         FROM users
         INNER JOIN user_roles
@@ -336,19 +386,24 @@ router.get(
       Object.entries(user.roles).some(([role, value]) => !role.startsWith('god') && value === true),
     );
 
-    const alumni = groupBy(
+    const alumni = groupBy<UserRoles['alumni_game_mode'], UserWithRoles, 'other'>(
       team.filter((user) => user.roles.alumni),
       'roles.alumni_game_mode',
-      undefined,
+      null,
       false,
       'other',
     );
 
     const allCurrent = team.filter((user) => !user.roles.alumni);
-    const current = groupBy(allCurrent, 'roles.captain_game_mode');
+    const current = groupBy<UserRoles['captain_game_mode'], UserWithRoles>(
+      allCurrent,
+      'roles.captain_game_mode',
+    ) as Record<Exclude<UserRoles['captain_game_mode'], null>, UserWithRoles[]> &
+      Partial<Record<'dev' | 'metadata' | 'moderator' | 'news', UserWithRoles[]>> &
+      Partial<{ null: UserWithRoles[] }>;
     delete current.null;
 
-    for (const role of ['dev', 'metadata', 'moderator', 'news']) {
+    for (const role of ['dev', 'metadata', 'moderator', 'news'] as const) {
       const usersWithRole = allCurrent.filter((user) => user.roles[role]);
 
       if (usersWithRole.length > 0) {
@@ -359,5 +414,3 @@ router.get(
     res.json({ alumni, current });
   }),
 );
-
-module.exports = router;

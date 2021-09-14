@@ -2,14 +2,35 @@
   "root": true,
   "extends": [
     "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:node/recommended-module",
     "../.eslintrc.json"
   ],
-  "env": {
-    "es2020": true,
-    "node": true
+  "plugins": [
+    "regex"
+  ],
+  "rules": {
+    "no-process-exit": "off",
+    "node/shebang": "off",
+    "regex/invalid": [
+      "error",
+      [
+        {
+          "regex": "\\.locals",
+          "message": "Use `typedLocals` instead"
+        },
+        {
+          "regex": "INSERT[^()]+VALUES",
+          "message": "List fields when running INSERTs"
+        }
+      ]
+    ]
   },
-  "parser": "@babel/eslint-parser",
-  "parserOptions": {
-    "requireConfigFile": false
+  "settings": {
+    "node": {
+      "tryExtensions": [".js", ".ts", ".d.ts"]
+    }
   }
 }

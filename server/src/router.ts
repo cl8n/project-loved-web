@@ -1,23 +1,14 @@
-const express = require('express');
-const db = require('./db');
-const { asyncHandler } = require('./express-helpers');
-const guards = require('./guards');
-const { groupBy } = require('./helpers');
-const { settings, updateSettings, accessSetting } = require('./settings');
+import { Router } from 'express';
+import db from './db';
+import { asyncHandler } from './express-helpers';
+import { isCaptain, isGod, isModerator, isNewsAuthor, roles as authRoles } from './guards';
+import { getParams, groupBy } from './helpers';
+import { settings, updateSettings, accessSetting } from './settings';
+import { isAssigneeType, isGameMode, isNumberArray, isRecord, isStringArray } from './type-guards';
 
-function getParams(object, keys) {
-  const params = {};
+const router = Router();
+export default router;
 
-  for (const key of keys) {
-    if (object[key] !== undefined) {
-      params[key] = object[key];
-    }
-  }
-
-  return params;
-}
-
-const router = express.Router();
 // TODO: rethink guards
 
 //#region captain
@@ -45,18 +36,18 @@ router.post(
       return res.status(422).json({ error: 'Invalid score' });
     }
 
-    const roles = guards.roles(req, res);
+    const roles = authRoles(req, res);
 
     if (!roles.gameModes[req.body.gameMode]) {
       return res.status(403).send();
     }
 
     // TODO: Not dumb workaround for God role
-    if (req.body.score >= -3 && !res.locals.user.roles.captain) {
+    if (req.body.score >= -3 && !res.typedLocals.user.roles.captain) {
       return res.status(403).send();
     }
 
-    const existingReview = await db.queryOne(
+    const existingReview = await db.queryOne<Review>(
       `
         SELECT *
         FROM reviews
@@ -64,7 +55,7 @@ router.post(
           AND captain_id = ?
           AND game_mode = ?
       `,
-      [req.body.beatmapsetId, res.locals.user.id, req.body.gameMode],
+      [req.body.beatmapsetId, res.typedLocals.user.id, req.body.gameMode],
     );
 
     if (existingReview != null) {
@@ -77,10 +68,12 @@ router.post(
         existingReview.id,
       ]);
 
-      return res.json(await db.queryOne('SELECT * FROM reviews WHERE id = ?', existingReview.id));
+      return res.json(
+        await db.queryOne<Review>('SELECT * FROM reviews WHERE id = ?', [existingReview.id]),
+      );
     }
 
-    const beatmapset = await res.locals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId);
+    const beatmapset = await res.typedLocals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId);
 
     if (beatmapset == null) {
       return res.status(422).json({ error: 'Invalid beatmapset ID' });
@@ -92,23 +85,25 @@ router.post(
       });
     }
 
-    const { insertId } = await db.query('INSERT INTO reviews SET ?', {
-      beatmapset_id: req.body.beatmapsetId,
-      captain_id: res.locals.user.id,
-      game_mode: req.body.gameMode,
-      reason: req.body.reason,
-      reviewed_at: new Date(),
-      score: req.body.score,
-    });
+    const { insertId } = await db.query('INSERT INTO reviews SET ?', [
+      {
+        beatmapset_id: req.body.beatmapsetId,
+        captain_id: res.typedLocals.user.id,
+        game_mode: req.body.gameMode,
+        reason: req.body.reason,
+        reviewed_at: new Date(),
+        score: req.body.score,
+      },
+    ]);
 
-    res.json(await db.queryOne('SELECT * FROM reviews WHERE id = ?', insertId));
+    res.json(await db.queryOne<Review>('SELECT * FROM reviews WHERE id = ?', [insertId]));
   }),
 );
 
 router.get(
   '/rounds',
-  asyncHandler(async (req, res) => {
-    const rounds = await db.query(`
+  asyncHandler(async (_, res) => {
+    const rounds = await db.query<Round & { nomination_count: number }>(`
       SELECT rounds.*, IFNULL(nomination_counts.count, 0) AS nomination_count
       FROM rounds
       LEFT JOIN (
@@ -130,21 +125,33 @@ router.get(
 router.get(
   '/nominations',
   asyncHandler(async (req, res) => {
-    const round = await db.queryOne(
-      `
-        SELECT *
-        FROM rounds
-        WHERE id = ?
-      `,
-      req.query.roundId,
-    );
+    const round: (Round & { game_modes?: Record<GameMode, RoundGameMode> }) | null =
+      await db.queryOne<Round>(
+        `
+          SELECT *
+          FROM rounds
+          WHERE id = ?
+        `,
+        [req.query.roundId],
+      );
 
     if (round == null) {
       return res.status(404).send();
     }
 
-    const assigneesByNominationId = groupBy(
-      await db.queryWithGroups(
+    const assigneesByNominationId = groupBy<
+      Nomination['id'],
+      {
+        assignee: User;
+        assignee_type: NominationAssignee['type'];
+        nomination_id: Nomination['id'];
+      }
+    >(
+      await db.queryWithGroups<{
+        assignee: User;
+        assignee_type: NominationAssignee['type'];
+        nomination_id: Nomination['id'];
+      }>(
         `
           SELECT users:assignee, nomination_assignees.type AS assignee_type, nominations.id AS nomination_id
           FROM nominations
@@ -154,12 +161,23 @@ router.get(
             ON nomination_assignees.assignee_id = users.id
           WHERE nominations.round_id = ?
         `,
-        req.query.roundId,
+        [req.query.roundId],
       ),
       'nomination_id',
     );
-    const includesByNominationId = groupBy(
-      await db.queryWithGroups(
+    const includesByNominationId = groupBy<
+      Nomination['id'],
+      {
+        beatmap: (Beatmap & { excluded: boolean }) | null;
+        creator: User | null;
+        nomination_id: Nomination['id'];
+      }
+    >(
+      await db.queryWithGroups<{
+        beatmap: (Beatmap & { excluded: boolean }) | null;
+        creator: User | null;
+        nomination_id: Nomination['id'];
+      }>(
         `
           SELECT nominations.id AS nomination_id, creators:creator, beatmaps:beatmap,
             nomination_excluded_beatmaps.beatmap_id IS NOT NULL AS 'beatmap:excluded'
@@ -177,12 +195,12 @@ router.get(
               AND beatmaps.id = nomination_excluded_beatmaps.beatmap_id
           WHERE nominations.round_id = ?
         `,
-        req.query.roundId,
+        [req.query.roundId],
       ),
       'nomination_id',
     );
-    const nominatorsByNominationId = groupBy(
-      await db.queryWithGroups(
+    const nominatorsByNominationId = groupBy<Nomination['id'], User>(
+      await db.queryWithGroups<{ nomination_id: Nomination['id']; nominator: User }>(
         `
           SELECT users:nominator, nominations.id AS nomination_id
           FROM nominations
@@ -192,12 +210,27 @@ router.get(
             ON nomination_nominators.nominator_id = users.id
           WHERE nominations.round_id = ?
         `,
-        req.query.roundId,
+        [req.query.roundId],
       ),
       'nomination_id',
       'nominator',
     );
-    const nominations = await db.queryWithGroups(
+    const nominations: (Nomination & {
+      beatmaps?: (Beatmap & { excluded: boolean })[];
+      beatmapset: Beatmapset;
+      beatmapset_creators?: User[];
+      description_author: User | null;
+      metadata_assignees?: User[];
+      moderator_assignees?: User[];
+      nominators?: User[];
+      poll_result: Poll | null;
+    })[] = await db.queryWithGroups<
+      Nomination & {
+        beatmapset: Beatmapset;
+        description_author: User | null;
+        poll_result: Poll | null;
+      }
+    >(
       `
         SELECT nominations.*, beatmapsets:beatmapset, description_authors:description_author,
           poll_results:poll_result
@@ -213,17 +246,17 @@ router.get(
         WHERE nominations.round_id = ?
         ORDER BY nominations.order ASC, nominations.id ASC
       `,
-      req.query.roundId,
+      [req.query.roundId],
     );
 
-    round.game_modes = groupBy(
-      await db.query(
+    round.game_modes = groupBy<RoundGameMode['game_mode'], RoundGameMode>(
+      await db.query<RoundGameMode>(
         `
           SELECT *
           FROM round_game_modes
           WHERE round_id = ?
         `,
-        req.query.roundId,
+        [req.query.roundId],
       ),
       'game_mode',
       null,
@@ -233,14 +266,21 @@ router.get(
     // TODO: Should not be necessary to check for uniques like this. Just fix query.
     //       See interop query as well
     nominations.forEach((nomination) => {
-      nomination.beatmaps = includesByNominationId[nomination.id]
-        .map((include) => include.beatmap)
-        .filter((b1, i, all) => b1 != null && all.findIndex((b2) => b1.id === b2.id) === i)
+      nomination.beatmaps = (
+        includesByNominationId[nomination.id]
+          .map((include) => include.beatmap)
+          .filter(
+            (b1, i, all) => b1 != null && all.findIndex((b2) => b1.id === b2?.id) === i,
+          ) as (Beatmap & { excluded: boolean })[]
+      )
         .sort((a, b) => a.star_rating - b.star_rating)
-        .sort((a, b) => a.key_count - b.key_count);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        .sort((a, b) => a.key_count! - b.key_count!);
       nomination.beatmapset_creators = includesByNominationId[nomination.id]
         .map((include) => include.creator)
-        .filter((c1, i, all) => c1 != null && all.findIndex((c2) => c1.id === c2.id) === i);
+        .filter(
+          (c1, i, all) => c1 != null && all.findIndex((c2) => c1.id === c2?.id) === i,
+        ) as User[];
       nomination.nominators = nominatorsByNominationId[nomination.id] || [];
 
       const assignees = assigneesByNominationId[nomination.id] || [];
@@ -263,6 +303,14 @@ router.get(
 router.post(
   '/nomination-submit',
   asyncHandler(async (req, res) => {
+    if (typeof req.body.beatmapsetId !== 'number') {
+      return res.status(422).json({ error: 'Invalid beatmapset ID' });
+    }
+
+    if (!isGameMode(req.body.gameMode)) {
+      return res.status(422).json({ error: 'Invalid game mode' });
+    }
+
     // TODO: can this be done with foreign constraint instead?
     if (req.body.parentId != null) {
       const parentNomination = await db.queryOne(
@@ -271,7 +319,7 @@ router.post(
           FROM nominations
           WHERE id = ?
         `,
-        req.body.parentId,
+        [req.body.parentId],
       );
 
       if (parentNomination == null) {
@@ -279,7 +327,7 @@ router.post(
       }
     }
 
-    const beatmapset = await res.locals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId);
+    const beatmapset = await res.typedLocals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId);
 
     if (beatmapset == null) {
       return res.status(422).json({ error: 'Invalid beatmapset ID' });
@@ -308,37 +356,41 @@ router.post(
       });
     }
 
-    const nominationCount = (
-      await db.queryOne(
-        `
-          SELECT COUNT(*) AS count
-          FROM nominations
-          WHERE round_id = ?
-            AND game_mode = ?
-        `,
-        [req.body.roundId, req.body.gameMode],
-      )
-    ).count;
-    let nominationId;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const nominationCount = (await db.queryOne<{ count: number }>(
+      `
+        SELECT COUNT(*) AS count
+        FROM nominations
+        WHERE round_id = ?
+          AND game_mode = ?
+      `,
+      [req.body.roundId, req.body.gameMode],
+    ))!.count;
+    // TODO can't actually be undefined but TS doesn't see that it's assigned in transaction below
+    let nominationId: Nomination['id'] | undefined;
 
     await db.transact(async (connection) => {
       nominationId = (
-        await connection.query('INSERT INTO nominations SET ?', {
-          beatmapset_id: beatmapset.id,
-          game_mode: req.body.gameMode,
-          order: nominationCount,
-          parent_id: req.body.parentId,
-          round_id: req.body.roundId,
-        })
+        await connection.query('INSERT INTO nominations SET ?', [
+          {
+            beatmapset_id: beatmapset.id,
+            game_mode: req.body.gameMode,
+            order: nominationCount,
+            parent_id: req.body.parentId,
+            round_id: req.body.roundId,
+          },
+        ])
       ).insertId;
 
-      await connection.query(`INSERT INTO nomination_nominators SET ?`, {
-        nomination_id: nominationId,
-        nominator_id: res.locals.user.id,
-      });
+      await connection.query(`INSERT INTO nomination_nominators SET ?`, [
+        {
+          nomination_id: nominationId,
+          nominator_id: res.typedLocals.user.id,
+        },
+      ]);
     });
 
-    const creators = await db.query(
+    const creators = await db.query<User>(
       `
         SELECT users.*
         FROM beatmapset_creators
@@ -349,17 +401,26 @@ router.post(
           ON beatmapset_creators.creator_id = users.id
         WHERE nominations.id = ?
       `,
-      nominationId,
+      [nominationId],
     );
-    const nomination = await db.queryOne(
+    const nomination: Nomination & {
+      beatmaps?: (Beatmap & { excluded: false })[];
+      beatmapset?: Beatmapset;
+      beatmapset_creators?: User[];
+      description_author: null;
+      metadata_assignees?: [];
+      moderator_assignees?: [];
+      nominators?: User[];
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    } = (await db.queryOne<Nomination & { description_author: null }>(
       `
         SELECT *, NULL AS description_author
         FROM nominations
         WHERE id = ?
       `,
-      nominationId,
-    );
-    const beatmaps = await db.query(
+      [nominationId],
+    ))!;
+    const beatmaps = await db.query<Beatmap & { excluded: false }>(
       `
         SELECT *, FALSE AS excluded
         FROM beatmaps
@@ -369,7 +430,7 @@ router.post(
       `,
       [nomination.beatmapset_id, req.body.gameMode],
     );
-    const nominators = await db.query(
+    const nominators = await db.query<User>(
       `
         SELECT users.*
         FROM nomination_nominators
@@ -377,7 +438,7 @@ router.post(
           ON nomination_nominators.nominator_id = users.id
         WHERE nomination_nominators.nomination_id = ?
       `,
-      nominationId,
+      [nominationId],
     );
 
     nomination.beatmaps = beatmaps;
@@ -396,13 +457,15 @@ router.post(
 router.post(
   '/nomination-edit-description',
   asyncHandler(async (req, res) => {
-    const existingNomination = await db.queryOne(
+    const existingNomination = await db.queryOne<
+      Pick<Nomination, 'description' | 'description_author_id' | 'description_state' | 'game_mode'>
+    >(
       `
         SELECT description, description_author_id, description_state, game_mode
         FROM nominations
         WHERE id = ?
       `,
-      req.body.nominationId,
+      [req.body.nominationId],
     );
 
     if (existingNomination == null) {
@@ -415,10 +478,10 @@ router.post(
       description_state: prevState,
       game_mode: gameMode,
     } = existingNomination;
-    const roles = guards.roles(req, res);
+    const roles = authRoles(req, res);
 
     if (
-      !(prevState !== 1 && roles.gameModes[gameMode]) &&
+      !(prevState !== DescriptionState.reviewed && roles.gameModes[gameMode]) &&
       !(prevDescription != null && roles.news)
     ) {
       return res.status(403).send();
@@ -439,14 +502,18 @@ router.post(
         req.body.description == null
           ? null
           : prevDescription == null
-          ? res.locals.user.id
+          ? res.typedLocals.user.id
           : prevAuthorId,
-        roles.news && prevDescription != null && req.body.description != null ? 1 : 0,
+        roles.news && prevDescription != null && req.body.description != null
+          ? DescriptionState.reviewed
+          : DescriptionState.notReviewed,
         req.body.nominationId,
       ],
     );
 
-    const nomination = await db.queryOneWithGroups(
+    const nomination = await db.queryOneWithGroups<
+      Nomination & { description_author: User | null }
+    >(
       `
         SELECT nominations.*, description_authors:description_author
         FROM nominations
@@ -454,7 +521,7 @@ router.post(
           ON nominations.description_author_id = description_authors.id
         WHERE nominations.id = ?
       `,
-      req.body.nominationId,
+      [req.body.nominationId],
     );
 
     res.json(nomination);
@@ -464,32 +531,42 @@ router.post(
 router.post(
   '/nomination-edit-metadata',
   asyncHandler(async (req, res) => {
-    const roles = guards.roles(req, res);
+    const roles = authRoles(req, res);
 
     if (!roles.metadata && !roles.news) {
       return res.status(403).json({ error: 'Must be a metadata checker or news author' });
     }
 
-    const nomination = await db.queryOne(
+    const nomination:
+      | (Pick<Nomination, 'beatmapset_id' | 'game_mode' | 'metadata_state'> & {
+          beatmapset_creators?: User[];
+        })
+      | null = await db.queryOne<
+      Pick<Nomination, 'beatmapset_id' | 'game_mode' | 'metadata_state'>
+    >(
       `
         SELECT beatmapset_id, game_mode, metadata_state
         FROM nominations
         WHERE id = ?
       `,
-      req.body.nominationId,
+      [req.body.nominationId],
     );
+
+    if (nomination == null) {
+      return res.status(422).json({ error: 'Invalid nomination ID' });
+    }
 
     await db.transact(async (connection) => {
       if (roles.metadata) {
         let artist = req.body.artist;
         let title = req.body.title;
 
-        if (req.body.state === 2) {
+        if (req.body.state === MetadataState.good) {
           artist = null;
           title = null;
 
-          if (nomination.metadata_state === 1) {
-            await res.locals.osu.createOrRefreshBeatmapset(nomination.beatmapset_id, true);
+          if (nomination.metadata_state === MetadataState.needsChange) {
+            await res.typedLocals.osu.createOrRefreshBeatmapset(nomination.beatmapset_id, true);
           }
         }
 
@@ -505,7 +582,7 @@ router.post(
 
       Object.assign(
         nomination,
-        await connection.queryOneWithGroups(
+        await connection.queryOneWithGroups<Nomination & { beatmapset: Beatmapset }>(
           `
             SELECT nominations.*, beatmapsets:beatmapset
             FROM nominations
@@ -513,7 +590,7 @@ router.post(
               ON nominations.beatmapset_id = beatmapsets.id
             WHERE nominations.id = ?
           `,
-          req.body.nominationId,
+          [req.body.nominationId],
         ),
       );
 
@@ -522,21 +599,22 @@ router.post(
         [nomination.beatmapset_id, nomination.game_mode],
       );
 
-      const creators = [];
+      const creators: User[] = [];
 
-      if (req.body.creators != null && req.body.creators.length > 0) {
+      if (isStringArray(req.body.creators) && req.body.creators.length > 0) {
         for (const creatorName of req.body.creators) {
           creators.push(
-            await res.locals.osu.createOrRefreshUser(creatorName, {
+            await res.typedLocals.osu.createOrRefreshUser(creatorName, {
               byName: true,
               storeBanned: true,
             }),
           );
         }
 
-        await connection.query('INSERT INTO beatmapset_creators VALUES ?', [
-          creators.map((user) => [nomination.beatmapset_id, user.id, nomination.game_mode]),
-        ]);
+        await connection.query(
+          'INSERT INTO beatmapset_creators (beatmapset_id, creator_id, game_mode) VALUES ?',
+          [creators.map((user) => [nomination.beatmapset_id, user.id, nomination.game_mode])],
+        );
       }
 
       nomination.beatmapset_creators = creators;
@@ -548,7 +626,7 @@ router.post(
 
 router.post(
   '/nomination-edit-moderation',
-  guards.isModerator,
+  isModerator,
   asyncHandler(async (req, res) => {
     await db.query('UPDATE nominations SET moderator_state = ? WHERE id = ?', [
       req.body.state,
@@ -565,7 +643,7 @@ router.post(
 router.delete(
   '/nomination',
   asyncHandler(async (req, res) => {
-    if (!res.locals.user.roles.god) {
+    if (!res.typedLocals.user.roles.god) {
       if (
         (await db.queryOne(
           `
@@ -574,7 +652,7 @@ router.delete(
             WHERE nomination_id = ?
               AND nominator_id = ?
           `,
-          [req.query.nominationId, res.locals.user.id],
+          [req.query.nominationId, res.typedLocals.user.id],
         )) == null
       ) {
         return res.status(403).send();
@@ -582,19 +660,16 @@ router.delete(
     }
 
     await db.transact(async (connection) => {
-      await connection.query(
-        'DELETE FROM nomination_assignees WHERE nomination_id = ?',
+      await connection.query('DELETE FROM nomination_assignees WHERE nomination_id = ?', [
         req.query.nominationId,
-      );
-      await connection.query(
-        'DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?',
+      ]);
+      await connection.query('DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?', [
         req.query.nominationId,
-      );
-      await connection.query(
-        'DELETE FROM nomination_nominators WHERE nomination_id = ?',
+      ]);
+      await connection.query('DELETE FROM nomination_nominators WHERE nomination_id = ?', [
         req.query.nominationId,
-      );
-      await connection.query('DELETE FROM nominations WHERE id = ?', req.query.nominationId);
+      ]);
+      await connection.query('DELETE FROM nominations WHERE id = ?', [req.query.nominationId]);
     });
 
     res.status(204).send();
@@ -603,7 +678,7 @@ router.delete(
 
 router.post(
   '/update-nomination-order',
-  guards.isCaptain,
+  isCaptain,
   asyncHandler(async (req, res) => {
     await db.transact((connection) =>
       Promise.all(
@@ -626,22 +701,22 @@ router.post(
 
 router.post(
   '/update-nominators',
-  guards.isCaptain,
+  isCaptain,
   asyncHandler(async (req, res) => {
     await db.transact(async (connection) => {
-      await connection.query(
-        'DELETE FROM nomination_nominators WHERE nomination_id = ?',
+      await connection.query('DELETE FROM nomination_nominators WHERE nomination_id = ?', [
         req.body.nominationId,
-      );
+      ]);
 
-      if (req.body.nominatorIds != null && req.body.nominatorIds.length > 0) {
-        await connection.query('INSERT INTO nomination_nominators VALUES ?', [
-          req.body.nominatorIds.map((id) => [req.body.nominationId, id]),
-        ]);
+      if (isNumberArray(req.body.nominatorIds) && req.body.nominatorIds.length > 0) {
+        await connection.query(
+          'INSERT INTO nomination_nominators (nomination_id, nominator_id) VALUES ?',
+          [req.body.nominatorIds.map((id) => [req.body.nominationId, id])],
+        );
       }
     });
 
-    const nominators = await db.query(
+    const nominators = await db.query<User>(
       `
         SELECT users.*
         FROM nomination_nominators
@@ -649,7 +724,7 @@ router.post(
           ON nomination_nominators.nominator_id = users.id
         WHERE nomination_nominators.nomination_id = ?
       `,
-      req.body.nominationId,
+      [req.body.nominationId],
     );
 
     res.json({
@@ -662,7 +737,11 @@ router.post(
 router.post(
   '/lock-nominations',
   asyncHandler(async (req, res) => {
-    const roles = guards.roles(req, res);
+    if (!isGameMode(req.body.gameMode)) {
+      return res.status(422).json({ error: 'Invalid game mode' });
+    }
+
+    const roles = authRoles(req, res);
 
     if (!roles.news && !roles.gameModes[req.body.gameMode]) {
       return res.status(403).json({ error: 'Must be a news author or captain for this game mode' });
@@ -681,33 +760,39 @@ router.post(
 //#region admin
 router.post(
   '/add-user',
-  guards.isGod,
+  isGod,
   asyncHandler(async (req, res) => {
-    const user = await res.locals.osu.createOrRefreshUser(req.body.name, {
-      byName: true,
-    });
+    if (typeof req.body.name !== 'string') {
+      return res.status(422).json({ error: 'Invalid username' });
+    }
+
+    const user: (User & { roles?: UserRoles & { id?: number } }) | null =
+      await res.typedLocals.osu.createOrRefreshUser(req.body.name, {
+        byName: true,
+      });
 
     if (user == null) {
       return res.status(422).json({ error: 'Invalid username' });
     }
 
-    await db.query('INSERT IGNORE INTO user_roles SET id = ?', user.id);
+    await db.query('INSERT IGNORE INTO user_roles SET id = ?', [user.id]);
 
-    user.roles = await db.queryOne(
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    user.roles = (await db.queryOne<UserRoles>(
       `
         SELECT *
         FROM user_roles
         WHERE id = ?
       `,
-      user.id,
-    );
+      [user.id],
+    ))!;
     delete user.roles.id;
 
     res.json(user);
   }),
 );
 
-router.post('/add-round', guards.isNewsAuthor, (_, res) => {
+router.post('/add-round', isNewsAuthor, (_, res) => {
   db.transact(async (connection) => {
     const queryResult = await connection.query("INSERT INTO rounds SET name = 'Unnamed round'");
 
@@ -728,8 +813,16 @@ router.post('/add-round', guards.isNewsAuthor, (_, res) => {
 
 router.post(
   '/update-round',
-  guards.isNewsAuthor,
+  isNewsAuthor,
   asyncHandler(async (req, res) => {
+    if (!isRecord(req.body.round)) {
+      return res.status(422).json({ error: 'Invalid round params' });
+    }
+
+    if (typeof req.body.roundId !== 'number') {
+      return res.status(422).json({ error: 'Invalid round ID' });
+    }
+
     await db.query('UPDATE rounds SET ? WHERE id = ?', [
       getParams(req.body.round, [
         'name',
@@ -748,14 +841,14 @@ router.post(
 router.get(
   '/assignees',
   asyncHandler(async (_, res) => {
-    const metadatas = await db.query(`
+    const metadatas = await db.query<User>(`
       SELECT users.*
       FROM users
       INNER JOIN user_roles
         ON users.id = user_roles.id
       WHERE user_roles.metadata = 1
     `);
-    const moderators = await db.query(`
+    const moderators = await db.query<User>(`
       SELECT users.*
       FROM users
       INNER JOIN user_roles
@@ -772,18 +865,18 @@ router.get(
 
 router.post(
   '/update-excluded-beatmaps',
-  guards.isCaptain,
+  isCaptain,
   asyncHandler(async (req, res) => {
     await db.transact(async (connection) => {
-      await connection.query(
-        'DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?',
+      await connection.query('DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?', [
         req.body.nominationId,
-      );
+      ]);
 
-      if (req.body.excludedBeatmapIds != null && req.body.excludedBeatmapIds.length > 0) {
-        await connection.query('INSERT INTO nomination_excluded_beatmaps VALUES ?', [
-          req.body.excludedBeatmapIds.map((id) => [id, req.body.nominationId]),
-        ]);
+      if (isNumberArray(req.body.excludedBeatmapIds) && req.body.excludedBeatmapIds.length > 0) {
+        await connection.query(
+          'INSERT INTO nomination_excluded_beatmaps (beatmap_id, nomination_id) VALUES ?',
+          [req.body.excludedBeatmapIds.map((id) => [id, req.body.nominationId])],
+        );
       }
     });
 
@@ -795,16 +888,16 @@ router.post(
   '/update-nomination-assignees',
   asyncHandler(async (req, res) => {
     const types = {
-      0: 'metadata',
-      1: 'moderator',
-    };
+      [AssigneeType.metadata]: 'metadata',
+      [AssigneeType.moderator]: 'moderator',
+    } as const;
 
-    const roles = guards.roles(req, res);
-    const typeString = types[req.body.type];
-
-    if (typeString == null) {
+    if (!isAssigneeType(req.body.type)) {
       return res.status(422).json({ error: 'Invalid assignee type' });
     }
+
+    const roles = authRoles(req, res);
+    const typeString = types[req.body.type];
 
     if (!roles.news && !roles[typeString]) {
       return res.status(403).json({ error: `Must have ${typeString} or news role` });
@@ -820,7 +913,7 @@ router.post(
         [req.body.nominationId, req.body.type],
       );
 
-      if (req.body.assigneeIds != null && req.body.assigneeIds.length > 0) {
+      if (isNumberArray(req.body.assigneeIds) && req.body.assigneeIds.length > 0) {
         await connection.query(
           'INSERT INTO nomination_assignees (assignee_id, nomination_id, type) VALUES ?',
           [req.body.assigneeIds.map((id) => [id, req.body.nominationId, req.body.type])],
@@ -828,7 +921,7 @@ router.post(
       }
     });
 
-    const assignees = await db.query(
+    const assignees = await db.query<User>(
       `
         SELECT users.*
         FROM nomination_assignees
@@ -850,7 +943,7 @@ router.post(
 router.get(
   '/users-with-permissions',
   asyncHandler(async (_, res) => {
-    const queryResult = await db.queryWithGroups(`
+    const queryResult = await db.queryWithGroups<UserWithRoles>(`
       SELECT users.*, user_roles:roles
       FROM users
       INNER JOIN user_roles
@@ -863,7 +956,7 @@ router.get(
 
 router.post(
   '/update-permissions',
-  guards.isGod,
+  isGod,
   asyncHandler(async (req, res) => {
     await db.query('UPDATE user_roles SET ? WHERE id = ?', [
       getParams(req.body, [
@@ -887,17 +980,25 @@ router.post(
 
 router.post(
   '/update-api-object',
-  guards.isGod,
+  isGod,
   asyncHandler(async (req, res) => {
+    if (typeof req.body.id !== 'number') {
+      return res.status(422).json({ error: 'Invalid ID' });
+    }
+
+    if (req.body.type !== 'beatmapset' && req.body.type !== 'user') {
+      return res.status(422).json({ error: 'Invalid type' });
+    }
+
     let apiObject;
 
     switch (req.body.type) {
       case 'beatmapset':
-        apiObject = await res.locals.osu.createOrRefreshBeatmapset(req.body.id, true);
+        apiObject = await res.typedLocals.osu.createOrRefreshBeatmapset(req.body.id, true);
         break;
       case 'user':
         // TODO: Store banned only if some box is ticked on web form
-        apiObject = await res.locals.osu.createOrRefreshUser(req.body.id, {
+        apiObject = await res.typedLocals.osu.createOrRefreshUser(req.body.id, {
           forceUpdate: true,
           storeBanned: true,
         });
@@ -912,7 +1013,7 @@ router.post(
   }),
 );
 
-router.post('/update-api-object-bulk', guards.isGod, (req, res) => {
+router.post('/update-api-object-bulk', isGod, (req, res) => {
   let apiObject;
   const type = req.body.type;
 
@@ -920,11 +1021,11 @@ router.post('/update-api-object-bulk', guards.isGod, (req, res) => {
     for (const id of req.body.ids) {
       switch (type) {
         case 'beatmapset':
-          apiObject = await res.locals.osu.createOrRefreshBeatmapset(id, true);
+          apiObject = await res.typedLocals.osu.createOrRefreshBeatmapset(id, true);
           break;
         case 'user':
           // TODO: Store banned only if some box is ticked on web form
-          apiObject = await res.locals.osu.createOrRefreshUser(id, {
+          apiObject = await res.typedLocals.osu.createOrRefreshUser(id, {
             forceUpdate: true,
             storeBanned: true,
           });
@@ -944,14 +1045,12 @@ router.post('/update-api-object-bulk', guards.isGod, (req, res) => {
   res.status(204).send();
 });
 
-router.get('/settings', guards.isCaptain, (_, res) => {
+router.get('/settings', isCaptain, (_, res) => {
   res.json(settings);
 });
 
-router.put('/settings', guards.isCaptain, (req, res) => {
+router.put('/settings', isCaptain, (req, res) => {
   updateSettings(req.body);
   res.json(settings);
 });
 //#endregion
-
-module.exports = router;

@@ -1,20 +1,33 @@
 #!/usr/bin/env node
 
-require('dotenv').config();
-const { randomBytes } = require('crypto');
-const express = require('express');
-const session = require('express-session');
-const MysqlSessionStore = require('express-mysql-session')(session);
-const db = require('./db');
-const { asyncHandler } = require('./express-helpers');
-const { hasLocalInteropKey, isAnything } = require('./guards');
-const { authRedirectUrl, Osu } = require('./osu');
-const router = require('./router');
-const anyoneRouter = require('./routers/anyone');
-const guestRouter = require('./routers/guest');
-const interopRouter = require('./routers/interop');
+import 'dotenv/config';
+import { randomBytes } from 'crypto';
+import type { NextFunction, Request, Response } from 'express';
+import express from 'express';
+import mysqlSessionStoreFactory from 'express-mysql-session';
+import session from 'express-session';
+import db from './db';
+import { asyncHandler } from './express-helpers';
+import { hasLocalInteropKey, isAnything } from './guards';
+import { authRedirectUrl, Osu } from './osu';
+import router from './router';
+import anyoneRouter from './routers/anyone';
+import guestRouter from './routers/guest';
+import interopRouter from './routers/interop';
 
-function destroySession(session) {
+if (
+  process.env.HTTPS_ALWAYS == null ||
+  process.env.PORT == null ||
+  process.env.SESSION_SECRET == null
+) {
+  throw 'Invalid API server config';
+}
+
+// Impossible to type
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const MysqlSessionStore = mysqlSessionStoreFactory(session as any);
+
+function destroySession(session: Request['session']): Promise<void> {
   return new Promise(function (resolve, reject) {
     session.destroy(function (error) {
       if (error != null) {
@@ -28,6 +41,13 @@ function destroySession(session) {
 
 db.initialize().then(() => {
   const app = express();
+
+  // Hack to add typing to locals
+  app.use((_, response, next) => {
+    // eslint-disable-next-line regex/invalid
+    response.typedLocals = response.locals as Response['typedLocals'];
+    next();
+  });
 
   app.use(express.json());
 
@@ -43,7 +63,8 @@ db.initialize().then(() => {
       proxy: true,
       resave: false,
       saveUninitialized: false,
-      secret: process.env.SESSION_SECRET,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      secret: process.env.SESSION_SECRET!,
       store: new MysqlSessionStore(
         {
           checkExpirationInterval: 1800000, // 30 minutes
@@ -96,7 +117,7 @@ db.initialize().then(() => {
 
       request.session.userId = user.id;
 
-      await db.query('INSERT IGNORE INTO user_roles SET id = ?', user.id);
+      await db.query('INSERT IGNORE INTO user_roles SET id = ?', [user.id]);
       //await log(logTypes.analytic, '{creator} logged in', userInfo.id);
 
       response.redirect(backUrl || '/');
@@ -109,10 +130,10 @@ db.initialize().then(() => {
         return next();
       }
 
-      response.locals.osu = new Osu(request.session);
+      response.typedLocals.osu = new Osu(request.session);
 
       try {
-        const tokenInfo = await response.locals.osu.tryRefreshToken();
+        const tokenInfo = await response.typedLocals.osu.tryRefreshToken();
 
         if (tokenInfo != null) {
           Object.assign(request.session, tokenInfo);
@@ -123,7 +144,7 @@ db.initialize().then(() => {
         throw error;
       }
 
-      const user = await db.queryOneWithGroups(
+      const user = await db.queryOneWithGroups<AuthUser & { api_fetched_at?: Date }>(
         `
           SELECT users.*, user_roles:roles
           FROM users
@@ -131,10 +152,15 @@ db.initialize().then(() => {
             ON users.id = user_roles.id
           WHERE users.id = ?
         `,
-        request.session.userId,
+        [request.session.userId],
       );
+
+      if (user == null) {
+        throw 'Missing user';
+      }
+
       delete user.api_fetched_at;
-      response.locals.user = user;
+      response.typedLocals.user = user;
 
       next();
     }),
@@ -154,7 +180,7 @@ db.initialize().then(() => {
   app.post(
     '/auth/bye',
     asyncHandler(async function (request, response) {
-      await response.locals.osu.revokeToken();
+      await response.typedLocals.osu.revokeToken();
       //log(logTypes.analytic, '{creator} logged out', request.session.userId);
       await destroySession(request.session);
 
@@ -163,7 +189,7 @@ db.initialize().then(() => {
   );
 
   app.get('/auth/remember', function (_, response) {
-    response.json(response.locals.user);
+    response.json(response.typedLocals.user);
   });
 
   app.use(anyoneRouter);
@@ -176,8 +202,9 @@ db.initialize().then(() => {
   });
 
   // Express relies on there being 4 arguments in the signature of error handlers
-  // eslint-disable-next-line no-unused-vars
-  app.use(function (error, _request, response, _next) {
+  // Also for some reason this has to be typed manually
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  app.use(function (error: unknown, _request: Request, response: Response, _next: NextFunction) {
     // TODO: can probably do better than these logs
     //log(logTypes.error, `{plain}${error}`);
     console.error(error);
@@ -185,11 +212,12 @@ db.initialize().then(() => {
     response.status(500).json({ error: 'Server error' });
   });
 
-  const httpServer = app.listen(parseInt(process.env.PORT, 10));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const httpServer = app.listen(parseInt(process.env.PORT!, 10));
 
-  function shutdown() {
+  function shutdown(): void {
     Promise.allSettled([
-      new Promise((resolve) => {
+      new Promise<void>((resolve) => {
         httpServer.close((error) => {
           if (error) {
             console.error(error);
