@@ -397,6 +397,20 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
   }
 
   const canReview = authUser != null && isCaptainForMode(authUser, gameMode);
+  const getOnReviewDelete = (beatmapsetId: number, reviewId: number) => () => {
+    setSubmissionsInfo((prev) => {
+      const beatmapset = prev!.beatmapsets.find((beatmapset) => beatmapset.id === beatmapsetId)!;
+
+      beatmapset.review_score -= beatmapset.reviews.find((review) => review.id === reviewId)!.score;
+      beatmapset.reviews = beatmapset.reviews.filter((review) => review.id !== reviewId);
+      beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
+
+      return {
+        beatmapsets: [...prev!.beatmapsets],
+        usersById: prev!.usersById,
+      };
+    });
+  };
   const onReviewUpdate = (review: IReview) => {
     setSubmissionsInfo((prev) => {
       const beatmapset = prev!.beatmapsets.find(
@@ -468,23 +482,26 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
         </tr>
       </thead>
       <tbody>
-        {displayBeatmapsets.map((beatmapset) => (
-          <SubmissionBeatmapset
-            key={beatmapset.id}
-            beatmapset={beatmapset}
-            canReview={canReview && !sortsAndFilters.filterToApproved}
-            columns={columns}
-            filterToApproved={sortsAndFilters.filterToApproved}
-            gameMode={gameMode}
-            onReviewUpdate={onReviewUpdate}
-            review={
-              canReview
-                ? beatmapset.reviews.find((review) => review.captain_id === authUser!.id)
-                : undefined
-            }
-            usersById={submissionsInfo.usersById}
-          />
-        ))}
+        {displayBeatmapsets.map((beatmapset) => {
+          const review = canReview
+            ? beatmapset.reviews.find((review) => review.captain_id === authUser!.id)
+            : undefined;
+
+          return (
+            <SubmissionBeatmapset
+              key={beatmapset.id}
+              beatmapset={beatmapset}
+              canReview={canReview && !sortsAndFilters.filterToApproved}
+              columns={columns}
+              filterToApproved={sortsAndFilters.filterToApproved}
+              gameMode={gameMode}
+              onReviewDelete={review == null ? null : getOnReviewDelete(beatmapset.id, review.id)}
+              onReviewUpdate={onReviewUpdate}
+              review={review}
+              usersById={submissionsInfo.usersById}
+            />
+          );
+        })}
       </tbody>
     </table>
   );

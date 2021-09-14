@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
 import type { GetSubmissionsResponseBody } from '../api';
+import { apiErrorMessage, deleteReview } from '../api';
 import Beatmap from '../Beatmap';
 import { dateFromString } from '../date-format';
 import { classNames } from '../dom-helpers';
@@ -108,6 +109,7 @@ interface SubmissionBeatmapsetProps {
   columns: ToggleableColumnsState;
   filterToApproved: boolean;
   gameMode: GameMode;
+  onReviewDelete: (() => void) | null;
   onReviewUpdate: (review: IReview) => void;
   review?: IReview;
   usersById: GetSubmissionsResponseBody['usersById'];
@@ -119,6 +121,7 @@ export default function SubmissionBeatmapset({
   columns,
   filterToApproved,
   gameMode,
+  onReviewDelete,
   onReviewUpdate,
   review,
   usersById,
@@ -160,6 +163,15 @@ export default function SubmissionBeatmapset({
     );
   }, [beatmapset, gameMode, intl]);
 
+  const onDeleteReviewClick = () => {
+    if (!window.confirm('Are you sure you want to delete your review?')) {
+      return;
+    }
+
+    deleteReview(review!.id)
+      .then(onReviewDelete!)
+      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
+  };
   const onClick = (event: MouseEvent<HTMLTableRowElement>) => {
     if (
       event.target instanceof Element &&
@@ -261,14 +273,15 @@ export default function SubmissionBeatmapset({
           </td>
           <td className='normal-wrap' colSpan={9}>
             {canReview && (
-              <div className='flex-left review-button-container'>
-                <button
-                  type='button'
-                  onClick={() => setReviewModalOpen(true)}
-                  className={reviewAngry ? 'angry' : undefined}
-                >
+              <div className='review-button-container'>
+                {review != null && (
+                  <button type='button' onClick={onDeleteReviewClick} className='angry'>
+                    Delete review
+                  </button>
+                )}{' '}
+                <button type='button' onClick={() => setReviewModalOpen(true)}>
                   Review
-                </button>
+                </button>{' '}
                 <Help>
                   You can also hold <kbd>Ctrl</kbd> while clicking on the mapset to open the review
                   modal.

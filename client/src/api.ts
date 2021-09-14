@@ -86,6 +86,10 @@ export function deleteNomination(nominationId: number): Response {
   return superagent.delete('/api/nomination').query({ nominationId });
 }
 
+export function deleteReview(reviewId: number): Response {
+  return superagent.delete('/api/review').query({ reviewId });
+}
+
 export function getAssignees(): Response<{ metadatas: IUser[]; moderators: IUser[] }> {
   return superagent.get('/api/assignees');
 }

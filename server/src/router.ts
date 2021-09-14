@@ -100,6 +100,33 @@ router.post(
   }),
 );
 
+router.delete(
+  '/review',
+  isCaptain,
+  asyncHandler(async (req, res) => {
+    const review = await db.queryOne<Pick<Review, 'captain_id'>>(
+      `
+        SELECT captain_id
+        FROM reviews
+        WHERE id = ?
+      `,
+      [req.query.reviewId],
+    );
+
+    if (review == null) {
+      return res.status(404).json({ error: 'Review not found' });
+    }
+
+    if (review.captain_id !== res.typedLocals.user.id) {
+      return res.status(403).json({ error: "This isn't your review" });
+    }
+
+    await db.query('DELETE FROM reviews WHERE id = ?', [req.query.reviewId]);
+
+    res.status(204).send();
+  }),
+);
+
 router.get(
   '/rounds',
   asyncHandler(async (_, res) => {
