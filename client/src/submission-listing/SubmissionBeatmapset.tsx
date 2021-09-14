@@ -15,6 +15,7 @@ import playIcon from '../images/icons8/play.png';
 import type { IReview } from '../interfaces';
 import { GameMode } from '../interfaces';
 import { Never } from '../Never';
+import { useOsuAuth } from '../osuAuth';
 import { UserInline } from '../UserInline';
 import type { ToggleableColumnsState } from './helpers';
 import { submissionIsNew } from './helpers';
@@ -122,10 +123,12 @@ export default function SubmissionBeatmapset({
   review,
   usersById,
 }: SubmissionBeatmapsetProps) {
+  const authUser = useOsuAuth().user;
   const intl = useIntl();
   const { state: submittedBeatmapsetId } = useLocation<number | undefined>();
   const [expanded, setExpanded] = useState(submittedBeatmapsetId === beatmapset.id);
   const [hovered, setHovered] = useState(false);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const year = useMemo(() => {
     const submittedAt = dateFromString(beatmapset.submitted_at).getFullYear();
     const updatedAt = dateFromString(beatmapset.updated_at).getFullYear();
@@ -160,8 +163,13 @@ export default function SubmissionBeatmapset({
   const onClick = (event: MouseEvent<HTMLTableRowElement>) => {
     if (
       event.target instanceof Element &&
-      event.target.closest('a, button, .modal-overlay') == null
+      event.target.closest('a, button, .help, .modal-overlay') == null
     ) {
+      if (event.ctrlKey) {
+        setReviewModalOpen(true);
+        return;
+      }
+
       setExpanded((prev) => !prev);
 
       if (event.target.closest('.submission-beatmapset') == null) {
@@ -171,6 +179,7 @@ export default function SubmissionBeatmapset({
   };
   const onMouseEnter = () => setHovered(true);
   const onMouseLeave = () => setHovered(false);
+  const reviewAngry = canReview && authUser?.roles.captain && !review?.score; // TODO: Not dumb workaround for God role
 
   return (
     <>
@@ -187,7 +196,10 @@ export default function SubmissionBeatmapset({
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        <td className='selector-indicator'>{expanded ? '▲' : '▼'}</td>
+        <td>
+          <span className='selector-indicator'>{expanded ? '▲' : '▼'}</span>{' '}
+          {reviewAngry && <span className='important-bad'>★</span>}
+        </td>
         <td className='normal-wrap'>
           <div data-beatmapset-id={beatmapset.id} />
           <div className='submission-selector' />
@@ -236,16 +248,6 @@ export default function SubmissionBeatmapset({
             {intl.formatNumber(beatmapset.modal_bpm)}
           </td>
         )}
-        {canReview && (
-          <td>
-            <ReviewEditor
-              beatmapset={beatmapset}
-              gameMode={gameMode}
-              onReviewUpdate={onReviewUpdate}
-              review={review}
-            />
-          </td>
-        )}
       </tr>
       {expanded && (
         <tr
@@ -257,7 +259,22 @@ export default function SubmissionBeatmapset({
           <td>
             <div className='submission-selector' />
           </td>
-          <td className='normal-wrap' colSpan={10}>
+          <td className='normal-wrap' colSpan={9}>
+            {canReview && (
+              <div className='flex-left review-button-container'>
+                <button
+                  type='button'
+                  onClick={() => setReviewModalOpen(true)}
+                  className={reviewAngry ? 'angry' : undefined}
+                >
+                  Review
+                </button>
+                <Help>
+                  You can also hold <kbd>Ctrl</kbd> while clicking on the mapset to open the review
+                  modal.
+                </Help>
+              </div>
+            )}
             <SubmissionsList
               reviews={beatmapset.reviews}
               submissions={beatmapset.submissions}
@@ -266,6 +283,13 @@ export default function SubmissionBeatmapset({
           </td>
         </tr>
       )}
+      <ReviewEditor
+        beatmapset={beatmapset}
+        gameMode={gameMode}
+        modalState={[reviewModalOpen, setReviewModalOpen]}
+        onReviewUpdate={onReviewUpdate}
+        review={review}
+      />
     </>
   );
 }

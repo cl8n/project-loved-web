@@ -20,6 +20,7 @@ const messages = defineMessages({
 interface ReviewEditorProps {
   beatmapset: IBeatmapset;
   gameMode: GameMode;
+  modalState: [boolean, (modalOpen: boolean) => void];
   onReviewUpdate: (review: IReview) => void;
   review?: IReview;
 }
@@ -27,15 +28,15 @@ interface ReviewEditorProps {
 export default function ReviewEditor({
   beatmapset,
   gameMode,
+  modalState,
   onReviewUpdate,
   review,
 }: ReviewEditorProps) {
-  const authUser = useOsuAuth().user!;
+  const authUser = useOsuAuth().user;
   const intl = useIntl();
   const [busy, setBusy] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
 
-  const actuallyCaptain = authUser.roles.captain; // TODO: Not dumb workaround for God role
+  const [modalOpen, setModalOpen] = modalState;
   const onSubmit: FormSubmitHandler = (form, then) => {
     if (
       form.score < -3 &&
@@ -54,78 +55,69 @@ export default function ReviewEditor({
   };
 
   return (
-    <>
-      <button
-        type='button'
-        onClick={() => setModalOpen(true)}
-        className={`fake-a${!actuallyCaptain || review?.score ? '' : ' important-bad'}`}
-      >
-        Review
-      </button>
-      <Modal close={() => setModalOpen(false)} open={modalOpen}>
-        <h2>
-          <BeatmapInline beatmapset={beatmapset} gameMode={gameMode} />
-          {' review'}
-        </h2>
-        <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
-          <table>
-            <tbody>
-              <tr>
-                <td>
-                  <label htmlFor='score'>Score</label>
-                </td>
-                <td>
-                  <select
-                    name='score'
-                    required
-                    defaultValue={review?.score}
-                    data-value-type='int'
-                    key={
-                      review?.score /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */
-                    }
-                  >
-                    <option hidden value=''>
-                      Select a score
-                    </option>
-                    {actuallyCaptain &&
-                      selectableReviewScores.map((score) => (
-                        <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
-                          {intl.formatMessage(reviewScoreMessages[score + 3])} (
-                          {intl.formatNumber(score, { signDisplay: 'exceptZero' })})
-                        </option>
-                      ))}
-                    <option className='review-score--3' value='-4'>
-                      {intl.formatMessage(messages.notAllowed)}
-                    </option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <label htmlFor='reason'>Reason</label>
-                </td>
-                <td>
-                  <textarea
-                    name='reason'
-                    required
-                    defaultValue={review?.reason}
-                    ref={autoHeightRef}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <button type='submit' className='modal-submit-button'>
-            {busy
-              ? review == null
-                ? 'Adding...'
-                : 'Updating...'
-              : review == null
-              ? 'Add'
-              : 'Update'}
-          </button>
-        </Form>
-      </Modal>
-    </>
+    <Modal close={() => setModalOpen(false)} open={modalOpen}>
+      <h2>
+        <BeatmapInline beatmapset={beatmapset} gameMode={gameMode} />
+        {' review'}
+      </h2>
+      <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <label htmlFor='score'>Score</label>
+              </td>
+              <td>
+                <select
+                  name='score'
+                  required
+                  defaultValue={review?.score}
+                  data-value-type='int'
+                  key={
+                    review?.score /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */
+                  }
+                >
+                  <option hidden value=''>
+                    Select a score
+                  </option>
+                  {authUser?.roles.captain && // TODO: Not dumb workaround for God role
+                    selectableReviewScores.map((score) => (
+                      <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
+                        {intl.formatMessage(reviewScoreMessages[score + 3])} (
+                        {intl.formatNumber(score, { signDisplay: 'exceptZero' })})
+                      </option>
+                    ))}
+                  <option className='review-score--3' value='-4'>
+                    {intl.formatMessage(messages.notAllowed)}
+                  </option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label htmlFor='reason'>Reason</label>
+              </td>
+              <td>
+                <textarea
+                  name='reason'
+                  required
+                  defaultValue={review?.reason}
+                  ref={autoHeightRef}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button type='submit' className='modal-submit-button'>
+          {busy
+            ? review == null
+              ? 'Adding...'
+              : 'Updating...'
+            : review == null
+            ? 'Add'
+            : 'Update'}
+        </button>
+      </Form>
+    </Modal>
   );
 }

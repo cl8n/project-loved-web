@@ -465,7 +465,6 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
           {columns.year && <th>{intl.formatMessage(messages.year)}</th>}
           {columns.difficultyCount && <th>{intl.formatMessage(messages.difficultyCount)}</th>}
           {columns.bpm && <th>{intl.formatMessage(messages.bpm)}</th>}
-          {canReview && <th />}
         </tr>
       </thead>
       <tbody>
