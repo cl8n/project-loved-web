@@ -547,6 +547,33 @@ tr.sticky > th {
       padding-right: 1em;
     }
   }
+
+  > tbody > tr {
+    position: relative;
+  }
+}
+
+.submission-selector {
+  border: 2px solid var(--control);
+  bottom:-2px;
+  display:none;
+  left:-2px;
+  pointer-events: none;
+  position:absolute;
+  right:-2px;
+  top:-2px;
+
+  tr.hover & {
+    display: block;
+  }
+
+  tr.submission-beatmapset:not(.closed) & {
+    border-bottom: none;
+  }
+
+  tr:not(.submission-beatmapset) & {
+    border-top: none;
+  }
 }
 
 .submission-beatmapset {
@@ -566,14 +593,26 @@ tr.sticky > th {
     border-top: 1px solid #bbb;
   }
 
-  [data-beatmapset-id]::before {
-    // Not sure where the 3px comes from, but this looks the best.
-    $offset: calc(2.25em + 3px);
+  [data-beatmapset-id] {
+    pointer-events: none;
 
-    content: '';
-    display: block;
-    height: $offset;
-    margin-top: calc(-1 * #{$offset});
+    &::before {
+      // Not sure where the 3px comes from, but this looks the best.
+      $offset: calc(2.25em + 3px);
+
+      content: '';
+      display: block;
+      height: $offset;
+      margin-top: calc(-1 * #{$offset});
+    }
+  }
+
+  &:not(.hover) .selector-indicator {
+    opacity: 0.4;
+  }
+
+  &.hover .selector-indicator {
+    color: var(--control-heavy);
   }
 
   > td {

@@ -432,6 +432,7 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
     <table className='main-table submissions-table'>
       <thead>
         <tr className='sticky'>
+          <th />
           <FormattedMessage
             defaultMessage='Beatmapset'
             description='Submissions table header'
@@ -464,7 +465,7 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
           {columns.year && <th>{intl.formatMessage(messages.year)}</th>}
           {columns.difficultyCount && <th>{intl.formatMessage(messages.difficultyCount)}</th>}
           {columns.bpm && <th>{intl.formatMessage(messages.bpm)}</th>}
-          <th />
+          {canReview && <th />}
         </tr>
       </thead>
       <tbody>

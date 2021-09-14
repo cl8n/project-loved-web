@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react';
 import { useMemo, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
@@ -124,6 +125,7 @@ export default function SubmissionBeatmapset({
   const intl = useIntl();
   const { state: submittedBeatmapsetId } = useLocation<number | undefined>();
   const [expanded, setExpanded] = useState(submittedBeatmapsetId === beatmapset.id);
+  const [hovered, setHovered] = useState(false);
   const year = useMemo(() => {
     const submittedAt = dateFromString(beatmapset.submitted_at).getFullYear();
     const updatedAt = dateFromString(beatmapset.updated_at).getFullYear();
@@ -155,19 +157,40 @@ export default function SubmissionBeatmapset({
     );
   }, [beatmapset, gameMode, intl]);
 
+  const onClick = (event: MouseEvent<HTMLTableRowElement>) => {
+    if (
+      event.target instanceof Element &&
+      event.target.closest('a, button, .modal-overlay') == null
+    ) {
+      setExpanded((prev) => !prev);
+
+      if (event.target.closest('.submission-beatmapset') == null) {
+        setHovered(false);
+      }
+    }
+  };
+  const onMouseEnter = () => setHovered(true);
+  const onMouseLeave = () => setHovered(false);
+
   return (
     <>
       <tr
         className={classNames({
           closed: !expanded,
+          hover: hovered,
           'in-voting': beatmapset.poll_in_progress,
           'low-favorites': gameMode === GameMode.osu && beatmapset.favorite_count < 30,
           new: beatmapset.submissions.some(submissionIsNew),
           'submission-beatmapset': true,
         })}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       >
+        <td className='selector-indicator'>{expanded ? '▲' : '▼'}</td>
         <td className='normal-wrap'>
           <div data-beatmapset-id={beatmapset.id} />
+          <div className='submission-selector' />
           <Beatmap beatmapset={beatmapset} />
         </td>
         <td>
@@ -213,26 +236,27 @@ export default function SubmissionBeatmapset({
             {intl.formatNumber(beatmapset.modal_bpm)}
           </td>
         )}
-        <td>
-          <button type='button' className='fake-a' onClick={() => setExpanded((prev) => !prev)}>
-            {intl.formatMessage(expanded ? messages.close : messages.expand)}
-          </button>
-          {canReview && (
-            <>
-              <br />
-              <ReviewEditor
-                beatmapset={beatmapset}
-                gameMode={gameMode}
-                onReviewUpdate={onReviewUpdate}
-                review={review}
-              />
-            </>
-          )}
-        </td>
+        {canReview && (
+          <td>
+            <ReviewEditor
+              beatmapset={beatmapset}
+              gameMode={gameMode}
+              onReviewUpdate={onReviewUpdate}
+              review={review}
+            />
+          </td>
+        )}
       </tr>
       {expanded && (
-        <tr>
+        <tr
+          className={classNames({ hover: hovered })}
+          onClick={onClick}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+        >
+          <td />
           <td className='normal-wrap' colSpan={10}>
+            <div className='submission-selector' />
             <SubmissionsList
               reviews={beatmapset.reviews}
               submissions={beatmapset.submissions}
