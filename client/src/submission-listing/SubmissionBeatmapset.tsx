@@ -254,9 +254,10 @@ export default function SubmissionBeatmapset({
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
         >
-          <td />
-          <td className='normal-wrap' colSpan={10}>
+          <td>
             <div className='submission-selector' />
+          </td>
+          <td className='normal-wrap' colSpan={10}>
             <SubmissionsList
               reviews={beatmapset.reviews}
               submissions={beatmapset.submissions}
