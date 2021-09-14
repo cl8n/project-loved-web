@@ -14,15 +14,14 @@ On the first run of the database container, the `project_loved` user will be cre
 
 Regular data exports (sans `logs`, `log_values`, and `sessions`) are posted to <https://loved.sh/exports>. **This will drop and re-create all other tables!**
 
-```sh
-# Latest export is used with no argument
+```
 docker-compose exec database /import-live-data.sh [export URL]
 ```
 
 ### Creating an admin user
 
-```sh
-docker-compose run --rm api ./init-user.js <osu! username>
+```
+docker-compose run --rm api ./build/init-user.js <osu! username>
 ```
 
 ## Deployment
@@ -35,18 +34,24 @@ docker-compose run --rm api ./init-user.js <osu! username>
 
 ### Client
 
-- `cd client`
-- `npm install && npm run build`
+```
+cd client
+npm install
+npm run build
+```
 
-The built webpage will be in `/client/build`, it's an SPA.
+The built webpage will be in `/client/build`; it's an SPA.
 
 ### Server
 
-- `cd server`
-- `npm install`
+- ```
+  cd server
+  npm install
+  npm run build
+  ```
 - Copy `.env.example` to `.env` and fill in the options, or export the environment variables separately
 - Run server
-  - Directly: `NODE_ENV=production ./index.js`
+  - Directly: `NODE_ENV=production ./build/index.js`
   - With systemd: See provided `project-loved-web.example.service`
 
 Request paths under `/api` should proxy to the server, paths exactly matching files should serve the files, and everything else should serve the client's `index.html`.
