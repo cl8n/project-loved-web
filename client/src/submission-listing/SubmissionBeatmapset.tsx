@@ -271,7 +271,7 @@ export default function SubmissionBeatmapset({
           <td>
             <div className='submission-selector' />
           </td>
-          <td className='normal-wrap' colSpan={9}>
+          <td className='normal-wrap fix-column-layout' colSpan={9}>
             {canReview && (
               <div className='review-button-container'>
                 {review != null && (
