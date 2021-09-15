@@ -20,6 +20,7 @@ import { useOsuAuth } from '../osuAuth';
 import { UserInline } from '../UserInline';
 import type { ToggleableColumnsState } from './helpers';
 import { submissionIsNew } from './helpers';
+import type { SubmittedBeatmapset } from './interfaces';
 import ReviewEditor from './ReviewEditor';
 import SubmissionsList from './SubmissionsList';
 
@@ -54,6 +55,10 @@ const messages = defineMessages({
   notAllowed: {
     defaultMessage: 'Not allowed',
     description: 'Aggregate review score shown on submissions table for maps that cannot be Loved',
+  },
+  notAllowedMapperBanned: {
+    defaultMessage: 'The mapset host is banned.',
+    description: 'Help text explaining that a map cannot be Loved due to its mapper being banned',
   },
   notAllowedNoConsent: {
     defaultMessage:
@@ -104,7 +109,7 @@ const messages = defineMessages({
 });
 
 interface SubmissionBeatmapsetProps {
-  beatmapset: GetSubmissionsResponseBody['beatmapsets'][0];
+  beatmapset: SubmittedBeatmapset;
   canReview: boolean;
   columns: ToggleableColumnsState;
   filterToApproved: boolean;
@@ -313,7 +318,7 @@ const priorities = [
 ] as const;
 
 interface PriorityCellProps {
-  beatmapset: GetSubmissionsResponseBody['beatmapsets'][0];
+  beatmapset: SubmittedBeatmapset;
 }
 
 function PriorityCell({ beatmapset }: PriorityCellProps) {
@@ -349,6 +354,15 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
     );
   }
 
+  if (beatmapset.creator.banned) {
+    return (
+      <td className='priority rejected'>
+        {intl.formatMessage(messages.notAllowed)}{' '}
+        <Help>{intl.formatMessage(messages.notAllowedMapperBanned)}</Help>
+      </td>
+    );
+  }
+
   if (beatmapset.poll != null && !beatmapset.poll.passed) {
     return (
       <td className='priority'>
@@ -376,7 +390,7 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
 }
 
 interface StatusCellProps {
-  beatmapset: GetSubmissionsResponseBody['beatmapsets'][0];
+  beatmapset: SubmittedBeatmapset;
 }
 
 function StatusCell({ beatmapset }: StatusCellProps) {

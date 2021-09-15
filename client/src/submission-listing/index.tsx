@@ -2,7 +2,6 @@ import type { ChangeEvent } from 'react';
 import { useEffect, useMemo, useReducer } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
-import type { GetSubmissionsResponseBody } from '../api';
 import { apiErrorMessage, getSubmissions, useApi } from '../api';
 import { dateFromString } from '../date-format';
 import Help from '../Help';
@@ -17,6 +16,7 @@ import { useOsuAuth } from '../osuAuth';
 import { isCaptainForMode } from '../permissions';
 import type { ToggleableColumn, ToggleableColumnsState } from './helpers';
 import { toggleableColumns } from './helpers';
+import type { SubmittedBeatmapset } from './interfaces';
 import SortButton from './SortButton';
 import SubmissionBeatmapset from './SubmissionBeatmapset';
 
@@ -303,8 +303,10 @@ function compareOrFallback<T>(a: T, b: T, hasProperty: (item: T) => boolean): nu
   return +aHasProperty - +hasProperty(b) || (aHasProperty ? 0 : null);
 }
 
-type _Beatmapset = GetSubmissionsResponseBody['beatmapsets'][number];
-const beatmapsetSortFns: Record<Sort | 'status', (a: _Beatmapset, b: _Beatmapset) => number> = {
+const beatmapsetSortFns: Record<
+  Sort | 'status',
+  (a: SubmittedBeatmapset, b: SubmittedBeatmapset) => number
+> = {
   artist: (a, b) => a.artist.toLowerCase().localeCompare(b.artist.toLowerCase()),
   favoriteCount: (a, b) => a.favorite_count - b.favorite_count,
   playCount: (a, b) => a.play_count - b.play_count,
@@ -313,7 +315,8 @@ const beatmapsetSortFns: Record<Sort | 'status', (a: _Beatmapset, b: _Beatmapset
     compareOrFallback(
       b,
       a,
-      (beatmapset) => beatmapset.strictly_rejected || beatmapset.consent === false,
+      (beatmapset) =>
+        beatmapset.strictly_rejected || beatmapset.consent === false || beatmapset.creator.banned,
     ) ??
     compareOrFallback(b, a, (beatmapset) => beatmapset.poll != null && !beatmapset.poll.passed) ??
     compareOrFallback(b, a, (beatmapset) => beatmapset.reviews.length === 0) ??
@@ -328,7 +331,7 @@ const beatmapsetSortFns: Record<Sort | 'status', (a: _Beatmapset, b: _Beatmapset
 function beatmapsetSortFn(
   { ascending, sort }: SortsAndFiltersState['sorts'][number],
   filterToApproved: boolean,
-): (a: _Beatmapset, b: _Beatmapset) => number {
+): (a: SubmittedBeatmapset, b: SubmittedBeatmapset) => number {
   return (a, b) =>
     (ascending ? 1 : -1) *
     beatmapsetSortFns[filterToApproved && sort === 'priority' ? 'status' : sort](a, b);
@@ -362,6 +365,10 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
           ? beatmapset.ranked_status > 0
           : beatmapset.ranked_status <= 0,
       )
+      .map((beatmapset) => ({
+        ...beatmapset,
+        creator: submissionsInfo.usersById[beatmapset.creator_id],
+      }))
       .sort(beatmapsetSortFn(sortsAndFilters.sorts[1], sortsAndFilters.filterToApproved))
       .sort(beatmapsetSortFn(sortsAndFilters.sorts[0], sortsAndFilters.filterToApproved))
       .sort((a, b) => +b.poll_in_progress - +a.poll_in_progress);
