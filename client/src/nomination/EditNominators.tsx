@@ -1,7 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import type { ResponseError } from 'superagent';
-import { apiErrorMessage, updateNominators } from '../api';
+import { alertApiErrorMessage, apiErrorMessage, updateNominators } from '../api';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
 import type { GameMode, INomination, IUserWithoutRoles, PartialWithId } from '../interfaces';
@@ -65,7 +65,7 @@ function EditNominatorsForm({
     return updateNominators(nomination.id, form.nominatorIds)
       .then((response) => onNominationUpdate(response.body))
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error))) // TODO: show error better
+      .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));
   };
 

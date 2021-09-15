@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react';
 import { createContext, useMemo } from 'react';
 import superagent from 'superagent';
-import { apiErrorMessage, authRemember, useApi } from './api';
+import { alertApiErrorMessage, authRemember, useApi } from './api';
 import type { IUser } from './interfaces';
 import { useRequiredContext } from './react-helpers';
 
@@ -25,7 +25,7 @@ export function OsuAuthProvider({ children }: PropsWithChildren<{}>) {
   );
 
   if (userError != null && userError.response?.status !== 401) {
-    window.alert(apiErrorMessage(userError)); // TODO: show error better
+    alertApiErrorMessage(userError);
   }
 
   return <authContext.Provider value={contextValue}>{children}</authContext.Provider>;

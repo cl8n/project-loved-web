@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { apiErrorMessage, updateRound } from '../api';
+import { alertApiErrorMessage, updateRound } from '../api';
 import { autoHeightRef } from '../auto-height';
 import { inputDateTime } from '../date-format';
 import type { FormSubmitHandler } from '../dom-helpers';
@@ -19,7 +19,7 @@ export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditor
     return updateRound(round.id, form)
       .then(() => onRoundUpdate({ id: round.id, ...form }))
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error))) // TODO: show error better
+      .catch(alertApiErrorMessage)
       .finally(close);
   };
 

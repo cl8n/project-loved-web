@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { apiErrorMessage, getSettings, updateSettings, useApi } from './api';
+import { alertApiErrorMessage, apiErrorMessage, getSettings, updateSettings, useApi } from './api';
 import type { FormSubmitHandler } from './dom-helpers';
 import { Form } from './dom-helpers';
 import { gameModeLongName, gameModes } from './osu-helpers';
@@ -20,7 +20,7 @@ export default function Settings() {
     return updateSettings(form)
       .then((response) => setSettings(response.body))
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
+      .catch(alertApiErrorMessage);
   };
 
   return (

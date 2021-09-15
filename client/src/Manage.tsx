@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   addUser,
+  alertApiErrorMessage,
   apiErrorMessage,
   getLogs,
   getUsersWithRoles,
@@ -111,9 +112,7 @@ function ApiObjectBulkMenu() {
 
     const numericIds = ids.split('\n').map((id) => parseInt(id));
 
-    return updateApiObjectBulk(type, numericIds)
-      .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
+    return updateApiObjectBulk(type, numericIds).then(then).catch(alertApiErrorMessage);
   };
 
   return (
@@ -253,7 +252,7 @@ function AddUser({ onUserAdd }: AddUserProps) {
     return addUser(form.username)
       .then((response) => onUserAdd(response.body))
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
+      .catch(alertApiErrorMessage);
   };
 
   // TODO class should probably go on the form itself
@@ -301,7 +300,7 @@ function PermissionsMenuUserEditor({ setRoles, user }: PermissionsMenuUserEditor
     return updateUserRoles(user.id, roles)
       .then(() => setRoles(roles))
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error))) // TODO: show error better
+      .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));
   };
 

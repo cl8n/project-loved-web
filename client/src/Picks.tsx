@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
 import {
   addNomination,
+  alertApiErrorMessage,
   apiErrorMessage,
   deleteNomination,
   getAssignees,
@@ -146,7 +147,7 @@ export function Picks() {
           };
         }),
       )
-      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
+      .catch(alertApiErrorMessage);
   };
   const onNominationDelete = (nominationId: number) => {
     setRoundInfo((prev) => {
@@ -195,7 +196,7 @@ export function Picks() {
 
     lockNominations(round.id, gameMode, lock)
       .then(() => onNominationsLock(gameMode, lock))
-      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
+      .catch(alertApiErrorMessage);
   };
 
   const canAdd = (gameMode: GameMode) => {
@@ -302,7 +303,7 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
     return addNomination(form.beatmapsetId, gameMode, form.parentId, roundId)
       .then((response) => onNominationAdd(response.body))
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
+      .catch(alertApiErrorMessage);
   };
 
   // TODO class should probably go on the form itself
@@ -362,7 +363,7 @@ function Nomination({
 
     deleteNomination(nomination.id)
       .then(() => onNominationDelete(nomination.id))
-      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
+      .catch(alertApiErrorMessage);
   };
 
   let failedVoting = false;
@@ -597,7 +598,7 @@ function EditMetadata({ metadataStarted, nomination, onNominationUpdate }: EditM
     )
       .then((response) => onNominationUpdate(response.body))
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error)))
+      .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));
   };
 
@@ -716,7 +717,7 @@ function EditAssignees({
     return updateNominationAssignees(nominationId, type, form.assigneeIds)
       .then((response) => onNominationUpdate(response.body))
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error)))
+      .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));
   };
 
@@ -800,7 +801,7 @@ function EditDifficulties({ nomination, onNominationUpdate }: EditDifficultiesPr
         });
       })
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error)))
+      .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));
   };
 
@@ -852,7 +853,7 @@ function GodMenu({ nomination, onNominationUpdate }: GodMenuProps) {
     return updateNominationBeatmapset(nomination.id, form.beatmapsetId)
       .then((response) => onNominationUpdate(response.body))
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error)))
+      .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));
   };
   const updateBeatmapset = () => {
@@ -860,7 +861,7 @@ function GodMenu({ nomination, onNominationUpdate }: GodMenuProps) {
 
     updateApiObject('beatmapset', nomination.beatmapset.id)
       .then(() => window.location.reload()) // TODO: update in place...
-      .catch((error) => window.alert(apiErrorMessage(error)))
+      .catch(alertApiErrorMessage)
       .finally(() => {
         setBusy(false);
         setModalOpen(false);
@@ -931,7 +932,7 @@ function Description({
     return updateNominationDescription(nominationId, form.description)
       .then((response) => onNominationUpdate(response.body))
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error))) // TODO: show error better
+      .catch(alertApiErrorMessage)
       .finally(() => setEditing(false));
   };
 

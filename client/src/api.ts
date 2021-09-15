@@ -267,6 +267,10 @@ export function updateUserRoles(userId: number, roles: IUser['roles']): Response
   });
 }
 
+export function alertApiErrorMessage(error: ResponseError): void {
+  window.alert(apiErrorMessage(error)); // TODO: show error better
+}
+
 export function apiErrorMessage(error: ResponseError): string {
   return error.response?.body?.error ?? error.message;
 }

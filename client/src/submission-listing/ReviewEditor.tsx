@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { addOrUpdateReview, apiErrorMessage } from '../api';
+import { addOrUpdateReview, alertApiErrorMessage } from '../api';
 import { autoHeightRef } from '../auto-height';
 import { BeatmapInline } from '../BeatmapInline';
 import type { FormSubmitHandler } from '../dom-helpers';
@@ -50,7 +50,7 @@ export default function ReviewEditor({
     return addOrUpdateReview(beatmapset.id, gameMode, form.reason, form.score)
       .then((response) => onReviewUpdate(response.body))
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error))) // TODO: show error better
+      .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));
   };
 

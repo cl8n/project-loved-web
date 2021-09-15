@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
 import type { GetSubmissionsResponseBody } from '../api';
-import { apiErrorMessage, deleteReview } from '../api';
+import { alertApiErrorMessage, deleteReview } from '../api';
 import Beatmap from '../Beatmap';
 import { dateFromString } from '../date-format';
 import { classNames } from '../dom-helpers';
@@ -168,9 +168,7 @@ export default function SubmissionBeatmapset({
       return;
     }
 
-    deleteReview(review!.id)
-      .then(onReviewDelete!)
-      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
+    deleteReview(review!.id).then(onReviewDelete!).catch(alertApiErrorMessage);
   };
   const onClick = (event: MouseEvent<HTMLTableRowElement>) => {
     if (

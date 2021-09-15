@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useHistory } from 'react-router-dom';
-import { addSubmission, apiErrorMessage } from '../api';
+import { addSubmission, alertApiErrorMessage } from '../api';
 import { autoHeightRef } from '../auto-height';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
@@ -49,7 +49,7 @@ export default function InnerForm() {
         }
       })
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
+      .catch(alertApiErrorMessage);
   };
 
   return (

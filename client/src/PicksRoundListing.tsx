@@ -1,6 +1,6 @@
 import { Link, useHistory } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
-import { addRound, apiErrorMessage, getRounds, useApi } from './api';
+import { addRound, alertApiErrorMessage, apiErrorMessage, getRounds, useApi } from './api';
 import type { IRound } from './interfaces';
 import { Never } from './Never';
 import { useOsuAuth } from './osuAuth';
@@ -72,7 +72,7 @@ function AddRound() {
 
     addRound()
       .then((response) => history.push(`/admin/picks/${response.body.id}`))
-      .catch((error) => window.alert(apiErrorMessage(error))); // TODO: show error better
+      .catch(alertApiErrorMessage);
   };
 
   return (

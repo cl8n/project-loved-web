@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { apiErrorMessage, updateNominationModeration } from '../api';
+import { alertApiErrorMessage, updateNominationModeration } from '../api';
 import { BeatmapInline } from '../BeatmapInline';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
@@ -25,7 +25,7 @@ export default function EditModeration({
     return updateNominationModeration(nomination.id, form.state)
       .then((response) => onNominationUpdate(response.body))
       .then(then)
-      .catch((error) => window.alert(apiErrorMessage(error))) // TODO: show error better
+      .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));
   };
 
