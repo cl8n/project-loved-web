@@ -56,21 +56,16 @@ export function Picks() {
   const params = useParams() as { round: string };
   const roundId = parseInt(params.round);
   const [roundInfo, roundInfoError, setRoundInfo] = useApi(getNominations, [roundId]);
-  const assigneesApi = useApi(
-    getAssignees,
-    [],
-    undefined,
-    authUser != null &&
+  const assigneesApi = useApi(getAssignees, [], {
+    condition:
+      authUser != null &&
       (canWriteAs(authUser, 'news') ||
         canWriteAs(authUser, 'metadata') ||
         canWriteAs(authUser, 'moderator')),
-  );
-  const captainsApi = useApi(
-    getCaptains,
-    [],
-    undefined,
-    authUser != null && canWriteAs(authUser, 'captain'),
-  );
+  });
+  const captainsApi = useApi(getCaptains, [], {
+    condition: authUser != null && canWriteAs(authUser, 'captain'),
+  });
   // TODO: Split by gamemode
   const [ordering, setOrdering] = useState(false);
 

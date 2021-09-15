@@ -285,33 +285,40 @@ export function useApi<T>(requester: () => Response<T>): useApiReturn<T>;
 export function useApi<T, P extends unknown[]>(
   requester: (...args: P) => Response<T>,
   args: P,
-  transform?: (body: T) => T,
-  condition?: boolean,
+  options?: {
+    condition?: boolean;
+  },
 ): useApiReturn<T>;
-export function useApi<T, P extends unknown[]>(
+export function useApi<T, T2, P extends unknown[]>(
   requester: (...args: P) => Response<T>,
+  args: P,
+  options: {
+    transform: (body: T) => T2;
+    condition?: boolean;
+  },
+): useApiReturn<T2>;
+export function useApi<T, T2, P extends unknown[]>(
+  requester: (() => Response<T>) | ((...args: P) => Response<T>),
   args?: P,
-  transform?: (body: T) => T,
-  condition?: boolean,
-): useApiReturn<T> {
-  const [body, setBody] = useState<T>();
+  options?: { transform?: (body: T) => T2; condition?: boolean },
+): useApiReturn<T | T2> {
+  const [body, setBody] = useState<T | T2>();
   const [error, setError] = useState<ResponseError>();
 
   useEffect(
     () => {
-      if (condition === false) {
+      if (options?.condition === false) {
         setBody(undefined);
         setError(undefined);
-
         return;
       }
 
-      (args == null ? requester(...([] as any)) : requester(...args))
-        .then((response) => setBody(transform == null ? response.body : transform(response.body)))
-        .catch((error) => setError(error));
+      (args == null ? requester() : requester(...args))
+        .then(({ body }) => setBody(options?.transform == null ? body : options.transform(body)))
+        .catch(setError);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    args == null ? [condition, requester] : [...args, condition, requester],
+    args == null ? [options?.condition] : [options?.condition, ...args],
   );
 
   return [body, error, setBody];

@@ -166,7 +166,7 @@ const sortUsers = (users: IUser[]): IUser[] => {
 
 function PermissionsMenu() {
   const authUser = useOsuAuth().user;
-  const [users, usersError, setUsers] = useApi(getUsersWithRoles, [], sortUsers);
+  const [users, usersError, setUsers] = useApi(getUsersWithRoles, [], { transform: sortUsers });
 
   const roleSetter = (userId: number) => {
     return (roles: IUser['roles']) => {
