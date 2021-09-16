@@ -66,6 +66,10 @@ const messages = defineMessages({
     description:
       'Help text explaining that a map cannot be Loved due to its mapper not consenting to it',
   },
+  notAllowedTooShort: {
+    defaultMessage: 'Every map in this set is too short (under 30 seconds).',
+    description: 'Help text explaining that a map cannot be Loved due to its length',
+  },
   high: {
     defaultMessage: 'High',
     description: 'Aggregate review score shown on submissions table',
@@ -359,6 +363,15 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
       <td className='priority rejected'>
         {intl.formatMessage(messages.notAllowed)}{' '}
         <Help>{intl.formatMessage(messages.notAllowedMapperBanned)}</Help>
+      </td>
+    );
+  }
+
+  if (beatmapset.maximum_length < 30) {
+    return (
+      <td className='priority rejected'>
+        {intl.formatMessage(messages.notAllowed)}{' '}
+        <Help>{intl.formatMessage(messages.notAllowedTooShort)}</Help>
       </td>
     );
   }

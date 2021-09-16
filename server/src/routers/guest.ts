@@ -148,6 +148,7 @@ guestRouter.get(
       Partial<{
         beatmap_counts: Record<GameMode, number>;
         consent: boolean | null;
+        maximum_length: number;
         modal_bpm: number;
         nominated_round_name: string | null;
         poll: Partial<Pick<Poll, 'beatmapset_id'>> &
@@ -187,11 +188,13 @@ guestRouter.get(
     );
     const beatmapsByBeatmapsetId = groupBy<
       Beatmap['beatmapset_id'],
-      Pick<Beatmap, 'beatmapset_id' | 'bpm' | 'game_mode' | 'play_count'>
+      Pick<Beatmap, 'beatmapset_id' | 'bpm' | 'game_mode' | 'play_count' | 'total_length'>
     >(
-      await db.query<Pick<Beatmap, 'beatmapset_id' | 'bpm' | 'game_mode' | 'play_count'>>(
+      await db.query<
+        Pick<Beatmap, 'beatmapset_id' | 'bpm' | 'game_mode' | 'play_count' | 'total_length'>
+      >(
         `
-          SELECT beatmapset_id, bpm, game_mode, play_count
+          SELECT beatmapset_id, bpm, game_mode, play_count, total_length
           FROM beatmaps
           WHERE beatmapset_id IN (?)
         `,
@@ -293,7 +296,7 @@ guestRouter.get(
     for (const beatmapset of beatmapsets) {
       const beatmaps = groupBy<
         Beatmap['game_mode'],
-        Pick<Beatmap, 'beatmapset_id' | 'bpm' | 'game_mode' | 'play_count'>
+        Pick<Beatmap, 'beatmapset_id' | 'bpm' | 'game_mode' | 'play_count' | 'total_length'>
       >(beatmapsByBeatmapsetId[beatmapset.id] || [], 'game_mode');
       const beatmapsForGameMode = beatmaps[gameMode]?.sort((a, b) => a.bpm - b.bpm) || [];
       const consent: ConsentValue | boolean | null =
@@ -305,6 +308,9 @@ guestRouter.get(
 
       beatmapset.consent =
         consent == null || consent === ConsentValue.unreachable ? null : !!consent;
+      beatmapset.maximum_length = Math.max(
+        ...beatmapsForGameMode.map((beatmap) => beatmap.total_length),
+      );
       beatmapset.modal_bpm = modeBy(beatmapsForGameMode, 'bpm');
       beatmapset.nominated_round_name = canViewNominationStatus
         ? (futureNominationsByBeatmapsetId as Record<number, string[] | undefined>)[

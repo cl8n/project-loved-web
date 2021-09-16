@@ -317,7 +317,10 @@ const beatmapsetSortFns: Record<
       b,
       a,
       (beatmapset) =>
-        beatmapset.strictly_rejected || beatmapset.consent === false || beatmapset.creator.banned,
+        beatmapset.strictly_rejected ||
+        beatmapset.consent === false ||
+        beatmapset.creator.banned ||
+        beatmapset.maximum_length < 30,
     ) ??
     compareOrFallback(b, a, (beatmapset) => beatmapset.poll != null && !beatmapset.poll.passed) ??
     compareOrFallback(b, a, (beatmapset) => beatmapset.reviews.length === 0) ??
