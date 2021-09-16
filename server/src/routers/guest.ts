@@ -2,7 +2,7 @@ import { Router } from 'express';
 import db from '../db';
 import { asyncHandler } from '../express-helpers';
 import { roles } from '../guards';
-import { groupBy, modeBy } from '../helpers';
+import { aggregateReviewScore, groupBy, modeBy } from '../helpers';
 import { accessSetting } from '../settings';
 import { isGameMode } from '../type-guards';
 
@@ -317,10 +317,7 @@ guestRouter.get(
       );
       beatmapset.poll = pollByBeatmapsetId[beatmapset.id];
       beatmapset.poll_in_progress = beatmapsetIdsWithPollInProgress.has(beatmapset.id);
-      beatmapset.review_score = beatmapset.reviews.reduce(
-        (sum, review) => (review.score < -3 ? sum : sum + review.score),
-        0,
-      );
+      beatmapset.review_score = aggregateReviewScore(beatmapset.reviews);
       beatmapset.score = beatmapset.favorite_count * 75 + beatmapset.play_count;
       beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
 

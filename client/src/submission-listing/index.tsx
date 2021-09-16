@@ -15,6 +15,7 @@ import {
 import { useOsuAuth } from '../osuAuth';
 import { isCaptainForMode } from '../permissions';
 import type { ToggleableColumn, ToggleableColumnsState } from './helpers';
+import { aggregateReviewScore } from './helpers';
 import { toggleableColumns } from './helpers';
 import type { SubmittedBeatmapset } from './interfaces';
 import SortButton from './SortButton';
@@ -408,8 +409,8 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
     setSubmissionsInfo((prev) => {
       const beatmapset = prev!.beatmapsets.find((beatmapset) => beatmapset.id === beatmapsetId)!;
 
-      beatmapset.review_score -= beatmapset.reviews.find((review) => review.id === reviewId)!.score;
       beatmapset.reviews = beatmapset.reviews.filter((review) => review.id !== reviewId);
+      beatmapset.review_score = aggregateReviewScore(beatmapset.reviews);
       beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
 
       return {
@@ -426,16 +427,12 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
       const existingReview = beatmapset.reviews.find((existing) => existing.id === review.id);
 
       if (existingReview != null) {
-        beatmapset.review_score -= existingReview.score;
         Object.assign(existingReview, review);
       } else {
         beatmapset.reviews.push(review);
       }
 
-      if (review.score >= -3) {
-        beatmapset.review_score += review.score;
-      }
-
+      beatmapset.review_score = aggregateReviewScore(beatmapset.reviews);
       beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
 
       if (prev!.usersById[review.captain_id] == null) {

@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl';
 import { dateFromString } from '../date-format';
-import type { ISubmission } from '../interfaces';
+import type { IReview, ISubmission } from '../interfaces';
 
 export type ToggleableColumn =
   | 'bpm'
@@ -49,6 +49,25 @@ const messages = defineMessages({
     description: '+3 review score. Fits into {score} of the review line',
   },
 });
+
+const reviewScoreMap = new Map([
+  [-3, -6.5],
+  [-2, -3.5],
+  [-1, -1.5],
+  [1, 1.5],
+  [2, 3.5],
+  [3, 6.5],
+]);
+export function aggregateReviewScore(reviews: IReview[]): number {
+  reviews = reviews.filter(
+    (review) => review.score >= -3 && review.score <= 3 && review.score !== 0,
+  );
+
+  return reviews.length === 0
+    ? 0
+    : reviews.reduce((sum, review) => sum + reviewScoreMap.get(review.score)!, 0) /
+        Math.sqrt(reviews.length);
+}
 
 export function displayRange(values: number[], displayFn?: (value: number) => string) {
   const max = Math.max(...values);
