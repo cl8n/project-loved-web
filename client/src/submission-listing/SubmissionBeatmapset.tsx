@@ -384,7 +384,11 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
   return (
     <td className={'priority ' + priorityClass}>
       {intl.formatMessage(priorityMessage)} (
-      {intl.formatNumber(beatmapset.review_score, { signDisplay: 'exceptZero' })})
+      {intl.formatNumber(beatmapset.review_score, {
+        maximumFractionDigits: 2,
+        signDisplay: 'exceptZero',
+      })}
+      )
     </td>
   );
 }
