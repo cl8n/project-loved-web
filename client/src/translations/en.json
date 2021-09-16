@@ -295,6 +295,10 @@
     "defaultMessage": "Plays",
     "description": "Submissions table header"
   },
+  "WjsRpS": {
+    "defaultMessage": "Every map in this set is too short (under 30 seconds).",
+    "description": "Help text explaining that a map cannot be Loved due to its length"
+  },
   "ZEsdcm": {
     "defaultMessage": "Poll topic",
     "description": "Poll results table header"
@@ -354,6 +358,10 @@
   "iCkWun": {
     "defaultMessage": "Round",
     "description": "Poll results table header"
+  },
+  "jVP2nx": {
+    "defaultMessage": "The mapset host is banned.",
+    "description": "Help text explaining that a map cannot be Loved due to its mapper being banned"
   },
   "jlkqJz": {
     "defaultMessage": "Manage",
