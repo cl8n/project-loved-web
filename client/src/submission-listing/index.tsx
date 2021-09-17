@@ -438,8 +438,8 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
       beatmapset.review_score = aggregateReviewScore(beatmapset.reviews);
       beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
 
-      if (prev!.usersById[review.captain_id] == null) {
-        prev!.usersById[review.captain_id] = { ...authUser!, alumni: authUser!.roles.alumni };
+      if (prev!.usersById[review.reviewer_id] == null) {
+        prev!.usersById[review.reviewer_id] = { ...authUser!, alumni: authUser!.roles.alumni };
       }
 
       return {
@@ -491,7 +491,7 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
       <tbody>
         {displayBeatmapsets.map((beatmapset) => {
           const review = canReview
-            ? beatmapset.reviews.find((review) => review.captain_id === authUser!.id)
+            ? beatmapset.reviews.find((review) => review.reviewer_id === authUser!.id)
             : undefined;
 
           return (

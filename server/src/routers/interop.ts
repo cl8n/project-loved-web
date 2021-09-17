@@ -203,9 +203,9 @@ interopRouter.get(
 interopRouter.get(
   '/poll-result-recent',
   asyncHandler(async (_, res) => {
-    const pollResult = await db.queryOne<Pick<Poll, 'round' | 'topic_id'>>(`
-      SELECT round, topic_id
-      FROM poll_results
+    const pollResult = await db.queryOne<Pick<Poll, 'round_id' | 'topic_id'>>(`
+      SELECT round_id, topic_id
+      FROM polls
       ORDER BY ended_at DESC
       LIMIT 1
     `);
@@ -236,7 +236,7 @@ interopRouter.post(
     }
 
     await db.query(
-      'INSERT INTO poll_results (beatmapset_id, ended_at, game_mode, result_no, result_yes, round, topic_id) VALUES ?',
+      'INSERT INTO polls (beatmapset_id, ended_at, game_mode, result_no, result_yes, round_id, topic_id) VALUES ?',
       [resultsToInsert],
     );
 

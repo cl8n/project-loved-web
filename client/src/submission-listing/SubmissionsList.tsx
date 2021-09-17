@@ -17,7 +17,7 @@ export default function SubmissionsList({ reviews, submissions, usersById }: Sub
           key={'r' + review.id}
           review={{
             ...review,
-            captain: usersById[review.captain_id],
+            captain: usersById[review.reviewer_id],
           }}
         />
       ))}

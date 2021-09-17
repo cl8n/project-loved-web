@@ -1,9 +1,9 @@
 import type { ChangeEvent } from 'react';
 import { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import { apiErrorMessage, getPollResults, useApi } from '../api';
+import { apiErrorMessage, getPolls, useApi } from '../api';
 import { BeatmapInline } from '../BeatmapInline';
-import type { GameMode, IPollResult } from '../interfaces';
+import type { GameMode, IPoll } from '../interfaces';
 import { gameModeLongName, gameModes } from '../osu-helpers';
 
 const messages = defineMessages({
@@ -46,10 +46,10 @@ const messages = defineMessages({
   },
 });
 
-export default function PollResults() {
+export default function Polls() {
   const intl = useIntl();
   const [gameMode, setGameMode] = useState<GameMode>();
-  const [polls, pollsError] = useApi(getPollResults);
+  const [polls, pollsError] = useApi(getPolls);
   const [roundOrderAsc, setRoundOrderAsc] = useState(false);
   const [showPercent, setShowPercent] = useState(true);
   const displayPolls = useMemo(() => {
@@ -64,7 +64,7 @@ export default function PollResults() {
     }
 
     if (roundOrderAsc) {
-      displayPolls.sort((a, b) => a.round - b.round);
+      displayPolls.sort((a, b) => a.round_id - b.round_id);
     }
 
     return displayPolls;
@@ -174,7 +174,7 @@ export default function PollResults() {
         <tbody>
           {displayPolls.map((poll) => (
             <tr key={poll.id}>
-              <td>{intl.formatNumber(poll.round)}</td>
+              <td>{intl.formatNumber(poll.round_id)}</td>
               {gameMode == null && <td>{gameModeLongName(poll.game_mode)}</td>}
               <td className='normal-wrap'>
                 {poll.beatmapset == null ? (
@@ -202,7 +202,7 @@ export default function PollResults() {
 }
 
 interface ResultCellsProps {
-  poll: IPollResult;
+  poll: IPoll;
   showPercent: boolean;
 }
 

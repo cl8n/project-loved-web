@@ -30,7 +30,7 @@ import type {
   GameMode,
   ICaptain,
   INomination,
-  INominationWithPollResult,
+  INominationWithPoll,
   IRound,
   IUser,
   IUserWithoutRoles,
@@ -86,7 +86,7 @@ export function Picks() {
   }
 
   const { nominations, round } = roundInfo;
-  const nominationsByGameMode: { [K in GameMode]: INominationWithPollResult[] } = {
+  const nominationsByGameMode: { [K in GameMode]: INominationWithPoll[] } = {
     0: [],
     1: [],
     2: [],
@@ -326,7 +326,7 @@ interface NominationProps {
   assigneesApi: readonly [IUser[] | undefined, IUser[] | undefined, ResponseError | undefined];
   captainsApi: readonly [{ [P in GameMode]?: ICaptain[] } | undefined, ResponseError | undefined];
   locked: boolean;
-  nomination: INominationWithPollResult;
+  nomination: INominationWithPoll;
   onNominationDelete: (nominationId: number) => void;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   parentGameMode?: GameMode;
@@ -364,8 +364,8 @@ function Nomination({
   let failedVoting = false;
   let votingResult: boolean | undefined;
 
-  if (nomination.poll_result != null) {
-    const { result_no, result_yes } = nomination.poll_result;
+  if (nomination.poll != null) {
+    const { result_no, result_yes } = nomination.poll;
     const yesFraction = result_yes / (result_no + result_yes);
 
     failedVoting = yesFraction < round.game_modes[nomination.game_mode].voting_threshold;

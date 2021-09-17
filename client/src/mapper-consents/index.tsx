@@ -126,7 +126,7 @@ export default function MapperConsents() {
         </thead>
         <tbody>
           {consents.map((consent) => (
-            <Fragment key={consent.id}>
+            <Fragment key={consent.user_id}>
               <tr>
                 <td>
                   <UserInline user={consent.mapper} />

@@ -23,7 +23,7 @@ guestRouter.get(
           SELECT users.*, user_roles:roles
           FROM users
           INNER JOIN user_roles
-            ON users.id = user_roles.id
+            ON users.id = user_roles.user_id
           WHERE user_roles.captain_game_mode IS NOT NULL
           ORDER BY users.name ASC
         `),
@@ -55,12 +55,12 @@ guestRouter.get(
       SELECT mapper_consents.*, mappers:mapper
       FROM mapper_consents
       INNER JOIN users AS mappers
-        ON mapper_consents.id = mappers.id
+        ON mapper_consents.user_id = mappers.id
       ORDER BY \`mapper:name\` ASC
     `);
 
     consents.forEach((consent) => {
-      consent.beatmapset_consents = beatmapsetConsentsByMapperId[consent.id] || [];
+      consent.beatmapset_consents = beatmapsetConsentsByMapperId[consent.user_id] || [];
     });
 
     res.json(consents);
@@ -77,14 +77,14 @@ guestRouter.get(
           voting_threshold: RoundGameMode['voting_threshold'] | null;
         }
       >(`
-        SELECT poll_results.*, beatmapsets:beatmapset, round_game_modes.voting_threshold
-        FROM poll_results
+        SELECT polls.*, beatmapsets:beatmapset, round_game_modes.voting_threshold
+        FROM polls
         LEFT JOIN beatmapsets
-          ON poll_results.beatmapset_id = beatmapsets.id
+          ON polls.beatmapset_id = beatmapsets.id
         LEFT JOIN round_game_modes
-          ON poll_results.round = round_game_modes.round_id
-            AND poll_results.game_mode = round_game_modes.game_mode
-        ORDER BY poll_results.ended_at DESC
+          ON polls.round_id = round_game_modes.round_id
+            AND polls.game_mode = round_game_modes.game_mode
+        ORDER BY polls.ended_at DESC
       `),
     );
   }),
@@ -134,7 +134,7 @@ guestRouter.get(
 
     for (const review of reviews) {
       beatmapsetIds.add(review.beatmapset_id);
-      userIds.add(review.captain_id);
+      userIds.add(review.reviewer_id);
     }
 
     if (beatmapsetIds.size === 0) {
@@ -221,26 +221,26 @@ guestRouter.get(
         'beatmapset_id',
         'name',
       );
-    // TODO: Scope to complete polls when incomplete polls are stored in poll_results
+    // TODO: Scope to complete polls when incomplete polls are stored in `polls`
     const pollByBeatmapsetId = groupBy<
       Poll['beatmapset_id'],
       Pick<Poll, 'beatmapset_id' | 'topic_id'> & { passed: 0 | 1 }
     >(
       await db.query<Pick<Poll, 'beatmapset_id' | 'topic_id'> & { passed: 0 | 1 }>(
         `
-          SELECT poll_results.beatmapset_id, poll_results.topic_id,
-            poll_results.result_yes / (poll_results.result_no + poll_results.result_yes) >= round_game_modes.voting_threshold AS passed
-          FROM poll_results
+          SELECT polls.beatmapset_id, polls.topic_id,
+            polls.result_yes / (polls.result_no + polls.result_yes) >= round_game_modes.voting_threshold AS passed
+          FROM polls
           INNER JOIN round_game_modes
-            ON poll_results.round = round_game_modes.round_id
-              AND poll_results.game_mode = round_game_modes.game_mode
-          WHERE poll_results.id IN (
+            ON polls.round_id = round_game_modes.round_id
+              AND polls.game_mode = round_game_modes.game_mode
+          WHERE polls.id IN (
             SELECT MAX(id)
-            FROM poll_results
+            FROM polls
             WHERE game_mode = ?
             GROUP BY beatmapset_id
           )
-            AND poll_results.beatmapset_id IN (?)
+            AND polls.beatmapset_id IN (?)
         `,
         [gameMode, [...beatmapsetIds]],
       ),
@@ -275,12 +275,12 @@ guestRouter.get(
       'consent',
       true,
     );
-    const consentByUserId = groupBy<Consent['id'], Consent['consent']>(
-      await db.query<Pick<Consent, 'consent' | 'id'>>(
+    const consentByUserId = groupBy<Consent['user_id'], Consent['consent']>(
+      await db.query<Pick<Consent, 'consent' | 'user_id'>>(
         `
-          SELECT consent, id
+          SELECT consent, user_id
           FROM mapper_consents
-          WHERE id IN (
+          WHERE user_id IN (
             SELECT creator_id
             FROM beatmapsets
             WHERE id IN (?)
@@ -288,7 +288,7 @@ guestRouter.get(
         `,
         [[...beatmapsetIds]],
       ),
-      'id',
+      'user_id',
       'consent',
       true,
     );
@@ -357,7 +357,7 @@ guestRouter.get(
           SELECT users.*, user_roles.alumni
           FROM users
           LEFT JOIN user_roles
-            ON users.id = user_roles.id
+            ON users.id = user_roles.user_id
           WHERE users.id IN (?)
         `,
         [[...userIds]],
@@ -382,7 +382,7 @@ guestRouter.get(
         SELECT users.*, user_roles:roles
         FROM users
         INNER JOIN user_roles
-          ON users.id = user_roles.id
+          ON users.id = user_roles.user_id
         ORDER BY users.name ASC
       `)
     ).filter((user) =>

@@ -93,7 +93,7 @@ interface BeatmapsetCreator {
 }
 
 interface Consent {
-  id: number;
+  user_id: number;
   consent: ConsentValue | null;
   consent_reason: string | null;
   updated_at: Date;
@@ -159,17 +159,17 @@ interface Poll {
   game_mode: GameMode;
   result_no: number;
   result_yes: number;
-  round: number;
+  round_id: number;
   topic_id: number;
 }
 
 interface Review {
   id: number;
   beatmapset_id: number;
-  captain_id: number;
   game_mode: GameMode;
   reason: string;
   reviewed_at: Date;
+  reviewer_id: number;
   score: number;
 }
 

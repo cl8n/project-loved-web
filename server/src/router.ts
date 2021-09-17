@@ -52,7 +52,7 @@ router.post(
         SELECT *
         FROM reviews
         WHERE beatmapset_id = ?
-          AND captain_id = ?
+          AND reviewer_id = ?
           AND game_mode = ?
       `,
       [req.body.beatmapsetId, res.typedLocals.user.id, req.body.gameMode],
@@ -88,10 +88,10 @@ router.post(
     const { insertId } = await db.query('INSERT INTO reviews SET ?', [
       {
         beatmapset_id: req.body.beatmapsetId,
-        captain_id: res.typedLocals.user.id,
         game_mode: req.body.gameMode,
         reason: req.body.reason,
         reviewed_at: new Date(),
+        reviewer_id: res.typedLocals.user.id,
         score: req.body.score,
       },
     ]);
@@ -104,9 +104,9 @@ router.delete(
   '/review',
   isCaptain,
   asyncHandler(async (req, res) => {
-    const review = await db.queryOne<Pick<Review, 'captain_id'>>(
+    const review = await db.queryOne<Pick<Review, 'reviewer_id'>>(
       `
-        SELECT captain_id
+        SELECT reviewer_id
         FROM reviews
         WHERE id = ?
       `,
@@ -117,7 +117,7 @@ router.delete(
       return res.status(404).json({ error: 'Review not found' });
     }
 
-    if (review.captain_id !== res.typedLocals.user.id) {
+    if (review.reviewer_id !== res.typedLocals.user.id) {
       return res.status(403).json({ error: "This isn't your review" });
     }
 
@@ -250,26 +250,26 @@ router.get(
       metadata_assignees?: User[];
       moderator_assignees?: User[];
       nominators?: User[];
-      poll_result: Poll | null;
+      poll: Poll | null;
     })[] = await db.queryWithGroups<
       Nomination & {
         beatmapset: Beatmapset;
         description_author: User | null;
-        poll_result: Poll | null;
+        poll: Poll | null;
       }
     >(
       `
         SELECT nominations.*, beatmapsets:beatmapset, description_authors:description_author,
-          poll_results:poll_result
+          polls:poll
         FROM nominations
         INNER JOIN beatmapsets
           ON nominations.beatmapset_id = beatmapsets.id
         LEFT JOIN users AS description_authors
           ON nominations.description_author_id = description_authors.id
-        LEFT JOIN poll_results
-          ON nominations.round_id = poll_results.round
-            AND nominations.game_mode = poll_results.game_mode
-            AND nominations.beatmapset_id = poll_results.beatmapset_id
+        LEFT JOIN polls
+          ON nominations.round_id = polls.round_id
+            AND nominations.game_mode = polls.game_mode
+            AND nominations.beatmapset_id = polls.beatmapset_id
         WHERE nominations.round_id = ?
         ORDER BY nominations.order ASC, nominations.id ASC
       `,
@@ -793,7 +793,7 @@ router.post(
       return res.status(422).json({ error: 'Invalid username' });
     }
 
-    const user: (User & { roles?: UserRoles & { id?: number } }) | null =
+    const user: (User & { roles?: UserRoles & { user_id?: number } }) | null =
       await res.typedLocals.osu.createOrRefreshUser(req.body.name, {
         byName: true,
       });
@@ -802,18 +802,18 @@ router.post(
       return res.status(422).json({ error: 'Invalid username' });
     }
 
-    await db.query('INSERT IGNORE INTO user_roles SET id = ?', [user.id]);
+    await db.query('INSERT IGNORE INTO user_roles SET user_id = ?', [user.id]);
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     user.roles = (await db.queryOne<UserRoles>(
       `
         SELECT *
         FROM user_roles
-        WHERE id = ?
+        WHERE user_id = ?
       `,
       [user.id],
     ))!;
-    delete user.roles.id;
+    delete user.roles.user_id;
 
     res.json(user);
   }),
@@ -872,14 +872,14 @@ router.get(
       SELECT users.*
       FROM users
       INNER JOIN user_roles
-        ON users.id = user_roles.id
+        ON users.id = user_roles.user_id
       WHERE user_roles.metadata = 1
     `);
     const moderators = await db.query<User>(`
       SELECT users.*
       FROM users
       INNER JOIN user_roles
-        ON users.id = user_roles.id
+        ON users.id = user_roles.user_id
       WHERE user_roles.moderator = 1
     `);
 
@@ -974,7 +974,7 @@ router.get(
       SELECT users.*, user_roles:roles
       FROM users
       INNER JOIN user_roles
-        ON users.id = user_roles.id
+        ON users.id = user_roles.user_id
     `);
 
     res.json(queryResult);
@@ -985,7 +985,7 @@ router.post(
   '/update-permissions',
   isGod,
   asyncHandler(async (req, res) => {
-    await db.query('UPDATE user_roles SET ? WHERE id = ?', [
+    await db.query('UPDATE user_roles SET ? WHERE user_id = ?', [
       getParams(req.body, [
         'alumni',
         'alumni_game_mode',

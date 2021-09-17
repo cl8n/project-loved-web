@@ -61,7 +61,7 @@ const maplistRegexGlobal = /#(\d+)/g;
     await writeSql(
       `${__dirname}/${timestamp}.sql`,
       'mapper_consents',
-      ['id', 'consent', 'consent_reason', 'updated_at', 'updater_id'],
+      ['user_id', 'consent', 'consent_reason', 'updated_at', 'updater_id'],
       cleanRows.map((row) => [
         tsvValue(row, 0).slice(1),
         {

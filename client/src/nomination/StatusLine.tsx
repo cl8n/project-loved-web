@@ -1,4 +1,4 @@
-import type { INominationWithPollResult } from '../interfaces';
+import type { INominationWithPoll } from '../interfaces';
 import { DescriptionState, MetadataState, ModeratorState } from '../interfaces';
 import ListInline from '../ListInline';
 
@@ -56,7 +56,7 @@ function votingClass(opened: boolean, result: boolean | undefined) {
 
 interface StatusLineProps {
   ignoreModeratorChecks: boolean;
-  nomination: INominationWithPollResult;
+  nomination: INominationWithPoll;
   pollsOpened: boolean;
   votingResult: boolean | undefined;
 }

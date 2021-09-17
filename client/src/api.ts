@@ -9,8 +9,8 @@ import type {
   ICaptain,
   ILog,
   INomination,
-  INominationWithPollResult,
-  IPollResult,
+  INominationWithPoll,
+  IPoll,
   IRound,
   ISubmission,
   IUser,
@@ -100,11 +100,11 @@ export function getCaptains(): Response<{ [P in GameMode]?: ICaptain[] }> {
 
 export function getNominations(
   roundId: number,
-): Response<{ nominations: INominationWithPollResult[]; round: IRound }> {
+): Response<{ nominations: INominationWithPoll[]; round: IRound }> {
   return superagent.get('/api/nominations').query({ roundId });
 }
 
-export function getPollResults(): Response<IPollResult[]> {
+export function getPolls(): Response<IPoll[]> {
   return superagent.get('/api/stats/polls');
 }
 

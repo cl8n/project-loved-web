@@ -117,7 +117,7 @@ db.initialize().then(() => {
 
       request.session.userId = user.id;
 
-      await db.query('INSERT IGNORE INTO user_roles SET id = ?', [user.id]);
+      await db.query('INSERT IGNORE INTO user_roles SET user_id = ?', [user.id]);
       //await log(logTypes.analytic, '{creator} logged in', userInfo.id);
 
       response.redirect(backUrl || '/');
@@ -149,7 +149,7 @@ db.initialize().then(() => {
           SELECT users.*, user_roles:roles
           FROM users
           INNER JOIN user_roles
-            ON users.id = user_roles.id
+            ON users.id = user_roles.user_id
           WHERE users.id = ?
         `,
         [request.session.userId],

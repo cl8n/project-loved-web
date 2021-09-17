@@ -1,5 +1,5 @@
 import { FormattedMessage } from 'react-intl';
-import PollResults from './PollResults';
+import Polls from './Polls';
 
 export default function Statistics() {
   return (
@@ -9,7 +9,7 @@ export default function Statistics() {
         description='Poll results title'
         tagName='h1'
       />
-      <PollResults />
+      <Polls />
     </div>
   );
 }

@@ -23,10 +23,10 @@ const username = process.argv[2];
   }
 
   await db.transact(async (connection) => {
-    await connection.query('DELETE FROM user_roles WHERE id = ?', [user.id]);
+    await connection.query('DELETE FROM user_roles WHERE user_id = ?', [user.id]);
     await connection.query('INSERT INTO user_roles SET ?', [
       {
-        id: user.id,
+        user_id: user.id,
         dev: true,
         god: true,
       },

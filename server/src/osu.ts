@@ -280,19 +280,19 @@ export class Osu {
         for (const round of incompleteRoundsWithBeatmapset) {
           const beatmapsets = await connection.queryWithGroups<
             Pick<Beatmapset, 'ranked_status'> & {
-              poll_result: (Poll & Pick<RoundGameMode, 'voting_threshold'>) | null;
+              poll: (Poll & Pick<RoundGameMode, 'voting_threshold'>) | null;
             }
           >(
             `
-              SELECT beatmapsets.ranked_status, poll_results:poll_result,
-                round_game_modes.voting_threshold AS 'poll_result:voting_threshold'
+              SELECT beatmapsets.ranked_status, polls:poll,
+                round_game_modes.voting_threshold AS 'poll:voting_threshold'
               FROM nominations
               INNER JOIN beatmapsets
                 ON nominations.beatmapset_id = beatmapsets.id
-              LEFT JOIN poll_results
-                ON nominations.round_id = poll_results.round
-                AND nominations.game_mode = poll_results.game_mode
-                AND nominations.beatmapset_id = poll_results.beatmapset_id
+              LEFT JOIN polls
+                ON nominations.round_id = polls.round_id
+                AND nominations.game_mode = polls.game_mode
+                AND nominations.beatmapset_id = polls.beatmapset_id
               INNER JOIN round_game_modes
                 ON nominations.round_id = round_game_modes.round_id
                 AND nominations.game_mode = round_game_modes.game_mode
@@ -307,7 +307,7 @@ export class Osu {
               continue;
             }
 
-            const result = beatmapset.poll_result;
+            const result = beatmapset.poll;
 
             if (
               result == null ||
@@ -434,7 +434,7 @@ export class Osu {
         dbFieldsWithPK = { ...dbFields, id: user.id };
 
         if (user.previous_usernames.length > 0) {
-          await connection.query('INSERT IGNORE INTO user_names (id, name) VALUES ?', [
+          await connection.query('INSERT IGNORE INTO user_names (user_id, name) VALUES ?', [
             user.previous_usernames.map((name) => [user.id, name]),
           ]);
         }
