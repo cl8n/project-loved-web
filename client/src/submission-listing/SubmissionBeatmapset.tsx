@@ -43,6 +43,11 @@ const messages = defineMessages({
     description:
       'Aggregate review score shown on submissions table for maps currently in community voting',
   },
+  passedVoting: {
+    defaultMessage: 'Passed voting',
+    description:
+      'Aggregate review score shown on submissions table for maps that passed community voting',
+  },
   nominated: {
     defaultMessage: 'Nominated',
     description:
@@ -206,10 +211,11 @@ export default function SubmissionBeatmapset({
         className={classNames({
           closed: !expanded,
           hover: hovered,
-          'in-voting': beatmapset.poll?.in_progress ?? false,
           'low-favorites': gameMode === GameMode.osu && beatmapset.favorite_count < 30,
           new: beatmapset.submissions.some(submissionIsNew),
           'submission-beatmapset': true,
+          voting:
+            beatmapset.poll != null && (beatmapset.poll.in_progress || beatmapset.poll.passed),
         })}
         onClick={onClick}
         onMouseEnter={onMouseEnter}
@@ -333,6 +339,16 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
       <td className='priority'>
         <a href={`https://osu.ppy.sh/community/forums/topics/${beatmapset.poll.topic_id}`}>
           {intl.formatMessage(messages.inVoting)}
+        </a>
+      </td>
+    );
+  }
+
+  if (beatmapset.poll?.passed) {
+    return (
+      <td className='priority'>
+        <a href={`https://osu.ppy.sh/community/forums/topics/${beatmapset.poll.topic_id}`}>
+          {intl.formatMessage(messages.passedVoting)}
         </a>
       </td>
     );

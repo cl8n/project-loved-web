@@ -585,7 +585,7 @@ tr.sticky > th {
     background-color: var(--rating--3-background);
   }
 
-  &.in-voting, &.in-voting:not(.closed) + tr {
+  &.voting, &.voting:not(.closed) + tr {
     background-color: var(--rating-3-background);
   }
 
