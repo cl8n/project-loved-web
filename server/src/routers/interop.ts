@@ -221,7 +221,7 @@ interopRouter.post(
       return res.status(422).json({ error: 'Body must be an array of poll results' });
     }
 
-    const resultsToInsert: [number, Date, GameMode, number, number, number, number][] = [];
+    const resultsToInsert: [number, Date, GameMode, number, number, number, Date, number][] = [];
 
     for (const result of req.body) {
       resultsToInsert.push([
@@ -231,12 +231,13 @@ interopRouter.post(
         result.no,
         result.yes,
         result.roundId,
+        new Date(result.startedAt),
         result.topicId,
       ]);
     }
 
     await db.query(
-      'INSERT INTO polls (beatmapset_id, ended_at, game_mode, result_no, result_yes, round_id, topic_id) VALUES ?',
+      'INSERT INTO polls (beatmapset_id, ended_at, game_mode, result_no, result_yes, round_id, started_at, topic_id) VALUES ?',
       [resultsToInsert],
     );
 

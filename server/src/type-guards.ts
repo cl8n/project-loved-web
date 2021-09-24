@@ -20,6 +20,7 @@ export function isPollArray(polls: unknown): polls is {
   gameMode: GameMode;
   no: number;
   roundId: number;
+  startedAt: string;
   topicId: number;
   yes: number;
 }[] {
@@ -33,6 +34,7 @@ export function isPollArray(polls: unknown): polls is {
         isGameMode(poll.gameMode) &&
         typeof poll.no === 'number' &&
         typeof poll.roundId === 'number' &&
+        typeof poll.startedAt === 'string' &&
         typeof poll.topicId === 'number' &&
         typeof poll.yes === 'number',
     )

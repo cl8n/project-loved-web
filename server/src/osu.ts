@@ -266,16 +266,16 @@ export class Osu {
           `
             SELECT rounds.id
             FROM rounds
-            INNER JOIN nominations
-              ON rounds.id = nominations.round_id
+            INNER JOIN polls
+              ON rounds.id = polls.round_id
             WHERE rounds.done = 0
-              AND rounds.polls_ended_at IS NOT NULL
-              AND rounds.polls_ended_at < ?
-              AND nominations.beatmapset_id = ?
+              AND polls.result_no IS NOT NULL
+              AND polls.result_yes IS NOT NULL
+              AND polls.beatmapset_id = ?
           `,
-          [new Date(), beatmapset.id],
+          [beatmapset.id],
         );
-        const roundIdsToComplete = [];
+        const roundIdsToComplete: number[] = [];
 
         for (const round of incompleteRoundsWithBeatmapset) {
           const beatmapsets = await connection.queryWithGroups<
@@ -311,6 +311,8 @@ export class Osu {
 
             if (
               result == null ||
+              result.result_no == null ||
+              result.result_yes == null ||
               result.voting_threshold == null ||
               result.result_yes / (result.result_no + result.result_yes) >= result.voting_threshold
             ) {

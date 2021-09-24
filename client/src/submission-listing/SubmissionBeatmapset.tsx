@@ -206,7 +206,7 @@ export default function SubmissionBeatmapset({
         className={classNames({
           closed: !expanded,
           hover: hovered,
-          'in-voting': beatmapset.poll_in_progress,
+          'in-voting': beatmapset.poll?.in_progress ?? false,
           'low-favorites': gameMode === GameMode.osu && beatmapset.favorite_count < 30,
           new: beatmapset.submissions.some(submissionIsNew),
           'submission-beatmapset': true,
@@ -328,8 +328,14 @@ interface PriorityCellProps {
 function PriorityCell({ beatmapset }: PriorityCellProps) {
   const intl = useIntl();
 
-  if (beatmapset.poll_in_progress) {
-    return <td className='priority high'>{intl.formatMessage(messages.inVoting)}</td>;
+  if (beatmapset.poll?.in_progress) {
+    return (
+      <td className='priority'>
+        <a href={`https://osu.ppy.sh/community/forums/topics/${beatmapset.poll.topic_id}`}>
+          {intl.formatMessage(messages.inVoting)}
+        </a>
+      </td>
+    );
   }
 
   if (beatmapset.nominated_round_name != null) {

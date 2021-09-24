@@ -152,8 +152,7 @@ guestRouter.get(
         modal_bpm: number;
         nominated_round_name: string | null;
         poll: Partial<Pick<Poll, 'beatmapset_id'>> &
-          Pick<Poll, 'topic_id'> & { passed: 0 | 1 | boolean };
-        poll_in_progress: boolean;
+          Pick<Poll, 'topic_id'> & { in_progress: 0 | 1 | boolean; passed: 0 | 1 | boolean };
         review_score: number;
         reviews: Review[];
         score: number;
@@ -166,25 +165,6 @@ guestRouter.get(
         WHERE id IN (?)
       `,
       [[...beatmapsetIds]],
-    );
-    const beatmapsetIdsWithPollInProgress = new Set(
-      (
-        await db.query<Pick<Beatmapset, 'id'>>(
-          `
-            SELECT beatmapsets.id
-            FROM beatmapsets
-            INNER JOIN nominations
-              ON beatmapsets.id = nominations.beatmapset_id
-            INNER JOIN rounds
-              ON nominations.round_id = rounds.id
-            WHERE beatmapsets.id IN (?)
-              AND nominations.game_mode = ?
-              AND NOW() >= rounds.polls_started_at
-              AND NOW() < rounds.polls_ended_at
-          `,
-          [[...beatmapsetIds], gameMode],
-        )
-      ).map((row) => row.id),
     );
     const beatmapsByBeatmapsetId = groupBy<
       Beatmap['beatmapset_id'],
@@ -224,12 +204,16 @@ guestRouter.get(
     // TODO: Scope to complete polls when incomplete polls are stored in `polls`
     const pollByBeatmapsetId = groupBy<
       Poll['beatmapset_id'],
-      Pick<Poll, 'beatmapset_id' | 'topic_id'> & { passed: 0 | 1 }
+      Pick<Poll, 'beatmapset_id' | 'topic_id'> & { in_progress: 0 | 1; passed: 0 | 1 }
     >(
-      await db.query<Pick<Poll, 'beatmapset_id' | 'topic_id'> & { passed: 0 | 1 }>(
+      await db.query<
+        Pick<Poll, 'beatmapset_id' | 'topic_id'> & { in_progress: 0 | 1; passed: 0 | 1 }
+      >(
         `
           SELECT polls.beatmapset_id, polls.topic_id,
-            polls.result_yes / (polls.result_no + polls.result_yes) >= round_game_modes.voting_threshold AS passed
+            polls.result_no IS NULL OR polls.result_yes IS NULL AS in_progress,
+            polls.result_no IS NOT NULL AND polls.result_yes IS NOT NULL AND
+              polls.result_yes / (polls.result_no + polls.result_yes) >= round_game_modes.voting_threshold AS passed
           FROM polls
           INNER JOIN round_game_modes
             ON polls.round_id = round_game_modes.round_id
@@ -322,13 +306,13 @@ guestRouter.get(
         0,
       );
       beatmapset.poll = pollByBeatmapsetId[beatmapset.id];
-      beatmapset.poll_in_progress = beatmapsetIdsWithPollInProgress.has(beatmapset.id);
       beatmapset.review_score = aggregateReviewScore(beatmapset.reviews);
       beatmapset.score = beatmapset.favorite_count * 75 + beatmapset.play_count;
       beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
 
       if (beatmapset.poll != null) {
         delete beatmapset.poll.beatmapset_id;
+        beatmapset.poll.in_progress = beatmapset.poll.in_progress > 0;
         beatmapset.poll.passed = beatmapset.poll.passed > 0;
       }
 

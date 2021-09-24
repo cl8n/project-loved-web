@@ -157,9 +157,10 @@ interface Poll {
   beatmapset_id: number;
   ended_at: Date;
   game_mode: GameMode;
-  result_no: number;
-  result_yes: number;
+  result_no: number | null;
+  result_yes: number | null;
   round_id: number;
+  started_at: Date;
   topic_id: number;
 }
 
@@ -187,8 +188,6 @@ interface Round {
   id: number;
   done: boolean;
   ignore_moderator_checks: boolean;
-  polls_ended_at: Date | null;
-  polls_started_at: Date | null;
   name: string;
   news_intro: string | null;
   news_intro_preview: string | null;

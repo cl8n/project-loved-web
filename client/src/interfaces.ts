@@ -112,9 +112,10 @@ export interface IPoll {
   beatmapset?: IBeatmapset;
   ended_at: string;
   game_mode: GameMode;
-  result_no: number;
-  result_yes: number;
+  result_no: number | null;
+  result_yes: number | null;
   round_id: number;
+  started_at: string;
   topic_id: number;
   voting_threshold?: number;
 }
@@ -150,8 +151,6 @@ export interface IRound {
     }
   >;
   ignore_moderator_checks: boolean;
-  polls_ended_at?: string;
-  polls_started_at?: string;
   name: string;
   news_intro?: string;
   news_intro_preview?: string;

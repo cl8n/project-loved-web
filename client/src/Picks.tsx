@@ -206,8 +206,6 @@ export function Picks() {
   const roundGameModes: GameMode[] = Object.keys(round.game_modes).map((gameMode) =>
     parseInt(gameMode, 10),
   );
-  const pollsOpened =
-    round.polls_started_at != null && new Date() > dateFromString(round.polls_started_at);
 
   return (
     <>
@@ -273,7 +271,6 @@ export function Picks() {
                   onNominationDelete={onNominationDelete}
                   onNominationUpdate={onNominationUpdate}
                   parentGameMode={parent?.game_mode}
-                  pollsOpened={pollsOpened}
                   round={round}
                 />
               );
@@ -330,7 +327,6 @@ interface NominationProps {
   onNominationDelete: (nominationId: number) => void;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   parentGameMode?: GameMode;
-  pollsOpened: boolean;
   round: IRound;
 }
 
@@ -342,7 +338,6 @@ function Nomination({
   onNominationDelete,
   onNominationUpdate,
   parentGameMode,
-  pollsOpened,
   round,
 }: NominationProps) {
   const authUser = useOsuAuth().user;
@@ -364,7 +359,11 @@ function Nomination({
   let failedVoting = false;
   let votingResult: boolean | undefined;
 
-  if (nomination.poll != null) {
+  if (
+    nomination.poll != null &&
+    nomination.poll.result_no != null &&
+    nomination.poll.result_yes != null
+  ) {
     const { result_no, result_yes } = nomination.poll;
     const yesFraction = result_yes / (result_no + result_yes);
 
@@ -547,7 +546,6 @@ function Nomination({
         <StatusLine
           ignoreModeratorChecks={round.ignore_moderator_checks}
           nomination={nomination}
-          pollsOpened={pollsOpened}
           votingResult={votingResult}
         />
         {canAccessGodMenu && (

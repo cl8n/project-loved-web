@@ -35,6 +35,10 @@ const messages = defineMessages({
     defaultMessage: 'Yes and no',
     description: 'Result display option for poll results table',
   },
+  pollInProgress: {
+    defaultMessage: 'Poll in progress',
+    description: 'Placeholder for results for ongoing polls',
+  },
 
   deletedBeatmapset: {
     defaultMessage: 'Deleted beatmapset',
@@ -211,6 +215,15 @@ function ResultCells({ poll, showPercent }: ResultCellsProps) {
 
   const yes = poll.result_yes;
   const no = poll.result_no;
+
+  if (no == null || yes == null) {
+    return (
+      <td colSpan={2}>
+        <i>{intl.formatMessage(messages.pollInProgress)}</i>
+      </td>
+    );
+  }
+
   const total = yes + no;
   const yesFraction = yes / total;
 

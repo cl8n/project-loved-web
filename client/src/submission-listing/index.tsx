@@ -375,7 +375,7 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
       }))
       .sort(beatmapsetSortFn(sortsAndFilters.sorts[1], sortsAndFilters.filterToApproved))
       .sort(beatmapsetSortFn(sortsAndFilters.sorts[0], sortsAndFilters.filterToApproved))
-      .sort((a, b) => +b.poll_in_progress - +a.poll_in_progress);
+      .sort((a, b) => +(b.poll?.in_progress ?? false) - +(a.poll?.in_progress ?? false));
   }, [sortsAndFilters, submissionsInfo]);
 
   useEffect(() => {

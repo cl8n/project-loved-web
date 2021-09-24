@@ -57,14 +57,12 @@ function votingClass(opened: boolean, result: boolean | undefined) {
 interface StatusLineProps {
   ignoreModeratorChecks: boolean;
   nomination: INominationWithPoll;
-  pollsOpened: boolean;
   votingResult: boolean | undefined;
 }
 
 export default function StatusLine({
   ignoreModeratorChecks,
   nomination,
-  pollsOpened,
   votingResult,
 }: StatusLineProps) {
   const infoArray = [
@@ -85,7 +83,7 @@ export default function StatusLine({
     <div>
       <ListInline array={infoArray} onlyCommas />
       {' → '}
-      <span className={votingClass(pollsOpened, votingResult)}>Voting</span>
+      <span className={votingClass(nomination.poll != null, votingResult)}>Voting</span>
       {' → '}
       <span className={nomination.beatmapset.ranked_status === 4 ? 'success' : 'error'}>Loved</span>
     </div>

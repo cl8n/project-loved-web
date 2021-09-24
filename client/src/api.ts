@@ -133,10 +133,10 @@ export interface GetSubmissionsResponseBody {
     modal_bpm: number;
     nominated_round_name: string | null;
     poll?: {
+      in_progress: boolean;
       passed: boolean;
       topic_id: number;
     };
-    poll_in_progress: boolean;
     review_score: number;
     reviews: IReview[];
     score: number;
