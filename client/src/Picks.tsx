@@ -22,7 +22,6 @@ import {
 import { autoHeightRef } from './auto-height';
 import { BBCode } from './BBCode';
 import { BeatmapInline } from './BeatmapInline';
-import { dateFromString } from './date-format';
 import type { FormSubmitHandler } from './dom-helpers';
 import { Form } from './dom-helpers';
 import Help from './Help';
