@@ -254,6 +254,7 @@ const db = new MysqlPool({
   port: parseInt(process.env.DB_PORT, 10),
   user: process.env.DB_USER,
 
+  charset: 'utf8mb4_general_ci',
   typeCast: function (field, next) {
     if (field.type !== 'TINY' || field.length !== 1) {
       return next();
