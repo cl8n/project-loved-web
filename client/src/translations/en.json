@@ -47,6 +47,10 @@
     "defaultMessage": "Metadata reviewers",
     "description": "Team listing title"
   },
+  "38JPtF": {
+    "defaultMessage": "Poll in progress",
+    "description": "Placeholder for results for ongoing polls"
+  },
   "39zfVl": {
     "defaultMessage": "light support",
     "description": "+1 review score. Fits into {score} of the review line"
@@ -110,6 +114,10 @@
   "Be0kKF": {
     "defaultMessage": "The map you submit may never be nominated for Loved, even if it does have some merit. Currently, the rate that maps get Loved is limited, so it's possible that the captains will continually find better picks than the map you submit.",
     "description": "Submission form list item 3"
+  },
+  "CCGzFA": {
+    "defaultMessage": "Passed voting",
+    "description": "Aggregate review score shown on submissions table for maps that passed community voting"
   },
   "CIAu6S": {
     "defaultMessage": "Wiki",
