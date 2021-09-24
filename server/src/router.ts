@@ -3,6 +3,7 @@ import db from './db';
 import { asyncHandler } from './express-helpers';
 import { isCaptain, isGod, isModerator, isNewsAuthor, roles as authRoles } from './guards';
 import { getParams, groupBy } from './helpers';
+import { systemLog } from './log';
 import { settings, updateSettings, accessSetting } from './settings';
 import { isAssigneeType, isGameMode, isNumberArray, isRecord, isStringArray } from './type-guards';
 
@@ -1060,9 +1061,9 @@ router.post('/update-api-object-bulk', isGod, (req, res) => {
       }
 
       if (apiObject == null) {
-        console.log(`Could not update ${id} from bulk request`);
+        systemLog(`Could not update ${id} from bulk request`, SyslogLevel.warning);
       } else {
-        console.log(`Updated object ${id} from bulk request`);
+        systemLog(`Updated object ${id} from bulk request`, SyslogLevel.info);
       }
 
       await new Promise((resolve) => setTimeout(resolve, 3000));

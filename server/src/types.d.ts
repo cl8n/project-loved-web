@@ -15,6 +15,17 @@ declare const enum RankedStatus {
   loved = 4,
 }
 
+declare const enum SyslogLevel {
+  emerg,
+  alert,
+  crit,
+  err,
+  warning,
+  notice,
+  info,
+  debug,
+}
+
 type AuthUser = Omit<UserWithRoles, 'api_fetched_at'>;
 
 interface UserWithRoles extends User {

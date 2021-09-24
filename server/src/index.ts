@@ -9,6 +9,7 @@ import session from 'express-session';
 import db from './db';
 import { asyncHandler } from './express-helpers';
 import { hasLocalInteropKey, isAnything } from './guards';
+import { systemLog } from './log';
 import { authRedirectUrl, Osu } from './osu';
 import router from './router';
 import anyoneRouter from './routers/anyone';
@@ -207,7 +208,7 @@ db.initialize().then(() => {
   app.use(function (error: unknown, _request: Request, response: Response, _next: NextFunction) {
     // TODO: can probably do better than these logs
     //log(logTypes.error, `{plain}${error}`);
-    console.error(error);
+    systemLog(error, SyslogLevel.err);
 
     response.status(500).json({ error: 'Server error' });
   });
@@ -220,17 +221,13 @@ db.initialize().then(() => {
       new Promise<void>((resolve) => {
         httpServer.close((error) => {
           if (error) {
-            console.error(error);
+            systemLog(error, SyslogLevel.err);
           }
 
-          console.log('HTTP server closed');
           resolve();
         });
       }),
-      db
-        .close()
-        .then(() => console.log('Database connection(s) closed'))
-        .catch((error) => console.error(error)),
+      db.close().catch((error) => systemLog(error, SyslogLevel.err)),
     ]).finally(() => process.exit());
   }
 
