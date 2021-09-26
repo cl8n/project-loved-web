@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import 'dotenv/config';
+import AsyncLock from 'async-lock';
 import { randomBytes } from 'crypto';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
@@ -29,8 +30,34 @@ if (
 const MysqlSessionStore = mysqlSessionStoreFactory(session as any);
 
 function destroySession(session: Request['session']): Promise<void> {
-  return new Promise(function (resolve, reject) {
-    session.destroy(function (error) {
+  return new Promise((resolve, reject) => {
+    session.destroy((error) => {
+      if (error != null) {
+        reject(error);
+      }
+
+      resolve();
+    });
+  });
+}
+
+function reloadSession(session: Request['session']): Promise<void> {
+  return new Promise((resolve, reject) => {
+    session.reload((error) => {
+      if (error != null) {
+        reject(error);
+      }
+
+      resolve();
+    });
+  });
+}
+
+// The session is saved at the end of each request, so this only needs to be used
+// if the session needs to be saved during a request.
+function saveSession(session: Request['session']): Promise<void> {
+  return new Promise((resolve, reject) => {
+    session.save((error) => {
       if (error != null) {
         reject(error);
       }
@@ -42,6 +69,7 @@ function destroySession(session: Request['session']): Promise<void> {
 
 db.initialize().then(() => {
   const app = express();
+  const sessionLock = new AsyncLock();
 
   // Hack to add typing to locals
   app.use((_, response, next) => {
@@ -127,22 +155,49 @@ db.initialize().then(() => {
 
   app.use(
     asyncHandler(async function (request, response, next) {
-      if (!request.session.userId) {
+      if (request.session.userId == null) {
         return next();
       }
 
-      response.typedLocals.osu = new Osu(request.session);
-
-      try {
-        const tokenInfo = await response.typedLocals.osu.tryRefreshToken();
-
-        if (tokenInfo != null) {
-          Object.assign(request.session, tokenInfo);
+      const responseSet = await sessionLock.acquire(request.session.userId.toString(), async () => {
+        try {
+          // TODO: Requiring reload of session for every authed request is inefficient,
+          // but I'm not sure how to split this lock across multiple express middleware.
+          // Ideally we would acquire a lock before loading the session at all, and then
+          // release it after trying refreshing/saving the osu! auth token.
+          await reloadSession(request.session);
+        } catch {
+          response.status(401).json({ error: 'osu! auth token expired. Try logging in again' });
+          return true;
         }
-      } catch (error) {
-        // TODO: start a normal re-auth if the refresh token is too old
-        await destroySession(request.session);
-        throw error;
+
+        response.typedLocals.osu = new Osu(request.session);
+
+        try {
+          const tokenInfo = await response.typedLocals.osu.tryRefreshToken();
+
+          if (tokenInfo != null) {
+            Object.assign(request.session, tokenInfo);
+            await saveSession(request.session);
+          }
+        } catch (error) {
+          await destroySession(request.session);
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if (typeof error === 'object' && error != null && (error as any).status === 401) {
+            // TODO: start a normal re-auth if the refresh token is too old
+            response.status(401).json({ error: 'osu! auth token expired. Try logging in again' });
+            return true;
+          } else {
+            throw error;
+          }
+        }
+
+        return false;
+      });
+
+      if (responseSet) {
+        return;
       }
 
       const user = await db.queryOneWithGroups<AuthUser & { api_fetched_at?: Date }>(
