@@ -18,11 +18,9 @@ export function isPollArray(polls: unknown): polls is {
   beatmapsetId: number;
   endedAt: string;
   gameMode: GameMode;
-  no: number;
   roundId: number;
   startedAt: string;
   topicId: number;
-  yes: number;
 }[] {
   return (
     Array.isArray(polls) &&
@@ -32,10 +30,25 @@ export function isPollArray(polls: unknown): polls is {
         typeof poll.beatmapsetId === 'number' &&
         typeof poll.endedAt === 'string' &&
         isGameMode(poll.gameMode) &&
-        typeof poll.no === 'number' &&
         typeof poll.roundId === 'number' &&
         typeof poll.startedAt === 'string' &&
-        typeof poll.topicId === 'number' &&
+        typeof poll.topicId === 'number',
+    )
+  );
+}
+
+export function isPollResultsArray(polls: unknown): polls is {
+  id: number;
+  no: number;
+  yes: number;
+}[] {
+  return (
+    Array.isArray(polls) &&
+    polls.every(
+      (poll) =>
+        isRecord(poll) &&
+        typeof poll.id === 'number' &&
+        typeof poll.no === 'number' &&
         typeof poll.yes === 'number',
     )
   );

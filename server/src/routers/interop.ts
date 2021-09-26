@@ -3,7 +3,7 @@ import db from '../db';
 import { asyncHandler } from '../express-helpers';
 import { groupBy } from '../helpers';
 import { accessSetting } from '../settings';
-import { isPollArray, isRepliesRecord } from '../type-guards';
+import { isPollArray, isPollResultsArray, isRepliesRecord } from '../type-guards';
 
 const interopRouter = Router();
 export default interopRouter;
@@ -215,33 +215,69 @@ interopRouter.get(
 );
 
 interopRouter.post(
-  '/poll-results',
+  '/polls',
   asyncHandler(async (req, res) => {
     if (!isPollArray(req.body)) {
-      return res.status(422).json({ error: 'Body must be an array of poll results' });
-    }
-
-    const resultsToInsert: [number, Date, GameMode, number, number, number, Date, number][] = [];
-
-    for (const result of req.body) {
-      resultsToInsert.push([
-        result.beatmapsetId,
-        new Date(result.endedAt),
-        result.gameMode,
-        result.no,
-        result.yes,
-        result.roundId,
-        new Date(result.startedAt),
-        result.topicId,
-      ]);
+      return res.status(422).json({ error: 'Body must be an array of polls' });
     }
 
     await db.query(
-      'INSERT INTO polls (beatmapset_id, ended_at, game_mode, result_no, result_yes, round_id, started_at, topic_id) VALUES ?',
-      [resultsToInsert],
+      'INSERT INTO polls (beatmapset_id, ended_at, game_mode, round_id, started_at, topic_id) VALUES ?',
+      [
+        req.body.map((poll) => [
+          poll.beatmapsetId,
+          new Date(poll.endedAt),
+          poll.gameMode,
+          poll.roundId,
+          new Date(poll.startedAt),
+          poll.topicId,
+        ]),
+      ],
     );
 
     res.status(204).send();
+  }),
+);
+
+interopRouter.post(
+  '/polls/complete',
+  asyncHandler<unknown[]>(async (req, res) => {
+    if (!isPollResultsArray(req.body)) {
+      return res.status(422).json({ error: 'Body must be an array of poll results' });
+    }
+
+    await db.transact((connection) =>
+      Promise.all(
+        (
+          req.body as {
+            id: number;
+            no: number;
+            yes: number;
+          }[]
+        ).map((pollResults) =>
+          connection.query(
+            'UPDATE polls SET ? WHERE id = ? AND result_no IS NULL AND result_yes IS NULL',
+            [{ result_no: pollResults.no, result_yes: pollResults.yes }, pollResults.id],
+          ),
+        ),
+      ),
+    );
+
+    res.status(204).send();
+  }),
+);
+
+interopRouter.get(
+  '/polls/incomplete',
+  asyncHandler(async (_, res) => {
+    res.json(
+      await db.query<Poll>(`
+        SELECT *
+        FROM polls
+        WHERE result_no IS NULL
+          OR result_yes IS NULL
+      `),
+    );
   }),
 );
 
