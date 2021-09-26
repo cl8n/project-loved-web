@@ -7,6 +7,7 @@ import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import mysqlSessionStoreFactory from 'express-mysql-session';
 import session from 'express-session';
+import { createHttpTerminator } from 'http-terminator';
 import db from './db';
 import { asyncHandler } from './express-helpers';
 import { hasLocalInteropKey, isAnything } from './guards';
@@ -270,21 +271,16 @@ db.initialize().then(() => {
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const httpServer = app.listen(parseInt(process.env.PORT!, 10));
+  const httpTerminator = createHttpTerminator({ server: httpServer });
 
   function shutdown(): void {
     systemLog('Received exit signal', SyslogLevel.info);
 
     Promise.allSettled([
-      new Promise<void>((resolve) => {
-        httpServer.close((error) => {
-          if (error) {
-            systemLog(error, SyslogLevel.err);
-          }
-
-          systemLog('Closed all HTTP(S) connections', SyslogLevel.info);
-          resolve();
-        });
-      }),
+      httpTerminator
+        .terminate()
+        .then(() => systemLog('Closed all HTTP(S) connections', SyslogLevel.info))
+        .catch((error) => systemLog(error, SyslogLevel.err)),
       db
         .close()
         .then(() => systemLog('Closed all DB connections', SyslogLevel.info))

@@ -12,6 +12,7 @@
     "express": "^4.17.1",
     "express-mysql-session": "^2.1.7",
     "express-session": "^1.17.2",
+    "http-terminator": "^3.0.3",
     "mysql": "^2.18.1",
     "superagent": "^6.1.0"
   },
