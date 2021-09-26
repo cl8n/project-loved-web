@@ -8,4 +8,4 @@ while true; do
   sleep 1
 done
 
-npm run start
+exec npm run start

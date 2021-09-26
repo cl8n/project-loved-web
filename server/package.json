@@ -4,7 +4,7 @@
   "scripts": {
     "build": "eslint --max-warnings 0 . && rm -rf build && tsc --noEmitOnError && npm run permissions",
     "permissions": "chmod +x ./build/index.js ./build/init-user.js ./build/update-stale-beatmapsets.js",
-    "start": "rm -rf build && tsc-watch --noClear --onSuccess \"sh -c 'npm run permissions && ./build/index.js'\""
+    "start": "rm -rf build && exec tsc-watch --noClear --onSuccess \"sh -c 'npm run permissions && ./build/index.js'\""
   },
   "dependencies": {
     "async-lock": "^1.3.0",
