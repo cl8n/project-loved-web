@@ -272,6 +272,8 @@ db.initialize().then(() => {
   const httpServer = app.listen(parseInt(process.env.PORT!, 10));
 
   function shutdown(): void {
+    systemLog('Received exit signal', SyslogLevel.info);
+
     Promise.allSettled([
       new Promise<void>((resolve) => {
         httpServer.close((error) => {
@@ -279,11 +281,18 @@ db.initialize().then(() => {
             systemLog(error, SyslogLevel.err);
           }
 
+          systemLog('Closed all HTTP(S) connections', SyslogLevel.info);
           resolve();
         });
       }),
-      db.close().catch((error) => systemLog(error, SyslogLevel.err)),
-    ]).finally(() => process.exit());
+      db
+        .close()
+        .then(() => systemLog('Closed all DB connections', SyslogLevel.info))
+        .catch((error) => systemLog(error, SyslogLevel.err)),
+    ]).finally(() => {
+      systemLog('Exiting', SyslogLevel.info);
+      process.exit();
+    });
   }
 
   process.on('SIGINT', shutdown);
