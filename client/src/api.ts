@@ -309,9 +309,10 @@ export function useApi<T, T2, P extends unknown[]>(
 
   useEffect(
     () => {
+      setBody(undefined);
+      setError(undefined);
+
       if (options?.condition === false) {
-        setBody(undefined);
-        setError(undefined);
         return;
       }
 
