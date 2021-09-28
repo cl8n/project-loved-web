@@ -237,7 +237,7 @@ export default function SubmissionBeatmapset({
         <td className='normal-wrap'>
           <div data-beatmapset-id={beatmapset.id} />
           <div className='submission-selector' />
-          <Beatmap beatmapset={beatmapset} />
+          <Beatmap beatmapset={beatmapset} gameMode={gameMode} />
         </td>
         <td>
           <UserInline name={beatmapset.creator_name} user={usersById[beatmapset.creator_id]} />
