@@ -217,6 +217,10 @@ export default function SubmissionListingContainer() {
 
     if (newMode !== gameMode) {
       history.push(`/submissions/${gameModeShortName(newMode)}`);
+
+      if (newMode !== GameMode.mania) {
+        setKeyMode(null);
+      }
     }
   };
   const onKeyModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
