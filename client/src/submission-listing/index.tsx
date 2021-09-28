@@ -1,11 +1,12 @@
 import type { ChangeEvent } from 'react';
-import { useEffect, useMemo, useReducer } from 'react';
+import { useEffect, useMemo, useReducer, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import { apiErrorMessage, getSubmissions, useApi } from '../api';
 import { dateFromString } from '../date-format';
 import Help from '../Help';
-import type { GameMode, IReview } from '../interfaces';
+import type { IReview } from '../interfaces';
+import { GameMode } from '../interfaces';
 import {
   gameModeFromShortName,
   gameModeLongName,
@@ -22,6 +23,10 @@ import SortButton from './SortButton';
 import SubmissionBeatmapset from './SubmissionBeatmapset';
 
 const messages = defineMessages({
+  all: {
+    defaultMessage: 'All',
+    description: 'osu!mania key mode option for submissions table',
+  },
   artist: {
     defaultMessage: 'Artist',
     description: 'Submissions table sort option',
@@ -69,6 +74,14 @@ const messages = defineMessages({
   year: {
     defaultMessage: 'Year',
     description: 'Submissions table header',
+  },
+  commonKeyModes: {
+    defaultMessage: 'Common',
+    description: 'osu!mania key mode option group for common key modes',
+  },
+  uncommonKeyModes: {
+    defaultMessage: 'Uncommon',
+    description: 'osu!mania key mode option group for uncommon key modes',
   },
 });
 
@@ -183,6 +196,7 @@ export default function SubmissionListingContainer() {
     score: true,
     year: true,
   });
+  const [keyMode, setKeyMode] = useState<number | null>(null);
   const [sortsAndFilters, updateSortOrFilter] = useReducer(
     sortsAndFiltersReducer,
     initialSortsAndFiltersState,
@@ -205,6 +219,11 @@ export default function SubmissionListingContainer() {
       history.push(`/submissions/${gameModeShortName(newMode)}`);
     }
   };
+  const onKeyModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const value = event.currentTarget.value;
+
+    setKeyMode(value === 'all' ? null : parseInt(value));
+  };
 
   // TODO: Controls break on languages with longer column names (fi, sv)
   return (
@@ -223,78 +242,111 @@ export default function SubmissionListingContainer() {
           description='Warning box above submissions table'
         />
       </div>
-      <div className='flex-left'>
-        <label htmlFor='gameMode'>{intl.formatMessage(messages.gameMode)}</label>
-        <select name='gameMode' value={gameMode} onChange={onGameModeChange}>
-          {gameModes.map((m) => (
-            <option key={m} value={m}>
-              {gameModeLongName(m)}
-            </option>
-          ))}
-        </select>
-        <FormattedMessage
-          defaultMessage='Columns:'
-          description='Title for options to show or hide columns'
-          tagName='span'
-        />
-        <span className='flex-text'>
-          {toggleableColumns.map((column) => (
-            <button
-              key={column}
-              type='button'
-              className={`fake-a${columns[column] ? ' underline' : ''}`}
-              onClick={() => toggleColumn(column)}
-            >
-              {intl.formatMessage(messages[column])}
-            </button>
-          ))}
-        </span>
-        <FormattedMessage
-          defaultMessage='Sort by:'
-          description='Title for sorting options'
-          tagName='span'
-        />
-        {sortsAndFilters.sorts.map((sort, sortIndex) => (
-          <span key={sortIndex}>
-            <select
-              value={sort.sort}
-              onChange={(event) =>
-                updateSortOrFilter({
-                  action: 'changeSort',
-                  index: sortIndex as 0 | 1,
-                  sort: event.currentTarget.value as Sort,
-                })
-              }
-            >
-              {sortOptions[sortIndex].map((sortOption) => (
-                <option key={sortOption} value={sortOption}>
-                  {intl.formatMessage(
-                    messages[
-                      sortsAndFilters.filterToApproved && sortOption === 'priority'
-                        ? 'status'
-                        : sortOption
-                    ],
-                  )}
-                </option>
-              ))}
-            </select>{' '}
-            <SortButton
-              ascending={sort.ascending}
-              toggle={() =>
-                updateSortOrFilter({ action: 'toggleOrder', index: sortIndex as 0 | 1 })
-              }
-            />
+      <div className='block-margin'>
+        <div className='flex-left'>
+          <label htmlFor='gameMode'>{intl.formatMessage(messages.gameMode)}</label>
+          <select name='gameMode' value={gameMode} onChange={onGameModeChange}>
+            {gameModes.map((m) => (
+              <option key={m} value={m}>
+                {gameModeLongName(m)}
+              </option>
+            ))}
+          </select>
+          <FormattedMessage
+            defaultMessage='Columns:'
+            description='Title for options to show or hide columns'
+            tagName='span'
+          />
+          <span className='flex-text'>
+            {toggleableColumns.map((column) => (
+              <button
+                key={column}
+                type='button'
+                className={`fake-a${columns[column] ? ' underline' : ''}`}
+                onClick={() => toggleColumn(column)}
+              >
+                {intl.formatMessage(messages[column])}
+              </button>
+            ))}
           </span>
-        ))}
-        <button
-          type='button'
-          className='push-right'
-          onClick={() => updateSortOrFilter({ action: 'toggleApproved' })}
-        >
-          {sortsAndFilters.filterToApproved ? 'Show pending' : 'Show approved'}
-        </button>
+          <FormattedMessage
+            defaultMessage='Sort by:'
+            description='Title for sorting options'
+            tagName='span'
+          />
+          {sortsAndFilters.sorts.map((sort, sortIndex) => (
+            <span key={sortIndex}>
+              <select
+                value={sort.sort}
+                onChange={(event) =>
+                  updateSortOrFilter({
+                    action: 'changeSort',
+                    index: sortIndex as 0 | 1,
+                    sort: event.currentTarget.value as Sort,
+                  })
+                }
+              >
+                {sortOptions[sortIndex].map((sortOption) => (
+                  <option key={sortOption} value={sortOption}>
+                    {intl.formatMessage(
+                      messages[
+                        sortsAndFilters.filterToApproved && sortOption === 'priority'
+                          ? 'status'
+                          : sortOption
+                      ],
+                    )}
+                  </option>
+                ))}
+              </select>{' '}
+              <SortButton
+                ascending={sort.ascending}
+                toggle={() =>
+                  updateSortOrFilter({ action: 'toggleOrder', index: sortIndex as 0 | 1 })
+                }
+              />
+            </span>
+          ))}
+          <button
+            type='button'
+            className='push-right'
+            onClick={() => updateSortOrFilter({ action: 'toggleApproved' })}
+          >
+            {sortsAndFilters.filterToApproved ? 'Show pending' : 'Show approved'}
+          </button>
+        </div>
+        {gameMode === GameMode.mania && (
+          <div className='flex-left slim-margin'>
+            <FormattedMessage
+              defaultMessage='Key mode:'
+              description='Selector to change osu!mania key mode'
+              tagName='span'
+            />
+            <select value={keyMode ?? 'all'} onChange={onKeyModeChange}>
+              <option value='all'>{intl.formatMessage(messages.all)}</option>
+              <optgroup label={intl.formatMessage(messages.commonKeyModes)}>
+                {[4, 7].map((keyMode) => (
+                  <option key={keyMode} value={keyMode}>
+                    {keyMode}K
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label={intl.formatMessage(messages.uncommonKeyModes)}>
+                {[1, 2, 3, 5, 6, 8, 9, 10].map((keyMode) => (
+                  <option key={keyMode} value={keyMode}>
+                    {keyMode}K
+                  </option>
+                ))}
+              </optgroup>
+            </select>
+          </div>
+        )}
       </div>
-      <SubmissionListing columns={columns} gameMode={gameMode} sortsAndFilters={sortsAndFilters} />
+      <SubmissionListing
+        columns={columns}
+        gameMode={gameMode}
+        keyMode={keyMode}
+        sortsAndFilters={sortsAndFilters}
+      />
     </>
   );
 }
@@ -344,10 +396,16 @@ function beatmapsetSortFn(
 interface SubmissionListingProps {
   columns: ToggleableColumnsState;
   gameMode: GameMode;
+  keyMode: number | null;
   sortsAndFilters: SortsAndFiltersState;
 }
 
-function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionListingProps) {
+function SubmissionListing({
+  columns,
+  gameMode,
+  keyMode,
+  sortsAndFilters,
+}: SubmissionListingProps) {
   const history = useHistory();
   const intl = useIntl();
   const { pathname: locationPath, state: submittedBeatmapsetId } = useLocation<
@@ -364,10 +422,12 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
 
     // Beatmapsets come from API sorted by score descending
     return submissionsInfo.beatmapsets
-      .filter((beatmapset) =>
-        sortsAndFilters.filterToApproved
-          ? beatmapset.ranked_status > 0
-          : beatmapset.ranked_status <= 0,
+      .filter(
+        (beatmapset) =>
+          (keyMode == null || beatmapset.key_modes.includes(keyMode)) &&
+          (sortsAndFilters.filterToApproved
+            ? beatmapset.ranked_status > 0
+            : beatmapset.ranked_status <= 0),
       )
       .map((beatmapset) => ({
         ...beatmapset,
@@ -376,7 +436,7 @@ function SubmissionListing({ columns, gameMode, sortsAndFilters }: SubmissionLis
       .sort(beatmapsetSortFn(sortsAndFilters.sorts[1], sortsAndFilters.filterToApproved))
       .sort(beatmapsetSortFn(sortsAndFilters.sorts[0], sortsAndFilters.filterToApproved))
       .sort((a, b) => +(b.poll?.in_progress ?? false) - +(a.poll?.in_progress ?? false));
-  }, [sortsAndFilters, submissionsInfo]);
+  }, [keyMode, sortsAndFilters, submissionsInfo]);
 
   useEffect(() => {
     if (submissionsInfo == null || submittedBeatmapsetId == null) {

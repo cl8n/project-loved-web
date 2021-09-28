@@ -148,6 +148,7 @@ guestRouter.get(
       Partial<{
         beatmap_counts: Record<GameMode, number>;
         consent: boolean | null;
+        key_modes: number[];
         maximum_length: number;
         modal_bpm: number;
         nominated_round_name: string | null;
@@ -168,13 +169,19 @@ guestRouter.get(
     );
     const beatmapsByBeatmapsetId = groupBy<
       Beatmap['beatmapset_id'],
-      Pick<Beatmap, 'beatmapset_id' | 'bpm' | 'game_mode' | 'play_count' | 'total_length'>
+      Pick<
+        Beatmap,
+        'beatmapset_id' | 'bpm' | 'game_mode' | 'key_count' | 'play_count' | 'total_length'
+      >
     >(
       await db.query<
-        Pick<Beatmap, 'beatmapset_id' | 'bpm' | 'game_mode' | 'play_count' | 'total_length'>
+        Pick<
+          Beatmap,
+          'beatmapset_id' | 'bpm' | 'game_mode' | 'key_count' | 'play_count' | 'total_length'
+        >
       >(
         `
-          SELECT beatmapset_id, bpm, game_mode, play_count, total_length
+          SELECT beatmapset_id, bpm, game_mode, key_count, play_count, total_length
           FROM beatmaps
           WHERE beatmapset_id IN (?)
         `,
@@ -280,7 +287,10 @@ guestRouter.get(
     for (const beatmapset of beatmapsets) {
       const beatmaps = groupBy<
         Beatmap['game_mode'],
-        Pick<Beatmap, 'beatmapset_id' | 'bpm' | 'game_mode' | 'play_count' | 'total_length'>
+        Pick<
+          Beatmap,
+          'beatmapset_id' | 'bpm' | 'game_mode' | 'key_count' | 'play_count' | 'total_length'
+        >
       >(beatmapsByBeatmapsetId[beatmapset.id] || [], 'game_mode');
       const beatmapsForGameMode = beatmaps[gameMode]?.sort((a, b) => a.bpm - b.bpm) || [];
       const consent: ConsentValue | boolean | null =
@@ -292,6 +302,11 @@ guestRouter.get(
 
       beatmapset.consent =
         consent == null || consent === ConsentValue.unreachable ? null : !!consent;
+      beatmapset.key_modes = (
+        [...new Set(beatmapsForGameMode.map((b) => b.key_count))].filter(
+          (k) => k != null,
+        ) as number[]
+      ).sort((a, b) => a - b);
       beatmapset.maximum_length = Math.max(
         ...beatmapsForGameMode.map((beatmap) => beatmap.total_length),
       );
