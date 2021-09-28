@@ -243,6 +243,10 @@
     "defaultMessage": "strong rejection",
     "description": "-3 review score. Fits into {score} of the review line"
   },
+  "PuVvCo": {
+    "defaultMessage": "Keys",
+    "description": "Submissions table header"
+  },
   "R0gvL0": {
     "defaultMessage": "Artist",
     "description": "Submissions table sort option"
