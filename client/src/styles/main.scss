@@ -493,8 +493,16 @@ tr.sticky > th {
   }
 }
 
+.key-mode-grid {
+  column-gap: 0.35em;
+  display: grid;
+  grid-template-columns: auto auto;
+  width: fit-content;
+}
+
 .beatmap {
   display: inline-block;
+  overflow-wrap: anywhere;
 
   &-artist {
     font-size: 12px;

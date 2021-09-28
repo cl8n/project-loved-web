@@ -225,6 +225,15 @@ export default function SubmissionBeatmapset({
           <span className='selector-indicator'>{expanded ? '▲' : '▼'}</span>{' '}
           {reviewAngry && <span className='important-bad'>★</span>}
         </td>
+        {gameMode === GameMode.mania && columns.keyModes && (
+          <td>
+            <div className='key-mode-grid'>
+              {beatmapset.key_modes.map((keyMode) => (
+                <span key={keyMode}>{keyMode}K</span>
+              ))}
+            </div>
+          </td>
+        )}
         <td className='normal-wrap'>
           <div data-beatmapset-id={beatmapset.id} />
           <div className='submission-selector' />
@@ -284,7 +293,7 @@ export default function SubmissionBeatmapset({
           <td>
             <div className='submission-selector' />
           </td>
-          <td className='normal-wrap fix-column-layout' colSpan={9}>
+          <td className='normal-wrap fix-column-layout' colSpan={10}>
             {canReview && (
               <div className='review-button-container'>
                 {review != null && (

@@ -47,6 +47,10 @@ const messages = defineMessages({
     defaultMessage: 'Game mode:',
     description: 'Selector to change game mode',
   },
+  keyModes: {
+    defaultMessage: 'Keys',
+    description: 'Submissions table header',
+  },
   playCount: {
     defaultMessage: 'Plays',
     description: 'Submissions table header',
@@ -192,6 +196,7 @@ export default function SubmissionListingContainer() {
     bpm: true,
     difficultyCount: true,
     favoriteCount: true,
+    keyModes: true,
     playCount: true,
     score: true,
     year: true,
@@ -262,16 +267,19 @@ export default function SubmissionListingContainer() {
             tagName='span'
           />
           <span className='flex-text'>
-            {toggleableColumns.map((column) => (
-              <button
-                key={column}
-                type='button'
-                className={`fake-a${columns[column] ? ' underline' : ''}`}
-                onClick={() => toggleColumn(column)}
-              >
-                {intl.formatMessage(messages[column])}
-              </button>
-            ))}
+            {toggleableColumns.map(
+              (column) =>
+                (gameMode === GameMode.mania || column !== 'keyModes') && (
+                  <button
+                    key={column}
+                    type='button'
+                    className={`fake-a${columns[column] ? ' underline' : ''}`}
+                    onClick={() => toggleColumn(column)}
+                  >
+                    {intl.formatMessage(messages[column])}
+                  </button>
+                ),
+            )}
           </span>
           <FormattedMessage
             defaultMessage='Sort by:'
@@ -518,6 +526,9 @@ function SubmissionListing({
       <thead>
         <tr className='sticky'>
           <th />
+          {gameMode === GameMode.mania && columns.keyModes && (
+            <th>{intl.formatMessage(messages.keyModes)}</th>
+          )}
           <FormattedMessage
             defaultMessage='Beatmapset'
             description='Submissions table header'

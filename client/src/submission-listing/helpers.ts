@@ -6,11 +6,13 @@ export type ToggleableColumn =
   | 'bpm'
   | 'difficultyCount'
   | 'favoriteCount'
+  | 'keyModes'
   | 'playCount'
   | 'score'
   | 'year';
 export type ToggleableColumnsState = Record<ToggleableColumn, boolean>;
 export const toggleableColumns = [
+  'keyModes',
   'score',
   'playCount',
   'favoriteCount',
