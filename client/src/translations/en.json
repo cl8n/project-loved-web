@@ -87,6 +87,10 @@
     "defaultMessage": "Priority",
     "description": "Submissions table header"
   },
+  "8NqvA2": {
+    "defaultMessage": "Key mode:",
+    "description": "Selector to change osu!mania key mode"
+  },
   "8bAHuK": {
     "defaultMessage": "Close",
     "description": "Button to close forms, dropdowns, modals, etc."
@@ -307,6 +311,10 @@
     "defaultMessage": "Every map in this set is too short (under 30 seconds).",
     "description": "Help text explaining that a map cannot be Loved due to its length"
   },
+  "Y620ue": {
+    "defaultMessage": "All",
+    "description": "osu!mania key mode option for submissions table"
+  },
   "ZEsdcm": {
     "defaultMessage": "Poll topic",
     "description": "Poll results table header"
@@ -330,6 +338,10 @@
   "bKfIQC": {
     "defaultMessage": "Why do you want this map to be Loved? <fade>(optional)</fade>",
     "description": "Submission form reason input prompt"
+  },
+  "bcLpeC": {
+    "defaultMessage": "Uncommon",
+    "description": "osu!mania key mode option group for uncommon key modes"
   },
   "c/0N4+": {
     "defaultMessage": "rejection",
@@ -362,6 +374,10 @@
   "gvLZL5": {
     "defaultMessage": "Log out",
     "description": "Button in site header to log out"
+  },
+  "ht0/kF": {
+    "defaultMessage": "Common",
+    "description": "osu!mania key mode option group for common key modes"
   },
   "iCkWun": {
     "defaultMessage": "Round",
