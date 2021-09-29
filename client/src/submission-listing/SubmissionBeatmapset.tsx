@@ -189,7 +189,7 @@ export default function SubmissionBeatmapset({
       event.target instanceof Element &&
       event.target.closest('a, button, .help, .modal-overlay') == null
     ) {
-      if (event.ctrlKey) {
+      if (canReview && event.ctrlKey) {
         setReviewModalOpen(true);
         return;
       }
