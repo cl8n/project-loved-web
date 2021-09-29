@@ -119,18 +119,22 @@ db.initialize().then(() => {
   app.get(
     '/auth/callback',
     asyncHandler(async function (request, response) {
+      const backUrl = request.session.authBackUrl;
+      const state = request.session.authState;
+      delete request.session.authBackUrl;
+      delete request.session.authState;
+
       if (request.query.error) {
-        throw request.query.error;
+        if (request.query.error === 'access_denied') {
+          return response.redirect(backUrl || '/');
+        } else {
+          throw request.query.error;
+        }
       }
 
       if (!request.query.code) {
         return response.status(422).json({ error: 'No authorization code provided' });
       }
-
-      const backUrl = request.session.authBackUrl;
-      const state = request.session.authState;
-      delete request.session.authBackUrl;
-      delete request.session.authState;
 
       if (!request.query.state || request.query.state !== state) {
         return response.status(422).json({ error: 'Invalid state. Try logging in again' });
