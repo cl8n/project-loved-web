@@ -31,8 +31,6 @@ const beatmapsetCount = parseInt(process.argv[2], 10);
     if (beatmapset == null) {
       console.error(`Could not update beatmapset #${id}`);
     }
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
   }
 
   await db.close();

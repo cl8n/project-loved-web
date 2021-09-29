@@ -4,6 +4,7 @@ import { asyncHandler } from './express-helpers';
 import { isCaptain, isGod, isModerator, isNewsAuthor, roles as authRoles } from './guards';
 import { getParams, groupBy } from './helpers';
 import { systemLog } from './log';
+import { Osu } from './osu';
 import { settings, updateSettings, accessSetting } from './settings';
 import { isAssigneeType, isGameMode, isNumberArray, isRecord, isStringArray } from './type-guards';
 
@@ -1044,16 +1045,19 @@ router.post(
 router.post('/update-api-object-bulk', isGod, (req, res) => {
   let apiObject;
   const type = req.body.type;
+  const bulkOsu = new Osu();
 
   (async () => {
+    await bulkOsu.getClientCredentialsToken();
+
     for (const id of req.body.ids) {
       switch (type) {
         case 'beatmapset':
-          apiObject = await res.typedLocals.osu.createOrRefreshBeatmapset(id, true);
+          apiObject = await bulkOsu.createOrRefreshBeatmapset(id, true);
           break;
         case 'user':
           // TODO: Store banned only if some box is ticked on web form
-          apiObject = await res.typedLocals.osu.createOrRefreshUser(id, {
+          apiObject = await bulkOsu.createOrRefreshUser(id, {
             forceUpdate: true,
             storeBanned: true,
           });
@@ -1065,8 +1069,6 @@ router.post('/update-api-object-bulk', isGod, (req, res) => {
       } else {
         systemLog(`Updated object ${id} from bulk request`, SyslogLevel.info);
       }
-
-      await new Promise((resolve) => setTimeout(resolve, 3000));
     }
   })();
 

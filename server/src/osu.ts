@@ -2,6 +2,7 @@ import qs from 'querystring';
 import type { Request, Response, SuperAgentStatic } from 'superagent';
 import superagent from 'superagent';
 import db from './db';
+import Limiter from './Limiter';
 
 if (
   process.env.OSU_CLIENT_ID == null ||
@@ -48,11 +49,13 @@ function serializeTokenResponse(response: Response): TokenInfo {
 
 export class Osu {
   #apiAgent!: SuperAgentStatic & Request;
+  #limiter: Limiter;
   #refreshToken!: string;
   #tokenExpiresAt!: number;
 
   constructor(tokenInfo?: TokenInfo) {
     this.#assignTokenInfo(tokenInfo);
+    this.#limiter = new Limiter(1000);
   }
 
   #assignTokenInfo(tokenInfo: TokenInfo | undefined): void {
@@ -116,23 +119,25 @@ export class Osu {
 
   //#region API requests
   async revokeToken(): Promise<void> {
-    await this.#apiAgent.delete(`${apiBaseUrl}/oauth/tokens/current`);
+    await this.#limiter.run(() => this.#apiAgent.delete(`${apiBaseUrl}/oauth/tokens/current`));
   }
 
   async #getBeatmapset(beatmapsetId: number): Promise<OsuApiBeatmapset> {
-    const response = await this.#apiAgent.get(`${apiBaseUrl}/beatmapsets/${beatmapsetId}`);
+    const response = await this.#limiter.run(() =>
+      this.#apiAgent.get(`${apiBaseUrl}/beatmapsets/${beatmapsetId}`),
+    );
 
     return response.body;
   }
 
   async #getUser(userIdOrName: number | string | undefined, byName: boolean): Promise<OsuApiUser> {
-    const request =
+    const response = await this.#limiter.run(() =>
       userIdOrName == null
         ? this.#apiAgent.get(`${apiBaseUrl}/me`)
         : this.#apiAgent
             .get(`${apiBaseUrl}/users/${userIdOrName}`)
-            .query({ key: byName ? 'username' : 'id' });
-    const response = await request;
+            .query({ key: byName ? 'username' : 'id' }),
+    );
 
     return response.body;
   }
