@@ -1070,6 +1070,8 @@ router.post('/update-api-object-bulk', isGod, (req, res) => {
         systemLog(`Updated object ${id} from bulk request`, SyslogLevel.info);
       }
     }
+
+    await bulkOsu.revokeToken();
   })();
 
   res.status(204).send();

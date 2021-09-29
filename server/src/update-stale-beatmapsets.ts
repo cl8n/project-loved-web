@@ -33,5 +33,5 @@ const beatmapsetCount = parseInt(process.argv[2], 10);
     }
   }
 
-  await db.close();
+  await Promise.all([db.close(), osu.revokeToken()]);
 })();

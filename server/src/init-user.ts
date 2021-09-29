@@ -35,5 +35,5 @@ const username = process.argv[2];
 
   console.log(`Added ${user.name} [#${user.id}] as administrator`);
 
-  await db.close();
+  await Promise.all([db.close(), osu.revokeToken()]);
 })();
