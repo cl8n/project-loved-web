@@ -304,6 +304,37 @@ interface OsuApiBeatmapset {
   [key: string]: unknown;
 }
 
+interface OsuApiForumTopic {
+  posts: {
+    body: {
+      html: string;
+      raw: string;
+    };
+    created_at: string;
+    deleted_at: string | null;
+    edited_at: string | null;
+    edited_by_id: number | null;
+    forum_id: number;
+    id: number;
+    topic_id: number;
+    user_id: number;
+  }[];
+  topic: {
+    created_at: string;
+    deleted_at: string | null;
+    first_post_id: number;
+    forum_id: number;
+    id: number;
+    is_locked: boolean;
+    last_post_id: number;
+    post_count: number;
+    title: string;
+    type: 'announcement' | 'normal' | 'sticky';
+    updated_at: string;
+    user_id: number;
+  };
+}
+
 interface OsuApiUser {
   avatar_url: string;
   country_code: string;

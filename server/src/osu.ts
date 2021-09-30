@@ -122,6 +122,14 @@ export class Osu {
     await this.#limiter.run(() => this.#apiAgent.delete(`${apiBaseUrl}/oauth/tokens/current`));
   }
 
+  async getForumTopic(topicId: number): Promise<OsuApiForumTopic> {
+    const response = await this.#limiter.run(() =>
+      this.#apiAgent.get(`${apiBaseUrl}/forums/topics/${topicId}`),
+    );
+
+    return response.body;
+  }
+
   async #getBeatmapset(beatmapsetId: number): Promise<OsuApiBeatmapset> {
     const response = await this.#limiter.run(() =>
       this.#apiAgent.get(`${apiBaseUrl}/beatmapsets/${beatmapsetId}`),
