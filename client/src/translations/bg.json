@@ -51,7 +51,7 @@
     "defaultMessage": "Възходящ"
   },
   "3RdYB+": {
-    "defaultMessage": "Игрален режим:"
+    "defaultMessage": "Вид игра:"
   },
   "5NZbY5": {
     "defaultMessage": "Вид резултати:"
@@ -66,7 +66,7 @@
     "defaultMessage": "Приоритет"
   },
   "8NqvA2": {
-    "defaultMessage": "Клавишен режим:"
+    "defaultMessage": "Вид клавиши:"
   },
   "8bAHuK": {
     "defaultMessage": "Затвори"
@@ -144,7 +144,7 @@
     "defaultMessage": "Не ви познавам! Опитайте да <a>влезнете</a> първо."
   },
   "LBBZpt": {
-    "defaultMessage": "Игрален режим"
+    "defaultMessage": "Вид игра"
   },
   "Ll1LUO": {
     "defaultMessage": "силна подкрепа"
@@ -171,7 +171,7 @@
     "defaultMessage": "Без връзка"
   },
   "O2IvSs": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} изпрати този бийтмап през {timestamp, date, long}} other{{user} изпрати този бийтмап}}"
+    "defaultMessage": "{hasTimestamp,select,true{{user} предложи този бийтмап през {timestamp, date, long}} other{{user} предложи този бийтмап}}"
   },
   "Oep6va": {
     "defaultMessage": "Изпрати"
@@ -189,7 +189,7 @@
     "defaultMessage": "Автор"
   },
   "RHg+09": {
-    "defaultMessage": "За кои режими на игра искате този бийтмап да е Обичан?"
+    "defaultMessage": "За кои видове игра искате този бийтмап да е Обичан?"
   },
   "RL5Qu1": {
     "defaultMessage": "Одобрен"
@@ -249,7 +249,7 @@
     "defaultMessage": "Година"
   },
   "ZZqLxU": {
-    "defaultMessage": "Трудности"
+    "defaultMessage": "Версии"
   },
   "aHJR9F": {
     "defaultMessage": "Съгласие"
@@ -393,6 +393,6 @@
     "defaultMessage": "Този бийтмап е номиниран за {roundName}."
   },
   "zn6DBN": {
-    "defaultMessage": "Подреждане по:"
+    "defaultMessage": "Ред:"
   }
 }
