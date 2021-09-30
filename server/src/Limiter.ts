@@ -16,10 +16,10 @@ export default class Limiter {
 
   run<T>(job: () => T | Promise<T>): Promise<T> {
     const id = Symbol();
-    const promise = this.#wait(id).then(job);
-    promise.finally(() => this.#end(id));
 
-    return promise;
+    return this.#wait(id)
+      .then(job)
+      .finally(() => this.#end(id));
   }
 
   #end(hash: symbol): void {
