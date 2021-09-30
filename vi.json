@@ -1,0 +1,398 @@
+{
+  "+3rK3I": {
+    "defaultMessage": "Không có phản hồi"
+  },
+  "+9RCG/": {
+    "defaultMessage": "Những icon khác được tạo bởi {author}"
+  },
+  "3RdYB+": {
+    "defaultMessage": "Chế độ chơi"
+  },
+  "5NZbY5": {
+    "defaultMessage": "Hiện kết quả:"
+  },
+  "3Kch6P": {
+    "defaultMessage": "Tăng dần"
+  },
+  "39zfVl": {
+    "defaultMessage": "Được ủng hộ một chút"
+  },
+  "38JPtF": {
+    "defaultMessage": "Đang tiến hành bình chọn..."
+  },
+  "2YTMfX": {
+    "defaultMessage": "Nộp và ở lại trang này"
+  },
+  "H65rvb": {
+    "defaultMessage": "Bạn không có đủ quyền để xem trang này."
+  },
+  "G1mG5h": {
+    "defaultMessage": "Tác giả beatmap đã đề nghị không đưa beatmap này vào thể loại Được Yêu Thích."
+  },
+  "EqGiDp": {
+    "defaultMessage": "Những gì bạn viết trong biểu mẫu này sẽ được công khai, nên đừng viết những gì bạn không muốn người khác thấy. Bạn không cần điền lý do nếu bạn không muốn."
+  },
+  "0+S3hP": {
+    "defaultMessage": "Nếu beatmap bạn nộp không phổ biến hoặc không thể chơi được, các đội trưởng có thể sẽ không bao giờ kiểm tra nó. Xin hãy nộp những beatmap mà bạn cho rằng sẽ thêm giá trị vào thể loại Được Yêu Thích."
+  },
+  "Be0kKF": {
+    "defaultMessage": "Beatmap bạn nộp có thể sẽ không bao giờ được bình chọn vào \"Được Yêu Thích\", kể cả khi nó có vượt qua một số tiêu chuẩn. Hiện tại, số lượng beatmap được bình chọn có giới hạn, nên rất có thể các đội trưởng sẽ tiếp tục tìm những beatmap khác tốt hơn beatmap mà bạn nộp."
+  },
+  "Oep6va": {
+    "defaultMessage": "Nộp"
+  },
+  "+bCbtl": {
+    "defaultMessage": "Hiện các cột:"
+  },
+  "+d4ZcX": {
+    "defaultMessage": "Những người giám sát"
+  },
+  "/CNHO3": {
+    "defaultMessage": "Đăng nhập bằng osu!"
+  },
+  "/SSCZX": {
+    "defaultMessage": "Có"
+  },
+  "06WpMi": {
+    "defaultMessage": "Đã bật xếp hạng"
+  },
+  "2SX61V": {
+    "defaultMessage": "Ghi chú"
+  },
+  "0Vz3c/": {
+    "defaultMessage": "Phần trăm và tổng cộng"
+  },
+  "2dOoEc": {
+    "defaultMessage": "Những người xem lại thông tin bổ sung"
+  },
+  "3E4vRf": {
+    "defaultMessage": "Thấp"
+  },
+  "3J+k4U": {
+    "defaultMessage": "Diễn đàn"
+  },
+  "5OS21f": {
+    "defaultMessage": "Bên ngoài:"
+  },
+  "5oqovx": {
+    "defaultMessage": "Nộp beatmap"
+  },
+  "7CJMwD": {
+    "defaultMessage": "Thứ tự ưu tiên"
+  },
+  "8NqvA2": {
+    "defaultMessage": "Số phím:"
+  },
+  "8bAHuK": {
+    "defaultMessage": "Đóng"
+  },
+  "8l6BC0": {
+    "defaultMessage": "Sự đồng ý của tác giả beatmap"
+  },
+  "9cv8r4": {
+    "defaultMessage": "B beatmap"
+  },
+  "e6WZri": {
+    "defaultMessage": "Được ủng hhộ"
+  },
+  "dG9/uH": {
+    "defaultMessage": "Đạt tiêu chuẩn"
+  },
+  "cwgho6": {
+    "defaultMessage": "Đang chờ duyệt..."
+  },
+  "c/0N4+": {
+    "defaultMessage": "Bị từ chối"
+  },
+  "c2UCNp": {
+    "defaultMessage": "Phần trăm"
+  },
+  "ccf+6T": {
+    "defaultMessage": "Các đội trưởng của {gameMode}"
+  },
+  "AGzOYr": {
+    "defaultMessage": "Nộp beatmap vào thể loại Được Yêu Thích!"
+  },
+  "BGA5hC": {
+    "defaultMessage": "Những nhà phát triển"
+  },
+  "BSKWqB": {
+    "defaultMessage": "Đội"
+  },
+  "CCGzFA": {
+    "defaultMessage": "Đã vượt qua vòng bình chọn"
+  },
+  "CIAu6S": {
+    "defaultMessage": "Wiki (những câu hỏi thường gặp)"
+  },
+  "CxsxoI": {
+    "defaultMessage": "Đang nộp..."
+  },
+  "Do+EPJ": {
+    "defaultMessage": "{user} đã kiểm tra với {score} vào {timestamp, date, long}"
+  },
+  "F1tQfW": {
+    "defaultMessage": "Tiêu đề"
+  },
+  "HVzPRU": {
+    "defaultMessage": "Không"
+  },
+  "Hf1vPz": {
+    "defaultMessage": "Beatmap đã được chọn"
+  },
+  "HvpI7B": {
+    "defaultMessage": "Bộ eatmap đã xóa"
+  },
+  "IO8Ye2": {
+    "defaultMessage": "Điểm"
+  },
+  "IiYTWb": {
+    "defaultMessage": "Đội hiện tại"
+  },
+  "Ipzb3R": {
+    "defaultMessage": "Không được phép"
+  },
+  "JHNIy2": {
+    "defaultMessage": "Thứ tự các vòng:"
+  },
+  "JPKVz4": {
+    "defaultMessage": "Bộ beatmap"
+  },
+  "JPSkxB": {
+    "defaultMessage": "Lá cờ của {country}"
+  },
+  "Jy6JW8": {
+    "defaultMessage": "Tôi chưa biết bạn là ai! Xin hãy thử <a>đăng nhập</a> trước."
+  },
+  "LBBZpt": {
+    "defaultMessage": "Chế độ chơi"
+  },
+  "Ll1LUO": {
+    "defaultMessage": "Được ủng hộ nhiều"
+  },
+  "Lm++cZ": {
+    "defaultMessage": "Dự án Được Yêu Thích"
+  },
+  "MLkhaQ": {
+    "defaultMessage": "Đang bình chọn"
+  },
+  "MUDTXQ": {
+    "defaultMessage": "Đường dẫn hoặc ID của bộ beatma"
+  },
+  "MoR8Of": {
+    "defaultMessage": "Sự đồng ý của tác giả beatmap"
+  },
+  "N4xf2i": {
+    "defaultMessage": "Yêu thích"
+  },
+  "NG8X9U": {
+    "defaultMessage": "Trang này chưa hoàn thiện"
+  },
+  "NjIKQe": {
+    "defaultMessage": "Không thể đến được"
+  },
+  "O2IvSs": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} đã nộp beatmap này vào {timestamp, date, long}} người dùng có tên {{user} đã nộp beatmap này}}"
+  },
+  "PCZJkZ": {
+    "defaultMessage": "Mã nguồn và nơi theo dõi vấn đề"
+  },
+  "PpxIZP": {
+    "defaultMessage": "Bị từ chối nhiều"
+  },
+  "PuVvCo": {
+    "defaultMessage": "Số phím"
+  },
+  "R0gvL0": {
+    "defaultMessage": "Nghệ sĩ"
+  },
+  "RHg+09": {
+    "defaultMessage": "Bạn muốn beatmap này Được Yêu Thích trong những chế độ chơi nào?"
+  },
+  "RL5Qu1": {
+    "defaultMessage": "Đã chấp nhận"
+  },
+  "RuFprR": {
+    "defaultMessage": "Khác"
+  },
+  "ScBgfg": {
+    "defaultMessage": "Không có sở thích rõ ràng"
+  },
+  "Sti+Y3": {
+    "defaultMessage": "Sau khi bạn nộp beabeatmap, bạn có thể kiểm tra tình trạng của nó trên <submissionsLink>trang \"Đã nộp\"</submissionsLink>."
+  },
+  "Tf7XH9": {
+    "defaultMessage": "Ghi chú:"
+  },
+  "TqI9fE": {
+    "defaultMessage": "Người chủ:"
+  },
+  "TrDD+Y": {
+    "defaultMessage": "Bạn cần phải <a>đăng nhập</a> để điền biểu mẫu này."
+  },
+  "U1fcdw": {
+    "defaultMessage": "Người soạn tin / Người quản lý"
+  },
+  "UjLvid": {
+    "defaultMessage": "Mở rộng"
+  },
+  "UxNmCh": {
+    "defaultMessage": "Trung bình"
+  },
+  "V5W+3b": {
+    "defaultMessage": "Sự đồng ý"
+  },
+  "VHEp9G": {
+    "defaultMessage": "Giảm dần"
+  },
+  "VYIbMd": {
+    "defaultMessage": "Đã Được Yêu Thích nhờ bình chọn"
+  },
+  "WEpxnj": {
+    "defaultMessage": "Lượt chơi"
+  },
+  "WjsRpS": {
+    "defaultMessage": "Tất cả beatmap trong bộ beatmap này quá ngắn (dưới 30 giây)."
+  },
+  "Y620ue": {
+    "defaultMessage": "Tất cả"
+  },
+  "ZEsdcm": {
+    "defaultMessage": "Chủ đề bình chọn"
+  },
+  "ZMV3ed": {
+    "defaultMessage": "Biểu tượng lá cờ của {author1} và {author2}"
+  },
+  "ZWbq0S": {
+    "defaultMessage": "Năm"
+  },
+  "ZZqLxU": {
+    "defaultMessage": "Độ khó"
+  },
+  "aHJR9F": {
+    "defaultMessage": "Sự đồng ý"
+  },
+  "bKfIQC": {
+    "defaultMessage": "Tại sao bạn muốn beatmap này Được Yêu Thích? <fade>(tùy chọn)</fade>"
+  },
+  "bcLpeC": {
+    "defaultMessage": "Không thông dụng"
+  },
+  "gLG6dL": {
+    "defaultMessage": "Beatmap đã nộp"
+  },
+  "gvLZL5": {
+    "defaultMessage": "Đăng xuất"
+  },
+  "ht0/kF": {
+    "defaultMessage": "Thông dụng"
+  },
+  "iCkWun": {
+    "defaultMessage": "Vòng"
+  },
+  "jVP2nx": {
+    "defaultMessage": "Tác giả của bộ beatmap này đã bị cấm."
+  },
+  "jlkqJz": {
+    "defaultMessage": "Quản lý"
+  },
+  "jlqkv1": {
+    "defaultMessage": "Đã được bầu chọn."
+  },
+  "kr2W+L": {
+    "defaultMessage": "<p>Điền vào biểu mẫu này sẽ giúgiúp <teamLink>các đội trưởng</teamLink> xác định những beatmap được bầu vào thể loại Được Yêu Thích trong các cuộc bình chọn hàng tháng. Kể cả khi beatmap đã <submissionsLink>được nộp</submissionsLink>, bạn vẫn có thể nêu cảm nghĩ về nó tại đây</p> <p>Một số điều cần lưu ý:</p>"
+  },
+  "l39agD": {
+    "defaultMessage": "Tình trạng"
+  },
+  "lMSjPi": {
+    "defaultMessage": "Phần này chưa có đối với bạn. Xin hãy quay lại sau!"
+  },
+  "lRk8DP": {
+    "defaultMessage": "Bị từ chối một chút"
+  },
+  "lULo+e": {
+    "defaultMessage": "Đã thất bại trong bình chọchọn"
+  },
+  "lbC8H+": {
+    "defaultMessage": "Tác giả beatmap"
+  },
+  "lz1fkx": {
+    "defaultMessage": "Có"
+  },
+  "me3BjX": {
+    "defaultMessage": "Thành tích"
+  },
+  "mhBW5h": {
+    "defaultMessage": "Tác giả beatmap"
+  },
+  "mucI2W": {
+    "defaultMessage": "Một phương thức để sắp xếp danh sách này. {definition}"
+  },
+  "necy1Q": {
+    "defaultMessage": "Danh sách này chỉ bao gồm những beatmap nộp qua website này. Các beatmap từ Google Sheets sẽ chuyển về đây trong thời gian ngắn, rôi sau đó file Google Sheets sẽ bị hủy."
+  },
+  "nn9fFb": {
+    "defaultMessage": "BPM"
+  },
+  "pLUxkj": {
+    "defaultMessage": "No"
+  },
+  "pNwB5k": {
+    "defaultMessage": "Mới!"
+  },
+  "pXOU6C": {
+    "defaultMessage": "Chưa có gì ở đây cả =("
+  },
+  "phKBIX": {
+    "defaultMessage": "Không rõ quốc gia"
+  },
+  "pvfxi+": {
+    "defaultMessage": "Beatmap đã nộp"
+  },
+  "qYCjeT": {
+    "defaultMessage": "Đuọc Yêu Thích"
+  },
+  "qfEiSZ": {
+    "defaultMessage": "Tổng cộng"
+  },
+  "rv3gh8": {
+    "defaultMessage": "{user} đã đánh dấu beatmap này là <score>không được phéphép</score> vào {timestamp, date, long}"
+  },
+  "sG6ons": {
+    "defaultMessage": "Danh sách những beatmap Được Yêu Thích"
+  },
+  "tCV6dl": {
+    "defaultMessage": "Ngôn ngữ: {selector}"
+  },
+  "uNpYlX": {
+    "defaultMessage": "Bị từ chối"
+  },
+  "urIF1D": {
+    "defaultMessage": "Bộ beatmap"
+  },
+  "vDQerf": {
+    "defaultMessage": "Kết quả bình chọn"
+  },
+  "wGcwBN": {
+    "defaultMessage": "Cao"
+  },
+  "xv9aUB": {
+    "defaultMessage": "Có và không"
+  },
+  "y+BE4P": {
+    "defaultMessage": "Tất cả"
+  },
+  "yQeX5q": {
+    "defaultMessage": "Nền: {selector}"
+  },
+  "wOZypU": {
+    "defaultMessage": "Nhóm osu! Alumni"
+  },
+  "zSxa2k": {
+    "defaultMessage": "Beatmap này đã được bầu chọn vào {roundName}."
+  },
+  "zn6DBN": {
+    "defaultMessage": "Sắp xếp theo:"
+  }
+}
