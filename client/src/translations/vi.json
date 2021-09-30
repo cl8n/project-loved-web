@@ -192,7 +192,7 @@
     "defaultMessage": "Không thể đến được"
   },
   "O2IvSs": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} đã nộp beatmap này vào {timestamp, date, long}} người dùng có tên {{user} đã nộp beatmap này}}"
+    "defaultMessage": "{hasTimestamp,select,true{{user} đã nộp beatmap này vào {timestamp, date, long}} other{{user} đã nộp beatmap này}}"
   },
   "PCZJkZ": {
     "defaultMessage": "Mã nguồn và nơi theo dõi vấn đề"
