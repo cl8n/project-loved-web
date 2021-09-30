@@ -3,6 +3,7 @@ import type { Request, Response, SuperAgentStatic } from 'superagent';
 import superagent from 'superagent';
 import db from './db';
 import Limiter from './Limiter';
+import { systemLog } from './log';
 
 if (
   process.env.OSU_CLIENT_ID == null ||
@@ -213,6 +214,14 @@ export class Osu {
       );
 
       for (const beatmap of beatmapset.beatmaps) {
+        if (beatmap.bpm == null) {
+          systemLog(
+            `Beatmap #${beatmap.id} has ${beatmap.bpm} BPM, setting to 0`,
+            SyslogLevel.warning,
+          );
+          beatmap.bpm = 0;
+        }
+
         gameModes.add(beatmap.mode_int);
 
         const dbFields = {
