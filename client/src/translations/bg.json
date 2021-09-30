@@ -1,0 +1,398 @@
+{
+  "+3rK3I": {
+    "defaultMessage": "Без отговор"
+  },
+  "+9RCG/": {
+    "defaultMessage": "Други икони от {author}"
+  },
+  "+bCbtl": {
+    "defaultMessage": "Колони:"
+  },
+  "+d4ZcX": {
+    "defaultMessage": "Модератори"
+  },
+  "/CNHO3": {
+    "defaultMessage": "Вход с osu!"
+  },
+  "/SSCZX": {
+    "defaultMessage": "Да"
+  },
+  "0+S3hP": {
+    "defaultMessage": "Когато изпратеният бийтмап е доста непопулярен или не може да се играе, капитанът дори няма да го прегледа. Молим да изпращате само бийтмапове които вярвате че ще имат стойност в категория Обичани."
+  },
+  "06WpMi": {
+    "defaultMessage": "Класиран"
+  },
+  "0Vz3c/": {
+    "defaultMessage": "Процент и общо"
+  },
+  "2SX61V": {
+    "defaultMessage": "Бележки"
+  },
+  "2YTMfX": {
+    "defaultMessage": "Изпрати и остани в страницата"
+  },
+  "2dOoEc": {
+    "defaultMessage": "Проверяват метаданни"
+  },
+  "38JPtF": {
+    "defaultMessage": "Анкетата е в ход "
+  },
+  "39zfVl": {
+    "defaultMessage": "лека подкрепа"
+  },
+  "3E4vRf": {
+    "defaultMessage": "Нисък"
+  },
+  "3J+k4U": {
+    "defaultMessage": "Форум"
+  },
+  "3Kch6P": {
+    "defaultMessage": "Възходящ"
+  },
+  "3RdYB+": {
+    "defaultMessage": "Игрален режим:"
+  },
+  "5NZbY5": {
+    "defaultMessage": "Вид резултати:"
+  },
+  "5OS21f": {
+    "defaultMessage": "Външни:"
+  },
+  "5oqovx": {
+    "defaultMessage": "Предложи Бийтмап"
+  },
+  "7CJMwD": {
+    "defaultMessage": "Приоритет"
+  },
+  "8NqvA2": {
+    "defaultMessage": "Клавишен режим:"
+  },
+  "8bAHuK": {
+    "defaultMessage": "Затвори"
+  },
+  "8l6BC0": {
+    "defaultMessage": "Съгласие на Създател"
+  },
+  "9cv8r4": {
+    "defaultMessage": "Бийтмап"
+  },
+  "AGzOYr": {
+    "defaultMessage": "Предложи бийтмап за Обичан!"
+  },
+  "BGA5hC": {
+    "defaultMessage": "Разработчици"
+  },
+  "BSKWqB": {
+    "defaultMessage": "Екип"
+  },
+  "Be0kKF": {
+    "defaultMessage": "Изпратеният бийтмап, дори да има някаква стойност, никога преди не трябва да е номиниран за Обичани. Към момента има определен лимит за бийтмаповете получаващи Обич, затова има вероятност че капитаните продължително ще търсят по-добри избори от вашия изпратен."
+  },
+  "CCGzFA": {
+    "defaultMessage": "Премина гласуването"
+  },
+  "CIAu6S": {
+    "defaultMessage": "Wiki"
+  },
+  "CxsxoI": {
+    "defaultMessage": "Изпращане..."
+  },
+  "Do+EPJ": {
+    "defaultMessage": "{user} даде {score} през {timestamp, date, long}"
+  },
+  "EqGiDp": {
+    "defaultMessage": "Съдържанието изпратеното през този формуляр ще бъде публично видимо, така че не пишете нещо което не искате да видят всички. Може да не попълвате полето 'защо' ако не желаете."
+  },
+  "F1tQfW": {
+    "defaultMessage": "Заглавие"
+  },
+  "G1mG5h": {
+    "defaultMessage": "Създателят е заявил че не иска този бийтмап да бъде замесен с категория Обичани."
+  },
+  "H65rvb": {
+    "defaultMessage": "Не си достатъчно готин за да разгледаш тази страница."
+  },
+  "HVzPRU": {
+    "defaultMessage": "Не"
+  },
+  "Hf1vPz": {
+    "defaultMessage": "Избори"
+  },
+  "HvpI7B": {
+    "defaultMessage": "Изтрит бийтмап"
+  },
+  "IO8Ye2": {
+    "defaultMessage": "Резултат"
+  },
+  "IiYTWb": {
+    "defaultMessage": "Текущ екип"
+  },
+  "Ipzb3R": {
+    "defaultMessage": "Без разрешение"
+  },
+  "JHNIy2": {
+    "defaultMessage": "Ред на Рунд:"
+  },
+  "JPKVz4": {
+    "defaultMessage": "Бийтмап"
+  },
+  "JPSkxB": {
+    "defaultMessage": "{country} флаг"
+  },
+  "Jy6JW8": {
+    "defaultMessage": "Не ви познавам! Опитайте да <a>влезнете</a> първо."
+  },
+  "LBBZpt": {
+    "defaultMessage": "Игрален режим"
+  },
+  "Ll1LUO": {
+    "defaultMessage": "силна подкрепа"
+  },
+  "Lm++cZ": {
+    "defaultMessage": "Проект Обичани"
+  },
+  "MLkhaQ": {
+    "defaultMessage": "Гласува се"
+  },
+  "MUDTXQ": {
+    "defaultMessage": "Връзка към Бийтмап или ID"
+  },
+  "MoR8Of": {
+    "defaultMessage": "Съгласие на създател"
+  },
+  "N4xf2i": {
+    "defaultMessage": "Любим"
+  },
+  "NG8X9U": {
+    "defaultMessage": "В процес на изграждане"
+  },
+  "NjIKQe": {
+    "defaultMessage": "Без връзка"
+  },
+  "O2IvSs": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} изпрати този бийтмап през {timestamp, date, long}} other{{user} изпрати този бийтмап}}"
+  },
+  "Oep6va": {
+    "defaultMessage": "Изпрати"
+  },
+  "PCZJkZ": {
+    "defaultMessage": "Изходен код и разрешаване на проблеми"
+  },
+  "PpxIZP": {
+    "defaultMessage": "силно възражение"
+  },
+  "PuVvCo": {
+    "defaultMessage": "Клавиши"
+  },
+  "R0gvL0": {
+    "defaultMessage": "Автор"
+  },
+  "RHg+09": {
+    "defaultMessage": "За кои режими на игра искате този бийтмап да е Обичан?"
+  },
+  "RL5Qu1": {
+    "defaultMessage": "Одобрен"
+  },
+  "RuFprR": {
+    "defaultMessage": "Друг"
+  },
+  "ScBgfg": {
+    "defaultMessage": "без предпочитание"
+  },
+  "Sti+Y3": {
+    "defaultMessage": "След изпращане на бийтмап може да се провери статуса му в страницата с <submissionsLink>\"Предложения\"</submissionsLink>."
+  },
+  "Tf7XH9": {
+    "defaultMessage": "Бележки"
+  },
+  "TqI9fE": {
+    "defaultMessage": "Админ:"
+  },
+  "TrDD+Y": {
+    "defaultMessage": "Трябва да <a>влезнете</a> за попълване на формуляра."
+  },
+  "U1fcdw": {
+    "defaultMessage": "Управители / редактори на Новини"
+  },
+  "UjLvid": {
+    "defaultMessage": "Разгъване"
+  },
+  "UxNmCh": {
+    "defaultMessage": "Среден"
+  },
+  "V5W+3b": {
+    "defaultMessage": "Съгласие"
+  },
+  "VHEp9G": {
+    "defaultMessage": "Низходящ"
+  },
+  "VYIbMd": {
+    "defaultMessage": "Обичан чрез гласуване"
+  },
+  "WEpxnj": {
+    "defaultMessage": "Изигран"
+  },
+  "WjsRpS": {
+    "defaultMessage": "Всеки бийтмап от комплекта е твърде кратък (под 30 секунди)."
+  },
+  "Y620ue": {
+    "defaultMessage": "Всички"
+  },
+  "ZEsdcm": {
+    "defaultMessage": "Анкетна страница"
+  },
+  "ZMV3ed": {
+    "defaultMessage": "Икони на знамена от {author1} и {author2}"
+  },
+  "ZWbq0S": {
+    "defaultMessage": "Година"
+  },
+  "ZZqLxU": {
+    "defaultMessage": "Трудности"
+  },
+  "aHJR9F": {
+    "defaultMessage": "Съгласие"
+  },
+  "bKfIQC": {
+    "defaultMessage": "Защо искате този бийтмап да е обичан? <fade>(незадължително)</fade>"
+  },
+  "bcLpeC": {
+    "defaultMessage": "Редки"
+  },
+  "c/0N4+": {
+    "defaultMessage": "възражение"
+  },
+  "c2UCNp": {
+    "defaultMessage": "Процент"
+  },
+  "ccf+6T": {
+    "defaultMessage": "{gameMode} капитани"
+  },
+  "cwgho6": {
+    "defaultMessage": "Изчакващ"
+  },
+  "dG9/uH": {
+    "defaultMessage": "Квалифициран"
+  },
+  "e6WZri": {
+    "defaultMessage": "подкрепа"
+  },
+  "gLG6dL": {
+    "defaultMessage": "Предложени бийтмапове"
+  },
+  "gvLZL5": {
+    "defaultMessage": "Изход"
+  },
+  "ht0/kF": {
+    "defaultMessage": "Чести"
+  },
+  "iCkWun": {
+    "defaultMessage": "Рунд"
+  },
+  "jVP2nx": {
+    "defaultMessage": "Домакинът на бийтмапа е баннат."
+  },
+  "jlkqJz": {
+    "defaultMessage": "Управление"
+  },
+  "jlqkv1": {
+    "defaultMessage": "Номиниран"
+  },
+  "kr2W+L": {
+    "defaultMessage": "<p>Попълвайки този формуляр помагате на <teamLink>капитаните</teamLink> с решението кой бийтмап да бъде номиниран за обич в месечните анкети. Дори вече успешно да е <submissionsLink>изпратен</submissionsLink> бийтмапа, тук може да оставите мнението си относно него.</p> <p>Неща които да имате предвид:</p>"
+  },
+  "l39agD": {
+    "defaultMessage": "Статус"
+  },
+  "lMSjPi": {
+    "defaultMessage": "Това все още не е достъпно за теб. Провери пак скоро!"
+  },
+  "lRk8DP": {
+    "defaultMessage": "леко възражение"
+  },
+  "lULo+e": {
+    "defaultMessage": "Неуспешно гласуване"
+  },
+  "lbC8H+": {
+    "defaultMessage": "Създател"
+  },
+  "lz1fkx": {
+    "defaultMessage": "Yes"
+  },
+  "me3BjX": {
+    "defaultMessage": "Статистика"
+  },
+  "mhBW5h": {
+    "defaultMessage": "Създател"
+  },
+  "mucI2W": {
+    "defaultMessage": "Метод за изчисление на тази подредба. {definition}"
+  },
+  "necy1Q": {
+    "defaultMessage": "Текущият списък включва само изпращанията през този уебсайт. Записите чрез стария метод с Гугъл ще бъдат преместени скоро, а след това списъците на Гугъл ще бъдат пенсионирани."
+  },
+  "nn9fFb": {
+    "defaultMessage": "BPM"
+  },
+  "pLUxkj": {
+    "defaultMessage": "Не"
+  },
+  "pNwB5k": {
+    "defaultMessage": "Нов!"
+  },
+  "pXOU6C": {
+    "defaultMessage": "Няма нищо тук =("
+  },
+  "phKBIX": {
+    "defaultMessage": "Неизвестна държава"
+  },
+  "pvfxi+": {
+    "defaultMessage": "Предложения"
+  },
+  "qYCjeT": {
+    "defaultMessage": "Обичан"
+  },
+  "qfEiSZ": {
+    "defaultMessage": "Общо"
+  },
+  "rv3gh8": {
+    "defaultMessage": "{user} отбеляза с <score>без разрешение</score> през {timestamp, date, long}"
+  },
+  "sG6ons": {
+    "defaultMessage": "Списък с Обичани"
+  },
+  "tCV6dl": {
+    "defaultMessage": "Език: {selector}"
+  },
+  "uNpYlX": {
+    "defaultMessage": "Отхвърлен"
+  },
+  "urIF1D": {
+    "defaultMessage": "Бийтмап"
+  },
+  "vDQerf": {
+    "defaultMessage": "Резултати от гласуване"
+  },
+  "wGcwBN": {
+    "defaultMessage": "Висок"
+  },
+  "wOZypU": {
+    "defaultMessage": "Възпитаници"
+  },
+  "xv9aUB": {
+    "defaultMessage": "Да и Не"
+  },
+  "y+BE4P": {
+    "defaultMessage": "Всички"
+  },
+  "yQeX5q": {
+    "defaultMessage": "Облик: {selector}"
+  },
+  "zSxa2k": {
+    "defaultMessage": "Този бийтмап е номиниран за {roundName}."
+  },
+  "zn6DBN": {
+    "defaultMessage": "Подреждане по:"
+  }
+}
