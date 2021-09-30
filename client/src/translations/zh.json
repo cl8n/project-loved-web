@@ -78,7 +78,7 @@
     "defaultMessage": "关闭"
   },
   "8l6BC0": {
-    "defaultMessage": "谱面作家的赞同"
+    "defaultMessage": "谱面作家意见"
   },
   "9cv8r4": {
     "defaultMessage": "谱面集"
@@ -96,7 +96,7 @@
     "defaultMessage": "即使你提交的地图确实有一些优点，也可能永远不会被提名为 \"Loved\"。目前变成\"Loved\"的地图的速度是有限制的，所以队长们有可能不断地找到比您提交的地图更好的选择。"
   },
   "CCGzFA": {
-    "defaultMessage": "通过投票"
+    "defaultMessage": "已通过投票"
   },
   "CIAu6S": {
     "defaultMessage": "Wiki"
@@ -165,10 +165,10 @@
     "defaultMessage": "谱面链接或谱面ID"
   },
   "MoR8Of": {
-    "defaultMessage": "谱面作家评论"
+    "defaultMessage": "谱面作家意见"
   },
   "N4xf2i": {
-    "defaultMessage": "喜爱数"
+    "defaultMessage": "收藏数"
   },
   "NG8X9U": {
     "defaultMessage": "建设中"
@@ -207,7 +207,7 @@
     "defaultMessage": "提交地图之后, 你可以在<submissionsLink>提交页面</submissionsLink>检查地图状态。"
   },
   "Tf7XH9": {
-    "defaultMessage": "备注"
+    "defaultMessage": "评论"
   },
   "TqI9fE": {
     "defaultMessage": "管理:"
@@ -225,10 +225,10 @@
     "defaultMessage": "中"
   },
   "V5W+3b": {
-    "defaultMessage": "评论"
+    "defaultMessage": "意见"
   },
   "aHJR9F": {
-    "defaultMessage": "评论"
+    "defaultMessage": "意见"
   },
   "VHEp9G": {
     "defaultMessage": "降序"
@@ -252,7 +252,7 @@
     "defaultMessage": "旗帜图标来自 {author1} 和 {author2}"
   },
   "ZWbq0S": {
-    "defaultMessage": "年"
+    "defaultMessage": "年份"
   },
   "ZZqLxU": {
     "defaultMessage": "难度"
@@ -267,13 +267,13 @@
     "defaultMessage": "拒绝"
   },
   "c2UCNp": {
-    "defaultMessage": "白粉笔"
+    "defaultMessage": "百分比"
   },
   "ccf+6T": {
     "defaultMessage": "{gameMode} 队长"
   },
   "cwgho6": {
-    "defaultMessage": "Pending"
+    "defaultMessage": "提交中"
   },
   "dG9/uH": {
     "defaultMessage": "Qualified"
@@ -315,10 +315,10 @@
     "defaultMessage": "轻微不同意"
   },
   "lULo+e": {
-    "defaultMessage": "投票失败"
+    "defaultMessage": "在投票中失败"
   },
   "lbC8H+": {
-    "defaultMessage": "谱面作者"
+    "defaultMessage": "谱面作家"
   },
   "lz1fkx": {
     "defaultMessage": "是"
@@ -333,7 +333,7 @@
     "defaultMessage": "列表排序方式 {definition}"
   },
   "wGcwBN": {
-    "defaultMessage": "高分"
+    "defaultMessage": "高"
   },
   "necy1Q": {
     "defaultMessage": "这个列表只包括从这个网站发送的作品。旧的谷歌表格将很快被移到这里，然后谷歌表格将废弃。"
@@ -372,7 +372,7 @@
     "defaultMessage": "显示语言: {selector}"
   },
   "uNpYlX": {
-    "defaultMessage": "已拒绝"
+    "defaultMessage": "强烈反对"
   },
   "urIF1D": {
     "defaultMessage": "谱面集"
@@ -391,5 +391,8 @@
   },
   "yQeX5q": {
     "defaultMessage": "主题: {selector}"
+  },
+  "PuVvCo": {
+    "defaultMessage": "键位数"
   }
 }
