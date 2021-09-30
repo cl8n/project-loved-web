@@ -1,0 +1,530 @@
+{
+  "+3rK3I": {
+    "defaultMessage": "Без отговор",
+    "description": "Mapper consent shown in mapper consents table"
+  },
+  "+9RCG/": {
+    "defaultMessage": "Други икони от {author}",
+    "description": "Credit in site footer"
+  },
+  "+bCbtl": {
+    "defaultMessage": "Колони:",
+    "description": "Title for options to show or hide columns"
+  },
+  "+d4ZcX": {
+    "defaultMessage": "Модератори",
+    "description": "Team listing title"
+  },
+  "/CNHO3": {
+    "defaultMessage": "Вход с osu!",
+    "description": "Button in site header to log in"
+  },
+  "/SSCZX": {
+    "defaultMessage": "Да",
+    "description": "Poll results table header"
+  },
+  "0+S3hP": {
+    "defaultMessage": "Когато изпратеният бийтмап е доста непопулярен или не може да се играе, капитанът дори няма да го прегледа. Молим да изпращате само бийтмапове които вярвате че ще имат стойност в категория Обичани.",
+    "description": "Submission form list item 2"
+  },
+  "06WpMi": {
+    "defaultMessage": "Класиран",
+    "description": "Beatmap status"
+  },
+  "0Vz3c/": {
+    "defaultMessage": "Процент и общо",
+    "description": "Result display option for poll results table"
+  },
+  "2SX61V": {
+    "defaultMessage": "Бележки",
+    "description": "Mapper consents table header"
+  },
+  "2YTMfX": {
+    "defaultMessage": "Изпрати и остани в страницата",
+    "description": "Submit button that doesn't navigate to the submissions page afterward"
+  },
+  "2dOoEc": {
+    "defaultMessage": "Проверяват метаданни",
+    "description": "Team listing title"
+  },
+  "38JPtF": {
+    "defaultMessage": "Анкетата е в ход ",
+    "description": "Placeholder for results for ongoing polls"
+  },
+  "39zfVl": {
+    "defaultMessage": "лека подкрепа",
+    "description": "+1 review score. Fits into {score} of the review line"
+  },
+  "3E4vRf": {
+    "defaultMessage": "Нисък",
+    "description": "Aggregate review score shown on submissions table"
+  },
+  "3J+k4U": {
+    "defaultMessage": "Форум",
+    "description": "Nav link"
+  },
+  "3Kch6P": {
+    "defaultMessage": "Възходящ",
+    "description": "Round order option for poll results table"
+  },
+  "3RdYB+": {
+    "defaultMessage": "Игрален режим:",
+    "description": "Selector to change game mode"
+  },
+  "5NZbY5": {
+    "defaultMessage": "Вид резултати:",
+    "description": "Selector to change result display in poll results table"
+  },
+  "5OS21f": {
+    "defaultMessage": "Външни:",
+    "description": "Nav separator"
+  },
+  "5oqovx": {
+    "defaultMessage": "Предложи Бийтмап",
+    "description": "Nav link"
+  },
+  "7CJMwD": {
+    "defaultMessage": "Приоритет",
+    "description": "Submissions table header"
+  },
+  "8NqvA2": {
+    "defaultMessage": "Клавишен режим:",
+    "description": "Selector to change osu!mania key mode"
+  },
+  "8bAHuK": {
+    "defaultMessage": "Затвори",
+    "description": "Button to close forms, dropdowns, modals, etc."
+  },
+  "8l6BC0": {
+    "defaultMessage": "Съгласие на Създател",
+    "description": "Mapper consents page title"
+  },
+  "9cv8r4": {
+    "defaultMessage": "Бийтмап",
+    "description": "Poll results table header"
+  },
+  "AGzOYr": {
+    "defaultMessage": "Предложи бийтмап за Обичан!",
+    "description": "Submission form title"
+  },
+  "BGA5hC": {
+    "defaultMessage": "Разработчици",
+    "description": "Team listing title"
+  },
+  "BSKWqB": {
+    "defaultMessage": "Екип",
+    "description": "Nav link"
+  },
+  "Be0kKF": {
+    "defaultMessage": "Изпратеният бийтмап, дори да има някаква стойност, никога преди не трябва да е номиниран за Обичани. Към момента има определен лимит за бийтмаповете получаващи Обич, затова има вероятност че капитаните продължително ще търсят по-добри избори от вашия изпратен.",
+    "description": "Submission form list item 3"
+  },
+  "CCGzFA": {
+    "defaultMessage": "Премина гласуването",
+    "description": "Aggregate review score shown on submissions table for maps that passed community voting"
+  },
+  "CIAu6S": {
+    "defaultMessage": "Wiki",
+    "description": "Nav link"
+  },
+  "CxsxoI": {
+    "defaultMessage": "Изпращане...",
+    "description": "Submit button when in progress"
+  },
+  "Do+EPJ": {
+    "defaultMessage": "{user} даде {score} през {timestamp, date, long}",
+    "description": "Review line"
+  },
+  "EqGiDp": {
+    "defaultMessage": "Съдържанието изпратеното през този формуляр ще бъде публично видимо, така че не пишете нещо което не искате да видят всички. Може да не попълвате полето 'защо' ако не желаете.",
+    "description": "Submission form list item 1"
+  },
+  "F1tQfW": {
+    "defaultMessage": "Заглавие",
+    "description": "Submissions table sort option"
+  },
+  "G1mG5h": {
+    "defaultMessage": "Създателят е заявил че не иска този бийтмап да бъде замесен с категория Обичани.",
+    "description": "Help text explaining that a map cannot be Loved due to its mapper not consenting to it"
+  },
+  "H65rvb": {
+    "defaultMessage": "Не си достатъчно готин за да разгледаш тази страница.",
+    "description": "Error message shown when logged in but not having permission to view a page"
+  },
+  "HVzPRU": {
+    "defaultMessage": "Не",
+    "description": "Poll results table header"
+  },
+  "Hf1vPz": {
+    "defaultMessage": "Избори",
+    "description": "Nav link"
+  },
+  "HvpI7B": {
+    "defaultMessage": "Изтрит бийтмап",
+    "description": "Placeholder for beatmapsets that were deleted from osu!"
+  },
+  "IO8Ye2": {
+    "defaultMessage": "Резултат",
+    "description": "Submissions table header"
+  },
+  "IiYTWb": {
+    "defaultMessage": "Текущ екип",
+    "description": "Team listing group title"
+  },
+  "Ipzb3R": {
+    "defaultMessage": "Без разрешение",
+    "description": "Aggregate review score shown on submissions table for maps that cannot be Loved"
+  },
+  "JHNIy2": {
+    "defaultMessage": "Ред на Рунд:",
+    "description": "Selector to change round order in poll results table"
+  },
+  "JPKVz4": {
+    "defaultMessage": "Бийтмап",
+    "description": "Mapper beatmapset consents table header"
+  },
+  "JPSkxB": {
+    "defaultMessage": "{country} флаг",
+    "description": "Country flag image alt text"
+  },
+  "Jy6JW8": {
+    "defaultMessage": "Не ви познавам! Опитайте да <a>влезнете</a> първо.",
+    "description": "Error message shown when trying to view a protected page before logging in"
+  },
+  "LBBZpt": {
+    "defaultMessage": "Игрален режим",
+    "description": "Poll results table header"
+  },
+  "Ll1LUO": {
+    "defaultMessage": "силна подкрепа",
+    "description": "+3 review score. Fits into {score} of the review line"
+  },
+  "Lm++cZ": {
+    "defaultMessage": "Проект Обичани",
+    "description": "Заглавие на сайт"
+  },
+  "MLkhaQ": {
+    "defaultMessage": "Гласува се",
+    "description": "Aggregate review score shown on submissions table for maps currently in community voting"
+  },
+  "MUDTXQ": {
+    "defaultMessage": "Връзка към Бийтмап или ID",
+    "description": "Submission form beatmapset input prompt"
+  },
+  "MoR8Of": {
+    "defaultMessage": "Съгласие на създател",
+    "description": "Nav link"
+  },
+  "N4xf2i": {
+    "defaultMessage": "Любим",
+    "description": "Submissions table header"
+  },
+  "NG8X9U": {
+    "defaultMessage": "В процес на изграждане",
+    "description": "Title of page not yet ready for public access"
+  },
+  "NjIKQe": {
+    "defaultMessage": "Без връзка",
+    "description": "Mapper consent shown in mapper consents table"
+  },
+  "O2IvSs": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} изпрати този бийтмап през {timestamp, date, long}} other{{user} изпрати този бийтмап}}",
+    "description": "Submission line"
+  },
+  "Oep6va": {
+    "defaultMessage": "Изпрати",
+    "description": "Submit button"
+  },
+  "PCZJkZ": {
+    "defaultMessage": "Изходен код и разрешаване на проблеми",
+    "description": "Link to GitHub repository in site footer"
+  },
+  "PpxIZP": {
+    "defaultMessage": "силно възражение",
+    "description": "-3 review score. Fits into {score} of the review line"
+  },
+  "PuVvCo": {
+    "defaultMessage": "Клавиши",
+    "description": "Submissions table header"
+  },
+  "R0gvL0": {
+    "defaultMessage": "Автор",
+    "description": "Submissions table sort option"
+  },
+  "RHg+09": {
+    "defaultMessage": "За кои режими на игра искате този бийтмап да е Обичан?",
+    "description": "Submission form game mode input prompt"
+  },
+  "RL5Qu1": {
+    "defaultMessage": "Одобрен",
+    "description": "Beatmap status"
+  },
+  "RuFprR": {
+    "defaultMessage": "Друг",
+    "description": "Team listing title for any role not explicitly listed"
+  },
+  "ScBgfg": {
+    "defaultMessage": "без предпочитание",
+    "description": "0 review score. Fits into {score} of the review line"
+  },
+  "Sti+Y3": {
+    "defaultMessage": "След изпращане на бийтмап може да се провери статуса му в страницата с <submissionsLink>\"Предложения\"</submissionsLink>.",
+    "description": "Submission form list item 4"
+  },
+  "Tf7XH9": {
+    "defaultMessage": "Бележки",
+    "description": "Mapper beatmapset consents table header"
+  },
+  "TqI9fE": {
+    "defaultMessage": "Админ:",
+    "description": "Nav separator"
+  },
+  "TrDD+Y": {
+    "defaultMessage": "Трябва да <a>влезнете</a> за попълване на формуляра.",
+    "description": "Submission form login prompt"
+  },
+  "U1fcdw": {
+    "defaultMessage": "Управители / редактори на Новини",
+    "description": "Team listing title"
+  },
+  "UjLvid": {
+    "defaultMessage": "Разгъване",
+    "description": "Button to expand dropdowns"
+  },
+  "UxNmCh": {
+    "defaultMessage": "Среден",
+    "description": "Aggregate review score shown on submissions table"
+  },
+  "V5W+3b": {
+    "defaultMessage": "Съгласие",
+    "description": "Mapper beatmapset consents table header"
+  },
+  "VHEp9G": {
+    "defaultMessage": "Низходящ",
+    "description": "Round order option for poll results table"
+  },
+  "VYIbMd": {
+    "defaultMessage": "Обичан чрез гласуване",
+    "description": "Beatmap status shown on submissions table for maps that passed community voting"
+  },
+  "WEpxnj": {
+    "defaultMessage": "Изигран",
+    "description": "Submissions table header"
+  },
+  "WjsRpS": {
+    "defaultMessage": "Всеки бийтмап от комплекта е твърде кратък (под 30 секунди).",
+    "description": "Help text explaining that a map cannot be Loved due to its length"
+  },
+  "Y620ue": {
+    "defaultMessage": "Всички",
+    "description": "osu!mania key mode option for submissions table"
+  },
+  "ZEsdcm": {
+    "defaultMessage": "Анкетна страница",
+    "description": "Poll results table header"
+  },
+  "ZMV3ed": {
+    "defaultMessage": "Икони на знамена от {author1} и {author2}",
+    "description": "Credit in site footer"
+  },
+  "ZWbq0S": {
+    "defaultMessage": "Година",
+    "description": "Submissions table header"
+  },
+  "ZZqLxU": {
+    "defaultMessage": "Трудности",
+    "description": "Submissions table header"
+  },
+  "aHJR9F": {
+    "defaultMessage": "Съгласие",
+    "description": "Mapper consents table header"
+  },
+  "bKfIQC": {
+    "defaultMessage": "Защо искате този бийтмап да е обичан? <fade>(незадължително)</fade>",
+    "description": "Submission form reason input prompt"
+  },
+  "bcLpeC": {
+    "defaultMessage": "Редки",
+    "description": "osu!mania key mode option group for uncommon key modes"
+  },
+  "c/0N4+": {
+    "defaultMessage": "възражение",
+    "description": "-2 review score. Fits into {score} of the review line"
+  },
+  "c2UCNp": {
+    "defaultMessage": "Процент",
+    "description": "Poll results table header"
+  },
+  "ccf+6T": {
+    "defaultMessage": "{gameMode} капитани",
+    "description": "Team listing title"
+  },
+  "cwgho6": {
+    "defaultMessage": "Изчакващ",
+    "description": "Aggregate review score shown on submissions table for maps with no reviews"
+  },
+  "dG9/uH": {
+    "defaultMessage": "Квалифициран",
+    "description": "Beatmap status"
+  },
+  "e6WZri": {
+    "defaultMessage": "подкрепа",
+    "description": "+2 review score. Fits into {score} of the review line"
+  },
+  "gLG6dL": {
+    "defaultMessage": "Предложени бийтмапове",
+    "description": "Submissions table title"
+  },
+  "gvLZL5": {
+    "defaultMessage": "Изход",
+    "description": "Button in site header to log out"
+  },
+  "ht0/kF": {
+    "defaultMessage": "Чести",
+    "description": "osu!mania key mode option group for common key modes"
+  },
+  "iCkWun": {
+    "defaultMessage": "Рунд",
+    "description": "Poll results table header"
+  },
+  "jVP2nx": {
+    "defaultMessage": "Домакинът на бийтмапа е баннат.",
+    "description": "Help text explaining that a map cannot be Loved due to its mapper being banned"
+  },
+  "jlkqJz": {
+    "defaultMessage": "Управление",
+    "description": "Nav link"
+  },
+  "jlqkv1": {
+    "defaultMessage": "Номиниран",
+    "description": "Aggregate review score shown on submissions table for maps nominated by captains for future voting"
+  },
+  "kr2W+L": {
+    "defaultMessage": "<p>Попълвайки този формуляр помагате на <teamLink>капитаните</teamLink> с решението кой бийтмап да бъде номиниран за обич в месечните анкети. Дори вече успешно да е <submissionsLink>изпратен</submissionsLink> бийтмапа, тук може да оставите мнението си относно него.</p> <p>Неща които да имате предвид:</p>",
+    "description": "Submission form intro"
+  },
+  "l39agD": {
+    "defaultMessage": "Статус",
+    "description": "Submissions table header"
+  },
+  "lMSjPi": {
+    "defaultMessage": "Това все още не е достъпно за теб. Провери пак скоро!",
+    "description": "Body of page not yet ready for public access"
+  },
+  "lRk8DP": {
+    "defaultMessage": "леко възражение",
+    "description": "-1 review score. Fits into {score} of the review line"
+  },
+  "lULo+e": {
+    "defaultMessage": "Неуспешно гласуване",
+    "description": "Aggregate review score shown on submissions table for maps that failed community voting"
+  },
+  "lbC8H+": {
+    "defaultMessage": "Създател",
+    "description": "Mapper consents table header"
+  },
+  "lz1fkx": {
+    "defaultMessage": "Yes",
+    "description": "Boolean"
+  },
+  "me3BjX": {
+    "defaultMessage": "Статистика",
+    "description": "Nav link"
+  },
+  "mhBW5h": {
+    "defaultMessage": "Създател",
+    "description": "Submissions table header"
+  },
+  "mucI2W": {
+    "defaultMessage": "Метод за изчисление на тази подредба. {definition}",
+    "description": "Help text for \"Score\" submissions table header"
+  },
+  "necy1Q": {
+    "defaultMessage": "Текущият списък включва само изпращанията през този уебсайт. Записите чрез стария метод с Гугъл ще бъдат преместени скоро, а след това списъците на Гугъл ще бъдат пенсионирани.",
+    "description": "Warning box above submissions table"
+  },
+  "nn9fFb": {
+    "defaultMessage": "BPM",
+    "description": "Submissions table header"
+  },
+  "pLUxkj": {
+    "defaultMessage": "Не",
+    "description": "Boolean"
+  },
+  "pNwB5k": {
+    "defaultMessage": "Нов!",
+    "description": "Indicator for content recently updated"
+  },
+  "pXOU6C": {
+    "defaultMessage": "Няма нищо тук =(",
+    "description": "Body of \"not found\" page"
+  },
+  "phKBIX": {
+    "defaultMessage": "Неизвестна държава",
+    "description": "Shown in flag image alt text for the \"?\" flag"
+  },
+  "pvfxi+": {
+    "defaultMessage": "Предложения",
+    "description": "Nav link"
+  },
+  "qYCjeT": {
+    "defaultMessage": "Обичан",
+    "description": "Beatmap status"
+  },
+  "qfEiSZ": {
+    "defaultMessage": "Общо",
+    "description": "Poll results table header"
+  },
+  "rv3gh8": {
+    "defaultMessage": "{user} отбеляза с <score>без разрешение</score> през {timestamp, date, long}",
+    "description": "Review line for marking the map as not allowed"
+  },
+  "sG6ons": {
+    "defaultMessage": "Списък с Обичани",
+    "description": "Nav link"
+  },
+  "tCV6dl": {
+    "defaultMessage": "Език: {selector}",
+    "description": "Selector in site header to change language"
+  },
+  "uNpYlX": {
+    "defaultMessage": "Отхвърлен",
+    "description": "Aggregate review score shown on submissions table"
+  },
+  "urIF1D": {
+    "defaultMessage": "Бийтмап",
+    "description": "Submissions table header"
+  },
+  "vDQerf": {
+    "defaultMessage": "Резултати от гласуване",
+    "description": "Poll results title"
+  },
+  "wGcwBN": {
+    "defaultMessage": "Висок",
+    "description": "Aggregate review score shown on submissions table"
+  },
+  "wOZypU": {
+    "defaultMessage": "Възпитаници",
+    "description": "Team listing group title"
+  },
+  "xv9aUB": {
+    "defaultMessage": "Да и Не",
+    "description": "Result display option for poll results table"
+  },
+  "y+BE4P": {
+    "defaultMessage": "Всички",
+    "description": "Game mode option for poll results table"
+  },
+  "yQeX5q": {
+    "defaultMessage": "Облик: {selector}",
+    "description": "Selector in site header to change theme"
+  },
+  "zSxa2k": {
+    "defaultMessage": "Този бийтмап е номиниран за {roundName}.",
+    "description": "Help text explaining that a map has been nominated"
+  },
+  "zn6DBN": {
+    "defaultMessage": "Подреждане по:",
+    "description": "Title for sorting options"
+  }
+}
