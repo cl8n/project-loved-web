@@ -281,12 +281,17 @@ type Req<Body = Record<string, unknown>> = import('express').Request<
 
 //#region osu! API
 interface OsuApiBeatmap {
+  beatmapset_id: number;
   bpm: number;
   cs: number;
   deleted_at?: string | null;
   difficulty_rating: number;
+  id: number;
   mode_int: GameMode;
-  [key: string]: unknown;
+  playcount: number;
+  ranked: RankedStatus;
+  total_length: number;
+  version: string;
 }
 
 interface OsuApiBeatmapset {
@@ -301,7 +306,6 @@ interface OsuApiBeatmapset {
   submitted_date: string;
   title: string;
   user_id: number;
-  [key: string]: unknown;
 }
 
 interface OsuApiForumTopic {
