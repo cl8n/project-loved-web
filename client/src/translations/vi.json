@@ -63,7 +63,7 @@
     "defaultMessage": "Phần trăm và tổng cộng"
   },
   "2dOoEc": {
-    "defaultMessage": "Những người xem lại thông tin bổ sung"
+    "defaultMessage": "Người giám sát các thứ khác"
   },
   "3E4vRf": {
     "defaultMessage": "Thấp"
@@ -90,10 +90,10 @@
     "defaultMessage": "Sự đồng ý của tác giả beatmap"
   },
   "9cv8r4": {
-    "defaultMessage": "B beatmap"
+    "defaultMessage": "Beatmap"
   },
   "e6WZri": {
-    "defaultMessage": "Được ủng hhộ"
+    "defaultMessage": "Được ủng hộ"
   },
   "dG9/uH": {
     "defaultMessage": "Đạt tiêu chuẩn"
@@ -177,7 +177,7 @@
     "defaultMessage": "Đang bình chọn"
   },
   "MUDTXQ": {
-    "defaultMessage": "Đường dẫn hoặc ID của bộ beatma"
+    "defaultMessage": "Đường dẫn hoặc ID của bộ beatmap"
   },
   "MoR8Of": {
     "defaultMessage": "Sự đồng ý của tác giả beatmap"
@@ -219,7 +219,7 @@
     "defaultMessage": "Không có sở thích rõ ràng"
   },
   "Sti+Y3": {
-    "defaultMessage": "Sau khi bạn nộp beabeatmap, bạn có thể kiểm tra tình trạng của nó trên <submissionsLink>trang \"Đã nộp\"</submissionsLink>."
+    "defaultMessage": "Sau khi bạn nộp beatmap, bạn có thể kiểm tra tình trạng của nó trên <submissionsLink>trang \"Đã nộp\"</submissionsLink>."
   },
   "Tf7XH9": {
     "defaultMessage": "Ghi chú:"
@@ -300,7 +300,7 @@
     "defaultMessage": "Đã được bầu chọn."
   },
   "kr2W+L": {
-    "defaultMessage": "<p>Điền vào biểu mẫu này sẽ giúgiúp <teamLink>các đội trưởng</teamLink> xác định những beatmap được bầu vào thể loại Được Yêu Thích trong các cuộc bình chọn hàng tháng. Kể cả khi beatmap đã <submissionsLink>được nộp</submissionsLink>, bạn vẫn có thể nêu cảm nghĩ về nó tại đây</p> <p>Một số điều cần lưu ý:</p>"
+    "defaultMessage": "<p>Điền vào biểu mẫu này sẽ giúp <teamLink>các đội trưởng</teamLink> xác định những beatmap được bầu vào thể loại Được Yêu Thích trong các cuộc bình chọn hàng tháng. Kể cả khi beatmap đã <submissionsLink>được nộp</submissionsLink>, bạn vẫn có thể nêu cảm nghĩ về nó tại đây</p> <p>Một số điều cần lưu ý:</p>"
   },
   "l39agD": {
     "defaultMessage": "Tình trạng"
@@ -312,7 +312,7 @@
     "defaultMessage": "Bị từ chối một chút"
   },
   "lULo+e": {
-    "defaultMessage": "Đã thất bại trong bình chọchọn"
+    "defaultMessage": "Đã thất bại trong bình chọn"
   },
   "lbC8H+": {
     "defaultMessage": "Tác giả beatmap"
@@ -336,7 +336,7 @@
     "defaultMessage": "BPM"
   },
   "pLUxkj": {
-    "defaultMessage": "No"
+    "defaultMessage": "Không"
   },
   "pNwB5k": {
     "defaultMessage": "Mới!"
@@ -357,7 +357,7 @@
     "defaultMessage": "Tổng cộng"
   },
   "rv3gh8": {
-    "defaultMessage": "{user} đã đánh dấu beatmap này là <score>không được phéphép</score> vào {timestamp, date, long}"
+    "defaultMessage": "{user} đã đánh dấu beatmap này là <score>không được phép</score> vào {timestamp, date, long}"
   },
   "sG6ons": {
     "defaultMessage": "Danh sách những beatmap Được Yêu Thích"
