@@ -36,7 +36,7 @@ export function hasLocalInteropKey(
 ): unknown {
   const key = request.get('X-Loved-InteropKey');
 
-  if (request.get('X-Loved-InteropVersion') !== '1') {
+  if (request.get('X-Loved-InteropVersion') !== '2') {
     return response.status(422).json({ error: 'Unsupported program version' });
   }
 
