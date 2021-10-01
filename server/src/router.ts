@@ -823,7 +823,12 @@ router.post(
 
 router.post('/add-round', isNewsAuthor, (_, res) => {
   db.transact(async (connection) => {
-    const queryResult = await connection.query("INSERT INTO rounds SET name = 'Unnamed round'");
+    const queryResult = await connection.query('INSERT INTO rounds SET ?', [
+      {
+        name: 'Unnamed round',
+        news_author_id: res.typedLocals.user.id,
+      },
+    ]);
 
     for (const gameMode of [0, 1, 2, 3]) {
       // TODO: 1 query instead of 4
