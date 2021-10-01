@@ -724,3 +724,43 @@ tr.sticky > th {
 .fix-column-layout {
   width: 100%;
 }
+
+.page-selector {
+  display: flex;
+  margin-top: 1em;
+  margin-bottom: 1em;
+
+  > :first-child {
+    margin-left: auto;
+  }
+
+  > :last-child {
+    margin-right: auto;
+  }
+
+  button {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    min-width: 2.5em;
+
+    &[disabled] {
+      cursor: initial;
+      opacity: 0.4;
+
+      &:hover {
+        background-color: var(--accent);
+        color: var(--background);
+      }
+    }
+
+    &.selected {
+      background-color: var(--secondary-accent);
+      cursor: initial;
+
+      &:hover {
+        background-color: var(--secondary-accent);
+        color: var(--background);
+      }
+    }
+  }
+}

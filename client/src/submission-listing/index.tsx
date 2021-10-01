@@ -19,6 +19,7 @@ import type { ToggleableColumn, ToggleableColumnsState } from './helpers';
 import { aggregateReviewScore } from './helpers';
 import { toggleableColumns } from './helpers';
 import type { SubmittedBeatmapset } from './interfaces';
+import PageSelector from './PageSelector';
 import SortButton from './SortButton';
 import SubmissionBeatmapset from './SubmissionBeatmapset';
 
@@ -405,6 +406,8 @@ function beatmapsetSortFn(
     beatmapsetSortFns[filterToApproved && sort === 'priority' ? 'status' : sort](a, b);
 }
 
+const pageSize = 30;
+
 interface SubmissionListingProps {
   columns: ToggleableColumnsState;
   gameMode: GameMode;
@@ -427,7 +430,10 @@ function SubmissionListing({
   const [submissionsInfo, submissionsInfoError, setSubmissionsInfo] = useApi(getSubmissions, [
     gameMode,
   ]);
+  const [page, setPage] = useState(1);
   const displayBeatmapsets = useMemo(() => {
+    setPage(1);
+
     if (submissionsInfo == null) {
       return null;
     }
@@ -522,69 +528,81 @@ function SubmissionListing({
   };
 
   return (
-    <table className='main-table submissions-table'>
-      <thead>
-        <tr className='sticky'>
-          <th />
-          {gameMode === GameMode.mania && columns.keyModes && (
-            <th>{intl.formatMessage(messages.keyModes)}</th>
-          )}
-          <FormattedMessage
-            defaultMessage='Beatmapset'
-            description='Submissions table header'
-            tagName='th'
-          />
-          <FormattedMessage
-            defaultMessage='Mapper'
-            description='Submissions table header'
-            tagName='th'
-          />
-          <th>
-            {sortsAndFilters.filterToApproved
-              ? intl.formatMessage(messages.status)
-              : intl.formatMessage(messages.priority)}
-          </th>
-          {columns.score && (
-            <th>
-              {intl.formatMessage(messages.score)}{' '}
-              <Help>
-                {intl.formatMessage(messages.scoreHelp, {
-                  definition: `${intl.formatMessage(messages.score)} = ${intl.formatMessage(
-                    messages.favoriteCount,
-                  )} × 75 + ${intl.formatMessage(messages.playCount)}`,
-                })}
-              </Help>
-            </th>
-          )}
-          {columns.playCount && <th>{intl.formatMessage(messages.playCount)}</th>}
-          {columns.favoriteCount && <th>{intl.formatMessage(messages.favoriteCount)}</th>}
-          {columns.year && <th>{intl.formatMessage(messages.year)}</th>}
-          {columns.difficultyCount && <th>{intl.formatMessage(messages.difficultyCount)}</th>}
-          {columns.bpm && <th>{intl.formatMessage(messages.bpm)}</th>}
-        </tr>
-      </thead>
-      <tbody>
-        {displayBeatmapsets.map((beatmapset) => {
-          const review = canReview
-            ? beatmapset.reviews.find((review) => review.reviewer_id === authUser!.id)
-            : undefined;
-
-          return (
-            <SubmissionBeatmapset
-              key={beatmapset.id}
-              beatmapset={beatmapset}
-              canReview={canReview && !sortsAndFilters.filterToApproved}
-              columns={columns}
-              filterToApproved={sortsAndFilters.filterToApproved}
-              gameMode={gameMode}
-              onReviewDelete={review == null ? null : getOnReviewDelete(beatmapset.id, review.id)}
-              onReviewUpdate={onReviewUpdate}
-              review={review}
-              usersById={submissionsInfo.usersById}
+    <>
+      <PageSelector
+        page={page}
+        pageCount={Math.ceil(displayBeatmapsets.length / pageSize)}
+        setPage={setPage}
+      />
+      <table className='main-table submissions-table'>
+        <thead>
+          <tr className='sticky'>
+            <th />
+            {gameMode === GameMode.mania && columns.keyModes && (
+              <th>{intl.formatMessage(messages.keyModes)}</th>
+            )}
+            <FormattedMessage
+              defaultMessage='Beatmapset'
+              description='Submissions table header'
+              tagName='th'
             />
-          );
-        })}
-      </tbody>
-    </table>
+            <FormattedMessage
+              defaultMessage='Mapper'
+              description='Submissions table header'
+              tagName='th'
+            />
+            <th>
+              {sortsAndFilters.filterToApproved
+                ? intl.formatMessage(messages.status)
+                : intl.formatMessage(messages.priority)}
+            </th>
+            {columns.score && (
+              <th>
+                {intl.formatMessage(messages.score)}{' '}
+                <Help>
+                  {intl.formatMessage(messages.scoreHelp, {
+                    definition: `${intl.formatMessage(messages.score)} = ${intl.formatMessage(
+                      messages.favoriteCount,
+                    )} × 75 + ${intl.formatMessage(messages.playCount)}`,
+                  })}
+                </Help>
+              </th>
+            )}
+            {columns.playCount && <th>{intl.formatMessage(messages.playCount)}</th>}
+            {columns.favoriteCount && <th>{intl.formatMessage(messages.favoriteCount)}</th>}
+            {columns.year && <th>{intl.formatMessage(messages.year)}</th>}
+            {columns.difficultyCount && <th>{intl.formatMessage(messages.difficultyCount)}</th>}
+            {columns.bpm && <th>{intl.formatMessage(messages.bpm)}</th>}
+          </tr>
+        </thead>
+        <tbody>
+          {displayBeatmapsets.slice((page - 1) * pageSize, page * pageSize).map((beatmapset) => {
+            const review = canReview
+              ? beatmapset.reviews.find((review) => review.reviewer_id === authUser!.id)
+              : undefined;
+
+            return (
+              <SubmissionBeatmapset
+                key={beatmapset.id}
+                beatmapset={beatmapset}
+                canReview={canReview && !sortsAndFilters.filterToApproved}
+                columns={columns}
+                filterToApproved={sortsAndFilters.filterToApproved}
+                gameMode={gameMode}
+                onReviewDelete={review == null ? null : getOnReviewDelete(beatmapset.id, review.id)}
+                onReviewUpdate={onReviewUpdate}
+                review={review}
+                usersById={submissionsInfo.usersById}
+              />
+            );
+          })}
+        </tbody>
+      </table>
+      <PageSelector
+        page={page}
+        pageCount={Math.ceil(displayBeatmapsets.length / pageSize)}
+        setPage={setPage}
+      />
+    </>
   );
 }
