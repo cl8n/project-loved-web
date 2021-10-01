@@ -38,38 +38,38 @@ render(
               <Route exact path='/submissions/:gameMode?/:page(\d+)?'>
                 <SubmissionListingContainer />
               </Route>
-              <Route path='/submit'>
+              <Route exact path='/submit'>
                 <SubmissionForm />
               </Route>
-              <Route path='/mappers'>
+              <Route exact path='/mappers'>
                 <MapperConsents />
               </Route>
-              <Route path='/team'>
+              <Route exact path='/team'>
                 <Team />
               </Route>
               <Redirect exact from='/captains' to='/team' />
-              <Route path='/statistics'>
+              <Route exact path='/statistics'>
                 <Statistics />
               </Route>
               <ProtectedRoute exact path='/admin/picks' role='any'>
                 <PicksRoundListing />
               </ProtectedRoute>
-              <ProtectedRoute path='/admin/picks/:round' role='any'>
+              <ProtectedRoute exact path='/admin/picks/:round(\d+)' role='any'>
                 <Picks />
               </ProtectedRoute>
-              <ProtectedRoute path='/admin/manage' role='any'>
+              <ProtectedRoute exact path='/admin/manage' role='any'>
                 <Manage />
               </ProtectedRoute>
-              <ProtectedRoute path='/admin/forum-opt-in' role='captain'>
+              <ProtectedRoute exact path='/admin/forum-opt-in' role='captain'>
                 <ForumOptIn />
               </ProtectedRoute>
-              <ProtectedRoute path='/admin/settings' role='captain'>
+              <ProtectedRoute exact path='/admin/settings' role='captain'>
                 <Settings />
               </ProtectedRoute>
-              <Route path='/localization/:locale?'>
+              <Route exact path='/localization/:locale?'>
                 <Localization />
               </Route>
-              <Route path='*'>
+              <Route>
                 <NoRoute />
               </Route>
             </Switch>
