@@ -31,7 +31,6 @@ import type {
   INomination,
   INominationWithPoll,
   IRound,
-  IUser,
   IUserWithoutRoles,
   PartialWithId,
 } from './interfaces';
@@ -321,7 +320,11 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
 }
 
 interface NominationProps {
-  assigneesApi: readonly [IUser[] | undefined, IUser[] | undefined, ResponseError | undefined];
+  assigneesApi: readonly [
+    IUserWithoutRoles[] | undefined,
+    IUserWithoutRoles[] | undefined,
+    ResponseError | undefined,
+  ];
   captainsApi: readonly [{ [P in GameMode]?: ICaptain[] } | undefined, ResponseError | undefined];
   locked: boolean;
   nomination: INominationWithPoll;
