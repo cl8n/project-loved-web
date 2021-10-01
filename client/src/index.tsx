@@ -31,8 +31,11 @@ render(
           <Header />
           <main className='big-center'>
             <Switch>
-              <Redirect exact from='/' to='/submissions/osu' />
-              <Route path='/submissions/:gameMode?'>
+              <Redirect exact from='/' to='/submissions' />
+              <Route exact path='/submissions/:gameMode(mania)/:keyMode(\d+K)/:page(\d+)?'>
+                <SubmissionListingContainer />
+              </Route>
+              <Route exact path='/submissions/:gameMode?/:page(\d+)?'>
                 <SubmissionListingContainer />
               </Route>
               <Route path='/submit'>

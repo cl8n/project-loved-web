@@ -1,5 +1,5 @@
 import type { ChangeEvent } from 'react';
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useEffect, useMemo, useReducer } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import { apiErrorMessage, getSubmissions, useApi } from '../api';
@@ -89,6 +89,24 @@ const messages = defineMessages({
     description: 'osu!mania key mode option group for uncommon key modes',
   },
 });
+
+function getNewSubmissionsListingPath(
+  gameMode: GameMode,
+  keyMode: number | null,
+  page: number,
+): string {
+  let path = `/submissions/${gameModeShortName(gameMode)}`;
+
+  if (keyMode != null) {
+    path += `/${keyMode}K`;
+  }
+
+  if (page > 1) {
+    path += `/${page}`;
+  }
+
+  return path;
+}
 
 function columnsReducer(
   prevState: ToggleableColumnsState,
@@ -189,10 +207,18 @@ function sortsAndFiltersReducer(
   return state;
 }
 
+type SubmissionListingParams =
+  | { gameMode: string | undefined; page: `${number}` | undefined }
+  | {
+      gameMode: `${'M' | 'm'}ania`;
+      keyMode: `${number}${'K' | 'k'}`;
+      page: `${number}` | undefined;
+    };
+
 export default function SubmissionListingContainer() {
   const history = useHistory();
   const intl = useIntl();
-  const params = useParams<{ gameMode: string | undefined }>();
+  const params = useParams<SubmissionListingParams>();
   const [columns, toggleColumn] = useReducer(columnsReducer, {
     bpm: true,
     difficultyCount: true,
@@ -202,7 +228,6 @@ export default function SubmissionListingContainer() {
     score: true,
     year: true,
   });
-  const [keyMode, setKeyMode] = useState<number | null>(null);
   const [sortsAndFilters, updateSortOrFilter] = useReducer(
     sortsAndFiltersReducer,
     initialSortsAndFiltersState,
@@ -212,27 +237,44 @@ export default function SubmissionListingContainer() {
     [sortsAndFilters],
   );
 
-  const gameMode = params.gameMode == null ? null : gameModeFromShortName(params.gameMode);
+  const gameMode =
+    params.gameMode == null ? null : gameModeFromShortName(params.gameMode.toLowerCase());
+  const keyMode = 'keyMode' in params ? parseInt(params.keyMode) : null;
+  const page = params.page == null ? 1 : parseInt(params.page);
 
   if (gameMode == null) {
-    return <Redirect to='/submissions/osu' />;
+    return <Redirect to={getNewSubmissionsListingPath(GameMode.osu, null, 1)} />;
   }
 
   const onGameModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const newMode = parseInt(event.currentTarget.value);
+    const newGameMode = parseInt(event.currentTarget.value);
 
-    if (newMode !== gameMode) {
-      history.push(`/submissions/${gameModeShortName(newMode)}`);
-
-      if (newMode !== GameMode.mania) {
-        setKeyMode(null);
-      }
+    if (newGameMode !== gameMode) {
+      history.push(getNewSubmissionsListingPath(newGameMode, null, 1));
     }
   };
   const onKeyModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const value = event.currentTarget.value;
+    const newKeyMode =
+      event.currentTarget.value === 'all' ? null : parseInt(event.currentTarget.value);
 
-    setKeyMode(value === 'all' ? null : parseInt(value));
+    if (newKeyMode !== keyMode) {
+      history.push(getNewSubmissionsListingPath(gameMode, newKeyMode, 1));
+    }
+  };
+  const resetPageComponent = () => {
+    return <Redirect to={getNewSubmissionsListingPath(gameMode, keyMode, 1)} />;
+  };
+  const setPage = (newPage: number, replace?: boolean) => {
+    if (newPage !== page) {
+      if (replace) {
+        history.replace(
+          getNewSubmissionsListingPath(gameMode, keyMode, newPage),
+          history.location.state,
+        );
+      } else {
+        history.push(getNewSubmissionsListingPath(gameMode, keyMode, newPage));
+      }
+    }
   };
 
   // TODO: Controls break on languages with longer column names (fi, sv)
@@ -291,13 +333,14 @@ export default function SubmissionListingContainer() {
             <span key={sortIndex}>
               <select
                 value={sort.sort}
-                onChange={(event) =>
+                onChange={(event) => {
                   updateSortOrFilter({
                     action: 'changeSort',
                     index: sortIndex as 0 | 1,
                     sort: event.currentTarget.value as Sort,
-                  })
-                }
+                  });
+                  setPage(1);
+                }}
               >
                 {sortOptions[sortIndex].map((sortOption) => (
                   <option key={sortOption} value={sortOption}>
@@ -313,16 +356,20 @@ export default function SubmissionListingContainer() {
               </select>{' '}
               <SortButton
                 ascending={sort.ascending}
-                toggle={() =>
-                  updateSortOrFilter({ action: 'toggleOrder', index: sortIndex as 0 | 1 })
-                }
+                toggle={() => {
+                  updateSortOrFilter({ action: 'toggleOrder', index: sortIndex as 0 | 1 });
+                  setPage(1);
+                }}
               />
             </span>
           ))}
           <button
             type='button'
             className='push-right'
-            onClick={() => updateSortOrFilter({ action: 'toggleApproved' })}
+            onClick={() => {
+              updateSortOrFilter({ action: 'toggleApproved' });
+              setPage(1);
+            }}
           >
             {sortsAndFilters.filterToApproved ? 'Show pending' : 'Show approved'}
           </button>
@@ -358,6 +405,9 @@ export default function SubmissionListingContainer() {
         columns={columns}
         gameMode={gameMode}
         keyMode={keyMode}
+        page={page}
+        resetPageComponent={resetPageComponent}
+        setPage={setPage}
         sortsAndFilters={sortsAndFilters}
       />
     </>
@@ -412,6 +462,9 @@ interface SubmissionListingProps {
   columns: ToggleableColumnsState;
   gameMode: GameMode;
   keyMode: number | null;
+  page: number;
+  resetPageComponent: () => JSX.Element;
+  setPage: (page: number, replace?: boolean) => void;
   sortsAndFilters: SortsAndFiltersState;
 }
 
@@ -419,21 +472,19 @@ function SubmissionListing({
   columns,
   gameMode,
   keyMode,
+  page,
+  resetPageComponent,
+  setPage,
   sortsAndFilters,
 }: SubmissionListingProps) {
   const history = useHistory();
   const intl = useIntl();
-  const { pathname: locationPath, state: submittedBeatmapsetId } = useLocation<
-    number | undefined
-  >();
+  const { state: submittedBeatmapsetId } = useLocation<number | undefined>();
   const authUser = useOsuAuth().user;
   const [submissionsInfo, submissionsInfoError, setSubmissionsInfo] = useApi(getSubmissions, [
     gameMode,
   ]);
-  const [page, setPage] = useState(1);
   const displayBeatmapsets = useMemo(() => {
-    setPage(1);
-
     if (submissionsInfo == null) {
       return null;
     }
@@ -466,20 +517,20 @@ function SubmissionListing({
     );
 
     if (submittedBeatmapsetIndex < 0) {
-      history.replace(locationPath);
+      history.replace({});
       return;
     }
 
     const submittedBeatmapsetPage = Math.floor(submittedBeatmapsetIndex / pageSize) + 1;
 
     if (page !== submittedBeatmapsetPage) {
-      setPage(submittedBeatmapsetPage);
+      setPage(submittedBeatmapsetPage, true);
       return;
     }
 
     document.querySelector(`[data-beatmapset-id="${submittedBeatmapsetId}"]`)?.scrollIntoView();
-    history.replace(locationPath);
-  }, [displayBeatmapsets, history, locationPath, page, submittedBeatmapsetId]);
+    history.replace({});
+  }, [displayBeatmapsets, history, page, setPage, submittedBeatmapsetId]);
 
   if (submissionsInfoError != null) {
     return (
@@ -491,6 +542,12 @@ function SubmissionListing({
 
   if (submissionsInfo == null || displayBeatmapsets == null) {
     return <span>Loading submissions...</span>;
+  }
+
+  const pageCount = Math.ceil(displayBeatmapsets.length / pageSize);
+
+  if (page < 1 || page > pageCount) {
+    return resetPageComponent();
   }
 
   if (displayBeatmapsets.length === 0) {
@@ -545,11 +602,7 @@ function SubmissionListing({
 
   return (
     <>
-      <PageSelector
-        page={page}
-        pageCount={Math.ceil(displayBeatmapsets.length / pageSize)}
-        setPage={setPage}
-      />
+      <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
       <table className='main-table submissions-table'>
         <thead>
           <tr className='sticky'>
@@ -614,11 +667,7 @@ function SubmissionListing({
           })}
         </tbody>
       </table>
-      <PageSelector
-        page={page}
-        pageCount={Math.ceil(displayBeatmapsets.length / pageSize)}
-        setPage={setPage}
-      />
+      <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
     </>
   );
 }

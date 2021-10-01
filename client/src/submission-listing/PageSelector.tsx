@@ -1,12 +1,10 @@
-import type { Dispatch, SetStateAction } from 'react';
-
 const pageOptionsAround = 3;
 const pageOptionsTotal = pageOptionsAround * 2 + 1;
 
 interface PageSelectorProps {
   page: number;
   pageCount: number;
-  setPage: Dispatch<SetStateAction<number>>;
+  setPage: (page: number) => void;
 }
 
 export default function PageSelector({ page, pageCount, setPage }: PageSelectorProps) {
@@ -38,7 +36,7 @@ export default function PageSelector({ page, pageCount, setPage }: PageSelectorP
       <button type='button' disabled={page <= 1} onClick={() => setPage(1)}>
         ◀◀
       </button>
-      <button type='button' disabled={page <= 1} onClick={() => setPage((prev) => prev - 1)}>
+      <button type='button' disabled={page <= 1} onClick={() => setPage(page - 1)}>
         ◀
       </button>
       {pageCandidates.map((pageCandidate) => (
@@ -51,11 +49,7 @@ export default function PageSelector({ page, pageCount, setPage }: PageSelectorP
           {pageCandidate}
         </button>
       ))}
-      <button
-        type='button'
-        disabled={page >= pageCount}
-        onClick={() => setPage((prev) => prev + 1)}
-      >
+      <button type='button' disabled={page >= pageCount} onClick={() => setPage(page + 1)}>
         ▶
       </button>
       <button type='button' disabled={page >= pageCount} onClick={() => setPage(pageCount)}>
