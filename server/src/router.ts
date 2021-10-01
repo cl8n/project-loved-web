@@ -913,6 +913,7 @@ router.get(
       INNER JOIN user_roles
         ON users.id = user_roles.user_id
       WHERE user_roles.metadata = 1
+      ORDER BY users.name ASC
     `);
     const moderators = await db.query<User>(`
       SELECT users.*
@@ -920,6 +921,7 @@ router.get(
       INNER JOIN user_roles
         ON users.id = user_roles.user_id
       WHERE user_roles.moderator = 1
+      ORDER BY users.name ASC
     `);
 
     res.json({
