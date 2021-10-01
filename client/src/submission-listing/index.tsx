@@ -544,18 +544,18 @@ function SubmissionListing({
     return <span>Loading submissions...</span>;
   }
 
-  const pageCount = Math.ceil(displayBeatmapsets.length / pageSize);
-
-  if (page < 1 || page > pageCount) {
-    return resetPageComponent();
-  }
-
-  if (displayBeatmapsets.length === 0) {
+  if (displayBeatmapsets.length === 0 && page === 1) {
     return (
       <p>
         <b>No submissions to show!</b>
       </p>
     );
+  }
+
+  const pageCount = Math.ceil(displayBeatmapsets.length / pageSize);
+
+  if (page < 1 || page > pageCount) {
+    return resetPageComponent();
   }
 
   const canReview = authUser != null && isCaptainForMode(authUser, gameMode);
