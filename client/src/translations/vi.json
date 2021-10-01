@@ -15,7 +15,7 @@
     "defaultMessage": "Tăng dần"
   },
   "39zfVl": {
-    "defaultMessage": "Được ủng hộ một chút"
+    "defaultMessage": "được ủng hộ một chút"
   },
   "38JPtF": {
     "defaultMessage": "Đang tiến hành bình chọn..."
@@ -45,7 +45,7 @@
     "defaultMessage": "Hiện các cột:"
   },
   "+d4ZcX": {
-    "defaultMessage": "Những người giám sát"
+    "defaultMessage": "Quản trị viên"
   },
   "/CNHO3": {
     "defaultMessage": "Đăng nhập bằng osu!"
@@ -63,7 +63,7 @@
     "defaultMessage": "Phần trăm và tổng cộng"
   },
   "2dOoEc": {
-    "defaultMessage": "Người giám sát các thứ khác"
+    "defaultMessage": "Giám sát các thứ khác"
   },
   "3E4vRf": {
     "defaultMessage": "Thấp"
@@ -93,7 +93,7 @@
     "defaultMessage": "Beatmap"
   },
   "e6WZri": {
-    "defaultMessage": "Được ủng hộ"
+    "defaultMessage": "được ủng hộ"
   },
   "dG9/uH": {
     "defaultMessage": "Đạt tiêu chuẩn"
@@ -102,7 +102,7 @@
     "defaultMessage": "Đang chờ duyệt..."
   },
   "c/0N4+": {
-    "defaultMessage": "Bị từ chối"
+    "defaultMessage": "bị từ chối"
   },
   "c2UCNp": {
     "defaultMessage": "Phần trăm"
@@ -129,7 +129,7 @@
     "defaultMessage": "Đang nộp..."
   },
   "Do+EPJ": {
-    "defaultMessage": "{user} đã kiểm tra với {score} vào {timestamp, date, long}"
+    "defaultMessage": "{user} đã cho rằng nó sẽ {score} vào {timestamp, date, long}"
   },
   "F1tQfW": {
     "defaultMessage": "Tiêu đề"
@@ -141,7 +141,7 @@
     "defaultMessage": "Beatmap đã được chọn"
   },
   "HvpI7B": {
-    "defaultMessage": "Bộ eatmap đã xóa"
+    "defaultMessage": "Bộ beatmap đã xóa"
   },
   "IO8Ye2": {
     "defaultMessage": "Điểm"
@@ -168,7 +168,7 @@
     "defaultMessage": "Chế độ chơi"
   },
   "Ll1LUO": {
-    "defaultMessage": "Được ủng hộ nhiều"
+    "defaultMessage": "được ủng hộ nhiều"
   },
   "Lm++cZ": {
     "defaultMessage": "Dự án Được Yêu Thích"
@@ -198,7 +198,7 @@
     "defaultMessage": "Mã nguồn và nơi theo dõi vấn đề"
   },
   "PpxIZP": {
-    "defaultMessage": "Bị từ chối nhiều"
+    "defaultMessage": "bị từ chối nhiều"
   },
   "PuVvCo": {
     "defaultMessage": "Số phím"
@@ -216,7 +216,7 @@
     "defaultMessage": "Khác"
   },
   "ScBgfg": {
-    "defaultMessage": "Không có sở thích rõ ràng"
+    "defaultMessage": "không nhận được ý kiến rõ ràng"
   },
   "Sti+Y3": {
     "defaultMessage": "Sau khi bạn nộp beatmap, bạn có thể kiểm tra tình trạng của nó trên <submissionsLink>trang \"Đã nộp\"</submissionsLink>."
@@ -231,7 +231,7 @@
     "defaultMessage": "Bạn cần phải <a>đăng nhập</a> để điền biểu mẫu này."
   },
   "U1fcdw": {
-    "defaultMessage": "Người soạn tin / Người quản lý"
+    "defaultMessage": "Người soạn tin / quản lý"
   },
   "UjLvid": {
     "defaultMessage": "Mở rộng"
@@ -258,7 +258,7 @@
     "defaultMessage": "Tất cả"
   },
   "ZEsdcm": {
-    "defaultMessage": "Chủ đề bình chọn"
+    "defaultMessage": "số hiệu bình chọn"
   },
   "ZMV3ed": {
     "defaultMessage": "Biểu tượng lá cờ của {author1} và {author2}"
@@ -309,7 +309,7 @@
     "defaultMessage": "Phần này chưa có đối với bạn. Xin hãy quay lại sau!"
   },
   "lRk8DP": {
-    "defaultMessage": "Bị từ chối một chút"
+    "defaultMessage": "bị từ chối một chút"
   },
   "lULo+e": {
     "defaultMessage": "Đã thất bại trong bình chọn"
@@ -366,7 +366,7 @@
     "defaultMessage": "Ngôn ngữ: {selector}"
   },
   "uNpYlX": {
-    "defaultMessage": "Bị từ chối"
+    "defaultMessage": "bị từ chối"
   },
   "urIF1D": {
     "defaultMessage": "Bộ beatmap"
