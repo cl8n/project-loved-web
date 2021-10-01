@@ -457,13 +457,29 @@ function SubmissionListing({
   }, [keyMode, sortsAndFilters, submissionsInfo]);
 
   useEffect(() => {
-    if (submissionsInfo == null || submittedBeatmapsetId == null) {
+    if (displayBeatmapsets == null || submittedBeatmapsetId == null) {
+      return;
+    }
+
+    const submittedBeatmapsetIndex = displayBeatmapsets.findIndex(
+      (beatmapset) => beatmapset.id === submittedBeatmapsetId,
+    );
+
+    if (submittedBeatmapsetIndex < 0) {
+      history.replace(locationPath);
+      return;
+    }
+
+    const submittedBeatmapsetPage = Math.floor(submittedBeatmapsetIndex / pageSize) + 1;
+
+    if (page !== submittedBeatmapsetPage) {
+      setPage(submittedBeatmapsetPage);
       return;
     }
 
     document.querySelector(`[data-beatmapset-id="${submittedBeatmapsetId}"]`)?.scrollIntoView();
     history.replace(locationPath);
-  }, [history, locationPath, submissionsInfo, submittedBeatmapsetId]);
+  }, [displayBeatmapsets, history, locationPath, page, submittedBeatmapsetId]);
 
   if (submissionsInfoError != null) {
     return (
