@@ -229,8 +229,8 @@ interopRouter.get(
     }
 
     res.json({
-      created_at: topic.topic.created_at,
       first_post_body: topic.posts[0].body.raw,
+      first_post_created_at: topic.posts[0].created_at,
       first_post_id: topic.posts[0].id,
     });
 
