@@ -200,6 +200,7 @@ interface Round {
   done: boolean;
   ignore_moderator_checks: boolean;
   name: string;
+  news_author_id: number;
   news_intro: string | null;
   news_intro_preview: string | null;
   news_outro: string | null;

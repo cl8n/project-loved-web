@@ -16,15 +16,18 @@ interopRouter.get(
       return res.status(422).json({ error: 'Missing round ID' });
     }
 
-    const round: (Round & { game_modes?: Record<GameMode, RoundGameMode> }) | null =
-      await db.queryOne<Round>(
-        `
-          SELECT *
+    const round:
+      | (Round & { game_modes?: Record<GameMode, RoundGameMode>; news_author: User })
+      | null = await db.queryOneWithGroups<Round & { news_author: User }>(
+      `
+          SELECT rounds.*, users:news_author
           FROM rounds
-          WHERE id = ?
+          INNER JOIN users
+            ON rounds.news_author_id = users.id
+          WHERE rounds.id = ?
         `,
-        [req.query.roundId],
-      );
+      [req.query.roundId],
+    );
 
     if (round == null) {
       return res.status(404).send();

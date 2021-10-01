@@ -152,6 +152,7 @@ export interface IRound {
   >;
   ignore_moderator_checks: boolean;
   name: string;
+  news_author_id: number;
   news_intro?: string;
   news_intro_preview?: string;
   news_outro?: string;
