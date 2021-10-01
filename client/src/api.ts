@@ -98,9 +98,14 @@ export function getCaptains(): Response<{ [P in GameMode]?: ICaptain[] }> {
   return superagent.get('/api/captains');
 }
 
-export function getNominations(
-  roundId: number,
-): Response<{ nominations: INominationWithPoll[]; round: IRound }> {
+export function getNewsAuthors(): Response<IUserWithoutRoles[]> {
+  return superagent.get('/api/news-authors');
+}
+
+export function getNominations(roundId: number): Response<{
+  nominations: INominationWithPoll[];
+  round: IRound & { news_author: IUserWithoutRoles };
+}> {
   return superagent.get('/api/nominations').query({ roundId });
 }
 
@@ -252,7 +257,10 @@ export function updateNominators(
   return superagent.post('/api/update-nominators').send({ nominationId, nominatorIds });
 }
 
-export function updateRound(roundId: number, round: PartialWithoutId<IRound>): Response {
+export function updateRound(
+  roundId: number,
+  round: PartialWithoutId<IRound>,
+): Response<Omit<IRound, 'game_modes'> & { news_author: IUserWithoutRoles }> {
   return superagent.post('/api/update-round').send({ roundId, round });
 }
 

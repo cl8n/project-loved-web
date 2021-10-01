@@ -173,11 +173,13 @@ export function Picks() {
       };
     });
   };
-  const onRoundUpdate = (round: PartialWithId<IRound>) => {
+  const onRoundUpdate = (
+    round: Omit<IRound, 'game_modes'> & { news_author: IUserWithoutRoles },
+  ) => {
     setRoundInfo((prev) => {
       return {
         nominations: prev!.nominations,
-        round: Object.assign(prev!.round, round),
+        round: { ...prev!.round, ...round },
       };
     });
   };

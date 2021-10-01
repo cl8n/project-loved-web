@@ -1,23 +1,36 @@
 import { useState } from 'react';
-import { alertApiErrorMessage, updateRound } from '../api';
+import { alertApiErrorMessage, apiErrorMessage, getNewsAuthors, updateRound, useApi } from '../api';
 import { autoHeightRef } from '../auto-height';
 import { inputDateTime } from '../date-format';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
-import type { IRound, PartialWithId } from '../interfaces';
+import type { IRound, IUserWithoutRoles } from '../interfaces';
 
 interface RoundEditorProps {
   close: () => void;
-  onRoundUpdate: (round: PartialWithId<IRound>) => void;
+  onRoundUpdate: (round: Omit<IRound, 'game_modes'> & { news_author: IUserWithoutRoles }) => void;
   round: IRound;
 }
 
 export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditorProps) {
   const [busy, setBusy] = useState(false);
+  const [newsAuthors, newsAuthorsError] = useApi(getNewsAuthors);
+
+  if (newsAuthorsError != null) {
+    return (
+      <span className='panic'>
+        Failed to load news authors: {apiErrorMessage(newsAuthorsError)}
+      </span>
+    );
+  }
+
+  if (newsAuthors == null) {
+    return <span>Loading news authors...</span>;
+  }
 
   const onSubmit: FormSubmitHandler = (form, then) => {
     return updateRound(round.id, form)
-      .then(() => onRoundUpdate({ id: round.id, ...form }))
+      .then(({ body }) => onRoundUpdate(body))
       .then(then)
       .catch(alertApiErrorMessage)
       .finally(close);
@@ -28,6 +41,22 @@ export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditor
       <div className='form-grid'>
         <label htmlFor='name'>Title</label>
         <input type='text' name='name' defaultValue={round.name} required size={30} />
+        <label htmlFor='news_author_id'>Author</label>
+        <select
+          name='news_author_id'
+          required
+          defaultValue={round.news_author_id}
+          data-value-type='int'
+          key={
+            round.news_author_id /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */
+          }
+        >
+          {newsAuthors.map((author) => (
+            <option key={author.id} value={author.id}>
+              {author.name}
+            </option>
+          ))}
+        </select>
         <label htmlFor='news_posted_at'>Post date (UTC)</label>
         <input
           type='datetime-local'

@@ -154,15 +154,18 @@ router.get(
 router.get(
   '/nominations',
   asyncHandler(async (req, res) => {
-    const round: (Round & { game_modes?: Record<GameMode, RoundGameMode> }) | null =
-      await db.queryOne<Round>(
-        `
-          SELECT *
+    const round:
+      | (Round & { game_modes?: Record<GameMode, RoundGameMode>; news_author: User })
+      | null = await db.queryOneWithGroups<Round & { news_author: User }>(
+      `
+          SELECT rounds.*, users:news_author
           FROM rounds
-          WHERE id = ?
+          INNER JOIN users
+            ON rounds.news_author_id = users.id
+          WHERE rounds.id = ?
         `,
-        [req.query.roundId],
-      );
+      [req.query.roundId],
+    );
 
     if (round == null) {
       return res.status(404).send();
@@ -860,6 +863,7 @@ router.post(
     await db.query('UPDATE rounds SET ? WHERE id = ?', [
       getParams(req.body.round, [
         'name',
+        'news_author_id',
         'news_intro',
         'news_intro_preview',
         'news_outro',
@@ -868,7 +872,35 @@ router.post(
       req.body.roundId,
     ]);
 
-    res.status(204).send();
+    res.json(
+      await db.queryOneWithGroups<Round & { news_author: User }>(
+        `
+          SELECT rounds.*, users:news_author
+          FROM rounds
+          INNER JOIN users
+            ON rounds.news_author_id = users.id
+          WHERE rounds.id = ?
+        `,
+        [req.body.roundId],
+      ),
+    );
+  }),
+);
+
+router.get(
+  '/news-authors',
+  isNewsAuthor,
+  asyncHandler(async (_, res) => {
+    res.json(
+      await db.query<User>(`
+        SELECT users.*
+        FROM users
+        INNER JOIN user_roles
+          ON users.id = user_roles.user_id
+        WHERE user_roles.news = 1
+        ORDER BY users.name ASC
+      `),
+    );
   }),
 );
 

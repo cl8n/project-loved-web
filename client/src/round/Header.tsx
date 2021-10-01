@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import type { IRound, PartialWithId } from '../interfaces';
+import type { IRound, IUserWithoutRoles } from '../interfaces';
 import Markdown from '../Markdown';
+import { UserInline } from '../UserInline';
 import PostDate from './PostDate';
 import RoundEditor from './RoundEditor';
 
 interface HeaderProps {
   canEdit: boolean;
-  onRoundUpdate: (round: PartialWithId<IRound>) => void;
-  round: IRound;
+  onRoundUpdate: (round: Omit<IRound, 'game_modes'> & { news_author: IUserWithoutRoles }) => void;
+  round: IRound & { news_author: IUserWithoutRoles };
 }
 
 export default function Header({ canEdit, onRoundUpdate, round }: HeaderProps) {
@@ -30,6 +31,10 @@ export default function Header({ canEdit, onRoundUpdate, round }: HeaderProps) {
         <RoundEditor close={() => setEditing(false)} onRoundUpdate={onRoundUpdate} round={round} />
       ) : (
         <>
+          <span>
+            News post by <UserInline user={round.news_author} />
+          </span>
+          <br />
           <PostDate round={round} />
           <h3>News intro preview</h3>
           <p>
