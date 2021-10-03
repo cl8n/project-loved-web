@@ -34,11 +34,14 @@ export function hasLocalInteropKey(
   response: Response,
   next: NextFunction,
 ): unknown {
-  const key = request.get('X-Loved-InteropKey');
-
-  if (request.get('X-Loved-InteropVersion') !== '2') {
+  if (
+    process.env.INTEROP_VERSION == null ||
+    request.get('X-Loved-InteropVersion') !== process.env.INTEROP_VERSION
+  ) {
     return response.status(422).json({ error: 'Unsupported program version' });
   }
+
+  const key = request.get('X-Loved-InteropKey');
 
   if (key == null) {
     return response.status(422).json({ error: 'Missing key' });
