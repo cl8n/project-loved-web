@@ -238,20 +238,6 @@ interopRouter.get(
   }),
 );
 
-interopRouter.get(
-  '/poll-result-recent',
-  asyncHandler(async (_, res) => {
-    const pollResult = await db.queryOne<Pick<Poll, 'round_id' | 'topic_id'>>(`
-      SELECT round_id, topic_id
-      FROM polls
-      ORDER BY ended_at DESC
-      LIMIT 1
-    `);
-
-    res.json(pollResult);
-  }),
-);
-
 interopRouter.post(
   '/polls',
   asyncHandler(async (req, res) => {
@@ -302,20 +288,6 @@ interopRouter.post(
     );
 
     res.status(204).send();
-  }),
-);
-
-interopRouter.get(
-  '/polls/incomplete',
-  asyncHandler(async (_, res) => {
-    res.json(
-      await db.query<Poll>(`
-        SELECT *
-        FROM polls
-        WHERE result_no IS NULL
-          OR result_yes IS NULL
-      `),
-    );
   }),
 );
 
