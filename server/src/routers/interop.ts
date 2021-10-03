@@ -117,16 +117,26 @@ interopRouter.get(
       metadata_assignees?: User[];
       moderator_assignees?: User[];
       nominators?: User[];
+      poll: Poll | null;
     })[] = await db.queryWithGroups<
-      Nomination & { beatmapset: Beatmapset; description_author: User | null }
+      Nomination & {
+        beatmapset: Beatmapset;
+        description_author: User | null;
+        poll: Poll | null;
+      }
     >(
       `
-        SELECT nominations.*, beatmapsets:beatmapset, description_authors:description_author
+        SELECT nominations.*, beatmapsets:beatmapset, description_authors:description_author,
+          polls:poll
         FROM nominations
         INNER JOIN beatmapsets
           ON nominations.beatmapset_id = beatmapsets.id
         LEFT JOIN users AS description_authors
           ON nominations.description_author_id = description_authors.id
+        LEFT JOIN polls
+          ON nominations.round_id = polls.round_id
+            AND nominations.game_mode = polls.game_mode
+            AND nominations.beatmapset_id = polls.beatmapset_id
         WHERE nominations.round_id = ?
         ORDER BY nominations.order ASC, nominations.id ASC
       `,
