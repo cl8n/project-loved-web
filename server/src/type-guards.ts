@@ -62,7 +62,7 @@ export function isRepliesRecord(replies: unknown): replies is Record<GameMode, n
   return (
     isRecord(replies) &&
     Object.entries(replies).every(
-      ([gameMode, postId]) => isGameMode(gameMode) && typeof postId === 'number',
+      ([gameMode, postId]) => isGameMode(parseInt(gameMode, 10)) && typeof postId === 'number',
     )
   );
 }
