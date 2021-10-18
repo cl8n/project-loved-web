@@ -20,6 +20,9 @@
   "0+S3hP": {
     "defaultMessage": "Jos ehdottamasi mappi on erittäin epäsuosittu tai jos sitä ei kukaan pysty läpäistä, kapteenit voivat jättää sen tarkistamatta. Ole hyvä ja ehdota vain mappeja, jotka mielestäsi vaikuttavat positiivisesti Loved-kategoriaan."
   },
+  "06WpMi": {
+    "defaultMessage": "Hyväksytty"
+  },
   "0Vz3c/": {
     "defaultMessage": "Prosentti ja summa"
   },
@@ -31,6 +34,9 @@
   },
   "2dOoEc": {
     "defaultMessage": "Metatietotarkistajat"
+  },
+  "38JPtF": {
+    "defaultMessage": "Äänestyksessä"
   },
   "39zfVl": {
     "defaultMessage": "heikosti puolesta"
@@ -59,6 +65,9 @@
   "7CJMwD": {
     "defaultMessage": "Prioriteetti"
   },
+  "8NqvA2": {
+    "defaultMessage": "Painikkeita (osu!mania):"
+  },
   "8bAHuK": {
     "defaultMessage": "Sulje"
   },
@@ -80,6 +89,9 @@
   "Be0kKF": {
     "defaultMessage": "Voi olla, että ehdottamasi mappi ei koskaan nimitetä Loved-kategoriaan, vaikka se näyttäisikin lupaavalta. Loved-kategoriaan pääsee parhaillaan vain tietty määrä mappeja kerralla, eli voi olla, että kapteenit löytävät aina parempia mappeja kuin mitä ehdotat."
   },
+  "CCGzFA": {
+    "defaultMessage": "Läpäissyt äänestyksen"
+  },
   "CIAu6S": {
     "defaultMessage": "Wiki"
   },
@@ -91,6 +103,12 @@
   },
   "EqGiDp": {
     "defaultMessage": "Mitä kirjoitat tähän lomakkeen tulee näkymään julkisesti, joten älä kirjoita mitään, mitä et halua muiden näkevän. Et tarvitse kirjoittaa syy-kenttään mitään, jos et halua."
+  },
+  "F1tQfW": {
+    "defaultMessage": "Nimi"
+  },
+  "G1mG5h": {
+    "defaultMessage": "Mapin omistaja on ilmaistanut, että hän ei halua siirtää mapinsa Loved-kategoriaan."
   },
   "H65rvb": {
     "defaultMessage": "Et ole tarpeeksi tyylikäs nähdääksesi tätä sivua."
@@ -109,6 +127,9 @@
   },
   "IiYTWb": {
     "defaultMessage": "Nykyinen tiimi"
+  },
+  "Ipzb3R": {
+    "defaultMessage": "Ei sallitu"
   },
   "JHNIy2": {
     "defaultMessage": "Sarjojen järjestys:"
@@ -161,8 +182,17 @@
   "PpxIZP": {
     "defaultMessage": "vahvasti vastaan"
   },
+  "PuVvCo": {
+    "defaultMessage": "Painikkeita"
+  },
+  "R0gvL0": {
+    "defaultMessage": "Artisti"
+  },
   "RHg+09": {
     "defaultMessage": "Mitkä pelimuodot tässä mapissa pitäisi saada Loved-tilan?"
+  },
+  "RL5Qu1": {
+    "defaultMessage": "Vahvistettu"
   },
   "RuFprR": {
     "defaultMessage": "Muu"
@@ -197,8 +227,17 @@
   "VHEp9G": {
     "defaultMessage": "Laskeva"
   },
+  "VYIbMd": {
+    "defaultMessage": "Rakastettu äänestyksen takia"
+  },
   "WEpxnj": {
     "defaultMessage": "Pelikertoja"
+  },
+  "WjsRpS": {
+    "defaultMessage": "Kaikki mapit tässä setissä ovat liian lyhyet (alle 30 sekunttia)."
+  },
+  "Y620ue": {
+    "defaultMessage": "Kaikki"
   },
   "ZEsdcm": {
     "defaultMessage": "Foorumiaihe"
@@ -218,6 +257,9 @@
   "bKfIQC": {
     "defaultMessage": "Miksi haluat nähdä tämän mapin Loved-kategoriassa? <fade>(vapaaehtoinen)</fade>"
   },
+  "bcLpeC": {
+    "defaultMessage": "Harvinaiset"
+  },
   "c/0N4+": {
     "defaultMessage": "vastaan"
   },
@@ -230,6 +272,9 @@
   "cwgho6": {
     "defaultMessage": "Vireillä"
   },
+  "dG9/uH": {
+    "defaultMessage": "Esihyväksytty"
+  },
   "e6WZri": {
     "defaultMessage": "puolesta"
   },
@@ -239,14 +284,26 @@
   "gvLZL5": {
     "defaultMessage": "Kirjaudu ulos"
   },
+  "ht0/kF": {
+    "defaultMessage": "Yleiset"
+  },
   "iCkWun": {
     "defaultMessage": "Sarja"
+  },
+  "jVP2nx": {
+    "defaultMessage": "Mapsetin omistaja on bannattu"
   },
   "jlkqJz": {
     "defaultMessage": "Hallitse"
   },
+  "jlqkv1": {
+    "defaultMessage": "Nimitetty"
+  },
   "kr2W+L": {
     "defaultMessage": "<p>Tämän lomakeen täyttäminen auttaa <teamLink>kapteeneja</teamLink> päättämään mitä mappeja he aikovat nimittää Loved-kategoriaan kuukausittaisissa äänestyksissä. Vaikka ajattelemasi mappi on jo <submissionsLink>ehdotettu</submissionsLink>, voit lisätä mielipiteesi siitä tähän.</p> <p>Huomioi kuitenkin näitä asioita:</p>"
+  },
+  "l39agD": {
+    "defaultMessage": "Tila"
   },
   "lMSjPi": {
     "defaultMessage": "Tämä ei ole vielä valmis käyttettäväksesi. Tarkista uudelleen myöhemmin!"
@@ -275,11 +332,17 @@
   "nWt/xH": {
     "defaultMessage": "Tämä listaus ei ole vielä aktiivisesti käytössä. Ehdotukset Google Forms -dokumentista tulevat siirtymään tänne, ja siitä lähtien kapteenit voivat käyttää tätä sivua Google Sheets -dokumentin sijasta. Voit nykyhetkellä lähettää ehdotuksesi tämän sivun tai Google Forms -dokumentin kautta."
   },
+  "necy1Q": {
+    "defaultMessage": "Tämä listaus sisältää vain ehdotuksia lähetetty tästä sivustosta. Muut ehdotukset siirtyvät pian tänne vanhasta Google Sheets -dokumentista, jota siitä lähtien ei enää käytetä."
+  },
   "nn9fFb": {
     "defaultMessage": "BPM"
   },
   "pLUxkj": {
     "defaultMessage": "Ei"
+  },
+  "pNwB5k": {
+    "defaultMessage": "Uusi!"
   },
   "pXOU6C": {
     "defaultMessage": "Täällä ei ole mitään =("
@@ -290,8 +353,14 @@
   "pvfxi+": {
     "defaultMessage": "Ehdotukset"
   },
+  "qYCjeT": {
+    "defaultMessage": "Rakastettu"
+  },
   "qfEiSZ": {
     "defaultMessage": "Summa"
+  },
+  "rv3gh8": {
+    "defaultMessage": "{user} merkitsi tämän <score>ei sallituksi</score> {timestamp, date, long}"
   },
   "sG6ons": {
     "defaultMessage": "Loved-listaus"
@@ -319,5 +388,14 @@
   },
   "y+BE4P": {
     "defaultMessage": "Kaikki"
+  },
+  "yQeX5q": {
+    "defaultMessage": "Ulkoasu: {selector}"
+  },
+  "zSxa2k": {
+    "defaultMessage": "Tämä mappi on nimitetty {roundName} -sarjaan."
+  },
+  "zn6DBN": {
+    "defaultMessage": "Lajittelu:"
   }
 }
