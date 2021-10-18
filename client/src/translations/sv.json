@@ -20,6 +20,9 @@
   "0+S3hP": {
     "defaultMessage": "Om mappen du skickar in är antingen väldigt opopulär eller omöjlig att spela, kan det vara att kaptener inte tittar på den. Var god bara skicka in maps som du tycker skulle ge värde till Loved-kategorin."
   },
+  "06WpMi": {
+    "defaultMessage": "Rankad"
+  },
   "0Vz3c/": {
     "defaultMessage": "Procent och summa"
   },
@@ -31,6 +34,9 @@
   },
   "2dOoEc": {
     "defaultMessage": "Metadata-granskare"
+  },
+  "38JPtF": {
+    "defaultMessage": "Votering på gång"
   },
   "39zfVl": {
     "defaultMessage": "svagt stöd"
@@ -59,6 +65,9 @@
   "7CJMwD": {
     "defaultMessage": "Prioritet"
   },
+  "8NqvA2": {
+    "defaultMessage": "Tangenter:"
+  },
   "8bAHuK": {
     "defaultMessage": "Stäng"
   },
@@ -80,6 +89,9 @@
   "Be0kKF": {
     "defaultMessage": "Mappen du skickar in kanske aldrig blir nominerad för Loved, även om den har merit. Vid tillfället kan maps inte ges Loved-status hur snabbt som helst, så det kan hända att kaptener hela tiden hittar bättre kandidater än dem du skickar in."
   },
+  "CCGzFA": {
+    "defaultMessage": "Framröstad"
+  },
   "CIAu6S": {
     "defaultMessage": "Wiki"
   },
@@ -91,6 +103,12 @@
   },
   "EqGiDp": {
     "defaultMessage": "Det du skriver i detta formulär kommer synas offentligt, så skriv inget som du inte vill att andra ska se. Du behöver inte skriva något i anledningsfältet om du inte vill."
+  },
+  "F1tQfW": {
+    "defaultMessage": "Titel"
+  },
+  "G1mG5h": {
+    "defaultMessage": "Mapparen har bett om att inte flytta denna map till Loved-kategorin."
   },
   "H65rvb": {
     "defaultMessage": "Du är inte tillräckligt cool för att se denna sida."
@@ -109,6 +127,9 @@
   },
   "IiYTWb": {
     "defaultMessage": "Nuvarande team"
+  },
+  "Ipzb3R": {
+    "defaultMessage": "Ej tillåten"
   },
   "JHNIy2": {
     "defaultMessage": "Ordning av rundor:"
@@ -161,8 +182,17 @@
   "PpxIZP": {
     "defaultMessage": "stark avvisning"
   },
+  "PuVvCo": {
+    "defaultMessage": "Tangenter"
+  },
+  "R0gvL0": {
+    "defaultMessage": "Artist"
+  },
   "RHg+09": {
     "defaultMessage": "Vilka spellägen av denna map tycker du borde hamna i Loved?"
+  },
+  "RL5Qu1": {
+    "defaultMessage": "Godkänd"
   },
   "RuFprR": {
     "defaultMessage": "Annat"
@@ -197,8 +227,17 @@
   "VHEp9G": {
     "defaultMessage": "Fallande"
   },
+  "VYIbMd": {
+    "defaultMessage": "Älskad genom votering"
+  },
   "WEpxnj": {
     "defaultMessage": "Spelningar"
+  },
+  "WjsRpS": {
+    "defaultMessage": "Alla maps i denna set är för korta (under 30 sekunder)."
+  },
+  "Y620ue": {
+    "defaultMessage": "Alla"
   },
   "ZEsdcm": {
     "defaultMessage": "Forumämne"
@@ -218,6 +257,9 @@
   "bKfIQC": {
     "defaultMessage": "Varför vill du se denna map i Loved? <fade>(frivillig)</fade>"
   },
+  "bcLpeC": {
+    "defaultMessage": "Ovanliga"
+  },
   "c/0N4+": {
     "defaultMessage": "avvisning"
   },
@@ -230,6 +272,9 @@
   "cwgho6": {
     "defaultMessage": "Inväntar röster"
   },
+  "dG9/uH": {
+    "defaultMessage": "Kvalificerad"
+  },
   "e6WZri": {
     "defaultMessage": "stöd"
   },
@@ -239,14 +284,26 @@
   "gvLZL5": {
     "defaultMessage": "Logga ut"
   },
+  "ht0/kF": {
+    "defaultMessage": "Vanliga"
+  },
   "iCkWun": {
     "defaultMessage": "Runda"
+  },
+  "jVP2nx": {
+    "defaultMessage": "Mappens ägare är bannad."
   },
   "jlkqJz": {
     "defaultMessage": "Hantera"
   },
+  "jlqkv1": {
+    "defaultMessage": "Nominerad"
+  },
   "kr2W+L": {
     "defaultMessage": "<p>Att fylla ut denna formulär hjälper <teamLink>kaptener</teamLink> välja vilka maps att nominera till Loved i röstningarna varje månad. Även om en map har redan <submissionsLink>skickats in</submissionsLink>, kan du tycka till om den här.</p> <p>Några saker att tänka på:</p>"
+  },
+  "l39agD": {
+    "defaultMessage": "Status"
   },
   "lMSjPi": {
     "defaultMessage": "Detta är inte tillgängligt till dig än. Kom tillbaka senare!"
@@ -275,11 +332,17 @@
   "nWt/xH": {
     "defaultMessage": "Denna listning används inte än aktivt av kaptener. Inlämningar via Google Forms kommer snart att flyttas hit, och därefter kommer kaptener kunna använda denna sida istället för Google Sheets. Just nu kan du använda antingen denna sida eller Google Forms för att skicka in maps."
   },
+  "necy1Q": {
+    "defaultMessage": "Denna listning inkluderar bara inlämningar från denna hemsida. Alla inlämningar från den gamla Google Kalkylarken kommer snart att flyttas hit, och då kommer Google Kalkylarken inte användas längre."
+  },
   "nn9fFb": {
     "defaultMessage": "BPM"
   },
   "pLUxkj": {
     "defaultMessage": "Nej"
+  },
+  "pNwB5k": {
+    "defaultMessage": "Ny!"
   },
   "pXOU6C": {
     "defaultMessage": "Det finns inget här =("
@@ -290,8 +353,14 @@
   "pvfxi+": {
     "defaultMessage": "Inlämningar"
   },
+  "qYCjeT": {
+    "defaultMessage": "Älskad"
+  },
   "qfEiSZ": {
     "defaultMessage": "Summa"
+  },
+  "rv3gh8": {
+    "defaultMessage": "{user} markerade denna map som <score>ej tillåten</score> {timestamp, date, long}"
   },
   "sG6ons": {
     "defaultMessage": "Loved-listning"
@@ -319,5 +388,14 @@
   },
   "y+BE4P": {
     "defaultMessage": "Alla"
+  },
+  "yQeX5q": {
+    "defaultMessage": "Tema: {selector}"
+  },
+  "zSxa2k": {
+    "defaultMessage": "Denna map har blivit nominerad för {roundName}."
+  },
+  "zn6DBN": {
+    "defaultMessage": "Sortering:"
   }
 }
