@@ -8,10 +8,14 @@ export function gameModeShortName(gameMode: GameMode) {
   return gameModeShortNames[gameMode];
 }
 
-export function gameModeFromShortName(shortName: string) {
-  const gameMode = (gameModeShortNames as any).indexOf(shortName);
+export function gameModeFromShortName(shortName: string | null | undefined): GameMode | null {
+  if (shortName == null) {
+    return null;
+  }
 
-  return gameMode < 0 ? null : (gameMode as GameMode);
+  const gameMode = (gameModeShortNames as unknown as string[]).indexOf(shortName);
+
+  return gameMode < 0 ? null : gameMode;
 }
 
 export function gameModeLongName(gameMode: GameMode) {

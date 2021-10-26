@@ -237,8 +237,7 @@ export default function SubmissionListingContainer() {
     [sortsAndFilters],
   );
 
-  const gameMode =
-    params.gameMode == null ? null : gameModeFromShortName(params.gameMode.toLowerCase());
+  const gameMode = gameModeFromShortName(params.gameMode?.toLowerCase());
   const keyMode = 'keyMode' in params ? parseInt(params.keyMode) : null;
   const page = params.page == null ? 1 : parseInt(params.page);
 
