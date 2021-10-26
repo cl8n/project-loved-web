@@ -1,0 +1,224 @@
+{
+  "+d4ZcX": {
+    "defaultMessage": "Moderatori"
+  },
+  "/CNHO3": {
+    "defaultMessage": "Accedi con osu!"
+  },
+  "/SSCZX": {
+    "defaultMessage": "Si"
+  },
+  "zn6DBN": {
+    "defaultMessage": "Ordina per:"
+  },
+  "yQeX5q": {
+    "defaultMessage": "Tema: {selector}"
+  },
+  "zSxa2k": {
+    "defaultMessage": "Questa mappa è stata nominata per {roundName}."
+  },
+  "y+BE4P": {
+    "defaultMessage": "Tutte"
+  },
+  "xv9aUB": {
+    "defaultMessage": "Si e no"
+  },
+  "wOZypU": {
+    "defaultMessage": "Alumni"
+  },
+  "wGcwBN": {
+    "defaultMessage": "Alto"
+  },
+  "vDQerf": {
+    "defaultMessage": "Risultati delle votazioni"
+  },
+  "uNpYlX": {
+    "defaultMessage": "Respinta"
+  },
+  "tCV6dl": {
+    "defaultMessage": "Lingua: {selector}"
+  },
+  "qfEiSZ": {
+    "defaultMessage": "Totale"
+  },
+  "qYCjeT": {
+    "defaultMessage": "Amata"
+  },
+  "phKBIX": {
+    "defaultMessage": "Paese sconosciuto"
+  },
+  "pNwB5k": {
+    "defaultMessage": "Nuovo!"
+  },
+  "pXOU6C": {
+    "defaultMessage": "Non c'è nulla qui =("
+  },
+  "pLUxkj": {
+    "defaultMessage": "No"
+  },
+  "nn9fFb": {
+    "defaultMessage": "BPM"
+  },
+  "me3BjX": {
+    "defaultMessage": "Statistiche"
+  },
+  "lz1fkx": {
+    "defaultMessage": "Si"
+  },
+  "lMSjPi": {
+    "defaultMessage": "Non è ancora disponibile per te. Controlla più tardi!"
+  },
+  "jlkqJz": {
+    "defaultMessage": "Gestisci"
+  },
+  "gvLZL5": {
+    "defaultMessage": "Disconnettiti"
+  },
+  "dG9/uH": {
+    "defaultMessage": "Qualificata"
+  },
+  "c2UCNp": {
+    "defaultMessage": "Percentuale"
+  },
+  "ZWbq0S": {
+    "defaultMessage": "Anno"
+  },
+  "ZZqLxU": {
+    "defaultMessage": "Difficoltà"
+  },
+  "Y620ue": {
+    "defaultMessage": "Tutte"
+  },
+  "WEpxnj": {
+    "defaultMessage": "Volte giocata"
+  },
+  "VYIbMd": {
+    "defaultMessage": "Amata attraverso il voto"
+  },
+  "V5W+3b": {
+    "defaultMessage": "Consenso"
+  },
+  "UxNmCh": {
+    "defaultMessage": "Medio"
+  },
+  "UjLvid": {
+    "defaultMessage": "Espandi"
+  },
+  "ScBgfg": {
+    "defaultMessage": "nessuna preferenza"
+  },
+  "RuFprR": {
+    "defaultMessage": "Altro"
+  },
+  "RHg+09": {
+    "defaultMessage": "Per quali modalità vorresti che questa mappa fosse Amata?"
+  },
+  "RL5Qu1": {
+    "defaultMessage": "Approvata"
+  },
+  "R0gvL0": {
+    "defaultMessage": "Artista"
+  },
+  "PuVvCo": {
+    "defaultMessage": "Tasti"
+  },
+  "Oep6va": {
+    "defaultMessage": "Invia"
+  },
+  "NG8X9U": {
+    "defaultMessage": "In costruzione"
+  },
+  "N4xf2i": {
+    "defaultMessage": "Preferiti"
+  },
+  "MLkhaQ": {
+    "defaultMessage": "In votazione"
+  },
+  "JPSkxB": {
+    "defaultMessage": "bandiera {country} "
+  },
+  "LBBZpt": {
+    "defaultMessage": "Modalità"
+  },
+  "Jy6JW8": {
+    "defaultMessage": "Non so chi sei! Prova ad <a>accedere</a> innanzitutto."
+  },
+  "Ipzb3R": {
+    "defaultMessage": "Non consentito"
+  },
+  "IiYTWb": {
+    "defaultMessage": "Team attuale"
+  },
+  "IO8Ye2": {
+    "defaultMessage": "Punteggio"
+  },
+  "HVzPRU": {
+    "defaultMessage": "No"
+  },
+  "H65rvb": {
+    "defaultMessage": "Non sei abbastanza figo/a per vedere questa pagina."
+  },
+  "G1mG5h": {
+    "defaultMessage": "Il creatore di questa mappa ha richiesto che questa mappa non fosse coinvolta nella categoria \"Amate\""
+  },
+  "CxsxoI": {
+    "defaultMessage": "Invio in corso..."
+  },
+  "F1tQfW": {
+    "defaultMessage": "Titolo"
+  },
+  "EqGiDp": {
+    "defaultMessage": "Quello che scrivi qui è visibile pubblicamente, quindi non scrivere nulla che non vorresti che altri vedessero. Non devi compilare il campo del motivo se non vuoi farlo."
+  },
+  "CIAu6S": {
+    "defaultMessage": "Wiki"
+  },
+  "CCGzFA": {
+    "defaultMessage": "Passato la votazione"
+  },
+  "BSKWqB": {
+    "defaultMessage": "Team"
+  },
+  "Be0kKF": {
+    "defaultMessage": "La mappa che vuoi inviare non potrebbe mai essere nominata tra le Amate, anche se dovesse avere dei meriti. Attualmente, il ritmo di nominazione delle mappe Amate è limitato, quindi è possibile che i capitani troveranno continuamente nuove mappe rispetto a quella che hai inviato."
+  },
+  "BGA5hC": {
+    "defaultMessage": "Sviluppatori"
+  },
+  "8bAHuK": {
+    "defaultMessage": "Chiudi"
+  },
+  "7CJMwD": {
+    "defaultMessage": "Priorità"
+  },
+  "5oqovx": {
+    "defaultMessage": "Invia una mappa"
+  },
+  "5OS21f": {
+    "defaultMessage": "Esterno al sito:"
+  },
+  "3RdYB+": {
+    "defaultMessage": "Modalità di gioco:"
+  },
+  "3J+k4U": {
+    "defaultMessage": "Forum"
+  },
+  "3E4vRf": {
+    "defaultMessage": "Basso"
+  },
+  "2YTMfX": {
+    "defaultMessage": "Invia e rimani su questa pagina"
+  },
+  "06WpMi": {
+    "defaultMessage": "Classificata"
+  },
+  "+bCbtl": {
+    "defaultMessage": "Colonne:"
+  },
+  "+9RCG/": {
+    "defaultMessage": "Altre icone di {author}"
+  },
+  "+3rK3I": {
+    "defaultMessage": "Nessuna risposta"
+  }
+}
