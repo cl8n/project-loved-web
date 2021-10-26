@@ -48,12 +48,14 @@ import { useOsuAuth } from './osuAuth';
 import { canWriteAs, isCaptainForMode } from './permissions';
 import Header from './round/Header';
 import { UserInline } from './UserInline';
+import useTitle from './useTitle';
 
 export function Picks() {
   const authUser = useOsuAuth().user;
   const params = useParams() as { round: string };
   const roundId = parseInt(params.round);
   const [roundInfo, roundInfoError, setRoundInfo] = useApi(getNominations, [roundId]);
+  useTitle(roundInfo == null ? `Round #${roundId}` : roundInfo.round.name);
   const assigneesApi = useApi(getAssignees, [], {
     condition:
       authUser != null &&

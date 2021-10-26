@@ -15,6 +15,7 @@ import {
 } from '../osu-helpers';
 import { useOsuAuth } from '../osuAuth';
 import { isCaptainForMode } from '../permissions';
+import useTitle from '../useTitle';
 import type { ToggleableColumn, ToggleableColumnsState } from './helpers';
 import { aggregateReviewScore } from './helpers';
 import { toggleableColumns } from './helpers';
@@ -240,6 +241,12 @@ export default function SubmissionListingContainer() {
   const gameMode = gameModeFromShortName(params.gameMode?.toLowerCase());
   const keyMode = 'keyMode' in params ? parseInt(params.keyMode) : null;
   const page = params.page == null ? 1 : parseInt(params.page);
+
+  useTitle(
+    gameMode == null
+      ? null
+      : `${keyMode == null ? '' : `${keyMode}K `}${gameModeLongName(gameMode)} submissions`,
+  );
 
   if (gameMode == null) {
     return (

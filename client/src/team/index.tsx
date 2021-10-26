@@ -1,8 +1,10 @@
 import { FormattedMessage } from 'react-intl';
 import { getTeam, useApi } from '../api';
+import useTitle from '../useTitle';
 import TeamList from './TeamList';
 
 export default function Team() {
+  useTitle('The team');
   const teamApi = useApi(getTeam);
 
   return (

@@ -4,6 +4,7 @@ import { Route } from 'react-router-dom';
 import type { IRole } from './interfaces';
 import { loginUrl, useOsuAuth } from './osuAuth';
 import { canReadAs } from './permissions';
+import useTitle from './useTitle';
 
 interface ProtectedRouteProps extends RouteProps {
   role?: IRole | 'any';
@@ -11,6 +12,13 @@ interface ProtectedRouteProps extends RouteProps {
 
 export function ProtectedRoute(props: ProtectedRouteProps) {
   const authUser = useOsuAuth().user;
+  useTitle(
+    authUser == null
+      ? 'Unauthenticated'
+      : props.role != null && !canReadAs(authUser, props.role)
+      ? 'Unauthorized'
+      : null,
+  );
 
   return (
     <Route

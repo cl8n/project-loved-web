@@ -6,6 +6,7 @@ import { Never } from './Never';
 import { useOsuAuth } from './osuAuth';
 import { canWriteAs } from './permissions';
 import PostDate from './round/PostDate';
+import useTitle from './useTitle';
 
 type RoundProps = IRound & {
   nomination_count: number;
@@ -85,6 +86,7 @@ function AddRound() {
 }
 
 export function PicksRoundListing() {
+  useTitle('Round listing');
   const authUser = useOsuAuth().user;
   const [rounds, roundsError] = useApi(getRounds);
 

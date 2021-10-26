@@ -1,7 +1,10 @@
 import { FormattedMessage } from 'react-intl';
+import useTitle from '../useTitle';
 import Polls from './Polls';
 
 export default function Statistics() {
+  useTitle('Statistics');
+
   return (
     <div className='content-block'>
       <FormattedMessage

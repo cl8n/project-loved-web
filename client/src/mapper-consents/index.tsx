@@ -4,6 +4,7 @@ import { apiErrorMessage, getMapperConsents, useApi } from '../api';
 import { BeatmapInline } from '../BeatmapInline';
 import type { IMapperConsent } from '../interfaces';
 import { UserInline } from '../UserInline';
+import useTitle from '../useTitle';
 
 const messages = defineMessages({
   noReply: {
@@ -85,6 +86,7 @@ function MapperBeatmapsetConsents({ consent }: { consent: IMapperConsent }) {
 }
 
 export default function MapperConsents() {
+  useTitle('Mapper consents');
   const [consents, consentError] = useApi(getMapperConsents);
 
   if (consentError != null) {

@@ -25,6 +25,7 @@ import { gameModeLongName, gameModes } from './osu-helpers';
 import { useOsuAuth } from './osuAuth';
 import { canReadAs, canWriteAs } from './permissions';
 import { UserInline } from './UserInline';
+import useTitle from './useTitle';
 
 interface ApiObjectUpdateLog {
   id: number;
@@ -536,6 +537,8 @@ function LogMessage(log: ILog) {
 }
 
 export function Manage() {
+  useTitle('Management');
+
   return (
     <>
       <div className='content-block'>

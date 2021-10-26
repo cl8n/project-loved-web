@@ -3,8 +3,10 @@ import { alertApiErrorMessage, apiErrorMessage, getSettings, updateSettings, use
 import type { FormSubmitHandler } from './dom-helpers';
 import { Form } from './dom-helpers';
 import { gameModeLongName, gameModes } from './osu-helpers';
+import useTitle from './useTitle';
 
 export default function Settings() {
+  useTitle('Site settings');
   const [busy, setBusy] = useState(false);
   const [settings, settingsError, setSettings] = useApi(getSettings);
 

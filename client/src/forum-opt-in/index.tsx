@@ -1,4 +1,8 @@
+import useTitle from '../useTitle';
+
 export default function ForumOptIn() {
+  useTitle('Forum opt-in');
+
   return (
     <>
       <h1>Opt-in to forum posting</h1>
