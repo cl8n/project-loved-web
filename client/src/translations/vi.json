@@ -3,10 +3,10 @@
     "defaultMessage": "Không có phản hồi"
   },
   "+9RCG/": {
-    "defaultMessage": "Những icon khác được tạo bởi {author}"
+    "defaultMessage": "Những biểu tượng khác được tạo bởi {author}"
   },
   "3RdYB+": {
-    "defaultMessage": "Chế độ chơi"
+    "defaultMessage": "Chế độ chơi:"
   },
   "5NZbY5": {
     "defaultMessage": "Hiện kết quả:"
@@ -18,7 +18,7 @@
     "defaultMessage": "được ủng hộ một chút"
   },
   "38JPtF": {
-    "defaultMessage": "Đang tiến hành bình chọn..."
+    "defaultMessage": "Đang tiến hành bình chọn"
   },
   "2YTMfX": {
     "defaultMessage": "Nộp và ở lại trang này"
@@ -33,7 +33,7 @@
     "defaultMessage": "Những gì bạn viết trong biểu mẫu này sẽ được công khai, nên đừng viết những gì bạn không muốn người khác thấy. Bạn không cần điền lý do nếu bạn không muốn."
   },
   "0+S3hP": {
-    "defaultMessage": "Nếu beatmap bạn nộp không phổ biến hoặc không thể chơi được, các đội trưởng có thể sẽ không bao giờ kiểm tra nó. Xin hãy nộp những beatmap mà bạn cho rằng sẽ thêm giá trị vào thể loại Được Yêu Thích."
+    "defaultMessage": "Nếu beatmap bạn nộp không phổ biến hoặc không thể chơi được, các đội trưởng có thể sẽ không bao giờ kiểm tra nó. Xin hãy nộp những beatmap mà bạn cho rằng sẽ thêm giá trị thực sự vào danh mục Được Yêu Thích."
   },
   "Be0kKF": {
     "defaultMessage": "Beatmap bạn nộp có thể sẽ không bao giờ được bình chọn vào \"Được Yêu Thích\", kể cả khi nó có vượt qua một số tiêu chuẩn. Hiện tại, số lượng beatmap được bình chọn có giới hạn, nên rất có thể các đội trưởng sẽ tiếp tục tìm những beatmap khác tốt hơn beatmap mà bạn nộp."
@@ -63,7 +63,7 @@
     "defaultMessage": "Phần trăm và tổng cộng"
   },
   "2dOoEc": {
-    "defaultMessage": "Giám sát các thứ khác"
+    "defaultMessage": "Người kiểm tra siêu dữ liệu"
   },
   "3E4vRf": {
     "defaultMessage": "Thấp"
@@ -90,7 +90,7 @@
     "defaultMessage": "Sự đồng ý của tác giả beatmap"
   },
   "9cv8r4": {
-    "defaultMessage": "Beatmap"
+    "defaultMessage": "Bộ beatmap"
   },
   "e6WZri": {
     "defaultMessage": "được ủng hộ"
@@ -99,7 +99,7 @@
     "defaultMessage": "Đạt tiêu chuẩn"
   },
   "cwgho6": {
-    "defaultMessage": "Đang chờ duyệt..."
+    "defaultMessage": "Đang chờ duyệt"
   },
   "c/0N4+": {
     "defaultMessage": "bị từ chối"
@@ -216,7 +216,7 @@
     "defaultMessage": "Khác"
   },
   "ScBgfg": {
-    "defaultMessage": "không nhận được ý kiến rõ ràng"
+    "defaultMessage": "không thấy sự ưa thích"
   },
   "Sti+Y3": {
     "defaultMessage": "Sau khi bạn nộp beatmap, bạn có thể kiểm tra tình trạng của nó trên <submissionsLink>trang \"Đã nộp\"</submissionsLink>."
@@ -279,7 +279,7 @@
     "defaultMessage": "Không thông dụng"
   },
   "gLG6dL": {
-    "defaultMessage": "Beatmap đã nộp"
+    "defaultMessage": "Các beatmap đã nộp"
   },
   "gvLZL5": {
     "defaultMessage": "Đăng xuất"
@@ -312,7 +312,7 @@
     "defaultMessage": "bị từ chối một chút"
   },
   "lULo+e": {
-    "defaultMessage": "Đã thất bại trong bình chọn"
+    "defaultMessage": "Đã thất bại trong phần bình chọn"
   },
   "lbC8H+": {
     "defaultMessage": "Tác giả beatmap"
@@ -327,7 +327,7 @@
     "defaultMessage": "Tác giả beatmap"
   },
   "mucI2W": {
-    "defaultMessage": "Một phương thức để sắp xếp danh sách này. {definition}"
+    "defaultMessage": "Một phương thức tạm thời để sắp xếp danh sách này. {definition}"
   },
   "necy1Q": {
     "defaultMessage": "Danh sách này chỉ bao gồm những beatmap nộp qua website này. Các beatmap từ Google Sheets sẽ chuyển về đây trong thời gian ngắn, rôi sau đó file Google Sheets sẽ bị hủy."
@@ -366,7 +366,7 @@
     "defaultMessage": "Ngôn ngữ: {selector}"
   },
   "uNpYlX": {
-    "defaultMessage": "bị từ chối"
+    "defaultMessage": "Bị từ chối"
   },
   "urIF1D": {
     "defaultMessage": "Bộ beatmap"
