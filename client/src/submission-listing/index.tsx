@@ -242,13 +242,22 @@ export default function SubmissionListingContainer() {
   const page = params.page == null ? 1 : parseInt(params.page);
 
   if (gameMode == null) {
-    return <Redirect to={getNewSubmissionsListingPath(GameMode.osu, null, 1)} />;
+    return (
+      <Redirect
+        to={getNewSubmissionsListingPath(
+          gameModeFromShortName(localStorage.getItem('gameMode')) ?? GameMode.osu,
+          null,
+          1,
+        )}
+      />
+    );
   }
 
   const onGameModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const newGameMode = parseInt(event.currentTarget.value);
 
     if (newGameMode !== gameMode) {
+      localStorage.setItem('gameMode', gameModeShortName(newGameMode));
       history.push(getNewSubmissionsListingPath(newGameMode, null, 1));
     }
   };
