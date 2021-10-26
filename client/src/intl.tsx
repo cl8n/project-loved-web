@@ -19,6 +19,7 @@ function loadMessages(locale: string): Record<string, MessageFormatElement[]> {
 export const locales = [
   { code: 'en', name: 'English' },
   { code: 'bg', name: 'Български' },
+  { code: 'de', name: 'Deutsch' },
   { code: 'es', name: 'español' },
   { code: 'fi', name: 'Suomi' },
   { code: 'sv', name: 'Svenska' },

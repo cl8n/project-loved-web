@@ -1,0 +1,398 @@
+{
+  "+3rK3I": {
+    "defaultMessage": "Keine Antwort"
+  },
+  "+9RCG/": {
+    "defaultMessage": "Andere Symbole von {author}"
+  },
+  "+bCbtl": {
+    "defaultMessage": "Spalten:"
+  },
+  "+d4ZcX": {
+    "defaultMessage": "Moderatoren"
+  },
+  "/CNHO3": {
+    "defaultMessage": "Einloggen mit osu!"
+  },
+  "/SSCZX": {
+    "defaultMessage": "Ja"
+  },
+  "0+S3hP": {
+    "defaultMessage": "Wenn die von dir eingereichte Karte entweder sehr unbeliebt oder völlig unspielbar ist, werden Kapitäne sie vielleicht niemals überprüfen. Bitte reiche nur Maps ein, von denen du glaubst, dass sie der Kategorie \"Loved\" einen echten Mehrwert verleihen."
+  },
+  "06WpMi": {
+    "defaultMessage": "Ranked"
+  },
+  "0Vz3c/": {
+    "defaultMessage": "Prozente und insgesamt"
+  },
+  "2SX61V": {
+    "defaultMessage": "Anmerkungen"
+  },
+  "2YTMfX": {
+    "defaultMessage": "Absenden und auf der Seite bleiben"
+  },
+  "2dOoEc": {
+    "defaultMessage": "Metadatenprüfer"
+  },
+  "38JPtF": {
+    "defaultMessage": "Umfrage läuft"
+  },
+  "39zfVl": {
+    "defaultMessage": "leichte Unterstützung"
+  },
+  "3E4vRf": {
+    "defaultMessage": "niedrig"
+  },
+  "3J+k4U": {
+    "defaultMessage": "Forum"
+  },
+  "3RdYB+": {
+    "defaultMessage": "Spielmodus:"
+  },
+  "3Kch6P": {
+    "defaultMessage": "Aufsteigend"
+  },
+  "5NZbY5": {
+    "defaultMessage": "Ergebnisanzeige:"
+  },
+  "5OS21f": {
+    "defaultMessage": "Extern:"
+  },
+  "5oqovx": {
+    "defaultMessage": "Eine Map einreichen"
+  },
+  "7CJMwD": {
+    "defaultMessage": "Priorität"
+  },
+  "8NqvA2": {
+    "defaultMessage": "Tastenmodus:"
+  },
+  "8bAHuK": {
+    "defaultMessage": "Schließen"
+  },
+  "8l6BC0": {
+    "defaultMessage": "Mapper Zustimmungen"
+  },
+  "9cv8r4": {
+    "defaultMessage": "Beatmap-Set"
+  },
+  "AGzOYr": {
+    "defaultMessage": "Eine Map für Loved! einreichen"
+  },
+  "BGA5hC": {
+    "defaultMessage": "Entwickler"
+  },
+  "BSKWqB": {
+    "defaultMessage": "Team"
+  },
+  "Be0kKF": {
+    "defaultMessage": "Die Map, die du einreichst, wird möglicherweise nie für Loved nominiert werden, selbst wenn sie einen gewissen Wert hat. Derzeit ist die Rate, mit der Maps den Loved Status erhalten, begrenzt. Daher ist es möglich, dass die Kapitäne ständig passendere Einsendungen als die von dir eingereichte Map finden."
+  },
+  "CCGzFA": {
+    "defaultMessage": "Abstimmung bestanden"
+  },
+  "CIAu6S": {
+    "defaultMessage": "Wiki"
+  },
+  "CxsxoI": {
+    "defaultMessage": "Wird eingereicht..."
+  },
+  "Do+EPJ": {
+    "defaultMessage": "{user} bewertete mit {score} am {timestamp, date, long}"
+  },
+  "EqGiDp": {
+    "defaultMessage": "Was du in dieses Formular schreibst, ist öffentlich sichtbar. Schreibe also nichts, was andere nicht sehen sollen. Du musst das Feld für den Grund nicht ausfüllen, wenn du es nicht möchtest."
+  },
+  "F1tQfW": {
+    "defaultMessage": "Titel"
+  },
+  "G1mG5h": {
+    "defaultMessage": "Der Mapper hat beantragt, dass diese Karte nicht in die Kategorie \"Loved\" einbezogen wird."
+  },
+  "H65rvb": {
+    "defaultMessage": "Du bist nicht cool genug, um diese Seite zu sehen."
+  },
+  "HVzPRU": {
+    "defaultMessage": "Nein"
+  },
+  "Hf1vPz": {
+    "defaultMessage": "Auswahl"
+  },
+  "HvpI7B": {
+    "defaultMessage": "Gelöschtes Beatmap-Set"
+  },
+  "IO8Ye2": {
+    "defaultMessage": "Bewertung"
+  },
+  "IiYTWb": {
+    "defaultMessage": "Aktuelles Team"
+  },
+  "Ipzb3R": {
+    "defaultMessage": "Nicht erlaubt"
+  },
+  "JHNIy2": {
+    "defaultMessage": "Reihenfolge:"
+  },
+  "JPKVz4": {
+    "defaultMessage": "Beatmap-Set"
+  },
+  "JPSkxB": {
+    "defaultMessage": "{country} Flagge"
+  },
+  "Jy6JW8": {
+    "defaultMessage": "Ich weiß nicht wer du bist! Versuche dich erst <a>einzuloggen</a>"
+  },
+  "LBBZpt": {
+    "defaultMessage": "Spielmodus"
+  },
+  "Ll1LUO": {
+    "defaultMessage": "Starke Unterstützung"
+  },
+  "Lm++cZ": {
+    "defaultMessage": "Projekt Loved"
+  },
+  "MLkhaQ": {
+    "defaultMessage": "in der Abstimmung"
+  },
+  "MUDTXQ": {
+    "defaultMessage": "Beatmap-Set Link oder ID"
+  },
+  "MoR8Of": {
+    "defaultMessage": "Mapper Zustimmungen"
+  },
+  "N4xf2i": {
+    "defaultMessage": "Favoriten"
+  },
+  "NG8X9U": {
+    "defaultMessage": "In Arbeit"
+  },
+  "NjIKQe": {
+    "defaultMessage": "Unerreichbar"
+  },
+  "O2IvSs": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} reichte die Map ein am {timestamp, date, long}} other{{user} reichte die Map ein}}"
+  },
+  "Oep6va": {
+    "defaultMessage": "Einreichen"
+  },
+  "PCZJkZ": {
+    "defaultMessage": "Quellcode und Problemverfolgung"
+  },
+  "PpxIZP": {
+    "defaultMessage": "starke Ablehnung"
+  },
+  "PuVvCo": {
+    "defaultMessage": "Tasten"
+  },
+  "R0gvL0": {
+    "defaultMessage": "Künstler"
+  },
+  "RHg+09": {
+    "defaultMessage": "Für welchen Spielmodus willst du diese Map für Loved einreichen?"
+  },
+  "RL5Qu1": {
+    "defaultMessage": "Zugelassen"
+  },
+  "RuFprR": {
+    "defaultMessage": "Andere"
+  },
+  "ScBgfg": {
+    "defaultMessage": "Keine Präferenz"
+  },
+  "Sti+Y3": {
+    "defaultMessage": "Nachdem du eine Map eingereicht hast, kannst du ihren Status bei den <submissionsLink>Einreichungen</submissionsLink> überprüfen."
+  },
+  "Tf7XH9": {
+    "defaultMessage": "Anmerkungen"
+  },
+  "TqI9fE": {
+    "defaultMessage": "Admin:"
+  },
+  "TrDD+Y": {
+    "defaultMessage": "Du bist dich <a>einloggen</a> um das Formular auszufüllen."
+  },
+  "U1fcdw": {
+    "defaultMessage": "Nachrichtenredakteure / Manager"
+  },
+  "UjLvid": {
+    "defaultMessage": "Erweitern"
+  },
+  "UxNmCh": {
+    "defaultMessage": "Mittel"
+  },
+  "V5W+3b": {
+    "defaultMessage": "Zustimmung"
+  },
+  "VHEp9G": {
+    "defaultMessage": "Absteigend"
+  },
+  "VYIbMd": {
+    "defaultMessage": "Loved durch Abstimmung"
+  },
+  "WEpxnj": {
+    "defaultMessage": "Plays"
+  },
+  "WjsRpS": {
+    "defaultMessage": "Jede Map in diesem Set ist zu kurz (unter 30 Sekunden)"
+  },
+  "Y620ue": {
+    "defaultMessage": "Alle"
+  },
+  "ZEsdcm": {
+    "defaultMessage": "Umfragenthema"
+  },
+  "ZMV3ed": {
+    "defaultMessage": "Flaggen-Symbole von {author1} und {author2}"
+  },
+  "ZWbq0S": {
+    "defaultMessage": "Jahr"
+  },
+  "ZZqLxU": {
+    "defaultMessage": "Diffs"
+  },
+  "aHJR9F": {
+    "defaultMessage": "Zustimmungen"
+  },
+  "bKfIQC": {
+    "defaultMessage": "Warum möchtest du, dass diese Map Loved wird? <fade>(optional)</fade>"
+  },
+  "bcLpeC": {
+    "defaultMessage": "Ungewöhnlich"
+  },
+  "c/0N4+": {
+    "defaultMessage": "Ablehnung"
+  },
+  "c2UCNp": {
+    "defaultMessage": "Prozente"
+  },
+  "ccf+6T": {
+    "defaultMessage": "{gameMode} Kapitäne"
+  },
+  "cwgho6": {
+    "defaultMessage": "Ausstehend"
+  },
+  "dG9/uH": {
+    "defaultMessage": "Qualifiziert"
+  },
+  "e6WZri": {
+    "defaultMessage": "Unterstützung"
+  },
+  "gLG6dL": {
+    "defaultMessage": "Eingereichte Maps"
+  },
+  "gvLZL5": {
+    "defaultMessage": "Ausloggen"
+  },
+  "ht0/kF": {
+    "defaultMessage": "Gewöhnlich"
+  },
+  "iCkWun": {
+    "defaultMessage": "Runden"
+  },
+  "jVP2nx": {
+    "defaultMessage": "Der Mapset-Host ist gebannt."
+  },
+  "jlkqJz": {
+    "defaultMessage": "Verwalten"
+  },
+  "jlqkv1": {
+    "defaultMessage": "Nominiert"
+  },
+  "kr2W+L": {
+    "defaultMessage": "<p>Das Ausfüllen dieses Formulars hilft den <teamLink>Kapitänen</teamLink> zu entscheiden, welche Maps sie in den monatlichen Umfragen für Loved nominieren sollen. Selbst wenn eine Map bereits <submissionsLink>eingereicht</submissionsLink> wurde, können Sie hier Ihre Meinung zur Map hinzufügen.</p> <p>Einige Dinge zu beachten:</p>"
+  },
+  "l39agD": {
+    "defaultMessage": "Status"
+  },
+  "lMSjPi": {
+    "defaultMessage": "Dies steht dir noch nicht zur Verfügung. Schau bald wieder vorbei!"
+  },
+  "lRk8DP": {
+    "defaultMessage": "leichte Ablehnung"
+  },
+  "lULo+e": {
+    "defaultMessage": "Fehlgeschlagene Abstimmung"
+  },
+  "lbC8H+": {
+    "defaultMessage": "Mapper"
+  },
+  "lz1fkx": {
+    "defaultMessage": "Ja"
+  },
+  "me3BjX": {
+    "defaultMessage": "Statistiken"
+  },
+  "mhBW5h": {
+    "defaultMessage": "Mapper"
+  },
+  "mucI2W": {
+    "defaultMessage": "Eine Platzhaltermethode zum Sortieren dieser Auflistung. {definition}"
+  },
+  "necy1Q": {
+    "defaultMessage": "Diese Auflistung enthält nur Einsendungen, die von dieser Website gesendet werden. Einträge aus den alten Google Sheets werden in Kürze hierher verschoben, und dann werden die Google Sheets eingestellt."
+  },
+  "nn9fFb": {
+    "defaultMessage": "BPM"
+  },
+  "pLUxkj": {
+    "defaultMessage": "Nein"
+  },
+  "pNwB5k": {
+    "defaultMessage": "Neu!"
+  },
+  "pXOU6C": {
+    "defaultMessage": "Hier gibt es nichts =("
+  },
+  "phKBIX": {
+    "defaultMessage": "Unbekanntes Land"
+  },
+  "pvfxi+": {
+    "defaultMessage": "Eingereicht"
+  },
+  "qYCjeT": {
+    "defaultMessage": "Loved"
+  },
+  "qfEiSZ": {
+    "defaultMessage": "Insgesamt"
+  },
+  "rv3gh8": {
+    "defaultMessage": "{user} als <score>nicht zulässig</score> markiert am {timestamp, date, long}"
+  },
+  "sG6ons": {
+    "defaultMessage": "Loved Auflistung"
+  },
+  "tCV6dl": {
+    "defaultMessage": "Sprache: {selector}"
+  },
+  "uNpYlX": {
+    "defaultMessage": "Abgelehnt"
+  },
+  "urIF1D": {
+    "defaultMessage": "Beatmap-Set"
+  },
+  "vDQerf": {
+    "defaultMessage": "Umfragenergebnisse"
+  },
+  "wGcwBN": {
+    "defaultMessage": "Hoch"
+  },
+  "wOZypU": {
+    "defaultMessage": "Ehemalig"
+  },
+  "xv9aUB": {
+    "defaultMessage": "Ja und Nein"
+  },
+  "y+BE4P": {
+    "defaultMessage": "Alle"
+  },
+  "yQeX5q": {
+    "defaultMessage": "Modus: {selector}"
+  },
+  "zSxa2k": {
+    "defaultMessage": "Diese Map wurde für {roundName} nominiert."
+  },
+  "zn6DBN": {
+    "defaultMessage": "Sortieren nach:"
+  }
+}
