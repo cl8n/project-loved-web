@@ -26,10 +26,8 @@ declare const enum SyslogLevel {
   debug,
 }
 
-type AuthUser = Omit<UserWithRoles, 'api_fetched_at'>;
-
 interface UserWithRoles extends User {
-  roles: UserRoles;
+  roles: UserRole[];
 }
 
 //#region Database
@@ -67,6 +65,17 @@ declare const enum ModeratorState {
   sentToReview,
   good,
   notAllowed,
+}
+
+declare const enum Role {
+  admin,
+  captain,
+  metadata,
+  moderator,
+  news,
+  developer,
+  spectator,
+  video,
 }
 
 interface Beatmap {
@@ -185,16 +194,6 @@ interface Review {
   score: number;
 }
 
-type Role =
-  | 'alumni'
-  | 'captain'
-  | 'dev'
-  | 'god'
-  | 'god_readonly'
-  | 'metadata'
-  | 'moderator'
-  | 'news';
-
 interface Round {
   id: number;
   done: boolean;
@@ -244,10 +243,12 @@ interface UserName {
   name: string;
 }
 
-type UserRoles = Record<Role, boolean> & {
-  alumni_game_mode: GameMode | null;
-  captain_game_mode: GameMode | null;
-};
+interface UserRole {
+  game_mode: GameMode | -1;
+  role_id: Role;
+  user_id: number;
+  alumni: boolean;
+}
 //#endregion
 
 //#region Express
@@ -267,7 +268,7 @@ declare namespace Express {
     // Required properties are not actually required
     typedLocals: {
       osu: import('./osu').Osu;
-      user: AuthUser;
+      user: UserWithRoles;
     };
   }
 }

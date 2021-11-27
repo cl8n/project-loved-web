@@ -2,19 +2,47 @@ import { createHash, timingSafeEqual } from 'crypto';
 import type { NextFunction, Request, RequestHandler, Response } from 'express';
 import { accessSetting } from './settings';
 
-const allRoles = ['alumni', 'captain', 'dev', 'metadata', 'moderator', 'news'] as const;
+const normalRoles = [
+  Role.captain,
+  Role.metadata,
+  Role.moderator,
+  Role.news,
+  Role.developer,
+  Role.video,
+] as const;
 
-function isGod(method: string, user: AuthUser | undefined): boolean {
-  return user != null && (user.roles.god || (method === 'GET' && user.roles.god_readonly));
+function findRole(user: Readonly<UserWithRoles>, roleId: Role): UserRole | undefined {
+  return user.roles.find((role) => !role.alumni && role.role_id === roleId);
 }
 
-function hasRole(method: string, user: AuthUser | undefined, roles: readonly Role[]): boolean {
-  return user != null && (isGod(method, user) || roles.some((role) => user.roles[role]));
+export function hasRole(user: Readonly<UserWithRoles>, roleIds: readonly Role[]): boolean {
+  return roleIds.some((roleId) => findRole(user, roleId) != null);
 }
 
-function hasRoleMiddleware(roles: readonly Role[], errorMessage: string): RequestHandler {
+export function hasRoleOrAdmin(
+  user: Readonly<UserWithRoles>,
+  roleIds: readonly Role[],
+  method: string,
+): boolean {
+  return isAdmin(user, method) || hasRole(user, roleIds);
+}
+
+export function hasRoleForGameModeOrAdmin(
+  user: Readonly<UserWithRoles>,
+  roleId: Role,
+  gameMode: GameMode,
+  method: string,
+): boolean {
+  return isAdmin(user, method) || findRole(user, roleId)?.game_mode === gameMode;
+}
+
+function isAdmin(user: Readonly<UserWithRoles>, method: string): boolean {
+  return hasRole(user, [Role.admin]) || (method === 'GET' && hasRole(user, [Role.spectator]));
+}
+
+function hasRoleMiddleware(roleIds: readonly Role[], errorMessage: string): RequestHandler {
   return function (request, response, next) {
-    if (!hasRole(request.method, response.typedLocals.user, roles)) {
+    if (!hasRoleOrAdmin(response.typedLocals.user, roleIds, request.method)) {
       return response.status(403).json({ error: errorMessage });
     }
 
@@ -60,40 +88,24 @@ export function isCaptainForGameMode(
   next: NextFunction,
 ): unknown {
   const gameMode = parseInt(request.param('gameMode'), 10);
-  const user = response.typedLocals.user;
 
   if (gameMode == null) {
     return response.status(400).json({ error: 'No game mode provided' });
   }
 
-  if (!isGod(request.method, user) && user?.roles.captain_game_mode !== gameMode) {
+  if (
+    !hasRoleForGameModeOrAdmin(response.typedLocals.user, Role.captain, gameMode, request.method)
+  ) {
     return response.status(403).json({ error: `Must be a captain for mode ${gameMode}` });
   }
 
   next();
 }
 
-type RolesReturn = Record<typeof allRoles[number], boolean> & { gameModes: boolean[] };
-export function roles(request: Request, response: Response): RolesReturn {
-  const roles: Partial<RolesReturn> = {
-    gameModes: [0, 1, 2, 3].map(
-      (gameMode) =>
-        isGod(request.method, response.typedLocals.user) ||
-        response.typedLocals.user?.roles.captain_game_mode === gameMode,
-    ),
-  };
-
-  for (const role of allRoles) {
-    roles[role] = hasRole(request.method, response.typedLocals.user, [role]);
-  }
-
-  return roles as RolesReturn;
-}
-
-export const isAnything = hasRoleMiddleware(allRoles, 'Must have a role');
-export const isCaptain = hasRoleMiddleware(['captain'], 'Must be a captain');
-const isGodMiddleware = hasRoleMiddleware([], 'Must be God');
-export { isGodMiddleware as isGod };
-export const isMetadataChecker = hasRoleMiddleware(['metadata'], 'Must be a metadata checker');
-export const isModerator = hasRoleMiddleware(['moderator'], 'Must be a moderator');
-export const isNewsAuthor = hasRoleMiddleware(['news'], 'Must be a news author');
+const isAdminMiddleware = hasRoleMiddleware([], 'Must be an admin');
+export { isAdminMiddleware as isAdmin };
+export const isAnything = hasRoleMiddleware(normalRoles, 'Must have a role');
+export const isCaptain = hasRoleMiddleware([Role.captain], 'Must be a captain');
+export const isMetadataChecker = hasRoleMiddleware([Role.metadata], 'Must be a metadata checker');
+export const isModerator = hasRoleMiddleware([Role.moderator], 'Must be a moderator');
+export const isNewsAuthor = hasRoleMiddleware([Role.news], 'Must be a news author');
