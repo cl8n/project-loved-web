@@ -5,6 +5,7 @@ import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { registerTextareaAutoHeightTrigger } from './auto-height';
 import ForumOptIn from './forum-opt-in';
 import { Header } from './Header';
+import { Role } from './interfaces';
 import { IntlProviderWrapper } from './intl';
 import Localization from './localization';
 import { Manage } from './Manage';
@@ -60,10 +61,10 @@ render(
               <ProtectedRoute exact path='/admin/manage' role='any'>
                 <Manage />
               </ProtectedRoute>
-              <ProtectedRoute exact path='/admin/forum-opt-in' role='captain'>
+              <ProtectedRoute exact path='/admin/forum-opt-in' role={Role.captain}>
                 <ForumOptIn />
               </ProtectedRoute>
-              <ProtectedRoute exact path='/admin/settings' role='captain'>
+              <ProtectedRoute exact path='/admin/settings' role={Role.captain}>
                 <Settings />
               </ProtectedRoute>
               <Route exact path='/localization/:locale?'>

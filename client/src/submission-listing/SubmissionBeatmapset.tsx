@@ -14,9 +14,11 @@ import heartIcon from '../images/icons8/heart.png';
 import musicalNotesIcon from '../images/icons8/musical-notes.png';
 import playIcon from '../images/icons8/play.png';
 import type { IReview } from '../interfaces';
+import { Role } from '../interfaces';
 import { GameMode } from '../interfaces';
 import { Never } from '../Never';
 import { useOsuAuth } from '../osuAuth';
+import { hasRole } from '../permissions';
 import { UserInline } from '../UserInline';
 import type { ToggleableColumnsState } from './helpers';
 import { submissionIsNew } from './helpers';
@@ -203,7 +205,11 @@ export default function SubmissionBeatmapset({
   };
   const onMouseEnter = () => setHovered(true);
   const onMouseLeave = () => setHovered(false);
-  const reviewAngry = canReview && authUser?.roles.captain && !review?.score; // TODO: Not dumb workaround for God role
+  const reviewAngry =
+    canReview &&
+    authUser != null &&
+    hasRole(authUser, Role.captain, undefined, true) &&
+    !review?.score;
 
   return (
     <>
@@ -318,13 +324,15 @@ export default function SubmissionBeatmapset({
           </td>
         </tr>
       )}
-      <ReviewEditor
-        beatmapset={beatmapset}
-        gameMode={gameMode}
-        modalState={[reviewModalOpen, setReviewModalOpen]}
-        onReviewUpdate={onReviewUpdate}
-        review={review}
-      />
+      {canReview && (
+        <ReviewEditor
+          beatmapset={beatmapset}
+          gameMode={gameMode}
+          modalState={[reviewModalOpen, setReviewModalOpen]}
+          onReviewUpdate={onReviewUpdate}
+          review={review}
+        />
+      )}
     </>
   );
 }

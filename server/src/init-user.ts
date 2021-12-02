@@ -22,16 +22,12 @@ const username = process.argv[2];
     process.exit(1);
   }
 
-  await db.transact(async (connection) => {
-    await connection.query('DELETE FROM user_roles WHERE user_id = ?', [user.id]);
-    await connection.query('INSERT INTO user_roles SET ?', [
-      {
-        user_id: user.id,
-        dev: true,
-        god: true,
-      },
-    ]);
-  });
+  await db.query('INSERT IGNORE INTO user_roles SET ?', [
+    {
+      role_id: Role.admin,
+      user_id: user.id,
+    },
+  ]);
 
   console.log(`Added ${user.name} [#${user.id}] as administrator`);
 

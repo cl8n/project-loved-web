@@ -2,9 +2,10 @@ import { Link, useHistory } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
 import { addRound, alertApiErrorMessage, apiErrorMessage, getRounds, useApi } from './api';
 import type { IRound } from './interfaces';
+import { Role } from './interfaces';
 import { Never } from './Never';
 import { useOsuAuth } from './osuAuth';
-import { canWriteAs } from './permissions';
+import { hasRole } from './permissions';
 import PostDate from './round/PostDate';
 import useTitle from './useTitle';
 
@@ -98,7 +99,7 @@ export function PicksRoundListing() {
     <>
       <div className='content-block'>
         <h1>Current rounds</h1>
-        {canWriteAs(authUser, 'news') && <AddRound />}
+        {hasRole(authUser, Role.news) && <AddRound />}
         <PicksRoundListingInner rounds={rounds?.incomplete_rounds} roundsError={roundsError} />
       </div>
       <div className='content-block'>

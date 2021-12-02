@@ -1,9 +1,9 @@
-import type { IUserWithoutRoles } from '../interfaces';
+import type { IUser } from '../interfaces';
 import { UserInline } from '../UserInline';
 
 interface UserListProps {
   title: string;
-  users: IUserWithoutRoles[];
+  users: IUser[];
 }
 
 export default function UserList({ title, users }: UserListProps) {

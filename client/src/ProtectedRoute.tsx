@@ -1,13 +1,13 @@
 import { FormattedMessage } from 'react-intl';
 import type { RouteProps } from 'react-router-dom';
 import { Route } from 'react-router-dom';
-import type { IRole } from './interfaces';
+import type { Role } from './interfaces';
 import { loginUrl, useOsuAuth } from './osuAuth';
-import { canReadAs } from './permissions';
+import { hasRole } from './permissions';
 import useTitle from './useTitle';
 
 interface ProtectedRouteProps extends RouteProps {
-  role?: IRole | 'any';
+  role?: Role | 'any';
 }
 
 export function ProtectedRoute(props: ProtectedRouteProps) {
@@ -15,7 +15,7 @@ export function ProtectedRoute(props: ProtectedRouteProps) {
   useTitle(
     authUser == null
       ? 'Unauthenticated'
-      : props.role != null && !canReadAs(authUser, props.role)
+      : props.role != null && !hasRole(authUser, props.role)
       ? 'Unauthorized'
       : null,
   );
@@ -39,7 +39,7 @@ export function ProtectedRoute(props: ProtectedRouteProps) {
           );
         }
 
-        if (props.role == null || canReadAs(authUser, props.role)) {
+        if (props.role == null || hasRole(authUser, props.role)) {
           return props.children;
         }
 

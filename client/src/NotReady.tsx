@@ -1,12 +1,12 @@
 import type { PropsWithChildren } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useOsuAuth } from './osuAuth';
-import { canReadAs } from './permissions';
+import { hasRole } from './permissions';
 
 export function NotReady({ children }: PropsWithChildren<{}>) {
   const authUser = useOsuAuth().user;
 
-  if (children == null || authUser == null || !canReadAs(authUser, 'any')) {
+  if (children == null || authUser == null || !hasRole(authUser, 'any')) {
     return (
       <>
         <FormattedMessage

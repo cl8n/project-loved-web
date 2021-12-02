@@ -6,22 +6,23 @@ import type {
   AssigneeType,
   GameMode,
   IBeatmapset,
-  ICaptain,
   ILog,
+  IMapperConsent,
   INomination,
   INominationWithPoll,
   IPoll,
+  IReview,
   IRound,
+  ISettings,
   ISubmission,
   IUser,
-  IUserWithoutRoles,
-  IMapperConsent,
+  IUserRole,
+  IUserWithRoles,
   MetadataState,
   ModeratorState,
   PartialWithId,
   PartialWithoutId,
-  IReview,
-  ISettings,
+  Role,
 } from './interfaces';
 
 interface SuperAgentResponseWithBody<BodyType> extends SuperAgentResponse {
@@ -78,7 +79,7 @@ export function addUser(name: string): Response<IUser> {
   return superagent.post('/api/add-user').send({ name });
 }
 
-export function authRemember(): Response<IUser> {
+export function authRemember(): Response<IUserWithRoles> {
   return superagent.get('/api/auth/remember');
 }
 
@@ -91,23 +92,23 @@ export function deleteReview(reviewId: number): Response {
 }
 
 export function getAssignees(): Response<{
-  metadatas: IUserWithoutRoles[];
-  moderators: IUserWithoutRoles[];
+  metadatas: IUser[];
+  moderators: IUser[];
 }> {
   return superagent.get('/api/assignees');
 }
 
-export function getCaptains(): Response<{ [P in GameMode]?: ICaptain[] }> {
+export function getCaptains(): Response<{ [P in GameMode]?: IUser[] }> {
   return superagent.get('/api/captains');
 }
 
-export function getNewsAuthors(): Response<IUserWithoutRoles[]> {
+export function getNewsAuthors(): Response<IUser[]> {
   return superagent.get('/api/news-authors');
 }
 
 export function getNominations(roundId: number): Response<{
   nominations: INominationWithPoll[];
-  round: IRound & { news_author: IUserWithoutRoles };
+  round: IRound & { news_author: IUser };
 }> {
   return superagent.get('/api/nominations').query({ roundId });
 }
@@ -152,32 +153,23 @@ export interface GetSubmissionsResponseBody {
     strictly_rejected: boolean;
     submissions: ISubmission[];
   })[];
-  usersById: Record<
-    number,
-    IUserWithoutRoles & {
-      alumni: boolean | null;
-    }
-  >;
+  usersById: Record<number, IUser>;
 }
 
 export function getSubmissions(gameMode: GameMode): Response<GetSubmissionsResponseBody> {
   return superagent.get('/api/submissions').query({ gameMode });
 }
 
-export interface GetTeamResponseBody {
-  alumni: {
-    [P in GameMode | 'dev' | 'metadata' | 'moderator' | 'news' | 'other']?: IUserWithoutRoles[];
-  };
-  current: {
-    [P in GameMode | 'dev' | 'metadata' | 'moderator' | 'news' | 'other']?: IUserWithoutRoles[];
-  };
-}
+export type GetTeamResponseBody = Record<
+  'alumni' | 'current',
+  Partial<Record<Role, Partial<Record<GameMode | -1, IUser[]>>>>
+>;
 
 export function getTeam(): Response<GetTeamResponseBody> {
   return superagent.get('/api/team');
 }
 
-export function getUsersWithRoles(): Response<IUser[]> {
+export function getUsersWithRoles(): Response<IUserWithRoles[]> {
   return superagent.get('/api/users-with-permissions');
 }
 
@@ -235,7 +227,7 @@ export function updateNominationMetadata(
   state: MetadataState,
   artist: string | null,
   title: string | null,
-  creators: IUserWithoutRoles[] | undefined,
+  creators: IUser[] | undefined,
 ): Response<PartialWithId<INomination>> {
   return superagent
     .post('/api/nomination-edit-metadata')
@@ -263,7 +255,7 @@ export function updateNominators(
 export function updateRound(
   roundId: number,
   round: PartialWithoutId<IRound>,
-): Response<Omit<IRound, 'game_modes'> & { news_author: IUserWithoutRoles }> {
+): Response<Omit<IRound, 'game_modes'> & { news_author: IUser }> {
   return superagent.post('/api/update-round').send({ roundId, round });
 }
 
@@ -271,12 +263,13 @@ export function updateSettings(settings: ISettings): Response<ISettings> {
   return superagent.put('/api/settings').send(settings);
 }
 
-export function updateUserRoles(userId: number, roles: IUser['roles']): Response {
+export function updateUserRoles(
+  userId: number,
+  roles: readonly Omit<IUserRole, 'user_id'>[],
+): Response {
   return superagent.post('/api/update-permissions').send({
+    roles,
     userId,
-    ...roles,
-    alumni_game_mode: roles.alumni_game_mode ?? null,
-    captain_game_mode: roles.captain_game_mode ?? null,
   });
 }
 

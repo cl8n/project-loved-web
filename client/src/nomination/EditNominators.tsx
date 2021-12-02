@@ -4,15 +4,12 @@ import type { ResponseError } from 'superagent';
 import { alertApiErrorMessage, apiErrorMessage, updateNominators } from '../api';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
-import type { GameMode, INomination, IUserWithoutRoles, PartialWithId } from '../interfaces';
+import type { GameMode, INomination, IUser, PartialWithId } from '../interfaces';
 import { Modal } from '../Modal';
 import { UserInline } from '../UserInline';
 
 interface EditNominatorsProps {
-  captainsApi: readonly [
-    { [P in GameMode]?: IUserWithoutRoles[] } | undefined,
-    ResponseError | undefined,
-  ];
+  captainsApi: readonly [{ [P in GameMode]?: IUser[] } | undefined, ResponseError | undefined];
   nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
 }

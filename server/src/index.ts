@@ -10,7 +10,7 @@ import session from 'express-session';
 import { createHttpTerminator } from 'http-terminator';
 import db from './db';
 import { asyncHandler } from './express-helpers';
-import { hasLocalInteropKey, isAnything } from './guards';
+import { hasLocalInteropKeyMiddleware, isAnyRoleMiddleware } from './guards';
 import { systemLog } from './log';
 import { authRedirectUrl, Osu } from './osu';
 import router from './router';
@@ -81,7 +81,7 @@ db.initialize().then(() => {
 
   app.use(express.json());
 
-  app.use('/local-interop', hasLocalInteropKey, interopRouter);
+  app.use('/local-interop', hasLocalInteropKeyMiddleware, interopRouter);
 
   app.use(
     session({
@@ -151,7 +151,6 @@ db.initialize().then(() => {
 
       request.session.userId = user.id;
 
-      await db.query('INSERT IGNORE INTO user_roles SET user_id = ?', [user.id]);
       //await log(logTypes.analytic, '{creator} logged in', userInfo.id);
 
       response.redirect(backUrl || '/');
@@ -205,13 +204,11 @@ db.initialize().then(() => {
         return;
       }
 
-      const user = await db.queryOneWithGroups<AuthUser & { api_fetched_at?: Date }>(
+      const user = await db.queryOne<UserWithRoles>(
         `
-          SELECT users.*, user_roles:roles
+          SELECT *
           FROM users
-          INNER JOIN user_roles
-            ON users.id = user_roles.user_id
-          WHERE users.id = ?
+          WHERE id = ?
         `,
         [request.session.userId],
       );
@@ -220,7 +217,15 @@ db.initialize().then(() => {
         throw 'Missing user';
       }
 
-      delete user.api_fetched_at;
+      user.roles = await db.query<UserRole>(
+        `
+          SELECT *
+          FROM user_roles
+          WHERE user_id = ?
+        `,
+        [user.id],
+      );
+
       response.typedLocals.user = user;
 
       next();
@@ -255,8 +260,8 @@ db.initialize().then(() => {
 
   app.use(anyoneRouter);
 
-  // TODO split out this router. "isAnything" is here because the permissions aren't all figured out yet, and I want to prevent security issues beyond this point
-  app.use(isAnything, router);
+  // TODO split out this router. "isAnyRoleMiddleware" is here because the permissions aren't all figured out yet, and I want to prevent security issues beyond this point
+  app.use(isAnyRoleMiddleware, router);
 
   app.use(function (_, response) {
     response.status(404).json({ error: 'Not found' });

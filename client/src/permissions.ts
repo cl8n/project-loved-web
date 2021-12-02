@@ -1,29 +1,66 @@
-import type { GameMode, IRole, IUser } from './interfaces';
+import { Role } from './interfaces';
+import type { GameMode, IUserWithRoles } from './interfaces';
 
-export function canReadAs(user: IUser, role: IRole | 'any') {
-  if (role === 'any') {
-    return Object.values(user.roles).some((roleValue) => roleValue === true);
-  }
+export const allRoles = Object.values(Role).filter(
+  (roleEnumKey) => typeof roleEnumKey === 'number',
+) as Role[];
 
-  return user.roles.god || user.roles.god_readonly || user.roles[role];
+// TODO: Translatable
+export const roleNames = {
+  [Role.admin]: 'Admin',
+  [Role.captain]: 'Captain',
+  [Role.metadata]: 'Metadata reviewer',
+  [Role.moderator]: 'Moderator',
+  [Role.news]: 'News editor / Manager',
+  [Role.developer]: 'Developer',
+  [Role.spectator]: 'Spectator',
+  [Role.video]: 'Video editor',
+} as const;
+
+function hasRole(user: Readonly<IUserWithRoles>, roleIds: readonly Role[]): boolean {
+  return roleIds.some((roleId) =>
+    user.roles.some((role) => !role.alumni && role.role_id === roleId),
+  );
 }
 
-export function canWriteAs(user: IUser, ...rolesOrIds: (IRole | number)[]) {
-  if (user.roles.god) {
+function hasRoleForGameMode(
+  user: Readonly<IUserWithRoles>,
+  roleId: Role,
+  gameMode: GameMode,
+): boolean {
+  return user.roles.some(
+    (role) => !role.alumni && role.role_id === roleId && role.game_mode === gameMode,
+  );
+}
+
+// TODO: This gives a very misleading UI that spectators can edit things,
+// but not worth the time to clean it up
+function isAdmin(user: Readonly<IUserWithRoles>): boolean {
+  return hasRole(user, [Role.admin, Role.spectator]);
+}
+
+function hasRoleExport(
+  user: Readonly<IUserWithRoles>,
+  roleId: Role | readonly Role[] | 'any',
+  gameMode?: GameMode,
+  skipAdminCheck?: boolean,
+): boolean {
+  if (roleId === 'any') {
+    return hasRole(user, allRoles);
+  }
+
+  if (!skipAdminCheck && isAdmin(user)) {
     return true;
   }
 
-  // TODO: This gives a very misleading UI that god_readonly can edit things,
-  // but not worth the time to clean it up
-  if (user.roles.god_readonly) {
-    return true;
+  if (typeof roleId === 'number') {
+    return gameMode == null ? hasRole(user, [roleId]) : hasRoleForGameMode(user, roleId, gameMode);
   }
 
-  return rolesOrIds.some((roleOrId) => {
-    return typeof roleOrId === 'number' ? user.id === roleOrId : user.roles[roleOrId];
-  });
+  return hasRole(user, roleId);
 }
+export { hasRoleExport as hasRole };
 
-export function isCaptainForMode(user: IUser, gameMode: GameMode) {
-  return user.roles.god || (user.roles.captain && user.roles.captain_game_mode === gameMode);
+export function canActAs(user: Readonly<IUserWithRoles>, userIds: readonly number[]): boolean {
+  return isAdmin(user) || userIds.some((id) => user.id === id);
 }

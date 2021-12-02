@@ -6,6 +6,7 @@ import { apiErrorMessage, getSubmissions, useApi } from '../api';
 import { dateFromString } from '../date-format';
 import Help from '../Help';
 import type { IReview } from '../interfaces';
+import { Role } from '../interfaces';
 import { GameMode } from '../interfaces';
 import {
   gameModeFromShortName,
@@ -14,7 +15,7 @@ import {
   gameModeShortName,
 } from '../osu-helpers';
 import { useOsuAuth } from '../osuAuth';
-import { isCaptainForMode } from '../permissions';
+import { hasRole } from '../permissions';
 import useTitle from '../useTitle';
 import type { ToggleableColumn, ToggleableColumnsState } from './helpers';
 import { aggregateReviewScore } from './helpers';
@@ -573,7 +574,7 @@ function SubmissionListing({
     return resetPageComponent();
   }
 
-  const canReview = authUser != null && isCaptainForMode(authUser, gameMode);
+  const canReview = authUser != null && hasRole(authUser, Role.captain, gameMode);
   const getOnReviewDelete = (beatmapsetId: number, reviewId: number) => () => {
     setSubmissionsInfo((prev) => {
       const beatmapset = prev!.beatmapsets.find((beatmapset) => beatmapset.id === beatmapsetId)!;
@@ -605,7 +606,7 @@ function SubmissionListing({
       beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
 
       if (prev!.usersById[review.reviewer_id] == null) {
-        prev!.usersById[review.reviewer_id] = { ...authUser!, alumni: authUser!.roles.alumni };
+        prev!.usersById[review.reviewer_id] = { ...authUser! };
       }
 
       return {

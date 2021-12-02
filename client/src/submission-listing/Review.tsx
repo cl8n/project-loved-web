@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { dateFromString } from '../date-format';
-import type { IReview, IUserWithoutRoles } from '../interfaces';
+import type { IReview, IUser } from '../interfaces';
 import { UserInline } from '../UserInline';
 import { reviewScoreClasses, reviewScoreMessages } from './helpers';
 
 interface ReviewProps {
-  review: IReview & { captain: IUserWithoutRoles & { alumni: boolean | null } };
+  review: IReview & { captain: IUser };
 }
 
 export default function Review({ review }: ReviewProps) {

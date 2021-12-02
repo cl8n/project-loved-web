@@ -4,11 +4,11 @@ import { autoHeightRef } from '../auto-height';
 import { inputDateTime } from '../date-format';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
-import type { IRound, IUserWithoutRoles } from '../interfaces';
+import type { IRound, IUser } from '../interfaces';
 
 interface RoundEditorProps {
   close: () => void;
-  onRoundUpdate: (round: Omit<IRound, 'game_modes'> & { news_author: IUserWithoutRoles }) => void;
+  onRoundUpdate: (round: Omit<IRound, 'game_modes'> & { news_author: IUser }) => void;
   round: IRound;
 }
 

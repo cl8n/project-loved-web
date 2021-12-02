@@ -1,5 +1,5 @@
 import { createHash, timingSafeEqual } from 'crypto';
-import type { NextFunction, Request, RequestHandler, Response } from 'express';
+import type { Request, RequestHandler, Response } from 'express';
 import { accessSetting } from './settings';
 
 const normalRoles = [
@@ -11,29 +11,20 @@ const normalRoles = [
   Role.video,
 ] as const;
 
-function findRole(user: Readonly<UserWithRoles>, roleId: Role): UserRole | undefined {
-  return user.roles.find((role) => !role.alumni && role.role_id === roleId);
+function hasRole(user: Readonly<UserWithRoles>, roleIds: readonly Role[]): boolean {
+  return roleIds.some((roleId) =>
+    user.roles.some((role) => !role.alumni && role.role_id === roleId),
+  );
 }
 
-export function hasRole(user: Readonly<UserWithRoles>, roleIds: readonly Role[]): boolean {
-  return roleIds.some((roleId) => findRole(user, roleId) != null);
-}
-
-export function hasRoleOrAdmin(
-  user: Readonly<UserWithRoles>,
-  roleIds: readonly Role[],
-  method: string,
-): boolean {
-  return isAdmin(user, method) || hasRole(user, roleIds);
-}
-
-export function hasRoleForGameModeOrAdmin(
+function hasRoleForGameMode(
   user: Readonly<UserWithRoles>,
   roleId: Role,
   gameMode: GameMode,
-  method: string,
 ): boolean {
-  return isAdmin(user, method) || findRole(user, roleId)?.game_mode === gameMode;
+  return user.roles.some(
+    (role) => !role.alumni && role.role_id === roleId && role.game_mode === gameMode,
+  );
 }
 
 function isAdmin(user: Readonly<UserWithRoles>, method: string): boolean {
@@ -42,7 +33,13 @@ function isAdmin(user: Readonly<UserWithRoles>, method: string): boolean {
 
 function hasRoleMiddleware(roleIds: readonly Role[], errorMessage: string): RequestHandler {
   return function (request, response, next) {
-    if (!hasRoleOrAdmin(response.typedLocals.user, roleIds, request.method)) {
+    const user = response.typedLocals.user as UserWithRoles | undefined;
+
+    if (user == null) {
+      return response.status(401).json({ error: errorMessage });
+    }
+
+    if (!isAdmin(user, request.method) && !hasRole(user, roleIds)) {
       return response.status(403).json({ error: errorMessage });
     }
 
@@ -57,11 +54,7 @@ function timingSafeStringEqual(a: string, b: string): boolean {
   return timingSafeEqual(aHash, bHash);
 }
 
-export function hasLocalInteropKey(
-  request: Request,
-  response: Response,
-  next: NextFunction,
-): unknown {
+export const hasLocalInteropKeyMiddleware: RequestHandler = (request, response, next) => {
   if (
     process.env.INTEROP_VERSION == null ||
     request.get('X-Loved-InteropVersion') !== process.env.INTEROP_VERSION
@@ -80,32 +73,35 @@ export function hasLocalInteropKey(
   }
 
   next();
-}
+};
 
-export function isCaptainForGameMode(
+export function currentUserRoles(
   request: Request,
   response: Response,
-  next: NextFunction,
-): unknown {
-  const gameMode = parseInt(request.param('gameMode'), 10);
+): (roleId: Role | readonly Role[], gameMode?: GameMode, skipAdminCheck?: boolean) => boolean {
+  const user = response.typedLocals.user as UserWithRoles | undefined;
 
-  if (gameMode == null) {
-    return response.status(400).json({ error: 'No game mode provided' });
-  }
+  return (roleId, gameMode, skipAdminCheck) => {
+    if (user == null) {
+      return false;
+    }
 
-  if (
-    !hasRoleForGameModeOrAdmin(response.typedLocals.user, Role.captain, gameMode, request.method)
-  ) {
-    return response.status(403).json({ error: `Must be a captain for mode ${gameMode}` });
-  }
+    if (!skipAdminCheck && isAdmin(user, request.method)) {
+      return true;
+    }
 
-  next();
+    if (typeof roleId === 'number') {
+      return gameMode == null
+        ? hasRole(user, [roleId])
+        : hasRoleForGameMode(user, roleId, gameMode);
+    }
+
+    return hasRole(user, roleId);
+  };
 }
 
-const isAdminMiddleware = hasRoleMiddleware([], 'Must be an admin');
-export { isAdminMiddleware as isAdmin };
-export const isAnything = hasRoleMiddleware(normalRoles, 'Must have a role');
-export const isCaptain = hasRoleMiddleware([Role.captain], 'Must be a captain');
-export const isMetadataChecker = hasRoleMiddleware([Role.metadata], 'Must be a metadata checker');
-export const isModerator = hasRoleMiddleware([Role.moderator], 'Must be a moderator');
-export const isNewsAuthor = hasRoleMiddleware([Role.news], 'Must be a news author');
+export const isAdminMiddleware = hasRoleMiddleware([], 'Must be an admin');
+export const isAnyRoleMiddleware = hasRoleMiddleware(normalRoles, 'Must have a role');
+export const isCaptainMiddleware = hasRoleMiddleware([Role.captain], 'Must be a captain');
+export const isModeratorMiddleware = hasRoleMiddleware([Role.moderator], 'Must be a moderator');
+export const isNewsAuthorMiddleware = hasRoleMiddleware([Role.news], 'Must be a news author');

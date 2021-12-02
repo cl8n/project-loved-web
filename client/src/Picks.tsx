@@ -27,13 +27,13 @@ import { Form } from './dom-helpers';
 import Help from './Help';
 import type {
   GameMode,
-  ICaptain,
   INomination,
   INominationWithPoll,
   IRound,
-  IUserWithoutRoles,
+  IUser,
   PartialWithId,
 } from './interfaces';
+import { Role } from './interfaces';
 import { AssigneeType, DescriptionState, MetadataState, ModeratorState } from './interfaces';
 import ListInline from './ListInline';
 import ListInput from './ListInput';
@@ -45,7 +45,7 @@ import StatusLine from './nomination/StatusLine';
 import { Orderable } from './Orderable';
 import { gameModeLongName } from './osu-helpers';
 import { useOsuAuth } from './osuAuth';
-import { canWriteAs, isCaptainForMode } from './permissions';
+import { canActAs, hasRole } from './permissions';
 import Header from './round/Header';
 import { UserInline } from './UserInline';
 import useTitle from './useTitle';
@@ -57,14 +57,10 @@ export function Picks() {
   const [roundInfo, roundInfoError, setRoundInfo] = useApi(getNominations, [roundId]);
   useTitle(roundInfo == null ? `Round #${roundId}` : roundInfo.round.name);
   const assigneesApi = useApi(getAssignees, [], {
-    condition:
-      authUser != null &&
-      (canWriteAs(authUser, 'news') ||
-        canWriteAs(authUser, 'metadata') ||
-        canWriteAs(authUser, 'moderator')),
+    condition: authUser != null && hasRole(authUser, [Role.news, Role.metadata, Role.moderator]),
   });
   const captainsApi = useApi(getCaptains, [], {
-    condition: authUser != null && canWriteAs(authUser, 'captain'),
+    condition: authUser != null && hasRole(authUser, Role.captain),
   });
   // TODO: Split by gamemode
   const [ordering, setOrdering] = useState(false);
@@ -174,9 +170,7 @@ export function Picks() {
       };
     });
   };
-  const onRoundUpdate = (
-    round: Omit<IRound, 'game_modes'> & { news_author: IUserWithoutRoles },
-  ) => {
+  const onRoundUpdate = (round: Omit<IRound, 'game_modes'> & { news_author: IUser }) => {
     setRoundInfo((prev) => {
       return {
         nominations: prev!.nominations,
@@ -196,13 +190,11 @@ export function Picks() {
       .catch(alertApiErrorMessage);
   };
 
-  const canAdd = (gameMode: GameMode) => {
-    return !round.done && !nominationsLocked(gameMode) && isCaptainForMode(authUser, gameMode);
-  };
-  const canEditRound = !round.done && canWriteAs(authUser, 'news');
-  const canLock = (gameMode: GameMode) => {
-    return !round.done && (isCaptainForMode(authUser, gameMode) || canWriteAs(authUser, 'news'));
-  };
+  const canAdd = (gameMode: GameMode) =>
+    !round.done && !nominationsLocked(gameMode) && hasRole(authUser, Role.captain, gameMode);
+  const canEditRound = !round.done && hasRole(authUser, Role.news);
+  const canLock = (gameMode: GameMode) =>
+    !round.done && (hasRole(authUser, Role.news) || hasRole(authUser, Role.captain, gameMode));
   const canOrder = canAdd;
 
   const roundGameModes: GameMode[] = Object.keys(round.game_modes).map((gameMode) =>
@@ -322,12 +314,8 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
 }
 
 interface NominationProps {
-  assigneesApi: readonly [
-    IUserWithoutRoles[] | undefined,
-    IUserWithoutRoles[] | undefined,
-    ResponseError | undefined,
-  ];
-  captainsApi: readonly [{ [P in GameMode]?: ICaptain[] } | undefined, ResponseError | undefined];
+  assigneesApi: readonly [IUser[] | undefined, IUser[] | undefined, ResponseError | undefined];
+  captainsApi: readonly [{ [P in GameMode]?: IUser[] } | undefined, ResponseError | undefined];
   locked: boolean;
   nomination: INominationWithPoll;
   onNominationDelete: (nominationId: number) => void;
@@ -379,7 +367,10 @@ function Nomination({
 
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
   const descriptionStarted = nomination.description != null;
-  const isNominator = canWriteAs(authUser, ...nomination.nominators.map((n) => n.id));
+  const isNominator = canActAs(
+    authUser,
+    nomination.nominators.map((n) => n.id),
+  );
   const metadataAssigned = nomination.metadata_assignees.length > 0;
   const metadataDone = nomination.metadata_state === MetadataState.good;
   const metadataStarted = nomination.metadata_state !== MetadataState.unchecked;
@@ -389,17 +380,17 @@ function Nomination({
     nomination.moderator_state === ModeratorState.notAllowed;
   const moderationStarted = nomination.moderator_state !== ModeratorState.unchecked;
 
-  const canAccessGodMenu = canWriteAs(authUser);
+  const canAccessGodMenu = hasRole(authUser, []);
   const canAssignMetadata =
     !round.done &&
     !(failedVoting && !metadataAssigned) &&
     !metadataDone &&
-    canWriteAs(authUser, 'metadata', 'news');
+    hasRole(authUser, [Role.metadata, Role.news]);
   const canAssignModeration =
     !round.done &&
     !(failedVoting && !moderationAssigned) &&
     !moderationDone &&
-    canWriteAs(authUser, 'moderator', 'news');
+    hasRole(authUser, [Role.moderator, Role.news]);
   const canDelete =
     !round.done &&
     !locked &&
@@ -409,16 +400,19 @@ function Nomination({
     isNominator;
   const canEditDescription =
     !round.done &&
-    ((!descriptionDone && isCaptainForMode(authUser, nomination.game_mode)) ||
-      (descriptionStarted && canWriteAs(authUser, 'news')));
+    ((!descriptionDone && hasRole(authUser, Role.captain, nomination.game_mode)) ||
+      (descriptionStarted && hasRole(authUser, Role.news)));
   const canEditDifficulties =
-    !round.done && !locked && !metadataDone && isCaptainForMode(authUser, nomination.game_mode);
+    !round.done &&
+    !locked &&
+    !metadataDone &&
+    hasRole(authUser, Role.captain, nomination.game_mode);
   const canEditMetadata =
     !round.done &&
     !failedVoting &&
-    ((canWriteAs(authUser, 'metadata') && metadataAssigned) || canWriteAs(authUser, 'news'));
+    ((hasRole(authUser, Role.metadata) && metadataAssigned) || hasRole(authUser, Role.news));
   const canEditModeration =
-    !round.done && !failedVoting && canWriteAs(authUser, 'moderator') && moderationAssigned;
+    !round.done && !failedVoting && hasRole(authUser, Role.moderator) && moderationAssigned;
   const canEditNominators = !round.done && !locked && isNominator;
 
   return (
@@ -575,11 +569,11 @@ interface EditMetadataProps {
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
 }
 
-function nameFromUser(user: IUserWithoutRoles) {
+function nameFromUser(user: IUser) {
   return user.name;
 }
 
-function renderUser(user: IUserWithoutRoles) {
+function renderUser(user: IUser) {
   return <UserInline user={user} />;
 }
 
@@ -695,8 +689,8 @@ const assigneeTypeNames = {
 } as const;
 
 interface EditAssigneesProps {
-  assignees: IUserWithoutRoles[];
-  candidatesApi: readonly [IUserWithoutRoles[] | undefined, ResponseError | undefined];
+  assignees: IUser[];
+  candidatesApi: readonly [IUser[] | undefined, ResponseError | undefined];
   nominationId: number;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   type: AssigneeType;
@@ -902,7 +896,7 @@ function GodMenu({ nomination, onNominationUpdate }: GodMenuProps) {
 }
 
 interface DescriptionProps {
-  author?: IUserWithoutRoles;
+  author?: IUser;
   canEdit: boolean;
   nominationId: number;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;

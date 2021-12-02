@@ -1,11 +1,11 @@
 import { FormattedMessage } from 'react-intl';
 import { dateFromString } from '../date-format';
-import type { ISubmission, IUserWithoutRoles } from '../interfaces';
+import type { ISubmission, IUser } from '../interfaces';
 import { UserInline } from '../UserInline';
 import { submissionIsNew } from './helpers';
 
 interface SubmissionProps {
-  submission: ISubmission & { submitter: IUserWithoutRoles | null };
+  submission: ISubmission & { submitter: IUser | null };
 }
 
 export default function Submission({ submission }: SubmissionProps) {

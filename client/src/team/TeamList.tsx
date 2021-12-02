@@ -2,6 +2,7 @@ import { defineMessages, useIntl } from 'react-intl';
 import type { ResponseError } from 'superagent';
 import type { GetTeamResponseBody } from '../api';
 import { apiErrorMessage } from '../api';
+import { Role } from '../interfaces';
 import { gameModeLongName, gameModes } from '../osu-helpers';
 import UserList from './UserList';
 
@@ -26,9 +27,9 @@ const messages = defineMessages({
     defaultMessage: 'News editors / Managers',
     description: 'Team listing title',
   },
-  other: {
-    defaultMessage: 'Other',
-    description: 'Team listing title for any role not explicitly listed',
+  video: {
+    defaultMessage: 'Video editors',
+    description: 'Team listing title',
   },
 });
 
@@ -50,38 +51,43 @@ export default function TeamList({ current, teamApi }: TeamListProps) {
   }
 
   const teamUsers = current ? team.current : team.alumni;
+  const newsUsers = teamUsers[Role.news]?.[-1];
+  const metadataUsers = teamUsers[Role.metadata]?.[-1];
+  const moderatorUsers = teamUsers[Role.moderator]?.[-1];
+  const developerUsers = teamUsers[Role.developer]?.[-1];
+  const videoUsers = teamUsers[Role.video]?.[-1];
 
   return (
     <div className='team-list'>
       {gameModes.map((gameMode) => {
-        const gameModeUsers = teamUsers[gameMode];
+        const captains = teamUsers[Role.captain]?.[gameMode];
 
         return (
-          gameModeUsers != null && (
+          captains != null && (
             <UserList
               key={gameMode}
               title={intl.formatMessage(messages.captains, {
                 gameMode: gameModeLongName(gameMode),
               })}
-              users={gameModeUsers}
+              users={captains}
             />
           )
         );
       })}
-      {teamUsers.news != null && (
-        <UserList title={intl.formatMessage(messages.news)} users={teamUsers.news} />
+      {newsUsers != null && (
+        <UserList title={intl.formatMessage(messages.news)} users={newsUsers} />
       )}
-      {teamUsers.metadata != null && (
-        <UserList title={intl.formatMessage(messages.metadata)} users={teamUsers.metadata} />
+      {metadataUsers != null && (
+        <UserList title={intl.formatMessage(messages.metadata)} users={metadataUsers} />
       )}
-      {teamUsers.moderator != null && (
-        <UserList title={intl.formatMessage(messages.moderator)} users={teamUsers.moderator} />
+      {moderatorUsers != null && (
+        <UserList title={intl.formatMessage(messages.moderator)} users={moderatorUsers} />
       )}
-      {teamUsers.dev != null && (
-        <UserList title={intl.formatMessage(messages.developer)} users={teamUsers.dev} />
+      {developerUsers != null && (
+        <UserList title={intl.formatMessage(messages.developer)} users={developerUsers} />
       )}
-      {teamUsers.other != null && (
-        <UserList title={intl.formatMessage(messages.other)} users={teamUsers.other} />
+      {videoUsers != null && (
+        <UserList title={intl.formatMessage(messages.video)} users={videoUsers} />
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import db from '../db';
 import { asyncHandler } from '../express-helpers';
-import { roles } from '../guards';
+import { currentUserRoles } from '../guards';
 import { aggregateReviewScore, groupBy, modeBy } from '../helpers';
 import { accessSetting } from '../settings';
 import { isGameMode } from '../type-guards';
@@ -12,26 +12,6 @@ export default guestRouter;
 guestRouter.get('/', (_, res) => {
   res.send('This is the API for <a href="https://loved.sh">loved.sh</a>. You shouldn\'t be here!');
 });
-
-// TODO: is not needed publicly anymore. check usage
-guestRouter.get(
-  '/captains',
-  asyncHandler(async (_, res) => {
-    res.json(
-      groupBy<GameMode, UserWithRoles>(
-        await db.queryWithGroups<UserWithRoles>(`
-          SELECT users.*, user_roles:roles
-          FROM users
-          INNER JOIN user_roles
-            ON users.id = user_roles.user_id
-          WHERE user_roles.captain_game_mode IS NOT NULL
-          ORDER BY users.name ASC
-        `),
-        'roles.captain_game_mode',
-      ),
-    );
-  }),
-);
 
 guestRouter.get(
   '/mapper-consents',
@@ -101,8 +81,10 @@ guestRouter.get(
 
     const beatmapsetIds = new Set<number>();
     const userIds = new Set<number>();
+
+    const hasRole = currentUserRoles(req, res);
     const canViewNominationStatus =
-      !accessSetting(`hideNominationStatus.${gameMode}`) || roles(req, res).gameModes[gameMode];
+      !accessSetting(`hideNominationStatus.${gameMode}`) || hasRole(Role.captain, gameMode);
 
     const submissions = await db.query<Submission>(
       `
@@ -350,14 +332,12 @@ guestRouter.get(
       });
     }
 
-    const usersById = groupBy<User['id'], User & { alumni: UserRoles['alumni'] | null }>(
-      await db.query<User & { alumni: UserRoles['alumni'] | null }>(
+    const usersById = groupBy<User['id'], User>(
+      await db.query<User>(
         `
-          SELECT users.*, user_roles.alumni
+          SELECT *
           FROM users
-          LEFT JOIN user_roles
-            ON users.id = user_roles.user_id
-          WHERE users.id IN (?)
+          WHERE id IN (?)
         `,
         [[...userIds]],
       ),
@@ -376,43 +356,37 @@ guestRouter.get(
 guestRouter.get(
   '/team',
   asyncHandler(async (_, res) => {
-    const team = (
-      await db.queryWithGroups<UserWithRoles>(`
-        SELECT users.*, user_roles:roles
+    const roles = await db.queryWithGroups<UserRole & { user: User }>(
+      `
+        SELECT user_roles.*, users:user
         FROM users
         INNER JOIN user_roles
           ON users.id = user_roles.user_id
+        WHERE user_roles.role_id IN (?)
         ORDER BY users.name ASC
-      `)
-    ).filter((user) =>
-      Object.entries(user.roles).some(([role, value]) => !role.startsWith('god') && value === true),
+      `,
+      [[Role.captain, Role.metadata, Role.moderator, Role.news, Role.developer, Role.video]],
     );
+    const groupedUsers: Record<
+      'alumni' | 'current',
+      Record<Role, Partial<Record<GameMode | -1, User[]>>>
+    > = { alumni: {}, current: {} };
 
-    const alumni = groupBy<UserRoles['alumni_game_mode'], UserWithRoles, 'other'>(
-      team.filter((user) => user.roles.alumni),
-      'roles.alumni_game_mode',
-      null,
-      false,
-      'other',
-    );
+    for (const role of roles) {
+      const topGroup = role.alumni ? 'alumni' : 'current';
 
-    const allCurrent = team.filter((user) => !user.roles.alumni);
-    const current = groupBy<UserRoles['captain_game_mode'], UserWithRoles>(
-      allCurrent,
-      'roles.captain_game_mode',
-    ) as Record<Exclude<UserRoles['captain_game_mode'], null>, UserWithRoles[]> &
-      Partial<Record<'dev' | 'metadata' | 'moderator' | 'news', UserWithRoles[]>> &
-      Partial<{ null: UserWithRoles[] }>;
-    delete current.null;
-
-    for (const role of ['dev', 'metadata', 'moderator', 'news'] as const) {
-      const usersWithRole = allCurrent.filter((user) => user.roles[role]);
-
-      if (usersWithRole.length > 0) {
-        current[role] = usersWithRole;
+      if (groupedUsers[topGroup][role.role_id] == null) {
+        groupedUsers[topGroup][role.role_id] = {};
       }
+
+      if (groupedUsers[topGroup][role.role_id][role.game_mode] == null) {
+        groupedUsers[topGroup][role.role_id][role.game_mode] = [];
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      groupedUsers[topGroup][role.role_id][role.game_mode]!.push(role.user);
     }
 
-    res.json({ alumni, current });
+    res.json(groupedUsers);
   }),
 );

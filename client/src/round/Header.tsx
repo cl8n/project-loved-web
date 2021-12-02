@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { IRound, IUserWithoutRoles } from '../interfaces';
+import type { IRound, IUser } from '../interfaces';
 import Markdown from '../Markdown';
 import { UserInline } from '../UserInline';
 import PostDate from './PostDate';
@@ -7,8 +7,8 @@ import RoundEditor from './RoundEditor';
 
 interface HeaderProps {
   canEdit: boolean;
-  onRoundUpdate: (round: Omit<IRound, 'game_modes'> & { news_author: IUserWithoutRoles }) => void;
-  round: IRound & { news_author: IUserWithoutRoles };
+  onRoundUpdate: (round: Omit<IRound, 'game_modes'> & { news_author: IUser }) => void;
+  round: IRound & { news_author: IUser };
 }
 
 export default function Header({ canEdit, onRoundUpdate, round }: HeaderProps) {

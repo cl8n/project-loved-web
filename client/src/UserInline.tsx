@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import CountryFlag from './CountryFlag';
-import type { IUserWithoutRoles } from './interfaces';
+import type { IUser } from './interfaces';
 
 const anonymousUser = {
   id: 4294967296,
@@ -13,7 +13,7 @@ const anonymousUser = {
 interface UserInlineProps {
   name?: string;
   showId?: boolean;
-  user: IUserWithoutRoles | null;
+  user: IUser | null;
 }
 
 export function UserInline({ name, showId, user }: UserInlineProps) {
@@ -35,7 +35,7 @@ export function UserInline({ name, showId, user }: UserInlineProps) {
 }
 
 interface UserInlineContainerProps {
-  user: IUserWithoutRoles;
+  user: IUser;
 }
 
 function UserInlineContainer({ children, user }: PropsWithChildren<UserInlineContainerProps>) {

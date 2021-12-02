@@ -6,7 +6,7 @@ import globeIcon from './images/icons8/globe.png';
 import sunIcon from './images/icons8/sun.png';
 import { locales, useLocaleState } from './intl';
 import { loginUrl, useOsuAuth } from './osuAuth';
-import { canReadAs } from './permissions';
+import { hasRole } from './permissions';
 import { UserInline } from './UserInline';
 
 export function Header() {
@@ -85,7 +85,7 @@ export function Header() {
         <a href='https://osu.ppy.sh/wiki/Project_Loved'>
           <FormattedMessage defaultMessage='Wiki' description='Nav link' />
         </a>
-        {user != null && canReadAs(user, 'any') && (
+        {user != null && hasRole(user, 'any') && (
           <>
             <FormattedMessage defaultMessage='Admin:' description='Nav separator' tagName='span' />
             <NavLink to='/admin/picks'>

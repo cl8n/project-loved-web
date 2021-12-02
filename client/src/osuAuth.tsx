@@ -3,12 +3,12 @@ import { useEffect } from 'react';
 import { createContext, useMemo } from 'react';
 import superagent from 'superagent';
 import { alertApiErrorMessage, authRemember, useApi } from './api';
-import type { IUser } from './interfaces';
+import type { IUserWithRoles } from './interfaces';
 import { useRequiredContext } from './react-helpers';
 
 interface OsuAuthContextValue {
   logOut: () => Promise<void>;
-  user?: IUser;
+  user?: IUserWithRoles;
 }
 
 const authContext = createContext<OsuAuthContextValue | undefined>(undefined);

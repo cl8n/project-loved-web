@@ -67,6 +67,23 @@ export function isRepliesRecord(replies: unknown): replies is Record<GameMode, n
   );
 }
 
+export function isRoleId(roleId: unknown): roleId is Role {
+  return typeof roleId === 'number' && roleId >= 0 && roleId <= 7;
+}
+
 export function isStringArray(strings: unknown): strings is string[] {
   return Array.isArray(strings) && strings.every((string) => typeof string === 'string');
+}
+
+export function isUserRoleWithoutUserIdArray(roles: unknown): roles is Omit<UserRole, 'user_id'>[] {
+  return (
+    Array.isArray(roles) &&
+    roles.every(
+      (role) =>
+        isRecord(role) &&
+        (isGameMode(role.game_mode) || role.game_mode === -1) &&
+        isRoleId(role.role_id) &&
+        typeof role.alumni === 'boolean',
+    )
+  );
 }

@@ -6,8 +6,11 @@ import { BeatmapInline } from '../BeatmapInline';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
 import type { GameMode, IBeatmapset, IReview } from '../interfaces';
+import { Role } from '../interfaces';
 import { Modal } from '../Modal';
+import { Never } from '../Never';
 import { useOsuAuth } from '../osuAuth';
+import { hasRole } from '../permissions';
 import { reviewScoreClasses, reviewScoreMessages, selectableReviewScores } from './helpers';
 
 const messages = defineMessages({
@@ -54,6 +57,10 @@ export default function ReviewEditor({
       .finally(() => setModalOpen(false));
   };
 
+  if (authUser == null) {
+    return <Never />;
+  }
+
   return (
     <Modal close={() => setModalOpen(false)} open={modalOpen}>
       <h2>
@@ -80,7 +87,7 @@ export default function ReviewEditor({
                   <option hidden value=''>
                     Select a score
                   </option>
-                  {authUser?.roles.captain && // TODO: Not dumb workaround for God role
+                  {hasRole(authUser, Role.captain, undefined, true) &&
                     selectableReviewScores.map((score) => (
                       <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
                         {intl.formatMessage(reviewScoreMessages[score + 3])} (

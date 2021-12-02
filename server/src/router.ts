@@ -1,12 +1,25 @@
 import { Router } from 'express';
 import db from './db';
 import { asyncHandler } from './express-helpers';
-import { isCaptain, isGod, isModerator, isNewsAuthor, roles as authRoles } from './guards';
+import {
+  currentUserRoles,
+  isAdminMiddleware,
+  isCaptainMiddleware,
+  isModeratorMiddleware,
+  isNewsAuthorMiddleware,
+} from './guards';
 import { getParams, groupBy } from './helpers';
 import { systemLog } from './log';
 import { Osu } from './osu';
 import { settings, updateSettings, accessSetting } from './settings';
-import { isAssigneeType, isGameMode, isNumberArray, isRecord, isStringArray } from './type-guards';
+import {
+  isAssigneeType,
+  isGameMode,
+  isNumberArray,
+  isRecord,
+  isStringArray,
+  isUserRoleWithoutUserIdArray,
+} from './type-guards';
 
 const router = Router();
 export default router;
@@ -14,6 +27,32 @@ export default router;
 // TODO: rethink guards
 
 //#region captain
+router.get(
+  '/captains',
+  isCaptainMiddleware,
+  asyncHandler(async (_, res) => {
+    res.json(
+      groupBy<GameMode, User>(
+        await db.queryWithGroups<Pick<UserRole, 'game_mode'> & { user: User }>(
+          `
+            SELECT user_roles.game_mode, users:user
+            FROM users
+            INNER JOIN user_roles
+              ON users.id = user_roles.user_id
+            WHERE user_roles.game_mode >= 0
+              AND user_roles.role_id = ?
+              AND user_roles.alumni = 0
+            ORDER BY users.name ASC
+          `,
+          [Role.captain],
+        ),
+        'game_mode',
+        'user',
+      ),
+    );
+  }),
+);
+
 router.post(
   '/review',
   asyncHandler(async (req, res) => {
@@ -21,7 +60,7 @@ router.post(
       return res.status(422).json({ error: 'Invalid beatmapset ID' });
     }
 
-    if (typeof req.body.gameMode !== 'number' || req.body.gameMode < 0 || req.body.gameMode > 3) {
+    if (!isGameMode(req.body.gameMode)) {
       return res.status(422).json({ error: 'Invalid game mode' });
     }
 
@@ -38,14 +77,13 @@ router.post(
       return res.status(422).json({ error: 'Invalid score' });
     }
 
-    const roles = authRoles(req, res);
+    const hasRole = currentUserRoles(req, res);
 
-    if (!roles.gameModes[req.body.gameMode]) {
+    if (!hasRole(Role.captain, req.body.gameMode)) {
       return res.status(403).send();
     }
 
-    // TODO: Not dumb workaround for God role
-    if (req.body.score >= -3 && !res.typedLocals.user.roles.captain) {
+    if (req.body.score >= -3 && !hasRole(Role.captain, req.body.gameMode, true)) {
       return res.status(403).send();
     }
 
@@ -104,7 +142,7 @@ router.post(
 
 router.delete(
   '/review',
-  isCaptain,
+  isCaptainMiddleware,
   asyncHandler(async (req, res) => {
     const review = await db.queryOne<Pick<Review, 'reviewer_id'>>(
       `
@@ -510,16 +548,16 @@ router.post(
       description_state: prevState,
       game_mode: gameMode,
     } = existingNomination;
-    const roles = authRoles(req, res);
+    const hasRole = currentUserRoles(req, res);
 
     if (
-      !(prevState !== DescriptionState.reviewed && roles.gameModes[gameMode]) &&
-      !(prevDescription != null && roles.news)
+      !(prevState !== DescriptionState.reviewed && hasRole(Role.captain, gameMode)) &&
+      !(prevDescription != null && hasRole(Role.news))
     ) {
       return res.status(403).send();
     }
 
-    if (!roles.gameModes[gameMode] && req.body.description == null) {
+    if (!hasRole(Role.captain, gameMode) && req.body.description == null) {
       return res.status(403).json({ error: "Can't remove description as editor" });
     }
 
@@ -536,7 +574,7 @@ router.post(
           : prevDescription == null
           ? res.typedLocals.user.id
           : prevAuthorId,
-        roles.news && prevDescription != null && req.body.description != null
+        hasRole(Role.news) && prevDescription != null && req.body.description != null
           ? DescriptionState.reviewed
           : DescriptionState.notReviewed,
         req.body.nominationId,
@@ -563,9 +601,9 @@ router.post(
 router.post(
   '/nomination-edit-metadata',
   asyncHandler(async (req, res) => {
-    const roles = authRoles(req, res);
+    const hasRole = currentUserRoles(req, res);
 
-    if (!roles.metadata && !roles.news) {
+    if (!hasRole([Role.metadata, Role.news])) {
       return res.status(403).json({ error: 'Must be a metadata checker or news author' });
     }
 
@@ -589,7 +627,7 @@ router.post(
     }
 
     await db.transact(async (connection) => {
-      if (roles.metadata) {
+      if (hasRole(Role.metadata)) {
         let artist = req.body.artist;
         let title = req.body.title;
 
@@ -658,7 +696,7 @@ router.post(
 
 router.post(
   '/nomination-edit-moderation',
-  isModerator,
+  isModeratorMiddleware,
   asyncHandler(async (req, res) => {
     await db.query('UPDATE nominations SET moderator_state = ? WHERE id = ?', [
       req.body.state,
@@ -675,19 +713,21 @@ router.post(
 router.delete(
   '/nomination',
   asyncHandler(async (req, res) => {
-    if (!res.typedLocals.user.roles.god) {
-      if (
-        (await db.queryOne(
-          `
-            SELECT 1
-            FROM nomination_nominators
-            WHERE nomination_id = ?
-              AND nominator_id = ?
-          `,
-          [req.query.nominationId, res.typedLocals.user.id],
-        )) == null
-      ) {
-        return res.status(403).send();
+    const hasRole = currentUserRoles(req, res);
+
+    if (!hasRole([])) {
+      const nominator = await db.queryOne(
+        `
+          SELECT 1
+          FROM nomination_nominators
+          WHERE nomination_id = ?
+            AND nominator_id = ?
+        `,
+        [req.query.nominationId, res.typedLocals.user.id],
+      );
+
+      if (nominator == null) {
+        return res.status(403).send({ error: 'Must be a nominator of this map' });
       }
     }
 
@@ -710,7 +750,7 @@ router.delete(
 
 router.post(
   '/update-nomination-order',
-  isCaptain,
+  isCaptainMiddleware,
   asyncHandler(async (req, res) => {
     await db.transact((connection) =>
       Promise.all(
@@ -733,7 +773,7 @@ router.post(
 
 router.post(
   '/update-nominators',
-  isCaptain,
+  isCaptainMiddleware,
   asyncHandler(async (req, res) => {
     await db.transact(async (connection) => {
       await connection.query('DELETE FROM nomination_nominators WHERE nomination_id = ?', [
@@ -773,9 +813,9 @@ router.post(
       return res.status(422).json({ error: 'Invalid game mode' });
     }
 
-    const roles = authRoles(req, res);
+    const hasRole = currentUserRoles(req, res);
 
-    if (!roles.news && !roles.gameModes[req.body.gameMode]) {
+    if (!hasRole(Role.news) && !hasRole(Role.captain, req.body.gameMode)) {
       return res.status(403).json({ error: 'Must be a news author or captain for this game mode' });
     }
 
@@ -792,39 +832,23 @@ router.post(
 //#region admin
 router.post(
   '/add-user',
-  isGod,
+  isAdminMiddleware,
   asyncHandler(async (req, res) => {
     if (typeof req.body.name !== 'string') {
       return res.status(422).json({ error: 'Invalid username' });
     }
 
-    const user: (User & { roles?: UserRoles & { user_id?: number } }) | null =
-      await res.typedLocals.osu.createOrRefreshUser(req.body.name, {
-        byName: true,
-      });
+    const user = await res.typedLocals.osu.createOrRefreshUser(req.body.name, { byName: true });
 
     if (user == null) {
       return res.status(422).json({ error: 'Invalid username' });
     }
 
-    await db.query('INSERT IGNORE INTO user_roles SET user_id = ?', [user.id]);
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    user.roles = (await db.queryOne<UserRoles>(
-      `
-        SELECT *
-        FROM user_roles
-        WHERE user_id = ?
-      `,
-      [user.id],
-    ))!;
-    delete user.roles.user_id;
-
     res.json(user);
   }),
 );
 
-router.post('/add-round', isNewsAuthor, (_, res) => {
+router.post('/add-round', isNewsAuthorMiddleware, (_, res) => {
   db.transact(async (connection) => {
     const queryResult = await connection.query('INSERT INTO rounds SET ?', [
       {
@@ -850,7 +874,7 @@ router.post('/add-round', isNewsAuthor, (_, res) => {
 
 router.post(
   '/update-round',
-  isNewsAuthor,
+  isNewsAuthorMiddleware,
   asyncHandler(async (req, res) => {
     if (!isRecord(req.body.round)) {
       return res.status(422).json({ error: 'Invalid round params' });
@@ -889,17 +913,22 @@ router.post(
 
 router.get(
   '/news-authors',
-  isNewsAuthor,
+  isNewsAuthorMiddleware,
   asyncHandler(async (_, res) => {
     res.json(
-      await db.query<User>(`
-        SELECT users.*
-        FROM users
-        INNER JOIN user_roles
-          ON users.id = user_roles.user_id
-        WHERE user_roles.news = 1
-        ORDER BY users.name ASC
-      `),
+      await db.query<User>(
+        `
+          SELECT users.*
+          FROM users
+          INNER JOIN user_roles
+            ON users.id = user_roles.user_id
+          WHERE user_roles.game_mode = -1
+            AND user_roles.role_id = ?
+            AND user_roles.alumni = 0
+          ORDER BY users.name ASC
+        `,
+        [Role.news],
+      ),
     );
   }),
 );
@@ -907,22 +936,32 @@ router.get(
 router.get(
   '/assignees',
   asyncHandler(async (_, res) => {
-    const metadatas = await db.query<User>(`
-      SELECT users.*
-      FROM users
-      INNER JOIN user_roles
-        ON users.id = user_roles.user_id
-      WHERE user_roles.metadata = 1
-      ORDER BY users.name ASC
-    `);
-    const moderators = await db.query<User>(`
-      SELECT users.*
-      FROM users
-      INNER JOIN user_roles
-        ON users.id = user_roles.user_id
-      WHERE user_roles.moderator = 1
-      ORDER BY users.name ASC
-    `);
+    const metadatas = await db.query<User>(
+      `
+        SELECT users.*
+        FROM users
+        INNER JOIN user_roles
+          ON users.id = user_roles.user_id
+        WHERE user_roles.game_mode = -1
+          AND user_roles.role_id = ?
+          AND user_roles.alumni = 0
+        ORDER BY users.name ASC
+      `,
+      [Role.metadata],
+    );
+    const moderators = await db.query<User>(
+      `
+        SELECT users.*
+        FROM users
+        INNER JOIN user_roles
+          ON users.id = user_roles.user_id
+        WHERE user_roles.game_mode = -1
+          AND user_roles.role_id = ?
+          AND user_roles.alumni = 0
+        ORDER BY users.name ASC
+      `,
+      [Role.moderator],
+    );
 
     res.json({
       metadatas,
@@ -933,7 +972,7 @@ router.get(
 
 router.post(
   '/update-excluded-beatmaps',
-  isCaptain,
+  isCaptainMiddleware,
   asyncHandler(async (req, res) => {
     await db.transact(async (connection) => {
       await connection.query('DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?', [
@@ -955,7 +994,11 @@ router.post(
 router.post(
   '/update-nomination-assignees',
   asyncHandler(async (req, res) => {
-    const types = {
+    const typeRoles = {
+      [AssigneeType.metadata]: Role.metadata,
+      [AssigneeType.moderator]: Role.moderator,
+    } as const;
+    const typeStrings = {
       [AssigneeType.metadata]: 'metadata',
       [AssigneeType.moderator]: 'moderator',
     } as const;
@@ -964,10 +1007,10 @@ router.post(
       return res.status(422).json({ error: 'Invalid assignee type' });
     }
 
-    const roles = authRoles(req, res);
-    const typeString = types[req.body.type];
+    const hasRole = currentUserRoles(req, res);
+    const typeString = typeStrings[req.body.type];
 
-    if (!roles.news && !roles[typeString]) {
+    if (!hasRole([Role.news, typeRoles[req.body.type]])) {
       return res.status(403).json({ error: `Must have ${typeString} or news role` });
     }
 
@@ -1011,36 +1054,65 @@ router.post(
 router.get(
   '/users-with-permissions',
   asyncHandler(async (_, res) => {
-    const queryResult = await db.queryWithGroups<UserWithRoles>(`
-      SELECT users.*, user_roles:roles
-      FROM users
-      INNER JOIN user_roles
-        ON users.id = user_roles.user_id
-    `);
+    const userRolesByUserId = groupBy<UserRole['user_id'], UserRole>(
+      await db.query<UserRole>(`
+        SELECT *
+        FROM user_roles
+        ORDER BY alumni ASC, role_id ASC
+      `),
+      'user_id',
+    );
+    const users = await db.query<UserWithRoles>(
+      `
+        SELECT *
+        FROM users
+        WHERE id IN (?)
+        ORDER BY name ASC
+      `,
+      [Object.keys(userRolesByUserId)],
+    );
 
-    res.json(queryResult);
+    for (const user of users) {
+      user.roles = userRolesByUserId[user.id];
+    }
+
+    users.sort(
+      (a, b) => +a.roles.every((role) => role.alumni) - +b.roles.every((role) => role.alumni),
+    );
+
+    res.json(users);
   }),
 );
 
 router.post(
   '/update-permissions',
-  isGod,
+  isAdminMiddleware,
   asyncHandler(async (req, res) => {
-    await db.query('UPDATE user_roles SET ? WHERE user_id = ?', [
-      getParams(req.body, [
-        'alumni',
-        'alumni_game_mode',
-        'captain',
-        'captain_game_mode',
-        'dev',
-        'god',
-        'god_readonly',
-        'metadata',
-        'moderator',
-        'news',
-      ]),
-      req.body.userId,
-    ]);
+    if (!isUserRoleWithoutUserIdArray(req.body.roles)) {
+      return res.status(422).json({ error: 'Invalid roles' });
+    }
+
+    if (typeof req.body.userId !== 'number') {
+      return res.status(422).json({ error: 'Invalid user ID' });
+    }
+
+    await db.transact(async (connection) => {
+      await connection.query('DELETE FROM user_roles WHERE user_id = ?', [req.body.userId]);
+
+      if ((req.body.roles as Omit<UserRole, 'user_id'>[]).length > 0) {
+        await connection.query(
+          'INSERT INTO user_roles (game_mode, role_id, user_id, alumni) VALUES ?',
+          [
+            (req.body.roles as Omit<UserRole, 'user_id'>[]).map((role) => [
+              role.game_mode,
+              role.role_id,
+              req.body.userId,
+              role.alumni,
+            ]),
+          ],
+        );
+      }
+    });
 
     res.status(204).send();
   }),
@@ -1048,7 +1120,7 @@ router.post(
 
 router.post(
   '/update-api-object',
-  isGod,
+  isAdminMiddleware,
   asyncHandler(async (req, res) => {
     if (typeof req.body.id !== 'number') {
       return res.status(422).json({ error: 'Invalid ID' });
@@ -1081,7 +1153,7 @@ router.post(
   }),
 );
 
-router.post('/update-api-object-bulk', isGod, (req, res) => {
+router.post('/update-api-object-bulk', isAdminMiddleware, (req, res) => {
   let apiObject;
   const type = req.body.type;
   const bulkOsu = new Osu();
@@ -1116,11 +1188,11 @@ router.post('/update-api-object-bulk', isGod, (req, res) => {
   res.status(204).send();
 });
 
-router.get('/settings', isCaptain, (_, res) => {
+router.get('/settings', isCaptainMiddleware, (_, res) => {
   res.json(settings);
 });
 
-router.put('/settings', isCaptain, (req, res) => {
+router.put('/settings', isCaptainMiddleware, (req, res) => {
   updateSettings(req.body);
   res.json(settings);
 });
