@@ -13,46 +13,69 @@ import { UserInline } from '../UserInline';
 function renderRoleInput(role: IUserRole | null, renderRemoveButton: () => ReactNode) {
   return (
     <div className='box'>
-      <label htmlFor='role_id'>Role</label>
-      <select
-        name='role_id'
-        required
-        defaultValue={role?.role_id}
-        key={
-          role?.role_id /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */
-        }
-      >
-        <option hidden value=''>
-          Select a role
-        </option>
-        {allRoles.map((roleId) => (
-          <option key={roleId} value={roleId}>
-            {roleNames[roleId]}
-          </option>
-        ))}
-      </select>
-      <label htmlFor='game_mode'>Game mode</label>
-      <select
-        name='game_mode'
-        required
-        defaultValue={role?.game_mode}
-        key={
-          role?.game_mode /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */
-        }
-      >
-        <option hidden value=''>
-          Select a game mode
-        </option>
-        <option value={-1}>None</option>
-        {gameModes.map((gameMode) => (
-          <option key={gameMode} value={gameMode}>
-            {gameModeLongName(gameMode)}
-          </option>
-        ))}
-      </select>
-      <label htmlFor='alumni'>Alumni</label>
-      <input type='checkbox' name='alumni' defaultChecked={role?.alumni} />
-      {renderRemoveButton()}
+      <table>
+        <tr>
+          <td>
+            <label htmlFor='role_id'>Role</label>
+          </td>
+          <td>
+            <select
+              name='role_id'
+              required
+              defaultValue={role?.role_id}
+              key={
+                role?.role_id /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */
+              }
+            >
+              <option hidden value=''>
+                Select a role
+              </option>
+              {allRoles.map((roleId) => (
+                <option key={roleId} value={roleId}>
+                  {roleNames[roleId]}
+                </option>
+              ))}
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label htmlFor='game_mode'>Game mode</label>
+          </td>
+          <td>
+            <select
+              name='game_mode'
+              required
+              defaultValue={role?.game_mode}
+              key={
+                role?.game_mode /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */
+              }
+            >
+              <option hidden value=''>
+                Select a game mode
+              </option>
+              <option value={-1}>None</option>
+              {gameModes.map((gameMode) => (
+                <option key={gameMode} value={gameMode}>
+                  {gameModeLongName(gameMode)}
+                </option>
+              ))}
+            </select>
+          </td>
+        </tr>
+        <tr>
+          {' '}
+          <td>
+            <label htmlFor='alumni'>Alumni</label>
+          </td>
+          <td>
+            <input type='checkbox' name='alumni' defaultChecked={role?.alumni} />
+          </td>
+        </tr>
+        <tr>
+          <td>{renderRemoveButton()}</td>
+        </tr>
+      </table>
     </div>
   );
 }
