@@ -259,10 +259,6 @@
     "defaultMessage": "Approved",
     "description": "Beatmap status"
   },
-  "RuFprR": {
-    "defaultMessage": "Other",
-    "description": "Team listing title for any role not explicitly listed"
-  },
   "ScBgfg": {
     "defaultMessage": "no preference",
     "description": "0 review score. Fits into {score} of the review line"
@@ -446,6 +442,10 @@
   "nn9fFb": {
     "defaultMessage": "BPM",
     "description": "Submissions table header"
+  },
+  "nvvuiw": {
+    "defaultMessage": "Video editors",
+    "description": "Team listing title"
   },
   "pLUxkj": {
     "defaultMessage": "No",
