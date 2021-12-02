@@ -35,6 +35,17 @@ export enum ModeratorState {
   notAllowed,
 }
 
+export enum Role {
+  admin,
+  captain,
+  metadata,
+  moderator,
+  news,
+  developer,
+  spectator,
+  video,
+}
+
 interface IGenericBeatmap {
   id: number;
   beatmapset_id: number;
@@ -86,16 +97,16 @@ export interface INomination {
   id: number;
   beatmaps: IBeatmapWithExcluded[];
   beatmapset: IBeatmapset;
-  beatmapset_creators: IUserWithoutRoles[];
+  beatmapset_creators: IUser[];
   description?: string;
   description_author?: IUser;
   description_state: DescriptionState;
   game_mode: GameMode;
-  metadata_assignees: IUserWithoutRoles[];
+  metadata_assignees: IUser[];
   metadata_state: MetadataState;
-  moderator_assignees: IUserWithoutRoles[];
+  moderator_assignees: IUser[];
   moderator_state: ModeratorState;
-  nominators: IUserWithoutRoles[];
+  nominators: IUser[];
   order: number;
   overwrite_artist?: string;
   overwrite_title?: string;
@@ -129,16 +140,6 @@ export interface IReview {
   reviewer_id: number;
   score: number;
 }
-
-export type IRole =
-  | 'alumni'
-  | 'captain'
-  | 'dev'
-  | 'god'
-  | 'god_readonly'
-  | 'metadata'
-  | 'moderator'
-  | 'news';
 
 export interface IRound {
   id: number;
@@ -183,19 +184,17 @@ export interface IUser {
   banned: boolean;
   country: string;
   name: string;
-  roles: Record<IRole, boolean> & {
-    alumni_game_mode?: GameMode;
-    captain_game_mode?: GameMode;
-  };
 }
 
-export type IUserWithoutRoles = Omit<IUser, 'roles'>;
+export interface IUserRole {
+  game_mode: GameMode | -1;
+  role_id: Role;
+  user_id: number;
+  alumni: boolean;
+}
 
-export interface ICaptain extends IUser {
-  roles: IUser['roles'] & {
-    captain: true;
-    captain_game_mode: GameMode;
-  };
+export interface IUserWithRoles extends IUser {
+  roles: IUserRole[];
 }
 
 export interface IMapperConsent {
