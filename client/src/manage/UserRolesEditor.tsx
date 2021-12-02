@@ -74,12 +74,14 @@ export default function UserRolesEditor({ onRolesUpdate, user }: UserRolesEditor
     for (let i = 0; i < controlsCount; i++) {
       const control = controls[i] as any; // TODO: typing
 
+      if (!['role_id', 'game_mode', 'alumni'].includes(control.name)) {
+        continue;
+      }
+
       // Assume the controls are in correct order
       if (control.name === 'role_id') {
         currentRole++;
         roles.push({ user_id: user.id });
-      } else if (control instanceof HTMLButtonElement) {
-        continue;
       }
 
       roles[currentRole][control.name as keyof IUserRole] =
