@@ -133,9 +133,14 @@ type SortsAndFiltersReducerAction =
   | {
       action: 'toggleOrder';
       index: 0 | 1;
+    }
+  | {
+      action: 'updateSearch';
+      search: string;
     };
 interface SortsAndFiltersState {
   filterToApproved: boolean;
+  search: string;
   sorts: [
     {
       ascending: boolean;
@@ -160,6 +165,7 @@ const allSorts: Sort[] = [
 const defaultAscendingSorts = new Set<Sort>(['artist', 'title', 'year']);
 const initialSortsAndFiltersState: SortsAndFiltersState = {
   filterToApproved: false,
+  search: '',
   sorts: [
     {
       ascending: false,
@@ -178,6 +184,7 @@ function sortsAndFiltersReducer(
 ): SortsAndFiltersState {
   const state: SortsAndFiltersState = {
     filterToApproved: prevState.filterToApproved,
+    search: prevState.search,
     sorts: [{ ...prevState.sorts[0] }, { ...prevState.sorts[1] }],
   };
 
@@ -203,6 +210,9 @@ function sortsAndFiltersReducer(
       break;
     case 'toggleOrder':
       state.sorts[action.index].ascending = !prevState.sorts[action.index].ascending;
+      break;
+    case 'updateSearch':
+      state.search = action.search;
       break;
   }
 
@@ -346,9 +356,21 @@ export default function SubmissionListingContainer() {
               </select>
             </>
           )}
+          <FormattedMessage
+            defaultMessage='Search:'
+            description='Title for submissions search input'
+            tagName='span'
+          />
+          <input
+            type='search'
+            className='flex-grow'
+            value={sortsAndFilters.search}
+            onChange={(event) =>
+              updateSortOrFilter({ action: 'updateSearch', search: event.currentTarget.value })
+            }
+          />
           <button
             type='button'
-            className='push-right'
             onClick={() => {
               updateSortOrFilter({ action: 'toggleApproved' });
               setPage(1);
@@ -514,7 +536,11 @@ function SubmissionListing({
           (keyMode == null || beatmapset.key_modes.includes(keyMode)) &&
           (sortsAndFilters.filterToApproved
             ? beatmapset.ranked_status > 0
-            : beatmapset.ranked_status <= 0),
+            : beatmapset.ranked_status <= 0) &&
+          (sortsAndFilters.search.length === 0 ||
+            beatmapset.artist.toLowerCase().includes(sortsAndFilters.search.toLowerCase()) ||
+            beatmapset.creator_name.toLowerCase().includes(sortsAndFilters.search.toLowerCase()) ||
+            beatmapset.title.toLowerCase().includes(sortsAndFilters.search.toLowerCase())),
       )
       .map((beatmapset) => ({
         ...beatmapset,
