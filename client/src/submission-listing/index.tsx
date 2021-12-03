@@ -320,6 +320,44 @@ export default function SubmissionListingContainer() {
               </option>
             ))}
           </select>
+          {gameMode === GameMode.mania && (
+            <>
+              <FormattedMessage
+                defaultMessage='Key mode:'
+                description='Selector to change osu!mania key mode'
+                tagName='span'
+              />
+              <select value={keyMode ?? 'all'} onChange={onKeyModeChange}>
+                <option value='all'>{intl.formatMessage(messages.all)}</option>
+                <optgroup label={intl.formatMessage(messages.commonKeyModes)}>
+                  {[4, 7].map((keyMode) => (
+                    <option key={keyMode} value={keyMode}>
+                      {keyMode}K
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label={intl.formatMessage(messages.uncommonKeyModes)}>
+                  {[1, 2, 3, 5, 6, 8, 9, 10].map((keyMode) => (
+                    <option key={keyMode} value={keyMode}>
+                      {keyMode}K
+                    </option>
+                  ))}
+                </optgroup>
+              </select>
+            </>
+          )}
+          <button
+            type='button'
+            className='push-right'
+            onClick={() => {
+              updateSortOrFilter({ action: 'toggleApproved' });
+              setPage(1);
+            }}
+          >
+            {sortsAndFilters.filterToApproved ? 'Show pending' : 'Show approved'}
+          </button>
+        </div>
+        <div className='flex-left slim-margin'>
           <FormattedMessage
             defaultMessage='Columns:'
             description='Title for options to show or hide columns'
@@ -379,43 +417,7 @@ export default function SubmissionListingContainer() {
               />
             </span>
           ))}
-          <button
-            type='button'
-            className='push-right'
-            onClick={() => {
-              updateSortOrFilter({ action: 'toggleApproved' });
-              setPage(1);
-            }}
-          >
-            {sortsAndFilters.filterToApproved ? 'Show pending' : 'Show approved'}
-          </button>
         </div>
-        {gameMode === GameMode.mania && (
-          <div className='flex-left slim-margin'>
-            <FormattedMessage
-              defaultMessage='Key mode:'
-              description='Selector to change osu!mania key mode'
-              tagName='span'
-            />
-            <select value={keyMode ?? 'all'} onChange={onKeyModeChange}>
-              <option value='all'>{intl.formatMessage(messages.all)}</option>
-              <optgroup label={intl.formatMessage(messages.commonKeyModes)}>
-                {[4, 7].map((keyMode) => (
-                  <option key={keyMode} value={keyMode}>
-                    {keyMode}K
-                  </option>
-                ))}
-              </optgroup>
-              <optgroup label={intl.formatMessage(messages.uncommonKeyModes)}>
-                {[1, 2, 3, 5, 6, 8, 9, 10].map((keyMode) => (
-                  <option key={keyMode} value={keyMode}>
-                    {keyMode}K
-                  </option>
-                ))}
-              </optgroup>
-            </select>
-          </div>
-        )}
       </div>
       <SubmissionListing
         columns={columns}
