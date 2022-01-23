@@ -346,11 +346,23 @@ router.get(
         .sort((a, b) => a.star_rating - b.star_rating)
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         .sort((a, b) => a.key_count! - b.key_count!);
-      nomination.beatmapset_creators = includesByNominationId[nomination.id]
-        .map((include) => include.creator)
-        .filter(
-          (c1, i, all) => c1 != null && all.findIndex((c2) => c1.id === c2?.id) === i,
-        ) as User[];
+      nomination.beatmapset_creators = (
+        includesByNominationId[nomination.id]
+          .map((include) => include.creator)
+          .filter(
+            (c1, i, all) => c1 != null && all.findIndex((c2) => c1.id === c2?.id) === i,
+          ) as User[]
+      ).sort((a, b) => {
+        if (a.id === nomination.beatmapset.creator_id) {
+          return -1;
+        }
+
+        if (b.id === nomination.beatmapset.creator_id) {
+          return 1;
+        }
+
+        return a.name.localeCompare(b.name);
+      });
       nomination.nominators = nominatorsByNominationId[nomination.id] || [];
 
       const assignees = assigneesByNominationId[nomination.id] || [];
@@ -513,8 +525,18 @@ router.post(
 
     nomination.beatmaps = beatmaps;
     nomination.beatmapset = beatmapset;
-    nomination.beatmapset_creators = creators || [];
-    nomination.nominators = nominators || [];
+    nomination.beatmapset_creators = creators.sort((a, b) => {
+      if (a.id === beatmapset.creator_id) {
+        return -1;
+      }
+
+      if (b.id === beatmapset.creator_id) {
+        return 1;
+      }
+
+      return a.name.localeCompare(b.name);
+    });
+    nomination.nominators = nominators;
     nomination.metadata_assignees = [];
     nomination.moderator_assignees = [];
 
@@ -619,6 +641,7 @@ router.post(
 
     const nomination:
       | (Pick<Nomination, 'beatmapset_id' | 'game_mode' | 'metadata_state'> & {
+          beatmapset?: Beatmapset;
           beatmapset_creators?: User[];
         })
       | null = await db.queryOne<
@@ -697,7 +720,17 @@ router.post(
         );
       }
 
-      nomination.beatmapset_creators = creators;
+      nomination.beatmapset_creators = creators.sort((a, b) => {
+        if (a.id === nomination.beatmapset?.creator_id) {
+          return -1;
+        }
+
+        if (b.id === nomination.beatmapset?.creator_id) {
+          return 1;
+        }
+
+        return a.name.localeCompare(b.name);
+      });
     });
 
     res.json(nomination);
