@@ -8,7 +8,7 @@ import {
   isModeratorMiddleware,
   isNewsAuthorMiddleware,
 } from './guards';
-import { getParams, groupBy } from './helpers';
+import { cleanNominationDescription, getParams, groupBy } from './helpers';
 import { systemLog } from './log';
 import { Osu } from './osu';
 import { settings, updateSettings, accessSetting } from './settings';
@@ -527,6 +527,16 @@ router.post(
 router.post(
   '/nomination-edit-description',
   asyncHandler(async (req, res) => {
+    // Checking for exactly null to validate input
+    // eslint-disable-next-line eqeqeq
+    if (req.body.description !== null && typeof req.body.description !== 'string') {
+      return res.status(422).json({ error: 'Invalid description' });
+    }
+
+    if (typeof req.body.nominationId !== 'number') {
+      return res.status(422).json({ error: 'Invalid nomination ID' });
+    }
+
     const existingNomination = await db.queryOne<
       Pick<Nomination, 'description' | 'description_author_id' | 'description_state' | 'game_mode'>
     >(
@@ -568,7 +578,7 @@ router.post(
         WHERE id = ?
       `,
       [
-        req.body.description,
+        cleanNominationDescription(req.body.description),
         req.body.description == null
           ? null
           : prevDescription == null
