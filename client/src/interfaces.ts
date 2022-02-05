@@ -50,7 +50,7 @@ interface IGenericBeatmap {
   id: number;
   beatmapset_id: number;
   bpm: number;
-  deleted_at?: Date;
+  deleted_at: string | null;
   play_count: number;
   ranked_status: number;
   star_rating: number;
@@ -77,6 +77,7 @@ export interface IBeatmapset {
   artist: string;
   creator_id: number;
   creator_name: string;
+  deleted_at: string | null;
   favorite_count: number;
   play_count: number;
   ranked_status: number;

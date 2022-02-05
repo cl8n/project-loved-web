@@ -98,6 +98,7 @@ interface Beatmapset {
   artist: string;
   creator_id: number;
   creator_name: string;
+  deleted_at: Date | null;
   favorite_count: number;
   play_count: number;
   ranked_status: RankedStatus;

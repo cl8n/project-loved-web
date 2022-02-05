@@ -164,7 +164,8 @@ export class Osu {
 
       if (
         currentInDb != null &&
-        Date.now() <= currentInDb.api_fetched_at.getTime() + retainApiObjectsFor
+        (currentInDb.deleted_at != null ||
+          Date.now() <= currentInDb.api_fetched_at.getTime() + retainApiObjectsFor)
       ) {
         const beatmaps = await db.query<Pick<Beatmap, 'game_mode'>>(
           'SELECT game_mode FROM beatmaps WHERE beatmapset_id = ?',
@@ -194,6 +195,7 @@ export class Osu {
       artist: beatmapset.artist,
       creator_id: beatmapset.user_id,
       creator_name: beatmapset.creator,
+      deleted_at: null,
       favorite_count: beatmapset.favourite_count,
       play_count: beatmapset.play_count,
       ranked_status: beatmapset.ranked,

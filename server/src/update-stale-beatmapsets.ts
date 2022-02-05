@@ -19,6 +19,7 @@ const beatmapsetCount = parseInt(process.argv[2], 10);
     `
       SELECT id
       FROM beatmapsets
+      WHERE deleted_at IS NULL
       ORDER BY api_fetched_at ASC
       LIMIT ?
     `,
