@@ -159,7 +159,7 @@ db.initialize().then(() => {
 
   app.use(
     asyncHandler(async function (request, response, next) {
-      if (request.session.userId == null) {
+      if (request.session?.userId == null) {
         return next();
       }
 
@@ -236,7 +236,7 @@ db.initialize().then(() => {
 
   // Below here requires authentication
   app.use((request, response, next) => {
-    if (!request.session.userId) {
+    if (!request.session?.userId) {
       return response.status(401).json({ error: 'Log in first' });
     }
 
