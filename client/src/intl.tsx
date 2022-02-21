@@ -23,6 +23,7 @@ export const locales = [
   { code: 'es', name: 'español' },
   { code: 'fi', name: 'Suomi' },
   { code: 'it', name: 'Italiano' },
+  { code: 'ru', name: 'Русский' },
   { code: 'sv', name: 'Svenska' },
   { code: 'tr', name: 'Türkçe' },
   { code: 'vi', name: 'Tiếng Việt' },

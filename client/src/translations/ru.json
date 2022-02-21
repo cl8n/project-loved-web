@@ -1,0 +1,407 @@
+{
+  "+3rK3I": {
+    "defaultMessage": "Без ответа"
+  },
+  "+9RCG/": {
+    "defaultMessage": "Другие иконки от {author}"
+  },
+  "+bCbtl": {
+    "defaultMessage": "Столбцы:"
+  },
+  "+d4ZcX": {
+    "defaultMessage": "Модераторы"
+  },
+  "/CNHO3": {
+    "defaultMessage": "Войти через osu!"
+  },
+  "/SSCZX": {
+    "defaultMessage": "Да"
+  },
+  "0+S3hP": {
+    "defaultMessage": "Если карта, которую вы отправляете, либо очень непопулярна, либо совершенно неиграбельна, капитаны могут никогда не проверить ее. Пожалуйста, отправляйте только те карты, которые, по вашему мнению, действительно подходят для категории «Любимая»."
+  },
+  "06WpMi": {
+    "defaultMessage": "Рейтинговая"
+  },
+  "0Vz3c/": {
+    "defaultMessage": "Процент и всего"
+  },
+  "2SX61V": {
+    "defaultMessage": "Примечание"
+  },
+  "2YTMfX": {
+    "defaultMessage": "Отправить и остаться на странице"
+  },
+  "2dOoEc": {
+    "defaultMessage": "Обзорщики метаданных"
+  },
+  "38JPtF": {
+    "defaultMessage": "Проводится опрос"
+  },
+  "39zfVl": {
+    "defaultMessage": "положительно"
+  },
+  "3E4vRf": {
+    "defaultMessage": "Низкий"
+  },
+  "3FN4wO": {
+    "defaultMessage": "Этот опрос был закрыт. Спасибо за ваше участие!"
+  },
+  "3J+k4U": {
+    "defaultMessage": "Форум"
+  },
+  "3Kch6P": {
+    "defaultMessage": "По возрастанию"
+  },
+  "3RdYB+": {
+    "defaultMessage": "Режим игры:"
+  },
+  "5NZbY5": {
+    "defaultMessage": "Отображаемый результат:"
+  },
+  "5OS21f": {
+    "defaultMessage": "Внешние ссылки:"
+  },
+  "5oqovx": {
+    "defaultMessage": "Отправить карту"
+  },
+  "7CJMwD": {
+    "defaultMessage": "Приоритет"
+  },
+  "8NqvA2": {
+    "defaultMessage": "Режим клавиш:"
+  },
+  "8bAHuK": {
+    "defaultMessage": "Закрыть"
+  },
+  "8l6BC0": {
+    "defaultMessage": "Соглашения мапперов"
+  },
+  "9cv8r4": {
+    "defaultMessage": "Список карт"
+  },
+  "AGzOYr": {
+    "defaultMessage": "Добавить карту в Любимые!"
+  },
+  "BGA5hC": {
+    "defaultMessage": "Разработчики"
+  },
+  "BSKWqB": {
+    "defaultMessage": "Команда"
+  },
+  "Be0kKF": {
+    "defaultMessage": "Карта, которую вы отправляете, может быть никогда не номинирована на «Любимая», даже если у нее есть какие-то достоинства. В настоящее время процент избранных карт ограничен, поэтому вполне возможно, что капитаны будут постоянно находить лучший выбор, чем карта, которую вы отправляете."
+  },
+  "Bsld0J": {
+    "defaultMessage": "Поиск:"
+  },
+  "CCGzFA": {
+    "defaultMessage": "Голосование завершено"
+  },
+  "CIAu6S": {
+    "defaultMessage": "Вики"
+  },
+  "CxsxoI": {
+    "defaultMessage": "Отправляем..."
+  },
+  "Do+EPJ": {
+    "defaultMessage": "{user} оценивает {score} - {timestamp, date, long}"
+  },
+  "EqGiDp": {
+    "defaultMessage": "То, что вы напишете в этой форме, будет видно всем, поэтому не пишите ничего, что вы не хотите, чтобы другие видели. Вам не нужно заполнять поле причины, если вы не хотите."
+  },
+  "F1tQfW": {
+    "defaultMessage": "Название"
+  },
+  "G1mG5h": {
+    "defaultMessage": "Маппер просит, чтобы эта карта не относилась к категории «Любимые»."
+  },
+  "H65rvb": {
+    "defaultMessage": "Вы недостаточно круты, чтобы увидеть эту страницу."
+  },
+  "HVzPRU": {
+    "defaultMessage": "Нет"
+  },
+  "Hf1vPz": {
+    "defaultMessage": "Выборы"
+  },
+  "HvpI7B": {
+    "defaultMessage": "Карта удалена"
+  },
+  "IO8Ye2": {
+    "defaultMessage": "Счет"
+  },
+  "IiYTWb": {
+    "defaultMessage": "Текущий состав"
+  },
+  "Ipzb3R": {
+    "defaultMessage": "Не допущено"
+  },
+  "JHNIy2": {
+    "defaultMessage": "Отображать раунды:"
+  },
+  "JPKVz4": {
+    "defaultMessage": "Список карт"
+  },
+  "JPSkxB": {
+    "defaultMessage": "{country} флаг"
+  },
+  "Jy6JW8": {
+    "defaultMessage": "Я без понятия, кто ты! Давай-ка <a>войди</a> для начала."
+  },
+  "LBBZpt": {
+    "defaultMessage": "Режим игры"
+  },
+  "Ll1LUO": {
+    "defaultMessage": "крайне положительно"
+  },
+  "Lm++cZ": {
+    "defaultMessage": "Project Loved"
+  },
+  "MLkhaQ": {
+    "defaultMessage": "На голосовании"
+  },
+  "MUDTXQ": {
+    "defaultMessage": "Ссылка или ID карты"
+  },
+  "MoR8Of": {
+    "defaultMessage": "Соглашения мапперов"
+  },
+  "N4xf2i": {
+    "defaultMessage": "Избранное"
+  },
+  "NG8X9U": {
+    "defaultMessage": "В разработке"
+  },
+  "NjIKQe": {
+    "defaultMessage": "Недоступно"
+  },
+  "O2IvSs": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} утверждает карту {timestamp, date, long}} другой{{user} утверждает карту}}"
+  },
+  "Oep6va": {
+    "defaultMessage": "Отправить"
+  },
+  "PCZJkZ": {
+    "defaultMessage": "Исходный код и трекер"
+  },
+  "PpxIZP": {
+    "defaultMessage": "крайне отрицательно"
+  },
+  "PuVvCo": {
+    "defaultMessage": "Клавиши"
+  },
+  "R0gvL0": {
+    "defaultMessage": "Автор"
+  },
+  "RHg+09": {
+    "defaultMessage": "Какие режимы следует отнести к категории «Любимая»?"
+  },
+  "RL5Qu1": {
+    "defaultMessage": "Одобрено"
+  },
+  "ScBgfg": {
+    "defaultMessage": "без предпочтений"
+  },
+  "Sti+Y3": {
+    "defaultMessage": "После отправки карты вы можете проверить ее статус на <submissionsLink>странице \"Заявок\"</submissionsLink>."
+  },
+  "Tf7XH9": {
+    "defaultMessage": "Примечание"
+  },
+  "TqI9fE": {
+    "defaultMessage": "Админ:"
+  },
+  "TrDD+Y": {
+    "defaultMessage": "Ты должен <a>войти</a>, чтобы заполнить форму."
+  },
+  "U1fcdw": {
+    "defaultMessage": "Редакторы новостей / Менеджеры"
+  },
+  "UjLvid": {
+    "defaultMessage": "Расширить"
+  },
+  "UxNmCh": {
+    "defaultMessage": "Средний"
+  },
+  "V5W+3b": {
+    "defaultMessage": "Согласие"
+  },
+  "VHEp9G": {
+    "defaultMessage": "По убыванию"
+  },
+  "VYIbMd": {
+    "defaultMessage": "Любимая по голосованию"
+  },
+  "WEpxnj": {
+    "defaultMessage": "Игр"
+  },
+  "WjsRpS": {
+    "defaultMessage": "Все карты в этом наборе слишком короткие (менее 30 секунд)."
+  },
+  "Y620ue": {
+    "defaultMessage": "Все"
+  },
+  "ZEsdcm": {
+    "defaultMessage": "Тема с опросом"
+  },
+  "ZWbq0S": {
+    "defaultMessage": "Год"
+  },
+  "ZZqLxU": {
+    "defaultMessage": "Сложности"
+  },
+  "aHJR9F": {
+    "defaultMessage": "Согласие"
+  },
+  "bKfIQC": {
+    "defaultMessage": "Почему вы хотите, чтобы эта карта была Любимой? <fade>(необязательно)</fade>"
+  },
+  "bcLpeC": {
+    "defaultMessage": "Необычный"
+  },
+  "c/0N4+": {
+    "defaultMessage": "очень отрицательно"
+  },
+  "c2UCNp": {
+    "defaultMessage": "Процент"
+  },
+  "ccf+6T": {
+    "defaultMessage": "{gameMode} капитаны"
+  },
+  "cwgho6": {
+    "defaultMessage": "В ожидании"
+  },
+  "dG9/uH": {
+    "defaultMessage": "Квалифицированная"
+  },
+  "e6WZri": {
+    "defaultMessage": "очень положительно"
+  },
+  "gLG6dL": {
+    "defaultMessage": "Представленные карты"
+  },
+  "gvLZL5": {
+    "defaultMessage": "Выйти"
+  },
+  "ht0/kF": {
+    "defaultMessage": "Обычный"
+  },
+  "iCkWun": {
+    "defaultMessage": "Раунд"
+  },
+  "jVP2nx": {
+    "defaultMessage": "Маппер карт забанен."
+  },
+  "jlkqJz": {
+    "defaultMessage": "Управление"
+  },
+  "jlqkv1": {
+    "defaultMessage": "Номинировано"
+  },
+  "kr2W+L": {
+    "defaultMessage": "<p>Заполнение этой формы помогает <teamLink>капитанам</teamLink> решить, какие карты номинировать в категорию «Любимые» в ежемесячных опросах. Даже если карта уже <submissionsLink>отправлена</submissionsLink>, вы можете добавить свои мысли о карте здесь.</p> <p>Некоторые вещи, которые следует иметь в виду:</p>"
+  },
+  "l39agD": {
+    "defaultMessage": "Статус"
+  },
+  "lMSjPi": {
+    "defaultMessage": "Это пока недоступно для вас. Зайдите в ближайшее время!"
+  },
+  "lRk8DP": {
+    "defaultMessage": "отрицательно"
+  },
+  "lULo+e": {
+    "defaultMessage": "Голосование провалено"
+  },
+  "lbC8H+": {
+    "defaultMessage": "Маппер"
+  },
+  "lz1fkx": {
+    "defaultMessage": "Да"
+  },
+  "me3BjX": {
+    "defaultMessage": "Статистика"
+  },
+  "mhBW5h": {
+    "defaultMessage": "Маппер"
+  },
+  "mhVjD+": {
+    "defaultMessage": "Иконки флагов от {author}"
+  },
+  "mucI2W": {
+    "defaultMessage": "Метод-заполнитель для сортировки этого списка. {definition}"
+  },
+  "necy1Q": {
+    "defaultMessage": "Этот список включает только материалы, отправленные с этого веб-сайта. Записи из старых таблиц Google скоро будут перемещены сюда, после чего таблицы Google будут удалены."
+  },
+  "nn9fFb": {
+    "defaultMessage": "BPM"
+  },
+  "nvvuiw": {
+    "defaultMessage": "Видеоредакторы"
+  },
+  "pLUxkj": {
+    "defaultMessage": "Нет"
+  },
+  "pNwB5k": {
+    "defaultMessage": "Новое!"
+  },
+  "pXOU6C": {
+    "defaultMessage": "Тут ничего нет =("
+  },
+  "phKBIX": {
+    "defaultMessage": "Страна неизвестна"
+  },
+  "pvfxi+": {
+    "defaultMessage": "Заявки"
+  },
+  "qYCjeT": {
+    "defaultMessage": "Любимая"
+  },
+  "qfEiSZ": {
+    "defaultMessage": "Всего"
+  },
+  "rv3gh8": {
+    "defaultMessage": "{user} отметил как <score>не допущено</score> - {timestamp, date, long}"
+  },
+  "sG6ons": {
+    "defaultMessage": "Список Любимых"
+  },
+  "tCV6dl": {
+    "defaultMessage": "Язык: {selector}"
+  },
+  "uNpYlX": {
+    "defaultMessage": "Отклонено"
+  },
+  "urIF1D": {
+    "defaultMessage": "Список карт"
+  },
+  "vDQerf": {
+    "defaultMessage": "Результаты голосования"
+  },
+  "vLehYo": {
+    "defaultMessage": "Опрос закрыт"
+  },
+  "wGcwBN": {
+    "defaultMessage": "Высокий"
+  },
+  "wOZypU": {
+    "defaultMessage": "Выпускники"
+  },
+  "xv9aUB": {
+    "defaultMessage": "Да и нет"
+  },
+  "y+BE4P": {
+    "defaultMessage": "Все"
+  },
+  "yQeX5q": {
+    "defaultMessage": "Тема: {selector}"
+  },
+  "zSxa2k": {
+    "defaultMessage": "Эта карта была номинирована на {roundName}."
+  },
+  "zn6DBN": {
+    "defaultMessage": "Сортировать по:"
+  }
+}
