@@ -59,6 +59,10 @@
     "defaultMessage": "Low",
     "description": "Aggregate review score shown on submissions table"
   },
+  "3FN4wO": {
+    "defaultMessage": "This survey has been closed. Thanks for your participation!",
+    "description": "Body of \"survey closed\" page"
+  },
   "3J+k4U": {
     "defaultMessage": "Forum",
     "description": "Nav link"
@@ -118,6 +122,10 @@
   "Be0kKF": {
     "defaultMessage": "The map you submit may never be nominated for Loved, even if it does have some merit. Currently, the rate that maps get Loved is limited, so it's possible that the captains will continually find better picks than the map you submit.",
     "description": "Submission form list item 3"
+  },
+  "Bsld0J": {
+    "defaultMessage": "Search:",
+    "description": "Title for submissions search input"
   },
   "CCGzFA": {
     "defaultMessage": "Passed voting",
@@ -319,10 +327,6 @@
     "defaultMessage": "Poll topic",
     "description": "Poll results table header"
   },
-  "ZMV3ed": {
-    "defaultMessage": "Flag icons by {author1} and {author2}",
-    "description": "Credit in site footer"
-  },
   "ZWbq0S": {
     "defaultMessage": "Year",
     "description": "Submissions table header"
@@ -431,6 +435,10 @@
     "defaultMessage": "Mapper",
     "description": "Submissions table header"
   },
+  "mhVjD+": {
+    "defaultMessage": "Flag icons by {author}",
+    "description": "Credit in site footer"
+  },
   "mucI2W": {
     "defaultMessage": "A placeholder method to sort this listing. {definition}",
     "description": "Help text for \"Score\" submissions table header"
@@ -498,6 +506,10 @@
   "vDQerf": {
     "defaultMessage": "Poll results",
     "description": "Poll results title"
+  },
+  "vLehYo": {
+    "defaultMessage": "Survey closed",
+    "description": "Title of \"survey closed\" page"
   },
   "wGcwBN": {
     "defaultMessage": "High",

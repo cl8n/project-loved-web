@@ -242,9 +242,6 @@
   "ZEsdcm": {
     "defaultMessage": "Umfragenthema"
   },
-  "ZMV3ed": {
-    "defaultMessage": "Flaggen-Symbole von {author1} und {author2}"
-  },
   "ZWbq0S": {
     "defaultMessage": "Jahr"
   },
@@ -325,6 +322,9 @@
   },
   "mhBW5h": {
     "defaultMessage": "Mapper"
+  },
+  "mhVjD+": {
+    "defaultMessage": "Flaggen-Symbole von {author}"
   },
   "mucI2W": {
     "defaultMessage": "Eine Platzhaltermethode zum Sortieren dieser Auflistung. {definition}"

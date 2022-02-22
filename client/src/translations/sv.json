@@ -242,9 +242,6 @@
   "ZEsdcm": {
     "defaultMessage": "Forumämne"
   },
-  "ZMV3ed": {
-    "defaultMessage": "Flaggikoner av {author1} och {author2}"
-  },
   "ZWbq0S": {
     "defaultMessage": "År"
   },
@@ -325,6 +322,9 @@
   },
   "mhBW5h": {
     "defaultMessage": "Mappare"
+  },
+  "mhVjD+": {
+    "defaultMessage": "Flaggikoner av {author}"
   },
   "mucI2W": {
     "defaultMessage": "Tillfälligt sätt att sortera denna listning. {definition}"

@@ -242,9 +242,6 @@
   "ZEsdcm": {
     "defaultMessage": "Foorumiaihe"
   },
-  "ZMV3ed": {
-    "defaultMessage": "Lippuikonit: {author1} ja {author2}"
-  },
   "ZWbq0S": {
     "defaultMessage": "Vuosi"
   },
@@ -325,6 +322,9 @@
   },
   "mhBW5h": {
     "defaultMessage": "Mappaaja"
+  },
+  "mhVjD+": {
+    "defaultMessage": "Lippuikonit: {author}"
   },
   "mucI2W": {
     "defaultMessage": "Väliaikainen tapa järjestää tätä listausta. {definition}"

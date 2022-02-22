@@ -215,9 +215,6 @@
   "ZEsdcm": {
     "defaultMessage": "Asunto de la encuesta"
   },
-  "ZMV3ed": {
-    "defaultMessage": "Íconos de banderas hechos por {author1} y {author2}"
-  },
   "ZWbq0S": {
     "defaultMessage": "Año"
   },
@@ -286,6 +283,9 @@
   },
   "mhBW5h": {
     "defaultMessage": "Mapeador"
+  },
+  "mhVjD+": {
+    "defaultMessage": "Íconos de banderas hechos por {author}"
   },
   "mucI2W": {
     "defaultMessage": "Este puntaje es un método primitivo realizado para ordenar esta lista. {definition}"

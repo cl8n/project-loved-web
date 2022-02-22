@@ -218,9 +218,6 @@
   "ZEsdcm": {
     "defaultMessage": "Oylama konusu"
   },
-  "ZMV3ed": {
-    "defaultMessage": "Bayrak ikonları {author1} ve {author2}"
-  },
   "ZWbq0S": {
     "defaultMessage": "Yıl"
   },
@@ -289,6 +286,9 @@
   },
   "mhBW5h": {
     "defaultMessage": "Mapper"
+  },
+  "mhVjD+": {
+    "defaultMessage": "Bayrak ikonları {author}"
   },
   "mucI2W": {
     "defaultMessage": "Bu listeyi sıralamak için bir yer tutucu metodu. {definition}"

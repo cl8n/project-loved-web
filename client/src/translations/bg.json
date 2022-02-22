@@ -242,9 +242,6 @@
   "ZEsdcm": {
     "defaultMessage": "Анкетна страница"
   },
-  "ZMV3ed": {
-    "defaultMessage": "Икони на знамена от {author1} и {author2}"
-  },
   "ZWbq0S": {
     "defaultMessage": "Година"
   },
@@ -325,6 +322,9 @@
   },
   "mhBW5h": {
     "defaultMessage": "Създател"
+  },
+  "mhVjD+": {
+    "defaultMessage": "Икони на знамена от {author}"
   },
   "mucI2W": {
     "defaultMessage": "Метод за изчисление на тази подредба. {definition}"

@@ -248,9 +248,6 @@
   "ZEsdcm": {
     "defaultMessage": "投票主题"
   },
-  "ZMV3ed": {
-    "defaultMessage": "旗帜图标来自 {author1} 和 {author2}"
-  },
   "ZWbq0S": {
     "defaultMessage": "年份"
   },
@@ -328,6 +325,9 @@
   },
   "mhBW5h": {
     "defaultMessage": "谱面作者"
+  },
+  "mhVjD+": {
+    "defaultMessage": "旗帜图标来自 {author}"
   },
   "mucI2W": {
     "defaultMessage": "列表排序方式 {definition}"

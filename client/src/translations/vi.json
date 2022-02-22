@@ -260,9 +260,6 @@
   "ZEsdcm": {
     "defaultMessage": "số hiệu bình chọn"
   },
-  "ZMV3ed": {
-    "defaultMessage": "Biểu tượng lá cờ của {author1} và {author2}"
-  },
   "ZWbq0S": {
     "defaultMessage": "Năm"
   },
@@ -325,6 +322,9 @@
   },
   "mhBW5h": {
     "defaultMessage": "Tác giả beatmap"
+  },
+  "mhVjD+": {
+    "defaultMessage": "Biểu tượng lá cờ của {author}"
   },
   "mucI2W": {
     "defaultMessage": "Một phương thức tạm thời để sắp xếp danh sách này. {definition}"
