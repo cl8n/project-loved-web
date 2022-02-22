@@ -111,7 +111,8 @@ db.initialize().then(() => {
     }
 
     request.session.authState = randomBytes(32).toString('hex');
-    request.session.authBackUrl = request.get('Referrer');
+    request.session.authBackUrl =
+      typeof request.query.back === 'string' ? request.query.back : request.get('Referrer');
 
     response.redirect(authRedirectUrl(request.session.authState));
   });

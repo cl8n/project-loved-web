@@ -1,4 +1,6 @@
+import { createHash } from 'crypto';
 import { Router } from 'express';
+import qs from 'querystring';
 import db from '../db';
 import { asyncHandler } from '../express-helpers';
 import { currentUserRoles } from '../guards';
@@ -350,6 +352,39 @@ guestRouter.get(
       beatmapsets,
       usersById,
     });
+  }),
+);
+
+guestRouter.get(
+  '/survey',
+  asyncHandler(async (req, res) => {
+    if (!process.env.SURVEY_ID || req.query.id !== process.env.SURVEY_ID) {
+      return res.status(404).json({ error: 'Survey not found' });
+    }
+
+    if (
+      !process.env.SURVEY_CONFIRMATION_SECRET ||
+      !process.env.SURVEY_LINK_TEMPLATE ||
+      !process.env.SURVEY_LINK_TEMPLATE.includes('{confirmation}')
+    ) {
+      return res.status(500).json({ error: 'Invalid survey configuration' });
+    }
+
+    const user = res.typedLocals.user as UserWithRoles | undefined;
+
+    if (user == null) {
+      return res.redirect('/api/auth/begin?' + qs.stringify({ back: `/survey/${req.query.id}` }));
+    }
+
+    const confirmation = createHash('md5')
+      .update(user.id + process.env.SURVEY_CONFIRMATION_SECRET)
+      .digest('hex');
+    const link = process.env.SURVEY_LINK_TEMPLATE.replace(
+      '{confirmation}',
+      `${user.id}-${confirmation}`,
+    );
+
+    res.redirect(link);
   }),
 );
 
