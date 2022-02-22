@@ -81,12 +81,9 @@ render(
           </main>
           <footer>
             <FormattedMessage
-              defaultMessage='Flag icons by {author1} and {author2}'
+              defaultMessage='Flag icons by {author}'
               description='Credit in site footer'
-              values={{
-                author1: <a href='http://famfamfam.com'>Mark James</a>,
-                author2: <a href='https://clayton.cc'>Clayton</a>,
-              }}
+              values={{ author: <a href='http://famfamfam.com'>Mark James</a> }}
             />
             {' | '}
             <FormattedMessage
