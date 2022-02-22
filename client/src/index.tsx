@@ -20,6 +20,7 @@ import Statistics from './statistics';
 import './styles/main.scss';
 import SubmissionForm from './submission-form';
 import SubmissionListingContainer from './submission-listing';
+import SurveyClosed from './survey/SurveyClosed';
 import Team from './team';
 
 registerTextareaAutoHeightTrigger();
@@ -69,6 +70,9 @@ render(
               </ProtectedRoute>
               <Route exact path='/localization/:locale?'>
                 <Localization />
+              </Route>
+              <Route exact path='/survey/closed'>
+                <SurveyClosed />
               </Route>
               <Route>
                 <NoRoute />
