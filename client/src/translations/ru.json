@@ -177,7 +177,7 @@
     "defaultMessage": "Недоступно"
   },
   "O2IvSs": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} утверждает карту {timestamp, date, long}} другой{{user} утверждает карту}}"
+    "defaultMessage": "{hasTimestamp,select,true{{user} утверждает карту {timestamp, date, long}} other{{user} утверждает карту}}"
   },
   "Oep6va": {
     "defaultMessage": "Отправить"
