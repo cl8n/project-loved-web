@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   alertApiErrorMessage,
   apiErrorMessage,
+  deleteBeatmapset,
   getLogs,
   isApiObjectType,
   updateApiObject,
@@ -140,6 +141,34 @@ function ApiObjectBulkMenu() {
   );
 }
 
+function BeatmapsetDeleteMenu() {
+  const [busy, setBusy] = useState(false);
+
+  const onSubmit: FormSubmitHandler = (form, then) => {
+    return deleteBeatmapset(form.id).then(then).catch(alertApiErrorMessage);
+  };
+
+  return (
+    <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
+      <table>
+        <tr>
+          <td>
+            <label htmlFor='id'>ID</label>
+          </td>
+          <td>
+            <input type='number' name='id' required data-value-type='int' />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button type='submit'>{busy ? 'Deleting...' : 'Delete'}</button>
+          </td>
+        </tr>
+      </table>
+    </Form>
+  );
+}
+
 function Logs() {
   const [logs, logsError] = useApi(getLogs);
 
@@ -221,6 +250,8 @@ export function Manage() {
         <ApiObjectMenu />
         <h2>Bulk</h2>
         <ApiObjectBulkMenu />
+        <h2>Delete beatmapset</h2>
+        <BeatmapsetDeleteMenu />
       </div>
       <div className='content-block'>
         <h1>Logs</h1>

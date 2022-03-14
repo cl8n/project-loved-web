@@ -83,6 +83,10 @@ export function authRemember(): Response<IUserWithRoles> {
   return superagent.get('/api/auth/remember');
 }
 
+export function deleteBeatmapset(beatmapsetId: number): Response {
+  return superagent.delete('/api/beatmapset').query({ beatmapsetId });
+}
+
 export function deleteNomination(nominationId: number): Response {
   return superagent.delete('/api/nomination').query({ nominationId });
 }

@@ -1231,6 +1231,42 @@ router.post('/update-api-object-bulk', isAdminMiddleware, (req, res) => {
   res.status(204).send();
 });
 
+router.delete(
+  '/beatmapset',
+  isAdminMiddleware,
+  asyncHandler(async (req, res) => {
+    const id = req.query.beatmapsetId;
+    const beatmapset = await db.queryOne<Beatmapset>('SELECT * FROM beatmapsets WHERE id = ?', [
+      id,
+    ]);
+
+    if (beatmapset == null || beatmapset.deleted_at != null) {
+      return res.status(404).json({ error: 'Beatmapset not found' });
+    }
+
+    const nomination = await db.queryOne('SELECT 1 FROM nominations WHERE beatmapset_id = ?', [id]);
+    const poll = await db.queryOne('SELECT 1 FROM polls WHERE beatmapset_id = ?', [id]);
+
+    if (nomination != null || poll != null) {
+      return res.status(422).json({ error: 'Beatmapset has nominations or polls attached' });
+    }
+
+    await db.transact(async (connection) => {
+      await connection.query('DELETE FROM beatmaps WHERE beatmapset_id = ?', [id]);
+      await connection.query('DELETE FROM beatmapset_creators WHERE beatmapset_id = ?', [id]);
+      await connection.query('DELETE FROM mapper_consent_beatmapsets WHERE beatmapset_id = ?', [
+        id,
+      ]);
+      await connection.query('DELETE FROM reviews WHERE beatmapset_id = ?', [id]);
+      await connection.query('DELETE FROM submissions WHERE beatmapset_id = ?', [id]);
+
+      await connection.query('DELETE FROM beatmapsets WHERE id = ?', [id]);
+    });
+
+    res.status(204).send();
+  }),
+);
+
 router.get('/settings', isCaptainMiddleware, (_, res) => {
   res.json(settings);
 });
