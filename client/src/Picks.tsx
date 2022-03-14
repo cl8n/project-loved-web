@@ -391,13 +391,7 @@ function Nomination({
     !(failedVoting && !moderationAssigned) &&
     !moderationDone &&
     hasRole(authUser, [Role.moderator, Role.news]);
-  const canDelete =
-    !round.done &&
-    !locked &&
-    !descriptionStarted &&
-    !metadataStarted &&
-    !moderationStarted &&
-    isNominator;
+  const canDelete = !round.done && !locked && isNominator;
   const canEditDescription =
     !round.done &&
     ((!descriptionDone && hasRole(authUser, Role.captain, nomination.game_mode)) ||

@@ -818,17 +818,23 @@ router.post(
   '/update-nominators',
   isCaptainMiddleware,
   asyncHandler(async (req, res) => {
+    if (!isNumberArray(req.body.nominatorIds) || req.body.nominatorIds.length === 0) {
+      return res.status(422).json({ error: 'Invalid nominator IDs' });
+    }
+
+    if (!req.body.nominatorIds.includes(res.typedLocals.user.id)) {
+      return res.status(422).json({ error: "Can't remove yourself from nominators" });
+    }
+
     await db.transact(async (connection) => {
       await connection.query('DELETE FROM nomination_nominators WHERE nomination_id = ?', [
         req.body.nominationId,
       ]);
 
-      if (isNumberArray(req.body.nominatorIds) && req.body.nominatorIds.length > 0) {
-        await connection.query(
-          'INSERT INTO nomination_nominators (nomination_id, nominator_id) VALUES ?',
-          [req.body.nominatorIds.map((id) => [req.body.nominationId, id])],
-        );
-      }
+      await connection.query(
+        'INSERT INTO nomination_nominators (nomination_id, nominator_id) VALUES ?',
+        [(req.body.nominatorIds as number[]).map((id) => [req.body.nominationId, id])],
+      );
     });
 
     const nominators = await db.query<User>(
