@@ -388,13 +388,14 @@ export class Osu {
     const { byName = false, forceUpdate = false, storeBanned = false } = options ?? {};
     let currentInDb: User | null | undefined;
 
-    if (!forceUpdate && userIdOrName != null) {
+    if (userIdOrName != null) {
       currentInDb = await db.queryOne<User>('SELECT * FROM users WHERE ?? = ?', [
         byName ? 'name' : 'id',
         userIdOrName,
       ]);
 
       if (
+        !forceUpdate &&
         currentInDb != null &&
         Date.now() <= currentInDb.api_fetched_at.getTime() + retainApiObjectsFor
       ) {
@@ -404,30 +405,29 @@ export class Osu {
 
     const user = await this.#getUser(userIdOrName, byName).catch(() => null);
 
+    if (userIdOrName == null) {
+      if (user == null) {
+        return null;
+      }
+
+      currentInDb = await db.queryOne<User>('SELECT * FROM users WHERE id = ?', [user.id]);
+    }
+
+    if (user == null) {
+      if (currentInDb != null) {
+        return currentInDb;
+      }
+
+      if (!storeBanned) {
+        return null;
+      }
+    }
+
     return await db.transact(async (connection) => {
       let dbFields: Omit<User, 'id'>;
       let dbFieldsWithPK: User;
 
       if (user == null) {
-        if (userIdOrName == null) {
-          return null;
-        }
-
-        if (currentInDb == null) {
-          currentInDb = await connection.queryOne<User>('SELECT * FROM users WHERE ?? = ?', [
-            byName ? 'name' : 'id',
-            userIdOrName,
-          ]);
-        }
-
-        if (currentInDb != null) {
-          return currentInDb;
-        }
-
-        if (!storeBanned) {
-          return null;
-        }
-
         dbFields = {
           api_fetched_at: new Date(),
           avatar_url: sanitizeAvatarUrl('/images/layout/avatar-guest.png'),
