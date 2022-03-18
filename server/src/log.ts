@@ -1,9 +1,9 @@
 import { inspect } from 'util';
 
-const logPrefix = process.env.LOG_SYSLOG_LEVEL_PREFIX === '1';
+const syslogPrefix = process.env.LOG_SYSLOG_LEVEL_PREFIX === '1';
 
 export function systemLog(message: unknown, level: SyslogLevel): void {
-  if (logPrefix) {
+  if (syslogPrefix) {
     if (typeof message !== 'string') {
       message = inspect(message, { depth: null });
     }
