@@ -44,6 +44,9 @@
   "3E4vRf": {
     "defaultMessage": "Matala"
   },
+  "3FN4wO": {
+    "defaultMessage": "Tämä kysely on päättynyt. Kiitos osallistumisestasi!"
+  },
   "3J+k4U": {
     "defaultMessage": "Foorumi"
   },
@@ -88,6 +91,9 @@
   },
   "Be0kKF": {
     "defaultMessage": "Voi olla, että ehdottamasi mappi ei koskaan nimitetä Loved-kategoriaan, vaikka se näyttäisikin lupaavalta. Loved-kategoriaan pääsee parhaillaan vain tietty määrä mappeja kerralla, eli voi olla, että kapteenit löytävät aina parempia mappeja kuin mitä ehdotat."
+  },
+  "Bsld0J": {
+    "defaultMessage": "Hae:"
   },
   "CCGzFA": {
     "defaultMessage": "Läpäissyt äänestyksen"
@@ -338,6 +344,9 @@
   "nn9fFb": {
     "defaultMessage": "BPM"
   },
+  "nvvuiw": {
+    "defaultMessage": "Videoeditoijia"
+  },
   "pLUxkj": {
     "defaultMessage": "Ei"
   },
@@ -376,6 +385,9 @@
   },
   "vDQerf": {
     "defaultMessage": "Äänestystulokset"
+  },
+  "vLehYo": {
+    "defaultMessage": "Kysely päättynyt"
   },
   "wGcwBN": {
     "defaultMessage": "Korkea"

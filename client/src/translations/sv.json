@@ -44,6 +44,9 @@
   "3E4vRf": {
     "defaultMessage": "Låg"
   },
+  "3FN4wO": {
+    "defaultMessage": "Denna enkät är avslutad. Tack för din medverkan!"
+  },
   "3J+k4U": {
     "defaultMessage": "Forum"
   },
@@ -88,6 +91,9 @@
   },
   "Be0kKF": {
     "defaultMessage": "Mappen du skickar in kanske aldrig blir nominerad för Loved, även om den har merit. Vid tillfället kan maps inte ges Loved-status hur snabbt som helst, så det kan hända att kaptener hela tiden hittar bättre kandidater än dem du skickar in."
+  },
+  "Bsld0J": {
+    "defaultMessage": "Sök:"
   },
   "CCGzFA": {
     "defaultMessage": "Framröstad"
@@ -338,6 +344,9 @@
   "nn9fFb": {
     "defaultMessage": "BPM"
   },
+  "nvvuiw": {
+    "defaultMessage": "Videoredigerare"
+  },
   "pLUxkj": {
     "defaultMessage": "Nej"
   },
@@ -376,6 +385,9 @@
   },
   "vDQerf": {
     "defaultMessage": "Röstningsresultat"
+  },
+  "vLehYo": {
+    "defaultMessage": "Enkät avslutad"
   },
   "wGcwBN": {
     "defaultMessage": "Hög"
