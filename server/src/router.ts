@@ -9,7 +9,7 @@ import {
   isNewsAuthorMiddleware,
 } from './guards';
 import { cleanNominationDescription, getParams, groupBy } from './helpers';
-import { systemLog } from './log';
+import { dbLog, systemLog } from './log';
 import { Osu } from './osu';
 import { settings, updateSettings, accessSetting } from './settings';
 import {
@@ -1145,7 +1145,74 @@ router.post(
       return res.status(422).json({ error: 'Invalid user ID' });
     }
 
+    const user = await db.queryOne<User>('SELECT * FROM users WHERE id = ?', [req.body.userId]);
+
+    if (user == null) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const userRoles = await db.query<UserRole>('SELECT * FROM user_roles WHERE user_id = ?', [
+      user.id,
+    ]);
+
     await db.transact(async (connection) => {
+      for (const newRole of req.body.roles as Omit<UserRole, 'user_id'>[]) {
+        const existingRole = userRoles.find(
+          (role) => role.game_mode === newRole.game_mode && role.role_id === newRole.role_id,
+        );
+
+        if (existingRole == null) {
+          await dbLog(
+            LogType.roleCreated,
+            {
+              actor: {
+                country: res.typedLocals.user.country,
+                id: res.typedLocals.user.id,
+                name: res.typedLocals.user.name,
+              },
+              role: newRole,
+              user: { country: user.country, id: user.id, name: user.name },
+            },
+            connection,
+          );
+        } else if (existingRole.alumni !== newRole.alumni) {
+          await dbLog(
+            LogType.roleToggledAlumni,
+            {
+              actor: {
+                country: res.typedLocals.user.country,
+                id: res.typedLocals.user.id,
+                name: res.typedLocals.user.name,
+              },
+              role: newRole,
+              user: { country: user.country, id: user.id, name: user.name },
+            },
+            connection,
+          );
+        }
+      }
+
+      for (const deletedRole of userRoles.filter(
+        (role) =>
+          (req.body.roles as Omit<UserRole, 'user_id'>[]).find(
+            (newRole) => role.game_mode === newRole.game_mode && role.role_id === newRole.role_id,
+          ) == null,
+      )) {
+        await dbLog(
+          LogType.roleDeleted,
+          {
+            actor: {
+              country: res.typedLocals.user.country,
+              id: res.typedLocals.user.id,
+              name: res.typedLocals.user.name,
+            },
+            role: deletedRole,
+            user: { country: user.country, id: user.id, name: user.name },
+          },
+          connection,
+        );
+      }
+
       await connection.query('DELETE FROM user_roles WHERE user_id = ?', [req.body.userId]);
 
       if ((req.body.roles as Omit<UserRole, 'user_id'>[]).length > 0) {
