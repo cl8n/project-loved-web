@@ -4,7 +4,7 @@ import ListInline from '../ListInline';
 import { gameModeLongName } from '../osu-helpers';
 import { roleNames } from '../permissions';
 
-function renderRole(role: IUserRole) {
+export function renderRole(role: IUserRole) {
   const classNames: string[] = [];
 
   if (role.role_id === Role.captain) {

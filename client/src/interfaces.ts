@@ -19,6 +19,11 @@ export enum LogType {
   apiServerStarted,
   loggedIn,
   loggedOut,
+  userCreated,
+  userUpdated,
+  roleCreated,
+  roleDeleted,
+  roleToggledAlumni,
 }
 
 export enum MetadataState {

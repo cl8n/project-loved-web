@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import {
   alertApiErrorMessage,
@@ -14,6 +15,7 @@ import type { FormSubmitHandler } from './dom-helpers';
 import { Form } from './dom-helpers';
 import type { ILog } from './interfaces';
 import { LogType } from './interfaces';
+import { renderRole } from './manage/RolesList';
 import UsersAndRolesList from './manage/UsersAndRolesList';
 import { Never } from './Never';
 import { UserInline } from './UserInline';
@@ -198,12 +200,34 @@ const logTemplates = {
   [LogType.apiServerStarted]: 'Started API server',
   [LogType.loggedIn]: '{user} logged in',
   [LogType.loggedOut]: '{user} logged out',
+  [LogType.userCreated]: 'Created user {user}',
+  [LogType.userUpdated]: 'Updated user {from} to {to}',
+  [LogType.roleCreated]: '{actor} created role {role} on {user}',
+  [LogType.roleDeleted]: '{actor} deleted role {role} from {user}',
+  [LogType.roleToggledAlumni]: '{actor} {markedOrUnmarked} role {role} as alumni on {user}',
 };
 
-function logElementForTemplate(parameter: string, values: Record<string, any>): JSX.Element {
+function logElementForTemplate(
+  type: LogType,
+  parameter: string,
+  values: Record<string, any>,
+): ReactNode {
   switch (parameter) {
+    case 'actor':
+      return <UserInline user={values.actor} />;
+    case 'role':
+      return renderRole(values.role);
     case 'user':
       return <UserInline user={values.user} />;
+  }
+
+  switch (`${type}-${parameter}`) {
+    case `${LogType.userUpdated}-from`:
+      return <UserInline user={values.from} />;
+    case `${LogType.userUpdated}-to`:
+      return <UserInline user={values.to} />;
+    case `${LogType.roleToggledAlumni}-markedOrUnmarked`:
+      return values.role.alumni ? 'marked' : 'unmarked';
   }
 
   return <Never />;
@@ -212,7 +236,7 @@ function logElementForTemplate(parameter: string, values: Record<string, any>): 
 function LogMessage(log: ILog) {
   const template = logTemplates[log.type];
   const templateRegex = /{([a-z]+)}/gi;
-  const elements: JSX.Element[] = [];
+  const elements: ReactNode[] = [];
   let match: RegExpExecArray | null;
   let lastMatchEnd = 0;
 
@@ -222,7 +246,7 @@ function LogMessage(log: ILog) {
         elements.push(<span>{template.slice(lastMatchEnd, match.index)}</span>);
       }
 
-      elements.push(logElementForTemplate(match[1], log.values));
+      elements.push(logElementForTemplate(log.type, match[1], log.values));
       lastMatchEnd = templateRegex.lastIndex;
     }
   }
