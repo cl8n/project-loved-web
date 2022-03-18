@@ -184,10 +184,9 @@ function Logs() {
     <table>
       {logs.map((log) => (
         <tr key={log.id}>
+          <td>[#{log.id}]</td>
+          <td>{log.created_at}</td>
           <td>
-            {log.created_at} [#{log.id}]
-          </td>
-          <td className={LogType[log.type]}>
             <LogMessage {...log} />
           </td>
         </tr>
@@ -196,43 +195,44 @@ function Logs() {
   );
 }
 
-function LogMessage(log: ILog) {
-  if (log.message.startsWith('{plain}')) {
-    return <span>{log.message.slice(7)}</span>;
+const logTemplates = {
+  [LogType.apiServerStarted]: 'Started API server',
+  [LogType.loggedIn]: '{user} logged in',
+  [LogType.loggedOut]: '{user} logged out',
+};
+
+function logElementForTemplate(parameter: string, values: Record<string, any>): JSX.Element {
+  switch (parameter) {
+    case 'user':
+      return <UserInline user={values.user} />;
   }
 
+  return <Never />;
+}
+
+function LogMessage(log: ILog) {
+  const template = logTemplates[log.type];
+  const templateRegex = /{([a-z]+)}/gi;
   const elements: JSX.Element[] = [];
-  const regex = /{creator}|{([^{}]+)}{([^{}]+)}/g;
   let match: RegExpExecArray | null;
   let lastMatchEnd = 0;
 
-  while ((match = regex.exec(log.message)) != null) {
-    if (lastMatchEnd !== match.index) {
-      elements.push(<span>{log.message.slice(lastMatchEnd, match.index)}</span>);
+  if (log.values != null) {
+    while ((match = templateRegex.exec(template)) != null) {
+      if (lastMatchEnd !== match.index) {
+        elements.push(<span>{template.slice(lastMatchEnd, match.index)}</span>);
+      }
+
+      elements.push(logElementForTemplate(match[1], log.values));
+      lastMatchEnd = templateRegex.lastIndex;
     }
-
-    elements.push(
-      match[1] != null ? (
-        match[2].startsWith('/') ? (
-          <Link to={match[2]}>{match[1]}</Link>
-        ) : (
-          <a href={match[2]}>{match[1]}</a>
-        )
-      ) : log.creator == null ? (
-        <Never />
-      ) : (
-        <UserInline user={log.creator} />
-      ),
-    );
-
-    lastMatchEnd = regex.lastIndex;
   }
 
-  if (lastMatchEnd !== log.message.length) {
-    elements.push(<span>{log.message.slice(lastMatchEnd)}</span>);
+  if (lastMatchEnd !== template.length) {
+    elements.push(<span>{template.slice(lastMatchEnd)}</span>);
   }
 
-  return <>elements</>;
+  return <>{elements}</>;
 }
 
 export function Manage() {

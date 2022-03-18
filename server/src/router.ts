@@ -1281,4 +1281,19 @@ router.put('/settings', isCaptainMiddleware, (req, res) => {
   updateSettings(req.body);
   res.json(settings);
 });
+
+router.get(
+  '/logs',
+  asyncHandler(async (_, res) => {
+    const logs = await db.query<Log>('SELECT * FROM logs ORDER BY id DESC LIMIT 20');
+
+    for (const log of logs) {
+      if (log.values != null) {
+        log.values = JSON.parse(log.values);
+      }
+    }
+
+    res.json(logs);
+  }),
+);
 //#endregion

@@ -16,9 +16,9 @@ export enum GameMode {
 }
 
 export enum LogType {
-  error,
-  action,
-  analytic,
+  apiServerStarted,
+  loggedIn,
+  loggedOut,
 }
 
 export enum MetadataState {
@@ -89,9 +89,8 @@ export interface IBeatmapset {
 export interface ILog {
   id: number;
   created_at: string;
-  creator?: IUser;
-  message: string;
   type: LogType;
+  values: Record<string, unknown> | null;
 }
 
 export interface INomination {
