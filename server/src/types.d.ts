@@ -137,8 +137,7 @@ interface Log {
 interface LogValue {
   log_id: number;
   parameter: number;
-  value_int: number | null;
-  value_text: string | null;
+  value: unknown;
 }
 
 interface Nomination {
