@@ -482,7 +482,7 @@ export class Osu {
 
       if (currentInDb == null) {
         await dbLog(LogType.userCreated, { user: logUser }, connection);
-      } else {
+      } else if (currentInDb.country !== logUser.country || currentInDb.name !== logUser.name) {
         await dbLog(
           LogType.userUpdated,
           {
