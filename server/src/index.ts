@@ -11,7 +11,7 @@ import { createHttpTerminator } from 'http-terminator';
 import db from './db';
 import { asyncHandler } from './express-helpers';
 import { hasLocalInteropKeyMiddleware, isAnyRoleMiddleware } from './guards';
-import { systemLog } from './log';
+import { dbLog, systemLog } from './log';
 import { authRedirectUrl, Osu } from './osu';
 import router from './router';
 import anyoneRouter from './routers/anyone';
@@ -152,7 +152,9 @@ db.initialize().then(() => {
 
       request.session.userId = user.id;
 
-      //await log(logTypes.analytic, '{creator} logged in', userInfo.id);
+      await dbLog(LogType.loggedIn, {
+        user: { country: user.country, id: user.id, name: user.name },
+      });
 
       response.redirect(backUrl || '/');
     }),
@@ -247,8 +249,17 @@ db.initialize().then(() => {
   app.post(
     '/auth/bye',
     asyncHandler(async function (request, response) {
+      const user = await response.typedLocals.osu.createOrRefreshUser(request.session.userId);
+
+      if (user == null) {
+        return response.status(500).json({ error: 'Failed to load user info' });
+      }
+
+      await dbLog(LogType.loggedOut, {
+        user: { country: user.country, id: user.id, name: user.name },
+      });
+
       await response.typedLocals.osu.revokeToken();
-      //log(logTypes.analytic, '{creator} logged out', request.session.userId);
       await destroySession(request.session);
 
       response.status(204).send();
@@ -282,6 +293,9 @@ db.initialize().then(() => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const httpServer = app.listen(parseInt(process.env.PORT!, 10));
   const httpTerminator = createHttpTerminator({ server: httpServer });
+
+  dbLog(LogType.apiServerStarted);
+  systemLog('Starting', SyslogLevel.info);
 
   function shutdown(): void {
     systemLog('Received exit signal', SyslogLevel.info);
