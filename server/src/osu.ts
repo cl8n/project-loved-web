@@ -3,7 +3,7 @@ import type { Request, Response, SuperAgentStatic } from 'superagent';
 import superagent from 'superagent';
 import db from './db';
 import Limiter from './Limiter';
-import { systemLog } from './log';
+import { dbLog, systemLog } from './log';
 
 if (
   process.env.OSU_CLIENT_ID == null ||
@@ -473,6 +473,25 @@ export class Osu {
         `,
         [dbFieldsWithPK, dbFields],
       );
+
+      const logUser = {
+        country: dbFieldsWithPK.country,
+        id: dbFieldsWithPK.id,
+        name: dbFieldsWithPK.name,
+      };
+
+      if (currentInDb == null) {
+        await dbLog(LogType.userCreated, { user: logUser });
+      } else {
+        await dbLog(LogType.userUpdated, {
+          from: {
+            country: currentInDb.country,
+            id: currentInDb.id,
+            name: currentInDb.name,
+          },
+          to: logUser,
+        });
+      }
 
       return dbFieldsWithPK;
     });
