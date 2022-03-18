@@ -48,9 +48,30 @@ declare const enum DescriptionState {
 }
 
 declare const enum LogType {
-  error,
-  action,
-  analytic,
+  apiServerStarted,
+  loggedIn,
+  loggedOut,
+  // submissionCreated,
+  // reviewCreated,
+  // reviewDeleted,
+  // reviewUpdated,
+  // mapperConsentCreated,
+  // mapperConsentDeleted,
+  // mapperConsentUpdated,
+  // mapperConsentBeatmapsetCreated,
+  // mapperConsentBeatmapsetDeleted,
+  // mapperConsentBeatmapsetUpdated,
+  // beatmapsetCreated,
+  // beatmapsetDeleted,
+  // beatmapsetSoftDeleted,
+  // beatmapsetUpdated,
+  // userCreated,
+  // userUpdated,
+  // roleCreated,
+  // roleDeleted,
+  // roleUpdated,
+  // nominationCreated,
+  // nominationDeleted,
 }
 
 declare const enum MetadataState {
@@ -131,13 +152,8 @@ interface ConsentBeatmapset {
 interface Log {
   id: number;
   created_at: Date;
-  type: number;
-}
-
-interface LogValue {
-  log_id: number;
-  parameter: number;
-  value: unknown;
+  type: LogType;
+  values: string | null;
 }
 
 interface Nomination {
