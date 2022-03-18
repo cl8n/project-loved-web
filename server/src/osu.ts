@@ -403,11 +403,11 @@ export class Osu {
     }
 
     const user = await this.#getUser(userIdOrName, byName).catch(() => null);
-    let dbFields: Omit<User, 'id'>;
-    // TODO can't actually be undefined but TS doesn't see that it's assigned in transaction below
-    let dbFieldsWithPK: User | undefined;
 
-    await db.transact(async (connection) => {
+    return await db.transact(async (connection) => {
+      let dbFields: Omit<User, 'id'>;
+      let dbFieldsWithPK: User;
+
       if (user == null) {
         if (userIdOrName == null) {
           return null;
@@ -473,10 +473,9 @@ export class Osu {
         `,
         [dbFieldsWithPK, dbFields],
       );
-    });
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return dbFieldsWithPK!;
+      return dbFieldsWithPK;
+    });
   }
   //#endregion
 }
