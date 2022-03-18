@@ -18,6 +18,8 @@ type StatementInsert = `${string}INSERT INTO${string}` | `${string}INSERT IGNORE
 type StatementSelect = `${string}SELECT${string}FROM${string}`;
 type StatementUpdate = `${string}UPDATE${string}`;
 
+export type MysqlConnectionType = MysqlConnection;
+
 class MysqlConnection {
   #columnsByTable: Record<string, string[]> | undefined;
   #connection: PoolConnection;

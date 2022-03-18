@@ -1,4 +1,5 @@
 import { inspect } from 'util';
+import type { MysqlConnectionType } from './db';
 import db from './db';
 
 const syslogPrefix = process.env.LOG_SYSLOG_LEVEL_PREFIX === '1';
@@ -6,8 +7,9 @@ const syslogPrefix = process.env.LOG_SYSLOG_LEVEL_PREFIX === '1';
 export function dbLog(
   type: LogType,
   values?: Record<string, unknown>,
+  connection?: MysqlConnectionType,
 ): Promise<{ insertId: number }> {
-  return db.query('INSERT INTO logs SET ?', [
+  return (connection ?? db).query('INSERT INTO logs SET ?', [
     {
       created_at: new Date(),
       type,

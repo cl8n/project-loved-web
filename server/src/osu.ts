@@ -481,16 +481,20 @@ export class Osu {
       };
 
       if (currentInDb == null) {
-        await dbLog(LogType.userCreated, { user: logUser });
+        await dbLog(LogType.userCreated, { user: logUser }, connection);
       } else {
-        await dbLog(LogType.userUpdated, {
-          from: {
-            country: currentInDb.country,
-            id: currentInDb.id,
-            name: currentInDb.name,
+        await dbLog(
+          LogType.userUpdated,
+          {
+            from: {
+              country: currentInDb.country,
+              id: currentInDb.id,
+              name: currentInDb.name,
+            },
+            to: logUser,
           },
-          to: logUser,
-        });
+          connection,
+        );
       }
 
       return dbFieldsWithPK;
