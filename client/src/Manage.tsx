@@ -218,6 +218,8 @@ function logElementForTemplate(
   switch (parameter) {
     case 'actor':
       return <UserInline user={values.actor} />;
+    case 'invalid':
+      return <i>Unsupported log type</i>;
     case 'role':
       return renderRole(values.role);
     case 'user':
@@ -237,7 +239,7 @@ function logElementForTemplate(
 }
 
 function LogMessage(log: ILog) {
-  const template = logTemplates[log.type];
+  const template = logTemplates[log.type] ?? '{invalid}';
   const templateRegex = /{([a-z]+)}/gi;
   const elements: ReactNode[] = [];
   let match: RegExpExecArray | null;
