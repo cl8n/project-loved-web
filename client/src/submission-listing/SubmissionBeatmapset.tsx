@@ -240,7 +240,7 @@ export default function SubmissionBeatmapset({
             </div>
           </td>
         )}
-        <td className='normal-wrap'>
+        <td className='normal-wrap fix-column-layout'>
           <div data-beatmapset-id={beatmapset.id} />
           <div className='submission-selector' />
           <Beatmap beatmapset={beatmapset} gameMode={gameMode} />
@@ -299,7 +299,7 @@ export default function SubmissionBeatmapset({
           <td>
             <div className='submission-selector' />
           </td>
-          <td className='normal-wrap fix-column-layout' colSpan={10}>
+          <td className='normal-wrap' colSpan={10}>
             {canReview && (
               <div className='review-button-container'>
                 {review != null && (
