@@ -3,6 +3,12 @@ export enum AssigneeType {
   moderator,
 }
 
+export enum ConsentValue {
+  no,
+  yes,
+  unreachable,
+}
+
 export enum DescriptionState {
   notReviewed,
   reviewed,
@@ -205,16 +211,20 @@ export interface IUserWithRoles extends IUser {
 export interface IMapperConsent {
   user_id: number;
   beatmapset_consents: IMapperBeatmapsetConsent[];
-  consent?: 0 | 1 | 2;
-  consent_reason?: string;
+  consent: ConsentValue | null;
+  consent_reason: string | null;
   mapper: IUser;
+  updated_at?: string;
+  updater?: IUser;
+  updater_id?: number;
 }
 
 export interface IMapperBeatmapsetConsent {
+  beatmapset_id: number;
   beatmapset: IBeatmapset;
   user_id: number;
   consent: boolean;
-  consent_reason?: string;
+  consent_reason: string | null;
 }
 
 export type PartialWithoutId<T extends { id: unknown }> = {
