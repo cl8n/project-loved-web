@@ -405,15 +405,15 @@ export class Osu {
 
     const user = await this.#getUser(userIdOrName, byName).catch(() => null);
 
-    if (userIdOrName == null) {
-      if (user == null) {
-        return null;
-      }
-
+    if (currentInDb == null && user != null) {
       currentInDb = await db.queryOne<User>('SELECT * FROM users WHERE id = ?', [user.id]);
     }
 
     if (user == null) {
+      if (userIdOrName == null) {
+        return null;
+      }
+
       if (currentInDb != null) {
         return currentInDb;
       }
