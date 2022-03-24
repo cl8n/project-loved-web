@@ -13,10 +13,11 @@ const messages = defineMessages({
 
 interface BoolViewProps {
   noColor?: boolean;
+  option?: boolean;
   value: boolean;
 }
 
-export function BoolView({ noColor, value }: BoolViewProps) {
+export function BoolView({ noColor, option, value }: BoolViewProps) {
   const intl = useIntl();
   let className: string | undefined;
 
@@ -24,7 +25,11 @@ export function BoolView({ noColor, value }: BoolViewProps) {
     className = value ? 'success' : 'error';
   }
 
-  return (
+  return option ? (
+    <option className={className} value={+value}>
+      {intl.formatMessage(value ? messages.yes : messages.no)}
+    </option>
+  ) : (
     <span className={className}>{intl.formatMessage(value ? messages.yes : messages.no)}</span>
   );
 }
