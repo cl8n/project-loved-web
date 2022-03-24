@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { BeatmapInline } from '../../BeatmapInline';
 import type { ILog } from '../../interfaces';
 import { LogType } from '../../interfaces';
 import { Never } from '../../Never';
@@ -14,6 +15,14 @@ const logTemplates = {
   [LogType.roleCreated]: '{actor} created role {role} on {user}',
   [LogType.roleDeleted]: '{actor} deleted role {role} from {user}',
   [LogType.roleToggledAlumni]: '{actor} {markedOrUnmarked} role {role} as alumni on {user}',
+  [LogType.mapperConsentCreated]: '{actor} created mapper consent for {user}',
+  [LogType.mapperConsentUpdated]: '{actor} updated mapper consent for {user}',
+  [LogType.mapperConsentBeatmapsetCreated]:
+    '{actor} created mapper consent for {user} on {beatmapset}',
+  [LogType.mapperConsentBeatmapsetDeleted]:
+    '{actor} deleted mapper consent for {user} on {beatmapset}',
+  [LogType.mapperConsentBeatmapsetUpdated]:
+    '{actor} updated mapper consent for {user} on {beatmapset}',
 };
 
 function logElementForTemplate(
@@ -24,6 +33,8 @@ function logElementForTemplate(
   switch (parameter) {
     case 'actor':
       return <UserInline user={values.actor} />;
+    case 'beatmapset':
+      return <BeatmapInline beatmapset={values.beatmapset} />;
     case 'invalid':
       return <i>Unsupported log type</i>;
     case 'role':

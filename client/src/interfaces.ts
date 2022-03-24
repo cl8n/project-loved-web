@@ -30,6 +30,11 @@ export enum LogType {
   roleCreated,
   roleDeleted,
   roleToggledAlumni,
+  mapperConsentCreated,
+  mapperConsentUpdated,
+  mapperConsentBeatmapsetCreated,
+  mapperConsentBeatmapsetDeleted,
+  mapperConsentBeatmapsetUpdated,
 }
 
 export enum MetadataState {
