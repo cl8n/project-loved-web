@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
+import { FormattedDate } from 'react-intl';
 import {
   alertApiErrorMessage,
   apiErrorMessage,
@@ -186,7 +187,9 @@ function Logs() {
       {logs.map((log) => (
         <tr key={log.id}>
           <td>[#{log.id}]</td>
-          <td>{log.created_at}</td>
+          <td>
+            <FormattedDate dateStyle='medium' timeStyle='medium' value={log.created_at} />
+          </td>
           <td>
             <LogMessage {...log} />
           </td>
