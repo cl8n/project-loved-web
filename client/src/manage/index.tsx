@@ -5,6 +5,7 @@ import useTitle from '../useTitle';
 import ApiObjects from './api-objects';
 import Logs from './logs';
 import Roles from './roles';
+import Settings from './settings';
 
 export default function Manage() {
   useTitle('Management');
@@ -15,6 +16,7 @@ export default function Manage() {
         <NavLink to='/admin/manage/roles'>Roles</NavLink>
         <NavLink to='/admin/manage/api-objects'>API objects</NavLink>
         <NavLink to='/admin/manage/logs'>Logs</NavLink>
+        <NavLink to='/admin/manage/settings'>Site settings</NavLink>
       </nav>
       <Switch>
         <Route exact path='/admin/manage/roles'>
@@ -26,6 +28,9 @@ export default function Manage() {
         <Route exact path='/admin/manage/logs'>
           <Logs />
         </Route>
+        <ProtectedRoute exact path='/admin/manage/settings' role={Role.captain}>
+          <Settings />
+        </ProtectedRoute>
       </Switch>
     </>
   );

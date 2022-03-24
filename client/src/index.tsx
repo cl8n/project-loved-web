@@ -15,7 +15,6 @@ import { OsuAuthProvider } from './osuAuth';
 import { Picks } from './Picks';
 import { PicksRoundListing } from './PicksRoundListing';
 import { ProtectedRoute } from './ProtectedRoute';
-import Settings from './Settings';
 import Statistics from './statistics';
 import './styles/main.scss';
 import SubmissionForm from './submission-form';
@@ -65,9 +64,7 @@ render(
               <ProtectedRoute exact path='/admin/forum-opt-in' role={Role.captain}>
                 <ForumOptIn />
               </ProtectedRoute>
-              <ProtectedRoute exact path='/admin/settings' role={Role.captain}>
-                <Settings />
-              </ProtectedRoute>
+              <Redirect exact from='/admin/settings' to='/admin/manage/settings' />
               <Route exact path='/localization/:locale?'>
                 <Localization />
               </Route>
