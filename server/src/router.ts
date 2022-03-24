@@ -1363,7 +1363,7 @@ router.put('/settings', isCaptainMiddleware, (req, res) => {
 router.get(
   '/logs',
   asyncHandler(async (_, res) => {
-    const logs = await db.query<Log>('SELECT * FROM logs ORDER BY id DESC LIMIT 20');
+    const logs = await db.query<Log>('SELECT * FROM logs ORDER BY id DESC');
 
     for (const log of logs) {
       if (log.values != null) {
