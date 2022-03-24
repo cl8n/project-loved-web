@@ -32,7 +32,7 @@ function wrapCast<T>(fn: (value: string) => T) {
   return (value: string) => (value.length === 0 ? null : fn(value));
 }
 
-const valueCasts = {
+export const valueCasts = {
   bool: wrapCast((value) => value !== '0'),
   date: wrapCast((value) => dateFromString(value)),
   decimal: wrapCast(parseFloat),
