@@ -8,7 +8,7 @@ import { Header } from './Header';
 import { Role } from './interfaces';
 import { IntlProviderWrapper } from './intl';
 import Localization from './localization';
-import { Manage } from './Manage';
+import Manage from './manage';
 import MapperConsents from './mapper-consents';
 import { NoRoute } from './NoRoute';
 import { OsuAuthProvider } from './osuAuth';
@@ -59,7 +59,7 @@ render(
               <ProtectedRoute exact path='/admin/picks/:round(\d+)' role='any'>
                 <Picks />
               </ProtectedRoute>
-              <ProtectedRoute exact path='/admin/manage' role='any'>
+              <ProtectedRoute path='/admin/manage' role='any'>
                 <Manage />
               </ProtectedRoute>
               <ProtectedRoute exact path='/admin/forum-opt-in' role={Role.captain}>

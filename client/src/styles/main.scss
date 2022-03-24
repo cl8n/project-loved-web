@@ -199,6 +199,19 @@ nav {
   margin-top: 0.5em;
   display: flex;
 
+  &.nested {
+    border-bottom: 1px dashed var(--accent);
+    padding-bottom: 1em;
+
+    a {
+      color: var(--background);
+
+      &.active {
+        outline: 1px solid var(--accent);
+      }
+    }
+  }
+
   a {
     background-color: var(--accent);
     padding: 0.25em 0.5em;

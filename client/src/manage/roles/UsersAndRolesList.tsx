@@ -1,9 +1,9 @@
-import { apiErrorMessage, getUsersWithRoles, useApi } from '../api';
-import type { IUser, IUserRole } from '../interfaces';
-import { Never } from '../Never';
-import { useOsuAuth } from '../osuAuth';
-import { hasRole } from '../permissions';
-import { UserInline } from '../UserInline';
+import { apiErrorMessage, getUsersWithRoles, useApi } from '../../api';
+import type { IUser, IUserRole } from '../../interfaces';
+import { Never } from '../../Never';
+import { useOsuAuth } from '../../osuAuth';
+import { hasRole } from '../../permissions';
+import { UserInline } from '../../UserInline';
 import RolesList from './RolesList';
 import UserAdder from './UserAdder';
 import UserRolesEditor from './UserRolesEditor';

@@ -1,8 +1,8 @@
-import type { IUserRole } from '../interfaces';
-import { Role } from '../interfaces';
-import ListInline from '../ListInline';
-import { gameModeLongName } from '../osu-helpers';
-import { roleNames } from '../permissions';
+import type { IUserRole } from '../../interfaces';
+import { Role } from '../../interfaces';
+import ListInline from '../../ListInline';
+import { gameModeLongName } from '../../osu-helpers';
+import { roleNames } from '../../permissions';
 
 export function renderRole(role: IUserRole) {
   const classNames: string[] = [];

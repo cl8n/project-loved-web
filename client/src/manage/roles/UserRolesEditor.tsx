@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { alertApiErrorMessage, updateUserRoles } from '../api';
-import type { FormSubmitHandler } from '../dom-helpers';
-import { Form } from '../dom-helpers';
-import type { IUserRole, IUserWithRoles } from '../interfaces';
-import ListInputCustom from '../ListInputCustom';
-import { Modal } from '../Modal';
-import { gameModeLongName, gameModes } from '../osu-helpers';
-import { allRoles, roleNames } from '../permissions';
-import { UserInline } from '../UserInline';
+import { alertApiErrorMessage, updateUserRoles } from '../../api';
+import type { FormSubmitHandler } from '../../dom-helpers';
+import { Form } from '../../dom-helpers';
+import type { IUserRole, IUserWithRoles } from '../../interfaces';
+import ListInputCustom from '../../ListInputCustom';
+import { Modal } from '../../Modal';
+import { gameModeLongName, gameModes } from '../../osu-helpers';
+import { allRoles, roleNames } from '../../permissions';
+import { UserInline } from '../../UserInline';
 
 function renderRoleInput(role: IUserRole | null, renderRemoveButton: () => ReactNode) {
   return (

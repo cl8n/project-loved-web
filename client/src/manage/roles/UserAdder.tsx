@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { addUser, alertApiErrorMessage } from '../api';
-import type { FormSubmitHandler } from '../dom-helpers';
-import { Form } from '../dom-helpers';
-import type { IUser } from '../interfaces';
+import { addUser, alertApiErrorMessage } from '../../api';
+import type { FormSubmitHandler } from '../../dom-helpers';
+import { Form } from '../../dom-helpers';
+import type { IUser } from '../../interfaces';
 
 interface UserAdderProps {
   onUserAdd: (user: IUser) => void;
