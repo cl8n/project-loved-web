@@ -429,10 +429,14 @@ button.angry {
   margin-top: 1em;
   width: 100%;
 
-  td, th {
+  > tbody > tr > td, > thead > tr > th {
     white-space: nowrap;
 
     &.normal-wrap {
+      white-space: normal;
+    }
+
+    > table {
       white-space: normal;
     }
   }

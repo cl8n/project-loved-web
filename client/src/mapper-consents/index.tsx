@@ -188,7 +188,7 @@ export default function MapperConsents() {
                   <UserInline user={consent.mapper} />
                 </td>
                 <ConsentCell consent={consent.consent} />
-                <td>{consent.consent_reason}</td>
+                <td className='normal-wrap fix-column-layout'>{consent.consent_reason}</td>
               </tr>
               {consent.beatmapset_consents.length > 0 && (
                 <tr>
