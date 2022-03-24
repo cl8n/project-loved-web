@@ -876,26 +876,37 @@ router.post(
     res.status(204).send();
   }),
 );
-//#endregion
 
-//#region admin
 router.post(
   '/add-user',
-  isAdminMiddleware,
   asyncHandler(async (req, res) => {
     if (typeof req.body.name !== 'string') {
       return res.status(422).json({ error: 'Invalid username' });
     }
 
-    const user = await res.typedLocals.osu.createOrRefreshUser(req.body.name, { byName: true });
+    const hasRole = currentUserRoles(req, res);
+
+    if (!hasRole(Role.captain)) {
+      return res.status(403).json({ error: 'Must be a captain' });
+    }
+
+    const user = await res.typedLocals.osu.createOrRefreshUser(req.body.name, {
+      byName: true,
+      // Overload doesn't support boolean
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      storeBanned: !!req.body.storeBanned as any,
+    });
 
     if (user == null) {
-      return res.status(422).json({ error: 'Invalid username' });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     res.json(user);
   }),
 );
+//#endregion
+
+//#region admin
 
 router.post('/add-round', isNewsAuthorMiddleware, (_, res) => {
   db.transact(async (connection) => {

@@ -83,8 +83,8 @@ export function addSubmission(
   return superagent.post('/api/submit').send({ beatmapsetId, gameModes, reason });
 }
 
-export function addUser(name: string): Response<IUser> {
-  return superagent.post('/api/add-user').send({ name });
+export function addUser(name: string, storeBanned?: boolean): Response<IUser> {
+  return superagent.post('/api/add-user').send({ name, storeBanned });
 }
 
 export function authRemember(): Response<IUserWithRoles> {
