@@ -1,9 +1,14 @@
 import { FormattedDate } from 'react-intl';
 import { apiErrorMessage, getLogs, useApi } from '../../api';
+import type { LogType } from '../../interfaces';
 import LogMessage from './LogMessage';
 
-export default function LogList() {
-  const [logs, logsError] = useApi(getLogs);
+interface LogListProps {
+  typesVisible: Record<LogType, boolean>;
+}
+
+export default function LogList({ typesVisible }: LogListProps) {
+  let [logs, logsError] = useApi(getLogs);
 
   if (logsError != null) {
     return <span className='panic'>Failed to load logs: {apiErrorMessage(logsError)}</span>;
@@ -11,6 +16,10 @@ export default function LogList() {
 
   if (logs == null) {
     return <span>Loading logs...</span>;
+  }
+
+  if (Object.values(typesVisible).some((visible) => visible)) {
+    logs = logs.filter((log) => typesVisible[log.type]);
   }
 
   return (

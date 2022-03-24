@@ -784,3 +784,15 @@ tr.sticky > th {
 .secondary-accent {
   color: var(--secondary-accent);
 }
+
+.log-type-list {
+  display: grid;
+  grid-auto-columns: max-content;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(5, auto);
+  gap: 0.5em 1em;
+
+  label {
+    margin-left: 1em;
+  }
+}
