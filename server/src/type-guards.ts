@@ -2,12 +2,48 @@ export function isAssigneeType(type: unknown): type is AssigneeType {
   return typeof type === 'number' && type >= 0 && type <= 1;
 }
 
+export function isConsentValue(consent: unknown): consent is ConsentValue | null {
+  // Checking for exactly null to validate input
+  // eslint-disable-next-line eqeqeq
+  return consent === null || (typeof consent === 'number' && consent >= 0 && consent <= 2);
+}
+
 export function isGameMode(gameMode: unknown): gameMode is GameMode {
   return typeof gameMode === 'number' && gameMode >= 0 && gameMode <= 3;
 }
 
 export function isGameModeArray(gameModes: unknown): gameModes is GameMode[] {
   return Array.isArray(gameModes) && gameModes.every(isGameMode);
+}
+
+export function isMapperConsent(
+  consent: unknown,
+): consent is Pick<Consent, 'consent' | 'consent_reason' | 'user_id'> {
+  return (
+    isRecord(consent) &&
+    isConsentValue(consent.consent) &&
+    // Checking for exactly null to validate input
+    // eslint-disable-next-line eqeqeq
+    (consent.consent_reason === null || typeof consent.consent_reason === 'string') &&
+    typeof consent.user_id === 'number'
+  );
+}
+
+export function isMapperConsentBeatmapsetArray(
+  beatmapsets: unknown,
+): beatmapsets is Pick<ConsentBeatmapset, 'beatmapset_id' | 'consent' | 'consent_reason'>[] {
+  return (
+    Array.isArray(beatmapsets) &&
+    beatmapsets.every(
+      (beatmapset) =>
+        isRecord(beatmapset) &&
+        typeof beatmapset.beatmapset_id === 'number' &&
+        typeof beatmapset.consent === 'boolean' &&
+        // Checking for exactly null to validate input
+        // eslint-disable-next-line eqeqeq
+        (beatmapset.consent_reason === null || typeof beatmapset.consent_reason === 'string'),
+    )
+  );
 }
 
 export function isNumberArray(numbers: unknown): numbers is number[] {

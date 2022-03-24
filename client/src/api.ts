@@ -7,6 +7,7 @@ import type {
   GameMode,
   IBeatmapset,
   ILog,
+  IMapperBeatmapsetConsent,
   IMapperConsent,
   INomination,
   INominationWithPoll,
@@ -52,6 +53,13 @@ export function addNomination(
     parentId,
     roundId,
   });
+}
+
+export function addOrUpdateMapperConsent(
+  consent: Pick<IMapperConsent, 'user_id' | 'consent' | 'consent_reason'>,
+  consentBeatmapsets: Omit<IMapperBeatmapsetConsent, 'beatmapset' | 'user_id'>[],
+): Response<IMapperConsent> {
+  return superagent.post('/api/mapper-consent').send({ consent, consentBeatmapsets });
 }
 
 export function addOrUpdateReview(
