@@ -10,6 +10,7 @@ import { IntlProviderWrapper } from './intl';
 import Localization from './localization';
 import Manage from './manage';
 import MapperConsents from './mapper-consents';
+import MorePages from './MorePages';
 import { NoRoute } from './NoRoute';
 import { OsuAuthProvider } from './osuAuth';
 import { Picks } from './Picks';
@@ -51,6 +52,9 @@ render(
               <Redirect exact from='/captains' to='/team' />
               <Route exact path='/statistics'>
                 <Statistics />
+              </Route>
+              <Route exact path='/more'>
+                <MorePages />
               </Route>
               <ProtectedRoute exact path='/admin/picks' role='any'>
                 <PicksRoundListing />

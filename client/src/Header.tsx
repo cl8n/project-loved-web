@@ -75,6 +75,9 @@ export function Header() {
         <NavLink to='/statistics'>
           <FormattedMessage defaultMessage='Statistics' description='Nav link' />
         </NavLink>
+        <NavLink to='/more'>
+          <FormattedMessage defaultMessage='More' description='Nav link' />
+        </NavLink>
         <FormattedMessage defaultMessage='External:' description='Nav separator' tagName='span' />
         <a href='https://osu.ppy.sh/beatmapsets?s=loved'>
           <FormattedMessage defaultMessage='Loved listing' description='Nav link' />

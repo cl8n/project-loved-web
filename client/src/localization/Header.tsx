@@ -1,7 +1,13 @@
+import { FormattedMessage } from 'react-intl';
+
 export default function Header() {
   return (
     <>
-      <h1>Localization</h1>
+      <FormattedMessage
+        defaultMessage='Localization'
+        description='Localization page title'
+        tagName='h1'
+      />
       <p>To translate this website:</p>
       <ul>
         <li>Select your locale below, or manually input the BCP 47 tag if it doesn't exist yet</li>

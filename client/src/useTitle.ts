@@ -4,7 +4,7 @@ export default function useTitle(title: string | null | undefined): void {
   useEffect(() => {
     if (title != null) {
       // TODO: localize
-      document.title = `${title} | Project Loved`;
+      document.title = title ? `${title} | Project Loved` : 'Project Loved';
     }
   }, [title]);
 }
