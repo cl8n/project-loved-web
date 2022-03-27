@@ -3,6 +3,7 @@ import { Role } from '../interfaces';
 import { ProtectedRoute } from '../ProtectedRoute';
 import useTitle from '../useTitle';
 import ApiObjects from './api-objects';
+import ForumOptIn from './forum-opt-in';
 import Logs from './logs';
 import Roles from './roles';
 import Settings from './settings';
@@ -16,6 +17,7 @@ export default function Manage() {
         <NavLink to='/admin/manage/roles'>Roles</NavLink>
         <NavLink to='/admin/manage/api-objects'>API objects</NavLink>
         <NavLink to='/admin/manage/logs'>Logs</NavLink>
+        <NavLink to='/admin/manage/forum-opt-in'>Forum opt-in</NavLink>
         <NavLink to='/admin/manage/settings'>Site settings</NavLink>
       </nav>
       <Switch>
@@ -28,6 +30,9 @@ export default function Manage() {
         <Route exact path='/admin/manage/logs'>
           <Logs />
         </Route>
+        <ProtectedRoute exact path='/admin/manage/forum-opt-in' role={Role.captain}>
+          <ForumOptIn />
+        </ProtectedRoute>
         <ProtectedRoute exact path='/admin/manage/settings' role={Role.captain}>
           <Settings />
         </ProtectedRoute>

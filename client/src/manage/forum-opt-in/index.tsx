@@ -1,4 +1,4 @@
-import useTitle from '../useTitle';
+import useTitle from '../../useTitle';
 
 export default function ForumOptIn() {
   useTitle('Forum opt-in');

@@ -3,9 +3,7 @@ import { render } from 'react-dom';
 import { FormattedMessage } from 'react-intl';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { registerTextareaAutoHeightTrigger } from './auto-height';
-import ForumOptIn from './forum-opt-in';
 import { Header } from './Header';
-import { Role } from './interfaces';
 import { IntlProviderWrapper } from './intl';
 import Localization from './localization';
 import Manage from './manage';
@@ -65,9 +63,7 @@ render(
               <ProtectedRoute path='/admin/manage' role='any'>
                 <Manage />
               </ProtectedRoute>
-              <ProtectedRoute exact path='/admin/forum-opt-in' role={Role.captain}>
-                <ForumOptIn />
-              </ProtectedRoute>
+              <Redirect exact from='/admin/forum-opt-in' to='/admin/manage/forum-opt-in' />
               <Redirect exact from='/admin/settings' to='/admin/manage/settings' />
               <Route exact path='/localization/:locale?'>
                 <Localization />
