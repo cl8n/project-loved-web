@@ -1,6 +1,6 @@
 import type { ChangeEvent } from 'react';
 import { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { NavLink, Link } from 'react-router-dom';
 import globeIcon from './images/icons8/globe.png';
 import sunIcon from './images/icons8/sun.png';
@@ -8,6 +8,17 @@ import { locales, useLocaleState } from './intl';
 import { loginUrl, useOsuAuth } from './osuAuth';
 import { hasRole } from './permissions';
 import { UserInline } from './UserInline';
+
+const messages = defineMessages({
+  dark: {
+    defaultMessage: 'Dark',
+    description: 'Option for dark theme',
+  },
+  light: {
+    defaultMessage: 'Light',
+    description: 'Option for light theme',
+  },
+});
 
 export function Header() {
   const { logOut, user } = useOsuAuth();
@@ -129,6 +140,7 @@ function LocaleSelector() {
 }
 
 function ThemeSelector() {
+  const intl = useIntl();
   const [theme, setTheme] = useState(
     localStorage.getItem('theme') ??
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
@@ -144,8 +156,8 @@ function ThemeSelector() {
 
   return (
     <select onChange={onThemeChange} value={theme}>
-      <option value='dark'>Dark</option>
-      <option value='light'>Light</option>
+      <option value='dark'>{intl.formatMessage(messages.dark)}</option>
+      <option value='light'>{intl.formatMessage(messages.light)}</option>
     </select>
   );
 }
