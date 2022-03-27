@@ -583,7 +583,18 @@ function EditMetadata({ metadataStarted, nomination, onNominationUpdate }: EditM
       form.title,
       form.creators,
     )
-      .then((response) => onNominationUpdate(response.body))
+      .then((response) => {
+        if (
+          nomination.metadata_state !== MetadataState.needsChange &&
+          response.body.metadata_state === MetadataState.needsChange
+        ) {
+          window.alert(
+            'Make sure to contact the mapper about any required changes! They may not be receiving notifications for discussion posts.',
+          );
+        }
+
+        onNominationUpdate(response.body);
+      })
       .then(then)
       .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));

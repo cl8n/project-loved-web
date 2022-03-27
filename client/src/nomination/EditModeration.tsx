@@ -23,7 +23,18 @@ export default function EditModeration({
 
   const onSubmit: FormSubmitHandler = (form, then) => {
     return updateNominationModeration(nomination.id, form.state)
-      .then((response) => onNominationUpdate(response.body))
+      .then((response) => {
+        if (
+          nomination.moderator_state !== ModeratorState.needsChange &&
+          response.body.moderator_state === ModeratorState.needsChange
+        ) {
+          window.alert(
+            'Make sure to contact the mapper about any required changes! They may not be receiving notifications for discussion posts.',
+          );
+        }
+
+        onNominationUpdate(response.body);
+      })
       .then(then)
       .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));
