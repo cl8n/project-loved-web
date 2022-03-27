@@ -17,7 +17,7 @@ import { Modal } from '../Modal';
 import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
 import { UserInline } from '../UserInline';
-import { consentMap } from '.';
+import { consentMap } from './MapperConsents';
 
 const messages = defineMessages({
   selectConsent: {

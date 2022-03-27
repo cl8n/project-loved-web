@@ -7,7 +7,7 @@ import { Header } from './Header';
 import { IntlProviderWrapper } from './intl';
 import Localization from './localization';
 import Manage from './manage';
-import MapperConsents from './mapper-consents';
+import MapperConsentsPage from './mapper-consents/MapperConsentsPage';
 import MorePages from './MorePages';
 import { NoRoute } from './NoRoute';
 import { OsuAuthProvider } from './osuAuth';
@@ -42,7 +42,7 @@ render(
                 <SubmissionForm />
               </Route>
               <Route exact path='/mappers'>
-                <MapperConsents />
+                <MapperConsentsPage />
               </Route>
               <Route exact path='/team'>
                 <Team />
