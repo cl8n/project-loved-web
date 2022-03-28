@@ -64,6 +64,7 @@ export function Picks() {
   });
   // TODO: Split by gamemode
   const [ordering, setOrdering] = useState(false);
+  const [showTodo, setShowTodo] = useState(false);
 
   if (authUser == null) {
     return <Never />;
@@ -201,10 +202,90 @@ export function Picks() {
     parseInt(gameMode, 10),
   );
 
+  const showNomination = (nomination: INomination) => {
+    if (!showTodo) {
+      return true;
+    }
+
+    // Note: not bypassing admin for this role check, because ordering nominations could get
+    // very messed up if not all the nominations are showing
+    if (
+      !nominationsLocked(nomination.game_mode) &&
+      hasRole(authUser, Role.captain, nomination.game_mode)
+    ) {
+      return true;
+    }
+
+    if (hasRole(authUser, Role.captain, nomination.game_mode, true)) {
+      if (nomination.description == null) {
+        return true;
+      }
+
+      if (
+        nomination.description_author?.id === authUser.id &&
+        nomination.description_state !== DescriptionState.reviewed
+      ) {
+        return true;
+      }
+    }
+
+    if (hasRole(authUser, Role.metadata, undefined, true)) {
+      if (nomination.metadata_assignees.length === 0) {
+        return true;
+      }
+
+      if (
+        nomination.metadata_assignees.some((assignee) => assignee.id === authUser.id) &&
+        nomination.metadata_state === MetadataState.unchecked
+      ) {
+        return true;
+      }
+    }
+
+    if (hasRole(authUser, Role.moderator, undefined, true)) {
+      if (nomination.moderator_assignees.length === 0) {
+        return true;
+      }
+
+      if (
+        nomination.moderator_assignees.some((assignee) => assignee.id === authUser.id) &&
+        nomination.moderator_state === ModeratorState.unchecked
+      ) {
+        return true;
+      }
+    }
+
+    if (hasRole(authUser, Role.news, undefined, true)) {
+      if (
+        nomination.metadata_assignees.length === 0 ||
+        nomination.moderator_assignees.length === 0
+      ) {
+        return true;
+      }
+
+      if (
+        nomination.description != null &&
+        nomination.description_state !== DescriptionState.reviewed
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+  const showNominations = (gameMode: GameMode) =>
+    !showTodo || nominationsByGameMode[gameMode].some(showNomination);
+
   return (
     <>
-      <Header canEdit={canEditRound} onRoundUpdate={onRoundUpdate} round={round} />
-      {roundGameModes.map((gameMode) => (
+      <Header
+        canEdit={canEditRound}
+        onRoundUpdate={onRoundUpdate}
+        round={round}
+        showTodo={showTodo}
+        setShowTodo={setShowTodo}
+      />
+      {roundGameModes.filter(showNominations).map((gameMode) => (
         <div key={gameMode} className='content-block'>
           <h2>
             {gameModeLongName(gameMode)}
@@ -245,7 +326,7 @@ export function Picks() {
             enabled={ordering && canOrder(gameMode)}
             onMoveChild={(i, j) => onNominationMove(gameMode, i, j)}
           >
-            {nominationsByGameMode[gameMode].map((nomination) => {
+            {nominationsByGameMode[gameMode].filter(showNomination).map((nomination) => {
               const parent =
                 nomination.parent_id == null
                   ? undefined
