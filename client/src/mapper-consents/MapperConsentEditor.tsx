@@ -1,8 +1,7 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import type { IntlShape } from 'react-intl';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { defineMessages } from 'react-intl/node_modules/@formatjs/intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { addOrUpdateMapperConsent, alertApiErrorMessage } from '../api';
 import { autoHeightRef } from '../auto-height';
 import { BoolView } from '../BoolView';
