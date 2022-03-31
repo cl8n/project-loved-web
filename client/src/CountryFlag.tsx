@@ -1,11 +1,6 @@
-import { useEffect, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+import flags from './flags';
 import missingFlag from './images/flags/__.png';
-
-let flags: Record<string, string> | undefined;
-const flagsPromise = import('./flags').then(({ default: flagsExport }) => {
-  flags = flagsExport;
-});
 
 const messages = defineMessages({
   flag: {
@@ -24,13 +19,7 @@ interface CountryFlagProps {
 
 export default function CountryFlag({ country }: CountryFlagProps) {
   const intl = useIntl();
-  const [src, setSrc] = useState(flags?.[country]);
-
-  useEffect(() => {
-    if (src == null) {
-      flagsPromise.then(() => setSrc(flags?.[country]));
-    }
-  }, [country, src]);
+  const src = flags[country];
 
   return src == null ? (
     <img
