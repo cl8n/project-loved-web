@@ -26,7 +26,11 @@ function formatForExporting(messages: Record<string, string | undefined>): strin
 }
 
 function loadMessages(locale: string): Promise<ExportedMessages> {
-  return import(`../translations/${locale}.json`)
+  return import(
+    /* webpackChunkName: "translations" */
+    /* webpackMode: "lazy-once" */
+    `../translations/${locale}.json`
+  )
     .then(({ default: translationsExport }) => translationsExport)
     .catch(() => ({}));
 }
