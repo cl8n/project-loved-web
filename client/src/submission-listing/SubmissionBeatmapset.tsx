@@ -358,6 +358,19 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
     );
   }
 
+  if (beatmapset.strictly_rejected) {
+    return <td className='priority rejected'>{intl.formatMessage(messages.notAllowed)}</td>;
+  }
+
+  if (beatmapset.consent === false) {
+    return (
+      <td className='priority rejected'>
+        {intl.formatMessage(messages.notAllowed)}{' '}
+        <Help>{intl.formatMessage(messages.notAllowedNoConsent)}</Help>
+      </td>
+    );
+  }
+
   if (beatmapset.poll?.passed) {
     return (
       <td className='priority'>
@@ -381,15 +394,12 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
     );
   }
 
-  if (beatmapset.strictly_rejected) {
-    return <td className='priority rejected'>{intl.formatMessage(messages.notAllowed)}</td>;
-  }
-
-  if (beatmapset.consent === false) {
+  if (beatmapset.poll != null && !beatmapset.poll.passed) {
     return (
-      <td className='priority rejected'>
-        {intl.formatMessage(messages.notAllowed)}{' '}
-        <Help>{intl.formatMessage(messages.notAllowedNoConsent)}</Help>
+      <td className='priority'>
+        <a href={`https://osu.ppy.sh/community/forums/topics/${beatmapset.poll.topic_id}`}>
+          {intl.formatMessage(messages.failedVoting)}
+        </a>
       </td>
     );
   }
@@ -408,16 +418,6 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
       <td className='priority rejected'>
         {intl.formatMessage(messages.notAllowed)}{' '}
         <Help>{intl.formatMessage(messages.notAllowedTooShort)}</Help>
-      </td>
-    );
-  }
-
-  if (beatmapset.poll != null && !beatmapset.poll.passed) {
-    return (
-      <td className='priority'>
-        <a href={`https://osu.ppy.sh/community/forums/topics/${beatmapset.poll.topic_id}`}>
-          {intl.formatMessage(messages.failedVoting)}
-        </a>
       </td>
     );
   }
