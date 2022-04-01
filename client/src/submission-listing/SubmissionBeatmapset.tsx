@@ -205,8 +205,13 @@ export default function SubmissionBeatmapset({
   };
   const onMouseEnter = () => setHovered(true);
   const onMouseLeave = () => setHovered(false);
+  const notAllowed =
+    beatmapset.strictly_rejected ||
+    beatmapset.consent === false ||
+    beatmapset.creator.banned ||
+    beatmapset.maximum_length < 30;
   const reviewAngry =
-    canReview && hasRole(authUser!, Role.captain, undefined, true) && !review?.score;
+    canReview && !notAllowed && hasRole(authUser!, Role.captain, undefined, true) && !review?.score;
 
   return (
     <>
