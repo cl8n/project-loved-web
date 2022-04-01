@@ -1,5 +1,5 @@
 import type { ChangeEvent } from 'react';
-import { useEffect, useMemo, useReducer } from 'react';
+import { useEffect, useMemo, useReducer, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import { apiErrorMessage, getSubmissions, useApi } from '../api';
@@ -54,6 +54,14 @@ const messages = defineMessages({
     defaultMessage: 'Keys',
     description: 'Submissions table header',
   },
+  lovedAndRanked: {
+    defaultMessage: 'Loved and ranked',
+    description: 'Beatmap status option',
+  },
+  pendingAndGrave: {
+    defaultMessage: 'Pending and grave',
+    description: 'Beatmap status option',
+  },
   playCount: {
     defaultMessage: 'Plays',
     description: 'Submissions table header',
@@ -92,6 +100,20 @@ const messages = defineMessages({
   },
 });
 
+const allBeatmapStatuses = ['pendingAndGrave', 'lovedAndRanked'] as const;
+type BeatmapStatus = typeof allBeatmapStatuses[number];
+
+const allSorts = [
+  'artist',
+  'title',
+  'priority',
+  'score',
+  'playCount',
+  'favoriteCount',
+  'year',
+] as const;
+type Sort = typeof allSorts[number];
+
 function getNewSubmissionsListingPath(
   gameMode: GameMode,
   keyMode: number | null,
@@ -120,77 +142,45 @@ function columnsReducer(
   };
 }
 
-type Sort = 'artist' | 'favoriteCount' | 'playCount' | 'priority' | 'score' | 'title' | 'year';
-type SortsAndFiltersReducerAction =
+type SortsReducerAction =
   | {
       action: 'changeSort';
       index: 0 | 1;
       sort: Sort;
     }
   | {
-      action: 'toggleApproved';
-    }
-  | {
       action: 'toggleOrder';
       index: 0 | 1;
-    }
-  | {
-      action: 'updateSearch';
-      search: string;
     };
-interface SortsAndFiltersState {
-  filterToApproved: boolean;
-  search: string;
-  sorts: [
-    {
-      ascending: boolean;
-      sort: Sort;
-    },
-    {
-      ascending: boolean;
-      sort: Sort;
-    },
-  ];
-}
-
-const allSorts: Sort[] = [
-  'artist',
-  'title',
-  'priority',
-  'score',
-  'playCount',
-  'favoriteCount',
-  'year',
+type SortsState = [
+  {
+    ascending: boolean;
+    sort: Sort;
+  },
+  {
+    ascending: boolean;
+    sort: Sort;
+  },
 ];
-const defaultAscendingSorts = new Set<Sort>(['artist', 'title', 'year']);
-const initialSortsAndFiltersState: SortsAndFiltersState = {
-  filterToApproved: false,
-  search: '',
-  sorts: [
-    {
-      ascending: false,
-      sort: 'priority',
-    },
-    {
-      ascending: false,
-      sort: 'score',
-    },
-  ],
-};
 
-function sortsAndFiltersReducer(
-  prevState: SortsAndFiltersState,
-  action: SortsAndFiltersReducerAction,
-): SortsAndFiltersState {
-  const state: SortsAndFiltersState = {
-    filterToApproved: prevState.filterToApproved,
-    search: prevState.search,
-    sorts: [{ ...prevState.sorts[0] }, { ...prevState.sorts[1] }],
-  };
+const defaultAscendingSorts = new Set<Sort>(['artist', 'title', 'year']);
+const initialSortsState: SortsState = [
+  {
+    ascending: false,
+    sort: 'priority',
+  },
+  {
+    ascending: false,
+    sort: 'score',
+  },
+];
+
+function sortsReducer(prevSorts: SortsState, action: SortsReducerAction): SortsState {
+  const sorts: SortsState = [{ ...prevSorts[0] }, { ...prevSorts[1] }];
 
   switch (action.action) {
     case 'changeSort':
-      state.sorts[action.index] = {
+      sorts[action.index] = {
         ascending: defaultAscendingSorts.has(action.sort),
         sort: action.sort,
       };
@@ -198,25 +188,19 @@ function sortsAndFiltersReducer(
       if (action.index === 0) {
         const secondSort = action.sort === 'score' ? 'priority' : 'score';
 
-        state.sorts[1] = {
+        sorts[1] = {
           ascending: defaultAscendingSorts.has(secondSort),
           sort: secondSort,
         };
       }
 
       break;
-    case 'toggleApproved':
-      state.filterToApproved = !prevState.filterToApproved;
-      break;
     case 'toggleOrder':
-      state.sorts[action.index].ascending = !prevState.sorts[action.index].ascending;
-      break;
-    case 'updateSearch':
-      state.search = action.search;
+      sorts[action.index].ascending = !sorts[action.index].ascending;
       break;
   }
 
-  return state;
+  return sorts;
 }
 
 type SubmissionListingParams =
@@ -231,6 +215,7 @@ export default function SubmissionListingContainer() {
   const history = useHistory();
   const intl = useIntl();
   const params = useParams<SubmissionListingParams>();
+  const [beatmapStatus, setBeatmapStatus] = useState<BeatmapStatus>('pendingAndGrave');
   const [columns, toggleColumn] = useReducer(columnsReducer, {
     bpm: true,
     difficultyCount: true,
@@ -240,13 +225,11 @@ export default function SubmissionListingContainer() {
     score: true,
     year: true,
   });
-  const [sortsAndFilters, updateSortOrFilter] = useReducer(
-    sortsAndFiltersReducer,
-    initialSortsAndFiltersState,
-  );
+  const [search, setSearch] = useState('');
+  const [sorts, updateSort] = useReducer(sortsReducer, initialSortsState);
   const sortOptions = useMemo(
-    () => [allSorts, allSorts.filter((sort) => sort !== sortsAndFilters.sorts[0].sort)] as const,
-    [sortsAndFilters],
+    () => [allSorts, allSorts.filter((sort) => sort !== sorts[0].sort)] as const,
+    [sorts],
   );
 
   const gameMode = gameModeFromShortName(params.gameMode?.toLowerCase());
@@ -357,6 +340,24 @@ export default function SubmissionListingContainer() {
             </>
           )}
           <FormattedMessage
+            defaultMessage='Beatmap status:'
+            description='Selector to change beatmap status'
+            tagName='span'
+          />
+          <select
+            value={beatmapStatus}
+            onChange={(event) => {
+              setBeatmapStatus(event.currentTarget.value as BeatmapStatus);
+              setPage(1, true);
+            }}
+          >
+            {allBeatmapStatuses.map((status) => (
+              <option key={status} value={status}>
+                {intl.formatMessage(messages[status])}
+              </option>
+            ))}
+          </select>
+          <FormattedMessage
             defaultMessage='Search:'
             description='Title for submissions search input'
             tagName='span'
@@ -364,20 +365,12 @@ export default function SubmissionListingContainer() {
           <input
             type='search'
             className='flex-grow'
-            value={sortsAndFilters.search}
-            onChange={(event) =>
-              updateSortOrFilter({ action: 'updateSearch', search: event.currentTarget.value })
-            }
-          />
-          <button
-            type='button'
-            onClick={() => {
-              updateSortOrFilter({ action: 'toggleApproved' });
-              setPage(1);
+            value={search}
+            onChange={(event) => {
+              setSearch(event.currentTarget.value);
+              setPage(1, true);
             }}
-          >
-            {sortsAndFilters.filterToApproved ? 'Show pending' : 'Show approved'}
-          </button>
+          />
         </div>
         <div className='flex-left slim-margin'>
           <FormattedMessage
@@ -405,24 +398,24 @@ export default function SubmissionListingContainer() {
             description='Title for sorting options'
             tagName='span'
           />
-          {sortsAndFilters.sorts.map((sort, sortIndex) => (
+          {sorts.map((sort, sortIndex) => (
             <span key={sortIndex}>
               <select
                 value={sort.sort}
                 onChange={(event) => {
-                  updateSortOrFilter({
+                  updateSort({
                     action: 'changeSort',
                     index: sortIndex as 0 | 1,
                     sort: event.currentTarget.value as Sort,
                   });
-                  setPage(1);
+                  setPage(1, true);
                 }}
               >
                 {sortOptions[sortIndex].map((sortOption) => (
                   <option key={sortOption} value={sortOption}>
                     {intl.formatMessage(
                       messages[
-                        sortsAndFilters.filterToApproved && sortOption === 'priority'
+                        beatmapStatus === 'lovedAndRanked' && sortOption === 'priority'
                           ? 'status'
                           : sortOption
                       ],
@@ -433,8 +426,8 @@ export default function SubmissionListingContainer() {
               <SortButton
                 ascending={sort.ascending}
                 toggle={() => {
-                  updateSortOrFilter({ action: 'toggleOrder', index: sortIndex as 0 | 1 });
-                  setPage(1);
+                  updateSort({ action: 'toggleOrder', index: sortIndex as 0 | 1 });
+                  setPage(1, true);
                 }}
               />
             </span>
@@ -442,13 +435,15 @@ export default function SubmissionListingContainer() {
         </div>
       </div>
       <SubmissionListing
+        beatmapStatus={beatmapStatus}
         columns={columns}
         gameMode={gameMode}
         keyMode={keyMode}
         page={page}
         resetPageComponent={resetPageComponent}
+        searchLowerCase={search.toLowerCase()}
         setPage={setPage}
-        sortsAndFilters={sortsAndFilters}
+        sorts={sorts}
       />
     </>
   );
@@ -488,34 +483,41 @@ const beatmapsetSortFns: Record<
 };
 
 function beatmapsetSortFn(
-  { ascending, sort }: SortsAndFiltersState['sorts'][number],
-  filterToApproved: boolean,
+  { ascending, sort }: SortsState[number],
+  beatmapStatus: BeatmapStatus,
 ): (a: SubmittedBeatmapset, b: SubmittedBeatmapset) => number {
   return (a, b) =>
     (ascending ? 1 : -1) *
-    beatmapsetSortFns[filterToApproved && sort === 'priority' ? 'status' : sort](a, b);
+    beatmapsetSortFns[beatmapStatus === 'lovedAndRanked' && sort === 'priority' ? 'status' : sort](
+      a,
+      b,
+    );
 }
 
 const pageSize = 30;
 
 interface SubmissionListingProps {
+  beatmapStatus: BeatmapStatus;
   columns: ToggleableColumnsState;
   gameMode: GameMode;
   keyMode: number | null;
   page: number;
   resetPageComponent: () => JSX.Element;
+  searchLowerCase: string;
   setPage: (page: number, replace?: boolean) => void;
-  sortsAndFilters: SortsAndFiltersState;
+  sorts: SortsState;
 }
 
 function SubmissionListing({
+  beatmapStatus,
   columns,
   gameMode,
   keyMode,
   page,
   resetPageComponent,
+  searchLowerCase,
   setPage,
-  sortsAndFilters,
+  sorts,
 }: SubmissionListingProps) {
   const history = useHistory();
   const intl = useIntl();
@@ -534,22 +536,22 @@ function SubmissionListing({
       .filter(
         (beatmapset) =>
           (keyMode == null || beatmapset.key_modes.includes(keyMode)) &&
-          (sortsAndFilters.filterToApproved
+          (beatmapStatus === 'lovedAndRanked'
             ? beatmapset.ranked_status > 0
             : beatmapset.ranked_status <= 0) &&
-          (sortsAndFilters.search.length === 0 ||
-            beatmapset.artist.toLowerCase().includes(sortsAndFilters.search.toLowerCase()) ||
-            beatmapset.creator_name.toLowerCase().includes(sortsAndFilters.search.toLowerCase()) ||
-            beatmapset.title.toLowerCase().includes(sortsAndFilters.search.toLowerCase())),
+          (searchLowerCase.length === 0 ||
+            beatmapset.artist.toLowerCase().includes(searchLowerCase) ||
+            beatmapset.creator_name.toLowerCase().includes(searchLowerCase) ||
+            beatmapset.title.toLowerCase().includes(searchLowerCase)),
       )
       .map((beatmapset) => ({
         ...beatmapset,
         creator: submissionsInfo.usersById[beatmapset.creator_id],
       }))
-      .sort(beatmapsetSortFn(sortsAndFilters.sorts[1], sortsAndFilters.filterToApproved))
-      .sort(beatmapsetSortFn(sortsAndFilters.sorts[0], sortsAndFilters.filterToApproved))
+      .sort(beatmapsetSortFn(sorts[1], beatmapStatus))
+      .sort(beatmapsetSortFn(sorts[0], beatmapStatus))
       .sort((a, b) => +(b.poll?.in_progress ?? false) - +(a.poll?.in_progress ?? false));
-  }, [keyMode, sortsAndFilters, submissionsInfo]);
+  }, [beatmapStatus, keyMode, searchLowerCase, sorts, submissionsInfo]);
 
   useEffect(() => {
     if (displayBeatmapsets == null || submittedBeatmapsetId == null) {
@@ -602,7 +604,7 @@ function SubmissionListing({
     return resetPageComponent();
   }
 
-  const canReview = authUser != null && hasRole(authUser, Role.captain, gameMode);
+  const canReviewAny = authUser != null && hasRole(authUser, Role.captain, gameMode);
   const getOnReviewDelete = (beatmapsetId: number, reviewId: number) => () => {
     setSubmissionsInfo((prev) => {
       const beatmapset = prev!.beatmapsets.find((beatmapset) => beatmapset.id === beatmapsetId)!;
@@ -665,7 +667,7 @@ function SubmissionListing({
               tagName='th'
             />
             <th>
-              {sortsAndFilters.filterToApproved
+              {beatmapStatus === 'lovedAndRanked'
                 ? intl.formatMessage(messages.status)
                 : intl.formatMessage(messages.priority)}
             </th>
@@ -690,6 +692,7 @@ function SubmissionListing({
         </thead>
         <tbody>
           {displayBeatmapsets.slice((page - 1) * pageSize, page * pageSize).map((beatmapset) => {
+            const canReview = canReviewAny && beatmapset.ranked_status <= 0;
             const review = canReview
               ? beatmapset.reviews.find((review) => review.reviewer_id === authUser!.id)
               : undefined;
@@ -698,13 +701,13 @@ function SubmissionListing({
               <SubmissionBeatmapset
                 key={beatmapset.id}
                 beatmapset={beatmapset}
-                canReview={canReview && !sortsAndFilters.filterToApproved}
+                canReview={canReview}
                 columns={columns}
-                filterToApproved={sortsAndFilters.filterToApproved}
                 gameMode={gameMode}
                 onReviewDelete={review == null ? null : getOnReviewDelete(beatmapset.id, review.id)}
                 onReviewUpdate={onReviewUpdate}
                 review={review}
+                showStatus={beatmapStatus === 'lovedAndRanked'}
                 usersById={submissionsInfo.usersById}
               />
             );

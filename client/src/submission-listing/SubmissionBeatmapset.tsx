@@ -123,11 +123,11 @@ interface SubmissionBeatmapsetProps {
   beatmapset: SubmittedBeatmapset;
   canReview: boolean;
   columns: ToggleableColumnsState;
-  filterToApproved: boolean;
   gameMode: GameMode;
   onReviewDelete: (() => void) | null;
   onReviewUpdate: (review: IReview) => void;
   review?: IReview;
+  showStatus: boolean;
   usersById: GetSubmissionsResponseBody['usersById'];
 }
 
@@ -135,11 +135,11 @@ export default function SubmissionBeatmapset({
   beatmapset,
   canReview,
   columns,
-  filterToApproved,
   gameMode,
   onReviewDelete,
   onReviewUpdate,
   review,
+  showStatus,
   usersById,
 }: SubmissionBeatmapsetProps) {
   const authUser = useOsuAuth().user;
@@ -206,10 +206,7 @@ export default function SubmissionBeatmapset({
   const onMouseEnter = () => setHovered(true);
   const onMouseLeave = () => setHovered(false);
   const reviewAngry =
-    canReview &&
-    authUser != null &&
-    hasRole(authUser, Role.captain, undefined, true) &&
-    !review?.score;
+    canReview && hasRole(authUser!, Role.captain, undefined, true) && !review?.score;
 
   return (
     <>
@@ -248,7 +245,7 @@ export default function SubmissionBeatmapset({
         <td>
           <UserInline name={beatmapset.creator_name} user={usersById[beatmapset.creator_id]} />
         </td>
-        {filterToApproved ? (
+        {showStatus ? (
           <StatusCell beatmapset={beatmapset} />
         ) : (
           <PriorityCell beatmapset={beatmapset} />
