@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl';
 import { dateFromString } from '../date-format';
 import type { IReview, ISubmission } from '../interfaces';
+import type { SubmittedBeatmapset } from './interfaces';
 
 export type ToggleableColumn =
   | 'bpm'
@@ -73,6 +74,15 @@ export function aggregateReviewScore(reviews: IReview[], includeNonCaptain?: boo
     ? 0
     : reviews.reduce((sum, review) => sum + reviewScoreMap.get(review.score)!, 0) /
         Math.sqrt(reviews.length);
+}
+
+export function beatmapsetNotAllowed(beatmapset: SubmittedBeatmapset): boolean {
+  return (
+    beatmapset.strictly_rejected ||
+    beatmapset.consent === false ||
+    beatmapset.creator.banned ||
+    beatmapset.maximum_length < 30
+  );
 }
 
 export function displayRange(values: number[], displayFn?: (value: number) => string) {

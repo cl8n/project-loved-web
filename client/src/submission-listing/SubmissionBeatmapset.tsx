@@ -21,6 +21,7 @@ import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
 import { UserInline } from '../UserInline';
 import type { ToggleableColumnsState } from './helpers';
+import { beatmapsetNotAllowed } from './helpers';
 import { submissionIsNew } from './helpers';
 import type { SubmittedBeatmapset } from './interfaces';
 import ReviewEditor from './ReviewEditor';
@@ -205,13 +206,11 @@ export default function SubmissionBeatmapset({
   };
   const onMouseEnter = () => setHovered(true);
   const onMouseLeave = () => setHovered(false);
-  const notAllowed =
-    beatmapset.strictly_rejected ||
-    beatmapset.consent === false ||
-    beatmapset.creator.banned ||
-    beatmapset.maximum_length < 30;
   const reviewAngry =
-    canReview && !notAllowed && hasRole(authUser!, Role.captain, undefined, true) && !review?.score;
+    canReview &&
+    !beatmapsetNotAllowed(beatmapset) &&
+    hasRole(authUser!, Role.captain, undefined, true) &&
+    !review?.score;
 
   return (
     <>

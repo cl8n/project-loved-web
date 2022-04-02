@@ -18,6 +18,7 @@ import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
 import useTitle from '../useTitle';
 import type { ToggleableColumn, ToggleableColumnsState } from './helpers';
+import { beatmapsetNotAllowed } from './helpers';
 import { aggregateReviewScore } from './helpers';
 import { toggleableColumns } from './helpers';
 import type { SubmittedBeatmapset } from './interfaces';
@@ -463,15 +464,7 @@ const beatmapsetSortFns: Record<
   playCount: (a, b) => a.play_count - b.play_count,
   priority: (a, b) =>
     compareOrFallback(a, b, (beatmapset) => beatmapset.nominated_round_name != null) ??
-    compareOrFallback(
-      b,
-      a,
-      (beatmapset) =>
-        beatmapset.strictly_rejected ||
-        beatmapset.consent === false ||
-        beatmapset.creator.banned ||
-        beatmapset.maximum_length < 30,
-    ) ??
+    compareOrFallback(b, a, beatmapsetNotAllowed) ??
     compareOrFallback(b, a, (beatmapset) => beatmapset.poll != null && !beatmapset.poll.passed) ??
     compareOrFallback(b, a, (beatmapset) => beatmapset.reviews.length === 0) ??
     a.review_score - b.review_score,
