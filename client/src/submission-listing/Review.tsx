@@ -46,10 +46,27 @@ export default function Review({ review }: ReviewProps) {
             </span>
           ),
           timestamp: dateFromString(review.reviewed_at),
-          user: (
+          user: review.active_captain ? (
             <b>
-              <UserInline user={review.captain} />
+              <UserInline user={review.captain} />{' '}
+              <FormattedMessage
+                defaultMessage='(captain)'
+                description='Suffix on user for review listing'
+              />
             </b>
+          ) : (
+            <>
+              <UserInline user={review.captain} />
+              {review.active_captain === false && (
+                <>
+                  {' '}
+                  <FormattedMessage
+                    defaultMessage='(alumni)'
+                    description='Suffix on user for review listing'
+                  />
+                </>
+              )}
+            </>
           ),
         }}
       />
