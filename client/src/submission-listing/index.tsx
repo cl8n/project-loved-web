@@ -71,6 +71,10 @@ const messages = defineMessages({
     defaultMessage: 'Priority',
     description: 'Submissions table header',
   },
+  rating: {
+    defaultMessage: 'Rating',
+    description: 'Submissions table header',
+  },
   score: {
     defaultMessage: 'Score',
     description: 'Submissions table header',
@@ -108,6 +112,7 @@ const allSorts = [
   'artist',
   'title',
   'priority',
+  'rating',
   'score',
   'playCount',
   'favoriteCount',
@@ -223,6 +228,7 @@ export default function SubmissionListingContainer() {
     favoriteCount: true,
     keyModes: true,
     playCount: true,
+    rating: true,
     score: true,
     year: true,
   });
@@ -468,6 +474,7 @@ const beatmapsetSortFns: Record<
     compareOrFallback(b, a, (beatmapset) => beatmapset.poll != null && !beatmapset.poll.passed) ??
     compareOrFallback(b, a, (beatmapset) => beatmapset.reviews.length === 0) ??
     a.review_score - b.review_score,
+  rating: (a, b) => a.review_score_all - b.review_score_all,
   score: (a, b) => a.score - b.score,
   status: (a, b) => +(a.ranked_status === 4) - +(b.ranked_status === 4),
   title: (a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()),
@@ -666,6 +673,7 @@ function SubmissionListing({
                 ? intl.formatMessage(messages.status)
                 : intl.formatMessage(messages.priority)}
             </th>
+            {columns.rating && <th>{intl.formatMessage(messages.rating)}</th>}
             {columns.score && (
               <th>
                 {intl.formatMessage(messages.score)}{' '}

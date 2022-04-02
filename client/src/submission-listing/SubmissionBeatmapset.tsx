@@ -254,6 +254,7 @@ export default function SubmissionBeatmapset({
         ) : (
           <PriorityCell beatmapset={beatmapset} />
         )}
+        {columns.rating && <RatingCell beatmapset={beatmapset} />}
         {columns.score && <td>{intl.formatNumber(beatmapset.score)}</td>}
         {columns.playCount && (
           <td>
@@ -442,6 +443,24 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
         signDisplay: 'exceptZero',
       })}
       )
+    </td>
+  );
+}
+
+interface RatingCellProps {
+  beatmapset: SubmittedBeatmapset;
+}
+
+function RatingCell({ beatmapset }: RatingCellProps) {
+  const intl = useIntl();
+  const [, , priorityClass] = priorities.find((p) => beatmapset.review_score_all >= p[0])!;
+
+  return (
+    <td className={'priority ' + priorityClass}>
+      {intl.formatNumber(beatmapset.review_score_all, {
+        maximumFractionDigits: 2,
+        signDisplay: 'exceptZero',
+      })}
     </td>
   );
 }
