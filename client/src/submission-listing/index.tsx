@@ -611,6 +611,7 @@ function SubmissionListing({
 
       beatmapset.reviews = beatmapset.reviews.filter((review) => review.id !== reviewId);
       beatmapset.review_score = aggregateReviewScore(beatmapset.reviews);
+      beatmapset.review_score_all = aggregateReviewScore(beatmapset.reviews, true);
       beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
 
       return {
@@ -633,6 +634,7 @@ function SubmissionListing({
       }
 
       beatmapset.review_score = aggregateReviewScore(beatmapset.reviews);
+      beatmapset.review_score_all = aggregateReviewScore(beatmapset.reviews, true);
       beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
 
       if (prev!.usersById[review.reviewer_id] == null) {

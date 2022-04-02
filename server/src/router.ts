@@ -87,6 +87,10 @@ router.post(
       return res.status(403).send();
     }
 
+    const captainRole = res.typedLocals.user.roles.find(
+      (role) => role.game_mode === req.body.gameMode && role.role_id === Role.captain,
+    );
+    const activeCaptain = captainRole == null ? null : !captainRole.alumni;
     const existingReview = await db.queryOne<Review>(
       `
         SELECT *
@@ -108,9 +112,10 @@ router.post(
         existingReview.id,
       ]);
 
-      return res.json(
-        await db.queryOne<Review>('SELECT * FROM reviews WHERE id = ?', [existingReview.id]),
-      );
+      return res.json({
+        ...(await db.queryOne<Review>('SELECT * FROM reviews WHERE id = ?', [existingReview.id])),
+        active_captain: activeCaptain,
+      });
     }
 
     const beatmapset = await res.typedLocals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId);
@@ -136,7 +141,10 @@ router.post(
       },
     ]);
 
-    res.json(await db.queryOne<Review>('SELECT * FROM reviews WHERE id = ?', [insertId]));
+    res.json({
+      ...(await db.queryOne<Review>('SELECT * FROM reviews WHERE id = ?', [insertId])),
+      active_captain: activeCaptain,
+    });
   }),
 );
 

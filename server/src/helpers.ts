@@ -20,9 +20,16 @@ const reviewScoreMap = new Map([
   [2, 3.5],
   [3, 6.5],
 ]);
-export function aggregateReviewScore(reviews: Review[]): number {
+export function aggregateReviewScore(
+  reviews: (Review & { active_captain: boolean | null })[],
+  includeNonCaptain?: boolean,
+): number {
   reviews = reviews.filter(
-    (review) => review.score >= -3 && review.score <= 3 && review.score !== 0,
+    (review) =>
+      (includeNonCaptain || review.active_captain) &&
+      review.score >= -3 &&
+      review.score <= 3 &&
+      review.score !== 0,
   );
 
   return reviews.length === 0

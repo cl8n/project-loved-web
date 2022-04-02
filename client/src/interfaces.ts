@@ -149,6 +149,7 @@ export interface IPoll {
 
 export interface IReview {
   id: number;
+  active_captain: boolean | null;
   beatmapset_id: number;
   game_mode: GameMode;
   reason: string;

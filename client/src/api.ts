@@ -160,6 +160,7 @@ export interface GetSubmissionsResponseBody {
       topic_id: number;
     };
     review_score: number;
+    review_score_all: number;
     reviews: IReview[];
     score: number;
     strictly_rejected: boolean;

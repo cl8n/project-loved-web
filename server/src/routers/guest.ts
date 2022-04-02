@@ -106,19 +106,28 @@ guestRouter.get(
       }
     }
 
-    const reviews = await db.query<Review>(
+    const reviews = await db.query<Review & { active_captain: boolean | null }>(
       `
-        SELECT *
+        SELECT reviews.*, NOT user_roles.alumni AS active_captain
         FROM reviews
-        WHERE game_mode = ?
-        ORDER BY reviewed_at ASC
+        LEFT JOIN user_roles
+          ON user_roles.game_mode = ?
+          AND user_roles.role_id = ?
+          AND reviews.reviewer_id = user_roles.user_id
+        WHERE reviews.game_mode = ?
+        ORDER BY reviews.reviewed_at ASC
       `,
-      [gameMode],
+      [gameMode, Role.captain, gameMode],
     );
 
     for (const review of reviews) {
       beatmapsetIds.add(review.beatmapset_id);
       userIds.add(review.reviewer_id);
+
+      // TODO: Type cast this correctly earlier?
+      if (review.active_captain != null) {
+        review.active_captain = (review.active_captain as unknown) !== 0;
+      }
     }
 
     if (beatmapsetIds.size === 0) {
@@ -139,7 +148,8 @@ guestRouter.get(
         poll: Partial<Pick<Poll, 'beatmapset_id'>> &
           Pick<Poll, 'topic_id'> & { in_progress: 0 | 1 | boolean; passed: 0 | 1 | boolean };
         review_score: number;
-        reviews: Review[];
+        review_score_all: number;
+        reviews: (Review & { active_captain: boolean | null })[];
         score: number;
         strictly_rejected: boolean;
         submissions: Submission[];
@@ -223,10 +233,10 @@ guestRouter.get(
       null,
       true,
     );
-    const reviewsByBeatmapsetId = groupBy<Review['beatmapset_id'], Review>(
-      reviews,
-      'beatmapset_id',
-    );
+    const reviewsByBeatmapsetId = groupBy<
+      Review['beatmapset_id'],
+      Review & { active_captain: boolean | null }
+    >(reviews, 'beatmapset_id');
     const submissionsByBeatmapsetId = groupBy<Submission['beatmapset_id'], Submission>(
       submissions,
       'beatmapset_id',
@@ -306,6 +316,7 @@ guestRouter.get(
       );
       beatmapset.poll = pollByBeatmapsetId[beatmapset.id];
       beatmapset.review_score = aggregateReviewScore(beatmapset.reviews);
+      beatmapset.review_score_all = aggregateReviewScore(beatmapset.reviews, true);
       beatmapset.score = beatmapset.favorite_count * 75 + beatmapset.play_count;
       beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
 
