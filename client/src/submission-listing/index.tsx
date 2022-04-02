@@ -627,6 +627,7 @@ function SubmissionListing({
         usersById: prev!.usersById,
       };
     });
+    history.replace({}, deletedReview.beatmapset_id);
   };
   const onReviewUpdate = (review: IReview) => {
     setSubmissionsInfo((prev) => {
@@ -655,6 +656,7 @@ function SubmissionListing({
         usersById: { ...prev!.usersById },
       };
     });
+    history.replace({}, review.beatmapset_id);
   };
 
   return (
