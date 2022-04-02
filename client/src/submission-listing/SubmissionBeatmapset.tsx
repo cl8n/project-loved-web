@@ -32,6 +32,14 @@ const messages = defineMessages({
     defaultMessage: 'Close',
     description: 'Button to close forms, dropdowns, modals, etc.',
   },
+  deleteReview: {
+    defaultMessage: 'Delete review',
+    description: 'Button to delete own review',
+  },
+  deleteReviewConfirm: {
+    defaultMessage: 'Are you sure you want to delete your review?',
+    description: 'Confirmation to delete own review on a beatmapset',
+  },
   expand: {
     defaultMessage: 'Expand',
     description: 'Button to expand dropdowns',
@@ -78,6 +86,16 @@ const messages = defineMessages({
     defaultMessage: 'Every map in this set is too short (under 30 seconds).',
     description: 'Help text explaining that a map cannot be Loved due to its length',
   },
+  review: {
+    defaultMessage: 'Review',
+    description: 'Button to add or update own review',
+  },
+  reviewHelp: {
+    defaultMessage:
+      'You can also hold {key} while clicking on the mapset to open the review modal.',
+    description:
+      'Help text explaining that the review modal can be opened with a keyboard shortcut',
+  },
   high: {
     defaultMessage: 'High',
     description: 'Aggregate review score shown on submissions table',
@@ -122,24 +140,20 @@ const messages = defineMessages({
 
 interface SubmissionBeatmapsetProps {
   beatmapset: SubmittedBeatmapset;
-  canReview: boolean;
   columns: ToggleableColumnsState;
   gameMode: GameMode;
-  onReviewDelete: (() => void) | null;
+  onReviewDelete: (review: IReview) => void;
   onReviewUpdate: (review: IReview) => void;
-  review?: IReview;
   showStatus: boolean;
   usersById: GetSubmissionsResponseBody['usersById'];
 }
 
 export default function SubmissionBeatmapset({
   beatmapset,
-  canReview,
   columns,
   gameMode,
   onReviewDelete,
   onReviewUpdate,
-  review,
   showStatus,
   usersById,
 }: SubmissionBeatmapsetProps) {
@@ -180,12 +194,19 @@ export default function SubmissionBeatmapset({
     );
   }, [beatmapset, gameMode, intl]);
 
+  const canReview = authUser != null && beatmapset.ranked_status <= 0;
+  const review =
+    authUser == null
+      ? undefined
+      : beatmapset.reviews.find((review) => review.reviewer_id === authUser.id);
   const onDeleteReviewClick = () => {
-    if (!window.confirm('Are you sure you want to delete your review?')) {
+    if (!window.confirm(intl.formatMessage(messages.deleteReviewConfirm))) {
       return;
     }
 
-    deleteReview(review!.id).then(onReviewDelete!).catch(alertApiErrorMessage);
+    deleteReview(review!.id)
+      .then(() => onReviewDelete(review!))
+      .catch(alertApiErrorMessage);
   };
   const onClick = (event: MouseEvent<HTMLTableRowElement>) => {
     if (
@@ -306,16 +327,13 @@ export default function SubmissionBeatmapset({
               <div className='review-button-container'>
                 {review != null && (
                   <button type='button' onClick={onDeleteReviewClick} className='angry'>
-                    Delete review
+                    {intl.formatMessage(messages.deleteReview)}
                   </button>
                 )}{' '}
                 <button type='button' onClick={() => setReviewModalOpen(true)}>
-                  Review
+                  {intl.formatMessage(messages.review)}
                 </button>{' '}
-                <Help>
-                  You can also hold <kbd>Ctrl</kbd> while clicking on the mapset to open the review
-                  modal.
-                </Help>
+                <Help>{intl.formatMessage(messages.reviewHelp, { key: <kbd>Ctrl</kbd> })}</Help>
               </div>
             )}
             <SubmissionsList

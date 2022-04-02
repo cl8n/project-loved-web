@@ -87,16 +87,17 @@ export default function ReviewEditor({
                   <option hidden value=''>
                     Select a score
                   </option>
-                  {hasRole(authUser, Role.captain, gameMode, true) &&
-                    selectableReviewScores.map((score) => (
-                      <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
-                        {intl.formatMessage(reviewScoreMessages[score + 3])} (
-                        {intl.formatNumber(score, { signDisplay: 'exceptZero' })})
-                      </option>
-                    ))}
-                  <option className='review-score--3' value='-4'>
-                    {intl.formatMessage(messages.notAllowed)}
-                  </option>
+                  {selectableReviewScores.map((score) => (
+                    <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
+                      {intl.formatMessage(reviewScoreMessages[score + 3])} (
+                      {intl.formatNumber(score, { signDisplay: 'exceptZero' })})
+                    </option>
+                  ))}
+                  {hasRole(authUser, Role.captain, gameMode) && (
+                    <option className='review-score--3' value='-4'>
+                      {intl.formatMessage(messages.notAllowed)}
+                    </option>
+                  )}
                 </select>
               </td>
             </tr>

@@ -79,12 +79,8 @@ router.post(
 
     const hasRole = currentUserRoles(req, res);
 
-    if (!hasRole(Role.captain, req.body.gameMode)) {
-      return res.status(403).send();
-    }
-
-    if (req.body.score >= -3 && !hasRole(Role.captain, req.body.gameMode, true)) {
-      return res.status(403).send();
+    if (req.body.score === -4 && !hasRole(Role.captain, req.body.gameMode)) {
+      return res.status(403).send({ error: 'Must be a captain to mark as not allowed' });
     }
 
     const captainRole = res.typedLocals.user.roles.find(

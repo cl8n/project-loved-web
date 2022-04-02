@@ -6,7 +6,6 @@ import { apiErrorMessage, getSubmissions, useApi } from '../api';
 import { dateFromString } from '../date-format';
 import Help from '../Help';
 import type { IReview } from '../interfaces';
-import { Role } from '../interfaces';
 import { GameMode } from '../interfaces';
 import {
   gameModeFromShortName,
@@ -15,7 +14,6 @@ import {
   gameModeShortName,
 } from '../osu-helpers';
 import { useOsuAuth } from '../osuAuth';
-import { hasRole } from '../permissions';
 import useTitle from '../useTitle';
 import type { ToggleableColumn, ToggleableColumnsState } from './helpers';
 import { beatmapsetNotAllowed } from './helpers';
@@ -494,6 +492,13 @@ function beatmapsetSortFn(
     );
 }
 
+function sortReviews(a: IReview, b: IReview): number {
+  return (
+    +(b.active_captain ?? -1) - +(a.active_captain ?? -1) ||
+    dateFromString(a.reviewed_at).getTime() - dateFromString(b.reviewed_at).getTime()
+  );
+}
+
 const pageSize = 30;
 
 interface SubmissionListingProps {
@@ -604,12 +609,15 @@ function SubmissionListing({
     return resetPageComponent();
   }
 
-  const canReviewAny = authUser != null && hasRole(authUser, Role.captain, gameMode);
-  const getOnReviewDelete = (beatmapsetId: number, reviewId: number) => () => {
+  const onReviewDelete = (deletedReview: IReview) => {
     setSubmissionsInfo((prev) => {
-      const beatmapset = prev!.beatmapsets.find((beatmapset) => beatmapset.id === beatmapsetId)!;
+      const beatmapset = prev!.beatmapsets.find(
+        (beatmapset) => beatmapset.id === deletedReview.beatmapset_id,
+      )!;
 
-      beatmapset.reviews = beatmapset.reviews.filter((review) => review.id !== reviewId);
+      beatmapset.reviews = beatmapset.reviews
+        .filter((review) => review.id !== deletedReview.id)
+        .sort(sortReviews);
       beatmapset.review_score = aggregateReviewScore(beatmapset.reviews);
       beatmapset.review_score_all = aggregateReviewScore(beatmapset.reviews, true);
       beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
@@ -633,6 +641,7 @@ function SubmissionListing({
         beatmapset.reviews.push(review);
       }
 
+      beatmapset.reviews.sort(sortReviews);
       beatmapset.review_score = aggregateReviewScore(beatmapset.reviews);
       beatmapset.review_score_all = aggregateReviewScore(beatmapset.reviews, true);
       beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
@@ -694,27 +703,18 @@ function SubmissionListing({
           </tr>
         </thead>
         <tbody>
-          {displayBeatmapsets.slice((page - 1) * pageSize, page * pageSize).map((beatmapset) => {
-            const canReview = canReviewAny && beatmapset.ranked_status <= 0;
-            const review = canReview
-              ? beatmapset.reviews.find((review) => review.reviewer_id === authUser!.id)
-              : undefined;
-
-            return (
-              <SubmissionBeatmapset
-                key={beatmapset.id}
-                beatmapset={beatmapset}
-                canReview={canReview}
-                columns={columns}
-                gameMode={gameMode}
-                onReviewDelete={review == null ? null : getOnReviewDelete(beatmapset.id, review.id)}
-                onReviewUpdate={onReviewUpdate}
-                review={review}
-                showStatus={beatmapStatus === 'lovedAndRanked'}
-                usersById={submissionsInfo.usersById}
-              />
-            );
-          })}
+          {displayBeatmapsets.slice((page - 1) * pageSize, page * pageSize).map((beatmapset) => (
+            <SubmissionBeatmapset
+              key={beatmapset.id}
+              beatmapset={beatmapset}
+              columns={columns}
+              gameMode={gameMode}
+              onReviewDelete={onReviewDelete}
+              onReviewUpdate={onReviewUpdate}
+              showStatus={beatmapStatus === 'lovedAndRanked'}
+              usersById={submissionsInfo.usersById}
+            />
+          ))}
         </tbody>
       </table>
       <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
