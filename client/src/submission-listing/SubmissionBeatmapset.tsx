@@ -209,7 +209,7 @@ export default function SubmissionBeatmapset({
   const reviewAngry =
     canReview &&
     !beatmapsetNotAllowed(beatmapset) &&
-    hasRole(authUser!, Role.captain, undefined, true) &&
+    hasRole(authUser!, Role.captain, gameMode, true) &&
     !review?.score;
 
   return (

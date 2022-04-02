@@ -87,7 +87,7 @@ export default function ReviewEditor({
                   <option hidden value=''>
                     Select a score
                   </option>
-                  {hasRole(authUser, Role.captain, undefined, true) &&
+                  {hasRole(authUser, Role.captain, gameMode, true) &&
                     selectableReviewScores.map((score) => (
                       <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
                         {intl.formatMessage(reviewScoreMessages[score + 3])} (
