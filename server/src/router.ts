@@ -146,15 +146,20 @@ router.post(
 
 router.delete(
   '/review',
-  isCaptainMiddleware,
   asyncHandler(async (req, res) => {
+    const reviewId = parseInt(req.query.reviewId ?? '', 10);
+
+    if (isNaN(reviewId)) {
+      return res.status(422).json({ error: 'Invalid review ID' });
+    }
+
     const review = await db.queryOne<Pick<Review, 'reviewer_id'>>(
       `
         SELECT reviewer_id
         FROM reviews
         WHERE id = ?
       `,
-      [req.query.reviewId],
+      [reviewId],
     );
 
     if (review == null) {
@@ -165,7 +170,7 @@ router.delete(
       return res.status(403).json({ error: "This isn't your review" });
     }
 
-    await db.query('DELETE FROM reviews WHERE id = ?', [req.query.reviewId]);
+    await db.query('DELETE FROM reviews WHERE id = ?', [reviewId]);
 
     res.status(204).send();
   }),
