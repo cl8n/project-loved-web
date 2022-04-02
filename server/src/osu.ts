@@ -100,16 +100,13 @@ export class Osu {
   async tryRefreshToken(): Promise<TokenInfo | void> {
     if (Date.now() >= this.#tokenExpiresAt - refreshTokenThreshold) {
       const tokenInfo = serializeTokenResponse(
-        await superagent
-          .post(`${baseUrl}/oauth/token`)
-          .type('form')
-          .send({
-            client_id: process.env.OSU_CLIENT_ID,
-            client_secret: process.env.OSU_CLIENT_SECRET,
-            grant_type: 'refresh_token',
-            refresh_token: this.#refreshToken,
-            scope: apiScopes,
-          }),
+        await superagent.post(`${baseUrl}/oauth/token`).type('form').send({
+          client_id: process.env.OSU_CLIENT_ID,
+          client_secret: process.env.OSU_CLIENT_SECRET,
+          grant_type: 'refresh_token',
+          refresh_token: this.#refreshToken,
+          scope: apiScopes,
+        }),
       );
 
       this.#assignTokenInfo(tokenInfo);
