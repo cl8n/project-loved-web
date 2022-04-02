@@ -29,6 +29,10 @@ const messages = defineMessages({
     defaultMessage: 'All',
     description: 'osu!mania key mode option for submissions table',
   },
+  any: {
+    defaultMessage: 'Any',
+    description: 'Review status option',
+  },
   artist: {
     defaultMessage: 'Artist',
     description: 'Submissions table sort option',
@@ -57,6 +61,10 @@ const messages = defineMessages({
     defaultMessage: 'Loved and ranked',
     description: 'Beatmap status option',
   },
+  notReviewed: {
+    defaultMessage: 'Not reviewed',
+    description: 'Review status option',
+  },
   pendingAndGrave: {
     defaultMessage: 'Pending and grave',
     description: 'Beatmap status option',
@@ -72,6 +80,10 @@ const messages = defineMessages({
   rating: {
     defaultMessage: 'Rating',
     description: 'Submissions table header',
+  },
+  reviewed: {
+    defaultMessage: 'Reviewed',
+    description: 'Review status option',
   },
   score: {
     defaultMessage: 'Score',
@@ -105,6 +117,9 @@ const messages = defineMessages({
 
 const allBeatmapStatuses = ['pendingAndGrave', 'lovedAndRanked'] as const;
 type BeatmapStatus = typeof allBeatmapStatuses[number];
+
+const allReviewStatuses = ['any', 'reviewed', 'notReviewed'] as const;
+type ReviewStatus = typeof allReviewStatuses[number];
 
 const allSorts = [
   'artist',
@@ -216,6 +231,7 @@ type SubmissionListingParams =
     };
 
 export default function SubmissionListingContainer() {
+  const authUser = useOsuAuth().user;
   const history = useHistory();
   const intl = useIntl();
   const params = useParams<SubmissionListingParams>();
@@ -230,6 +246,7 @@ export default function SubmissionListingContainer() {
     score: true,
     year: true,
   });
+  const [reviewStatus, setReviewStatus] = useState<ReviewStatus>('any');
   const [search, setSearch] = useState('');
   const [sorts, updateSort] = useReducer(sortsReducer, initialSortsState);
   const sortOptions = useMemo(
@@ -377,6 +394,28 @@ export default function SubmissionListingContainer() {
             }}
           />
         </div>
+        {authUser != null && (
+          <div className='flex-left slim-margin'>
+            <FormattedMessage
+              defaultMessage='My review status:'
+              description='Selector to change own review status filter'
+              tagName='span'
+            />
+            <select
+              value={reviewStatus}
+              onChange={(event) => {
+                setReviewStatus(event.currentTarget.value as ReviewStatus);
+                setPage(1, true);
+              }}
+            >
+              {allReviewStatuses.map((status) => (
+                <option key={status} value={status}>
+                  {intl.formatMessage(messages[status])}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         <div className='flex-left slim-margin'>
           <FormattedMessage
             defaultMessage='Columns:'
@@ -446,6 +485,7 @@ export default function SubmissionListingContainer() {
         keyMode={keyMode}
         page={page}
         resetPageComponent={resetPageComponent}
+        reviewStatus={reviewStatus}
         searchLowerCase={search.toLowerCase()}
         setPage={setPage}
         sorts={sorts}
@@ -508,6 +548,7 @@ interface SubmissionListingProps {
   keyMode: number | null;
   page: number;
   resetPageComponent: () => JSX.Element;
+  reviewStatus: ReviewStatus;
   searchLowerCase: string;
   setPage: (page: number, replace?: boolean) => void;
   sorts: SortsState;
@@ -520,6 +561,7 @@ function SubmissionListing({
   keyMode,
   page,
   resetPageComponent,
+  reviewStatus,
   searchLowerCase,
   setPage,
   sorts,
@@ -547,7 +589,11 @@ function SubmissionListing({
           (searchLowerCase.length === 0 ||
             beatmapset.artist.toLowerCase().includes(searchLowerCase) ||
             beatmapset.creator_name.toLowerCase().includes(searchLowerCase) ||
-            beatmapset.title.toLowerCase().includes(searchLowerCase)),
+            beatmapset.title.toLowerCase().includes(searchLowerCase)) &&
+          (authUser == null ||
+            reviewStatus === 'any' ||
+            (reviewStatus === 'reviewed') ===
+              beatmapset.reviews.some((review) => review.reviewer_id === authUser.id)),
       )
       .map((beatmapset) => ({
         ...beatmapset,
@@ -556,7 +602,7 @@ function SubmissionListing({
       .sort(beatmapsetSortFn(sorts[1], beatmapStatus))
       .sort(beatmapsetSortFn(sorts[0], beatmapStatus))
       .sort((a, b) => +(b.poll?.in_progress ?? false) - +(a.poll?.in_progress ?? false));
-  }, [beatmapStatus, keyMode, searchLowerCase, sorts, submissionsInfo]);
+  }, [authUser, beatmapStatus, keyMode, reviewStatus, searchLowerCase, sorts, submissionsInfo]);
 
   useEffect(() => {
     if (displayBeatmapsets == null || submittedBeatmapsetId == null) {
