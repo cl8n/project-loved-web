@@ -8,7 +8,6 @@ import { Form } from '../dom-helpers';
 import type { GameMode, IBeatmapset, IReview } from '../interfaces';
 import { Role } from '../interfaces';
 import { Modal } from '../Modal';
-import { Never } from '../Never';
 import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
 import { reviewScoreClasses, reviewScoreMessages, selectableReviewScores } from './helpers';
@@ -35,7 +34,7 @@ export default function ReviewEditor({
   onReviewUpdate,
   review,
 }: ReviewEditorProps) {
-  const authUser = useOsuAuth().user;
+  const authUser = useOsuAuth().user!;
   const intl = useIntl();
   const [busy, setBusy] = useState(false);
 
@@ -56,10 +55,6 @@ export default function ReviewEditor({
       .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));
   };
-
-  if (authUser == null) {
-    return <Never />;
-  }
 
   return (
     <Modal close={() => setModalOpen(false)} open={modalOpen}>

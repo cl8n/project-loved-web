@@ -38,7 +38,6 @@ import { AssigneeType, DescriptionState, MetadataState, ModeratorState } from '.
 import ListInline from './ListInline';
 import ListInput from './ListInput';
 import { Modal } from './Modal';
-import { Never } from './Never';
 import EditModeration from './nomination/EditModeration';
 import EditNominators from './nomination/EditNominators';
 import StatusLine from './nomination/StatusLine';
@@ -51,24 +50,20 @@ import { UserInline } from './UserInline';
 import useTitle from './useTitle';
 
 export function Picks() {
-  const authUser = useOsuAuth().user;
+  const authUser = useOsuAuth().user!;
   const params = useParams() as { round: string };
   const roundId = parseInt(params.round);
   const [roundInfo, roundInfoError, setRoundInfo] = useApi(getNominations, [roundId]);
   useTitle(roundInfo == null ? `Round #${roundId}` : roundInfo.round.name);
   const assigneesApi = useApi(getAssignees, [], {
-    condition: authUser != null && hasRole(authUser, [Role.news, Role.metadata, Role.moderator]),
+    condition: hasRole(authUser, [Role.news, Role.metadata, Role.moderator]),
   });
   const captainsApi = useApi(getCaptains, [], {
-    condition: authUser != null && hasRole(authUser, Role.captain),
+    condition: hasRole(authUser, Role.captain),
   });
   // TODO: Split by gamemode
   const [ordering, setOrdering] = useState(false);
   const [showTodo, setShowTodo] = useState(false);
-
-  if (authUser == null) {
-    return <Never />;
-  }
 
   if (roundInfoError != null) {
     return (
@@ -415,11 +410,7 @@ function Nomination({
   parentGameMode,
   round,
 }: NominationProps) {
-  const authUser = useOsuAuth().user;
-
-  if (authUser == null) {
-    return <Never />;
-  }
+  const authUser = useOsuAuth().user!;
 
   const deleteSelf = () => {
     if (!window.confirm('Are you sure you want to delete this nomination?')) {

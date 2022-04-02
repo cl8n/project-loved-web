@@ -1,6 +1,5 @@
 import { apiErrorMessage, getUsersWithRoles, useApi } from '../../api';
 import type { IUser, IUserRole } from '../../interfaces';
-import { Never } from '../../Never';
 import { useOsuAuth } from '../../osuAuth';
 import { hasRole } from '../../permissions';
 import { UserInline } from '../../UserInline';
@@ -9,12 +8,8 @@ import UserAdder from './UserAdder';
 import UserRolesEditor from './UserRolesEditor';
 
 export default function UsersAndRolesList() {
-  const authUser = useOsuAuth().user;
+  const authUser = useOsuAuth().user!;
   const [users, usersError, setUsers] = useApi(getUsersWithRoles);
-
-  if (authUser == null) {
-    return <Never />;
-  }
 
   if (usersError != null) {
     return <span className='panic'>Failed to load users: {apiErrorMessage(usersError)}</span>;

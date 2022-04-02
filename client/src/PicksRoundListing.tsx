@@ -3,7 +3,6 @@ import type { ResponseError } from 'superagent';
 import { addRound, alertApiErrorMessage, apiErrorMessage, getRounds, useApi } from './api';
 import type { IRound } from './interfaces';
 import { Role } from './interfaces';
-import { Never } from './Never';
 import { useOsuAuth } from './osuAuth';
 import { hasRole } from './permissions';
 import PostDate from './round/PostDate';
@@ -88,12 +87,8 @@ function AddRound() {
 
 export function PicksRoundListing() {
   useTitle('Round listing');
-  const authUser = useOsuAuth().user;
+  const authUser = useOsuAuth().user!;
   const [rounds, roundsError] = useApi(getRounds);
-
-  if (authUser == null) {
-    return <Never />;
-  }
 
   return (
     <>
