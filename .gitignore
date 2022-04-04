@@ -1,6 +1,5 @@
 /.idea
-/build-client.sh
-/build-server.sh
+/build.sh
 build/
 node_modules/
 .env
