@@ -1,0 +1,407 @@
+{
+  "+3rK3I": {
+    "defaultMessage": "Sem resposta"
+  },
+  "+9RCG/": {
+    "defaultMessage": "Outros ícones por {author}"
+  },
+  "+bCbtl": {
+    "defaultMessage": "Colunas:"
+  },
+  "+d4ZcX": {
+    "defaultMessage": "Moderadores"
+  },
+  "/CNHO3": {
+    "defaultMessage": "Entrar com conta do osu!"
+  },
+  "/SSCZX": {
+    "defaultMessage": "Sim"
+  },
+  "0+S3hP": {
+    "defaultMessage": "Se o mapa que você enviar for pouco popular ou completamente injogável, os capitães provavelmente nunca vão vê-lo. Por favor, apenas envie mapas que você acredita que acrescentariam de verdade na categoria."
+  },
+  "06WpMi": {
+    "defaultMessage": "Ranked"
+  },
+  "0Vz3c/": {
+    "defaultMessage": "Porcentagem e total"
+  },
+  "2SX61V": {
+    "defaultMessage": "Observações"
+  },
+  "2YTMfX": {
+    "defaultMessage": "Enviar e continuar na página"
+  },
+  "2dOoEc": {
+    "defaultMessage": "Revisores de metadata"
+  },
+  "38JPtF": {
+    "defaultMessage": "Votação em progresso"
+  },
+  "39zfVl": {
+    "defaultMessage": "leve apoio"
+  },
+  "3E4vRf": {
+    "defaultMessage": "Baixo"
+  },
+  "3FN4wO": {
+    "defaultMessage": "Esta pesquisa está encerrada. Obrigado por participar!"
+  },
+  "3J+k4U": {
+    "defaultMessage": "Fórum"
+  },
+  "3Kch6P": {
+    "defaultMessage": "Crescente"
+  },
+  "3RdYB+": {
+    "defaultMessage": "Modo de jogo:"
+  },
+  "5NZbY5": {
+    "defaultMessage": "Exibição dos resultados:"
+  },
+  "5OS21f": {
+    "defaultMessage": "Externo:"
+  },
+  "5oqovx": {
+    "defaultMessage": "Enviar um mapa"
+  },
+  "7CJMwD": {
+    "defaultMessage": "Prioridade"
+  },
+  "8NqvA2": {
+    "defaultMessage": "Quantidade de keys:"
+  },
+  "8bAHuK": {
+    "defaultMessage": "Fechar"
+  },
+  "8l6BC0": {
+    "defaultMessage": "Consentimentos de mappers"
+  },
+  "9cv8r4": {
+    "defaultMessage": "Beatmapset"
+  },
+  "AGzOYr": {
+    "defaultMessage": "Envie um mapa para Loved!"
+  },
+  "BGA5hC": {
+    "defaultMessage": "Desenvolvedores"
+  },
+  "BSKWqB": {
+    "defaultMessage": "Equipe"
+  },
+  "Be0kKF": {
+    "defaultMessage": "O mapa que você enviar pode nunca ser indicado para Loved, mesmo se tiver algum mérito. Atualmente, a taxa de mapas que são Loved é bem limitada, então é possível que os capitães acabem sempre achando mapas melhores do que o que você enviou."
+  },
+  "Bsld0J": {
+    "defaultMessage": "Pesquisar:"
+  },
+  "CCGzFA": {
+    "defaultMessage": "Passou na votação"
+  },
+  "CIAu6S": {
+    "defaultMessage": "Wiki"
+  },
+  "CxsxoI": {
+    "defaultMessage": "Enviando..."
+  },
+  "Do+EPJ": {
+    "defaultMessage": "{user} revisou com {score} em {timestamp, date, long}"
+  },
+  "EqGiDp": {
+    "defaultMessage": "Tudo o que você escrever aqui vai ser visível publicamente, então não escreva algo que você não quer que os outros vejam. Você não precisa preencher com os motivos do seu envio se não quiser."
+  },
+  "F1tQfW": {
+    "defaultMessage": "Título"
+  },
+  "G1mG5h": {
+    "defaultMessage": "Este mapper solicitou que o mapa não fosse adicionado na categoria Loved."
+  },
+  "H65rvb": {
+    "defaultMessage": "Você não tem permissão para ver esta página."
+  },
+  "HVzPRU": {
+    "defaultMessage": "Não"
+  },
+  "Hf1vPz": {
+    "defaultMessage": "Escolhas"
+  },
+  "HvpI7B": {
+    "defaultMessage": "Mapset deletado"
+  },
+  "IO8Ye2": {
+    "defaultMessage": "Pontuação"
+  },
+  "IiYTWb": {
+    "defaultMessage": "Equipe atual"
+  },
+  "Ipzb3R": {
+    "defaultMessage": "Não permitido"
+  },
+  "JHNIy2": {
+    "defaultMessage": "Ordem das rodadas:"
+  },
+  "JPKVz4": {
+    "defaultMessage": "Beatmapset"
+  },
+  "JPSkxB": {
+    "defaultMessage": "bandeira do(a)(s) {country}"
+  },
+  "Jy6JW8": {
+    "defaultMessage": "Eu não sei quem você é! Tente <a>entrar com sua conta</a> primeiro."
+  },
+  "LBBZpt": {
+    "defaultMessage": "Modo de jogo"
+  },
+  "Ll1LUO": {
+    "defaultMessage": "bastante apoio"
+  },
+  "Lm++cZ": {
+    "defaultMessage": "Projeto Loved"
+  },
+  "MLkhaQ": {
+    "defaultMessage": "Votação em progresso"
+  },
+  "MUDTXQ": {
+    "defaultMessage": "Link ou ID do mapset"
+  },
+  "MoR8Of": {
+    "defaultMessage": "Consentimentos de mappers"
+  },
+  "N4xf2i": {
+    "defaultMessage": "Favoritos"
+  },
+  "NG8X9U": {
+    "defaultMessage": "Em construção"
+  },
+  "NjIKQe": {
+    "defaultMessage": "Não contatável"
+  },
+  "O2IvSs": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} enviou este mapa em {timestamp, date, long}} other{{user} enviou este mapa}}"
+  },
+  "Oep6va": {
+    "defaultMessage": "Enviar"
+  },
+  "PCZJkZ": {
+    "defaultMessage": "Código-fonte e rastreador de problemas"
+  },
+  "PpxIZP": {
+    "defaultMessage": "bastante rejeição"
+  },
+  "PuVvCo": {
+    "defaultMessage": "Keys"
+  },
+  "R0gvL0": {
+    "defaultMessage": "Artista"
+  },
+  "RHg+09": {
+    "defaultMessage": "Para quais modos de jogo você quer que esse mapa seja Loved?"
+  },
+  "RL5Qu1": {
+    "defaultMessage": "Aprovado"
+  },
+  "ScBgfg": {
+    "defaultMessage": "sem preferência"
+  },
+  "Sti+Y3": {
+    "defaultMessage": "Depois que você enviar um mapa, você pode checar o seu status na <submissionsLink>página de \"Envios\"</submissionsLink>."
+  },
+  "Tf7XH9": {
+    "defaultMessage": "Observações"
+  },
+  "TqI9fE": {
+    "defaultMessage": "Administrador:"
+  },
+  "TrDD+Y": {
+    "defaultMessage": "Você deve <a>entrar</a> para preencher o formulário."
+  },
+  "U1fcdw": {
+    "defaultMessage": "Editores de notícias / Gerentes"
+  },
+  "UjLvid": {
+    "defaultMessage": "Expandir"
+  },
+  "UxNmCh": {
+    "defaultMessage": "Médio"
+  },
+  "V5W+3b": {
+    "defaultMessage": "Consentimento"
+  },
+  "VHEp9G": {
+    "defaultMessage": "Decrescente"
+  },
+  "VYIbMd": {
+    "defaultMessage": "Loved por votação"
+  },
+  "WEpxnj": {
+    "defaultMessage": "Plays"
+  },
+  "WjsRpS": {
+    "defaultMessage": "Todas as diffs nesse mapset são muito curtas (menos de 30 segundos)."
+  },
+  "Y620ue": {
+    "defaultMessage": "Todos"
+  },
+  "ZEsdcm": {
+    "defaultMessage": "Tópico da votação"
+  },
+  "ZWbq0S": {
+    "defaultMessage": "Ano"
+  },
+  "ZZqLxU": {
+    "defaultMessage": "Dificuldades"
+  },
+  "aHJR9F": {
+    "defaultMessage": "Consentimento"
+  },
+  "bKfIQC": {
+    "defaultMessage": "Por que você quer que esse mapa seja Loved? <fade>(opcional)</fade>"
+  },
+  "bcLpeC": {
+    "defaultMessage": "Incomum"
+  },
+  "c/0N4+": {
+    "defaultMessage": "rejeição"
+  },
+  "c2UCNp": {
+    "defaultMessage": "Porcentagem"
+  },
+  "ccf+6T": {
+    "defaultMessage": "capitães de {gameMode}"
+  },
+  "cwgho6": {
+    "defaultMessage": "Pendente"
+  },
+  "dG9/uH": {
+    "defaultMessage": "Qualificado"
+  },
+  "e6WZri": {
+    "defaultMessage": "apoio"
+  },
+  "gLG6dL": {
+    "defaultMessage": "Mapas enviados"
+  },
+  "gvLZL5": {
+    "defaultMessage": "Sair"
+  },
+  "ht0/kF": {
+    "defaultMessage": "Comum"
+  },
+  "iCkWun": {
+    "defaultMessage": "Rodada"
+  },
+  "jVP2nx": {
+    "defaultMessage": "O mapper está banido."
+  },
+  "jlkqJz": {
+    "defaultMessage": "Gerenciar"
+  },
+  "jlqkv1": {
+    "defaultMessage": "Indicado"
+  },
+  "kr2W+L": {
+    "defaultMessage": "<p>Preencher este formulário ajuda os <teamLink>capitães</teamLink> a decidirem quais mapas indicar para Loved nas votações mensais. Mesmo se um mapa já foi <submissionsLink>enviado</submissionsLink>, você pode adicionar sua opinião sobre o mapa aqui.</p> <p>Algumas coisas para manter em mente:</p>"
+  },
+  "l39agD": {
+    "defaultMessage": "Status"
+  },
+  "lMSjPi": {
+    "defaultMessage": "Isso ainda não está disponível no momento. Volte em breve!"
+  },
+  "lRk8DP": {
+    "defaultMessage": "leve rejeição"
+  },
+  "lULo+e": {
+    "defaultMessage": "Não passou na votação"
+  },
+  "lbC8H+": {
+    "defaultMessage": "Mapper"
+  },
+  "lz1fkx": {
+    "defaultMessage": "Sim"
+  },
+  "me3BjX": {
+    "defaultMessage": "Estatísticas"
+  },
+  "mhBW5h": {
+    "defaultMessage": "Mapper"
+  },
+  "mhVjD+": {
+    "defaultMessage": "Ícones de bandeiras por {author}"
+  },
+  "mucI2W": {
+    "defaultMessage": "Um método temporário para ordenar esta listagem. {definition}"
+  },
+  "necy1Q": {
+    "defaultMessage": "Esta listagem apenas inclui envios feitos nesse website. Envios da planilha antiga do Google Drive irão ser movidos para cá em breve, e após, a planilha não será mais utilizada."
+  },
+  "nn9fFb": {
+    "defaultMessage": "BPM"
+  },
+  "nvvuiw": {
+    "defaultMessage": "Editores de vídeo"
+  },
+  "pLUxkj": {
+    "defaultMessage": "Não"
+  },
+  "pNwB5k": {
+    "defaultMessage": "Novo!"
+  },
+  "pXOU6C": {
+    "defaultMessage": "Não tem nada aqui ;_;"
+  },
+  "phKBIX": {
+    "defaultMessage": "País desconhecido"
+  },
+  "pvfxi+": {
+    "defaultMessage": "Postagens"
+  },
+  "qYCjeT": {
+    "defaultMessage": "Loved"
+  },
+  "qfEiSZ": {
+    "defaultMessage": "Total"
+  },
+  "rv3gh8": {
+    "defaultMessage": "{user} marcou como <score>não permitido</score> em {timestamp, date, long}"
+  },
+  "sG6ons": {
+    "defaultMessage": "Listagem de Loved"
+  },
+  "tCV6dl": {
+    "defaultMessage": "Língua: {selector}"
+  },
+  "uNpYlX": {
+    "defaultMessage": "Rejeitado"
+  },
+  "urIF1D": {
+    "defaultMessage": "Beatmapset"
+  },
+  "vDQerf": {
+    "defaultMessage": "Resultados da votação"
+  },
+  "vLehYo": {
+    "defaultMessage": "Pesquisa encerrada"
+  },
+  "wGcwBN": {
+    "defaultMessage": "Alto"
+  },
+  "wOZypU": {
+    "defaultMessage": "Alumni"
+  },
+  "xv9aUB": {
+    "defaultMessage": "Sim e não"
+  },
+  "y+BE4P": {
+    "defaultMessage": "Todos"
+  },
+  "yQeX5q": {
+    "defaultMessage": "Tema: {selector}"
+  },
+  "zSxa2k": {
+    "defaultMessage": "Este mapa foi indicado para {roundName}."
+  },
+  "zn6DBN": {
+    "defaultMessage": "Ordenar por:"
+  }
+}
