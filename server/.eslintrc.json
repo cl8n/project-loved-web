@@ -12,7 +12,9 @@
     "regex"
   ],
   "rules": {
+    "import/no-unresolved": ["error", { "ignore": ["^loved-bridge"] }],
     "no-process-exit": "off",
+    "node/no-missing-import": ["error", { "allowModules": ["loved-bridge"] }],
     "node/shebang": "off",
     "regex/invalid": [
       "error",

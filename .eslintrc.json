@@ -7,15 +7,13 @@
     "curly": "error",
     "eqeqeq": ["error", "always", { "null": "never" }],
     "import/newline-after-import": "error",
-    "import/no-unresolved": ["error", { "ignore": ["^loved-bridge"] }],
     "import/order": [
       "error",
       {
         "alphabetize": { "order": "asc", "caseInsensitive": true },
         "groups": [["builtin", "external", "internal"], "parent", "sibling"]
       }
-    ],
-    "node/no-missing-import": ["error", { "allowModules": ["loved-bridge"] }]
+    ]
   },
   "overrides": [
     {
