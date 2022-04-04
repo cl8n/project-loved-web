@@ -1,3 +1,13 @@
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import type {
+  AssigneeType,
+  Consent,
+  ConsentBeatmapset,
+  ConsentValue,
+  Role,
+  UserRole,
+} from 'loved-bridge/tables';
+
 export function isAssigneeType(type: unknown): type is AssigneeType {
   return typeof type === 'number' && type >= 0 && type <= 1;
 }

@@ -1,10 +1,28 @@
 import { createHash } from 'crypto';
 import { Router } from 'express';
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import { gameModes } from 'loved-bridge/beatmaps/gameMode';
+import { reviewRating } from 'loved-bridge/beatmaps/reviewRating';
+import type {
+  Beatmap,
+  Beatmapset,
+  Consent,
+  ConsentBeatmapset,
+  Nomination,
+  Poll,
+  Review,
+  Round,
+  RoundGameMode,
+  Submission,
+  User,
+  UserRole,
+} from 'loved-bridge/tables';
+import { ConsentValue, Role } from 'loved-bridge/tables';
 import qs from 'querystring';
 import db from '../db';
 import { asyncHandler } from '../express-helpers';
 import { currentUserRoles } from '../guards';
-import { aggregateReviewScore, groupBy, modeBy } from '../helpers';
+import { groupBy, modeBy } from '../helpers';
 import { accessSetting } from '../settings';
 import { isGameMode } from '../type-guards';
 
@@ -315,8 +333,8 @@ guestRouter.get(
         0,
       );
       beatmapset.poll = pollByBeatmapsetId[beatmapset.id];
-      beatmapset.review_score = aggregateReviewScore(beatmapset.reviews);
-      beatmapset.review_score_all = aggregateReviewScore(beatmapset.reviews, true);
+      beatmapset.review_score = reviewRating(beatmapset.reviews);
+      beatmapset.review_score_all = reviewRating(beatmapset.reviews, true);
       beatmapset.score = beatmapset.favorite_count * 75 + beatmapset.play_count;
       beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
 
@@ -326,8 +344,8 @@ guestRouter.get(
         beatmapset.poll.passed = beatmapset.poll.passed > 0;
       }
 
-      beatmapset.beatmap_counts = {};
-      for (const gameMode of [0, 1, 2, 3]) {
+      beatmapset.beatmap_counts = {} as Record<GameMode, number>;
+      for (const gameMode of gameModes) {
         beatmapset.beatmap_counts[gameMode] = beatmaps[gameMode]?.length ?? 0;
       }
 
@@ -416,7 +434,8 @@ guestRouter.get(
     const groupedUsers: Record<
       'alumni' | 'current',
       Record<Role, Partial<Record<GameMode | -1, User[]>>>
-    > = { alumni: {}, current: {} };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    > = { alumni: {}, current: {} } as any;
 
     for (const role of roles) {
       const topGroup = role.alumni ? 'alumni' : 'current';

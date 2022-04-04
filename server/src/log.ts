@@ -1,3 +1,4 @@
+import type { LogType } from 'loved-bridge/tables';
 import { inspect } from 'util';
 import type { MysqlConnectionType } from './db';
 import db from './db';

@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "esModuleInterop": true,
     "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
     "lib": ["ES2020"],
     "module": "CommonJS",
-    "moduleResolution": "Node12",
     "outDir": "build",
     "rootDir": "src",
-    "skipLibCheck": true,
     "strict": true,
     "target": "ES2020"
   }

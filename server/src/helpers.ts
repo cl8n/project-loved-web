@@ -11,34 +11,6 @@ export function accessNested<T>(object: unknown, key: string): T {
   return value;
 }
 
-// TODO copied from submission-listing/helpers.ts
-const reviewScoreMap = new Map([
-  [-3, -6.5],
-  [-2, -3.5],
-  [-1, -1.5],
-  [1, 1.5],
-  [2, 3.5],
-  [3, 6.5],
-]);
-export function aggregateReviewScore(
-  reviews: (Review & { active_captain: boolean | null })[],
-  includeNonCaptain?: boolean,
-): number {
-  reviews = reviews.filter(
-    (review) =>
-      (includeNonCaptain || review.active_captain) &&
-      review.score >= -3 &&
-      review.score <= 3 &&
-      review.score !== 0,
-  );
-
-  return reviews.length === 0
-    ? 0
-    : // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      reviews.reduce((sum, review) => sum + reviewScoreMap.get(review.score)!, 0) /
-        Math.sqrt(reviews.length);
-}
-
 export function cleanNominationDescription(description: string | null): string | null {
   return description == null
     ? null

@@ -13,6 +13,7 @@
     "express-mysql-session": "^2.1.7",
     "express-session": "^1.17.2",
     "http-terminator": "^3.0.3",
+    "loved-bridge": "file:../bridge",
     "mysql": "^2.18.1",
     "superagent": "7.1.1"
   },
@@ -33,7 +34,7 @@
     "eslint-plugin-regex": "^1.8.0",
     "prettier": "^2.4.0",
     "tsc-watch": "^4.5.0",
-    "typescript": "^4.4.3"
+    "typescript": "^4.7.0-dev.20220404"
   },
   "engines": {
     "node": ">=14"

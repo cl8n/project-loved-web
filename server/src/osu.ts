@@ -1,3 +1,16 @@
+import { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
+import type {
+  Beatmap,
+  Beatmapset,
+  BeatmapsetCreator,
+  Poll,
+  Round,
+  RoundGameMode,
+  TokenInfo,
+  User,
+} from 'loved-bridge/tables';
+import { LogType } from 'loved-bridge/tables';
 import qs from 'querystring';
 import type { Request, Response, SuperAgentStatic } from 'superagent';
 import superagent from 'superagent';

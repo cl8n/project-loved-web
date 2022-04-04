@@ -18,14 +18,16 @@ services:
       NODE_ENV: development
     volumes:
       - api_storage:/storage
-      - ./server:/srv/loved
+      - ./bridge:/app/bridge
+      - ./server:/app/server
 
   assets:
     build:
       context: ./docker
       dockerfile: Dockerfile-assets
     volumes:
-      - ./client:/app/loved
+      - ./bridge:/app/bridge
+      - ./client:/app/client
 
   database:
     build:

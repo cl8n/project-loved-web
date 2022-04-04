@@ -1,20 +1,3 @@
-declare const enum GameMode {
-  osu,
-  taiko,
-  catch,
-  mania,
-}
-
-declare const enum RankedStatus {
-  graveyard = -2,
-  workInProgress = -1,
-  pending = 0,
-  ranked = 1,
-  approved = 2,
-  qualified = 3,
-  loved = 4,
-}
-
 declare const enum SyslogLevel {
   emerg,
   alert,
@@ -26,245 +9,9 @@ declare const enum SyslogLevel {
   debug,
 }
 
-interface UserWithRoles extends User {
-  roles: UserRole[];
-}
-
-//#region Database
-declare const enum AssigneeType {
-  metadata,
-  moderator,
-}
-
-declare const enum ConsentValue {
-  no,
-  yes,
-  unreachable,
-}
-
-declare const enum DescriptionState {
-  notReviewed,
-  reviewed,
-}
-
-declare const enum LogType {
-  apiServerStarted,
-  loggedIn,
-  loggedOut,
-  userCreated,
-  userUpdated,
-  roleCreated,
-  roleDeleted,
-  roleToggledAlumni,
-  mapperConsentCreated,
-  mapperConsentUpdated,
-  mapperConsentBeatmapsetCreated,
-  mapperConsentBeatmapsetDeleted,
-  mapperConsentBeatmapsetUpdated,
-  // submissionCreated,
-  // reviewCreated,
-  // reviewDeleted,
-  // reviewUpdated,
-  // beatmapsetCreated,
-  // beatmapsetDeleted,
-  // beatmapsetSoftDeleted,
-  // beatmapsetUpdated,
-  // nominationCreated,
-  // nominationDeleted,
-}
-
-declare const enum MetadataState {
-  unchecked,
-  needsChange,
-  good,
-}
-
-declare const enum ModeratorState {
-  unchecked,
-  needsChange,
-  sentToReview,
-  good,
-  notAllowed,
-}
-
-declare const enum Role {
-  admin,
-  captain,
-  metadata,
-  moderator,
-  news,
-  developer,
-  spectator,
-  video,
-}
-
-interface Beatmap {
-  id: number;
-  beatmapset_id: number;
-  bpm: number;
-  deleted_at: Date | null;
-  game_mode: GameMode;
-  key_count: number | null;
-  play_count: number;
-  ranked_status: RankedStatus;
-  star_rating: number;
-  total_length: number;
-  version: string;
-}
-
-interface Beatmapset {
-  id: number;
-  api_fetched_at: Date;
-  artist: string;
-  creator_id: number;
-  creator_name: string;
-  deleted_at: Date | null;
-  favorite_count: number;
-  play_count: number;
-  ranked_status: RankedStatus;
-  submitted_at: Date;
-  title: string;
-  updated_at: Date;
-}
-
-interface BeatmapsetCreator {
-  beatmapset_id: number;
-  creator_id: number;
-  game_mode: GameMode;
-}
-
-interface Consent {
-  user_id: number;
-  consent: ConsentValue | null;
-  consent_reason: string | null;
-  updated_at: Date;
-  updater_id: number;
-}
-
-interface ConsentBeatmapset {
-  beatmapset_id: number;
-  user_id: number;
-  consent: boolean;
-  consent_reason: string | null;
-}
-
-interface Log {
-  id: number;
-  created_at: Date;
-  type: LogType;
-  values: string | null;
-}
-
-interface Nomination {
-  id: number;
-  beatmapset_id: number;
-  description: string | null;
-  description_author_id: number | null;
-  description_state: DescriptionState;
-  game_mode: GameMode;
-  metadata_state: MetadataState;
-  moderator_state: ModeratorState;
-  order: number;
-  overwrite_artist: string | null;
-  overwrite_title: string | null;
-  parent_id: number | null;
-  round_id: number;
-}
-
-interface NominationAssignee {
-  assignee_id: number;
-  nomination_id: number;
-  type: AssigneeType;
-}
-
-interface NominationExcludedBeatmap {
-  beatmap_id: number;
-  nomination_id: number;
-}
-
-interface NominationNominator {
-  nomination_id: number;
-  nominator_id: number;
-}
-
-interface Poll {
-  id: number;
-  beatmapset_id: number;
-  ended_at: Date;
-  game_mode: GameMode;
-  result_no: number | null;
-  result_yes: number | null;
-  round_id: number;
-  started_at: Date;
-  topic_id: number;
-}
-
-interface Review {
-  id: number;
-  beatmapset_id: number;
-  game_mode: GameMode;
-  reason: string;
-  reviewed_at: Date;
-  reviewer_id: number;
-  score: number;
-}
-
-interface Round {
-  id: number;
-  done: boolean;
-  ignore_moderator_checks: boolean;
-  name: string;
-  news_author_id: number;
-  news_intro: string | null;
-  news_intro_preview: string | null;
-  news_outro: string | null;
-  news_posted_at: Date | null;
-}
-
-interface RoundGameMode {
-  round_id: number;
-  game_mode: GameMode;
-  nominations_locked: boolean;
-  results_post_id: number | null;
-  voting_threshold: number;
-}
-
-interface Submission {
-  id: number;
-  beatmapset_id: number;
-  game_mode: GameMode;
-  reason: string | null;
-  submitted_at: Date | null;
-  submitter_id: number | null;
-}
-
-interface TokenInfo {
-  accessToken: string;
-  refreshToken: string;
-  tokenExpiresAt: number;
-}
-
-interface User {
-  id: number;
-  api_fetched_at: Date;
-  avatar_url: string;
-  banned: boolean;
-  country: string;
-  name: string;
-}
-
-interface UserName {
-  id: number;
-  name: string;
-}
-
-interface UserRole {
-  game_mode: GameMode | -1;
-  role_id: Role;
-  user_id: number;
-  alumni: boolean;
-}
-//#endregion
+type UserWithRoles = import('loved-bridge/tables').User & {
+  roles: import('loved-bridge/tables').UserRole[];
+};
 
 //#region Express
 declare namespace Express {
@@ -272,7 +19,7 @@ declare namespace Express {
     // Required properties are not actually required
     session: import('express-session').Session &
       Partial<import('express-session').SessionData> &
-      TokenInfo & {
+      import('loved-bridge/tables').TokenInfo & {
         authBackUrl?: string | undefined;
         authState?: string;
         userId: number;
@@ -304,9 +51,9 @@ interface OsuApiBeatmap {
   deleted_at?: string | null;
   difficulty_rating: number;
   id: number;
-  mode_int: GameMode;
+  mode_int: import('loved-bridge/beatmaps/gameMode').GameMode;
   playcount: number;
-  ranked: RankedStatus;
+  ranked: import('loved-bridge/beatmaps/rankedStatus').RankedStatus;
   total_length: number;
   version: string;
 }
@@ -319,7 +66,7 @@ interface OsuApiBeatmapset {
   id: number;
   last_updated: string;
   play_count: number;
-  ranked: RankedStatus;
+  ranked: import('loved-bridge/beatmaps/rankedStatus').RankedStatus;
   submitted_date: string;
   title: string;
   user_id: number;

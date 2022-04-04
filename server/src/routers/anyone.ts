@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import type { Beatmapset, Consent, ConsentBeatmapset, Review, User } from 'loved-bridge/tables';
+import { LogType, Role } from 'loved-bridge/tables';
 import db from '../db';
 import { asyncHandler } from '../express-helpers';
 import { currentUserRoles } from '../guards';

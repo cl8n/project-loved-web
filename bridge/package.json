@@ -1,0 +1,25 @@
+{
+  "name": "loved-bridge",
+  "private": true,
+  "scripts": {
+    "build": "eslint --max-warnings 0 . && rm -rf build && tsc --noEmitOnError"
+  },
+  "devDependencies": {
+    "@types/node": "^14.18.12",
+    "@typescript-eslint/eslint-plugin": "^4.33.0",
+    "@typescript-eslint/parser": "^4.33.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.6.2",
+    "typescript": "^4.7.0-dev.20220404"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "exports": {
+    "./*": "./build/*.js"
+  }
+}

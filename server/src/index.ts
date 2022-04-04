@@ -8,6 +8,8 @@ import express from 'express';
 import mysqlSessionStoreFactory from 'express-mysql-session';
 import session from 'express-session';
 import { createHttpTerminator } from 'http-terminator';
+import type { UserRole } from 'loved-bridge/tables';
+import { LogType } from 'loved-bridge/tables';
 import db from './db';
 import { asyncHandler } from './express-helpers';
 import { hasLocalInteropKeyMiddleware, isAnyRoleMiddleware } from './guards';

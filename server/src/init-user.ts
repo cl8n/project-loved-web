@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import 'dotenv/config';
+import { Role } from 'loved-bridge/tables';
 import db from './db';
 import { Osu } from './osu';
 

@@ -1,4 +1,16 @@
 import { Router } from 'express';
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import { gameModes } from 'loved-bridge/beatmaps/gameMode';
+import type {
+  Beatmap,
+  Beatmapset,
+  Nomination,
+  NominationAssignee,
+  Poll,
+  Round,
+  RoundGameMode,
+  User,
+} from 'loved-bridge/tables';
 import db from '../db';
 import { asyncHandler } from '../express-helpers';
 import { groupBy } from '../helpers';
@@ -215,7 +227,7 @@ interopRouter.get(
     );
 
     res.json({
-      discord_webhooks: [0, 1, 2, 3].map(
+      discord_webhooks: gameModes.map(
         (gameMode) => accessSetting(`discordWebhook.${gameMode}`) || null,
       ),
       nominations,

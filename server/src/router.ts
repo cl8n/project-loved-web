@@ -1,4 +1,19 @@
 import { Router } from 'express';
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import { gameModes } from 'loved-bridge/beatmaps/gameMode';
+import type {
+  Beatmap,
+  Beatmapset,
+  Log,
+  Nomination,
+  NominationAssignee,
+  Poll,
+  Round,
+  RoundGameMode,
+  User,
+  UserRole,
+} from 'loved-bridge/tables';
+import { AssigneeType, DescriptionState, LogType, MetadataState, Role } from 'loved-bridge/tables';
 import db from './db';
 import { asyncHandler } from './express-helpers';
 import {
@@ -803,7 +818,7 @@ router.post('/add-round', isNewsAuthorMiddleware, (_, res) => {
       },
     ]);
 
-    for (const gameMode of [0, 1, 2, 3]) {
+    for (const gameMode of gameModes) {
       // TODO: 1 query instead of 4
       await connection.query('INSERT INTO round_game_modes SET ?', [
         {
