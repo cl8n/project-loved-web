@@ -110,7 +110,7 @@ export const reviewScoreMessages = [
 export const reviewScoreClasses = reviewScoreMessages.map(
   (_, score) => `review-score-${score - 3}`,
 );
-export const selectableReviewScores = [3, 2, 1, -1, -2, -3];
+export const reviewScoreSymbols = ['-2', '-1.5', '-1', '0', '+1', '+1.5', '+2'] as const;
 
 export function submissionIsNew(submission: ISubmission): boolean {
   const submitDate = dateFromString(submission.submitted_at);

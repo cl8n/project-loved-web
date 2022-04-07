@@ -313,6 +313,14 @@ anyoneRouter.post(
       [req.body.beatmapsetId, res.typedLocals.user.id, req.body.gameMode],
     );
 
+    // "Support" and "Rejection" are no longer selectable, unless the review was already set to the same score
+    if (
+      (req.body.score === -2 || req.body.score === 2) &&
+      req.body.score !== existingReview?.score
+    ) {
+      return res.status(422).json({ error: 'Invalid score' });
+    }
+
     if (existingReview != null) {
       await db.query('UPDATE reviews SET ? WHERE id = ?', [
         {

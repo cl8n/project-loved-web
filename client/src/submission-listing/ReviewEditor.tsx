@@ -10,7 +10,7 @@ import { Role } from '../interfaces';
 import { Modal } from '../Modal';
 import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
-import { reviewScoreClasses, reviewScoreMessages, selectableReviewScores } from './helpers';
+import { reviewScoreClasses, reviewScoreMessages, reviewScoreSymbols } from './helpers';
 
 const messages = defineMessages({
   notAllowed: {
@@ -55,6 +55,14 @@ export default function ReviewEditor({
       .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));
   };
+  const selectableReviewScores = [
+    3,
+    review?.score === 2 && 2,
+    1,
+    -1,
+    review?.score === -2 && -2,
+    -3,
+  ].filter((score) => score !== false) as number[];
 
   return (
     <Modal close={() => setModalOpen(false)} open={modalOpen}>
@@ -85,7 +93,7 @@ export default function ReviewEditor({
                   {selectableReviewScores.map((score) => (
                     <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
                       {intl.formatMessage(reviewScoreMessages[score + 3])} (
-                      {intl.formatNumber(score, { signDisplay: 'exceptZero' })})
+                      {reviewScoreSymbols[score + 3]})
                     </option>
                   ))}
                   {hasRole(authUser, Role.captain, gameMode) && (
