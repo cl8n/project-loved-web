@@ -1,6 +1,10 @@
 import type { GameMode } from './beatmaps/gameMode';
 import type { RankedStatus } from './beatmaps/rankedStatus';
 
+declare global {
+  type TableDateType = unknown;
+}
+
 export const enum AssigneeType {
   metadata,
   moderator,
@@ -73,7 +77,7 @@ export interface Beatmap {
   id: number;
   beatmapset_id: number;
   bpm: number;
-  deleted_at: Date | null;
+  deleted_at: TableDateType | null;
   game_mode: GameMode;
   key_count: number | null;
   play_count: number;
@@ -85,17 +89,17 @@ export interface Beatmap {
 
 export interface Beatmapset {
   id: number;
-  api_fetched_at: Date;
+  api_fetched_at: TableDateType;
   artist: string;
   creator_id: number;
   creator_name: string;
-  deleted_at: Date | null;
+  deleted_at: TableDateType | null;
   favorite_count: number;
   play_count: number;
   ranked_status: RankedStatus;
-  submitted_at: Date;
+  submitted_at: TableDateType;
   title: string;
-  updated_at: Date;
+  updated_at: TableDateType;
 }
 
 export interface BeatmapsetCreator {
@@ -108,7 +112,7 @@ export interface Consent {
   user_id: number;
   consent: ConsentValue | null;
   consent_reason: string | null;
-  updated_at: Date;
+  updated_at: TableDateType;
   updater_id: number;
 }
 
@@ -121,7 +125,7 @@ export interface ConsentBeatmapset {
 
 export interface Log {
   id: number;
-  created_at: Date;
+  created_at: TableDateType;
   type: LogType;
   values: string | null;
 }
@@ -161,12 +165,12 @@ export interface NominationNominator {
 export interface Poll {
   id: number;
   beatmapset_id: number;
-  ended_at: Date;
+  ended_at: TableDateType;
   game_mode: GameMode;
   result_no: number | null;
   result_yes: number | null;
   round_id: number;
-  started_at: Date;
+  started_at: TableDateType;
   topic_id: number;
 }
 
@@ -175,7 +179,7 @@ export interface Review {
   beatmapset_id: number;
   game_mode: GameMode;
   reason: string;
-  reviewed_at: Date;
+  reviewed_at: TableDateType;
   reviewer_id: number;
   score: number;
 }
@@ -189,7 +193,7 @@ export interface Round {
   news_intro: string | null;
   news_intro_preview: string | null;
   news_outro: string | null;
-  news_posted_at: Date | null;
+  news_posted_at: TableDateType | null;
 }
 
 export interface RoundGameMode {
@@ -205,7 +209,7 @@ export interface Submission {
   beatmapset_id: number;
   game_mode: GameMode;
   reason: string | null;
-  submitted_at: Date | null;
+  submitted_at: TableDateType | null;
   submitter_id: number | null;
 }
 
@@ -217,7 +221,7 @@ export interface TokenInfo {
 
 export interface User {
   id: number;
-  api_fetched_at: Date;
+  api_fetched_at: TableDateType;
   avatar_url: string;
   banned: boolean;
   country: string;
