@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import type { Beatmapset, Consent, ConsentBeatmapset, Review, User } from 'loved-bridge/tables';
 import { LogType, Role } from 'loved-bridge/tables';
+import type { MysqlConnectionType } from '../db';
 import db from '../db';
 import { asyncHandler } from '../express-helpers';
 import { currentUserRoles } from '../guards';
@@ -321,19 +322,36 @@ anyoneRouter.post(
       return res.status(422).json({ error: 'Invalid score' });
     }
 
-    if (existingReview != null) {
-      await db.query('UPDATE reviews SET ? WHERE id = ?', [
-        {
-          reason: req.body.reason,
-          reviewed_at: new Date(),
-          score: req.body.score,
-        },
-        existingReview.id,
-      ]);
+    const deleteExistingSubmission = (connection: MysqlConnectionType) =>
+      connection.query(
+        `
+          DELETE FROM submissions
+          WHERE beatmapset_id = ?
+            AND game_mode = ?
+            AND submitter_id = ?
+            AND reason IS NULL
+        `,
+        [req.body.beatmapsetId, req.body.gameMode, res.typedLocals.user.id],
+      );
 
-      return res.json({
-        ...(await db.queryOne<Review>('SELECT * FROM reviews WHERE id = ?', [existingReview.id])),
-        active_captain: activeCaptain,
+    if (existingReview != null) {
+      return await db.transact(async (connection) => {
+        await connection.query('UPDATE reviews SET ? WHERE id = ?', [
+          {
+            reason: req.body.reason,
+            reviewed_at: new Date(),
+            score: req.body.score,
+          },
+          existingReview.id,
+        ]);
+        await deleteExistingSubmission(connection);
+
+        res.json({
+          ...(await connection.queryOne<Review>('SELECT * FROM reviews WHERE id = ?', [
+            existingReview.id,
+          ])),
+          active_captain: activeCaptain,
+        });
       });
     }
 
@@ -349,20 +367,23 @@ anyoneRouter.post(
       });
     }
 
-    const { insertId } = await db.query('INSERT INTO reviews SET ?', [
-      {
-        beatmapset_id: req.body.beatmapsetId,
-        game_mode: req.body.gameMode,
-        reason: req.body.reason,
-        reviewed_at: new Date(),
-        reviewer_id: res.typedLocals.user.id,
-        score: req.body.score,
-      },
-    ]);
+    await db.transact(async (connection) => {
+      const { insertId } = await connection.query('INSERT INTO reviews SET ?', [
+        {
+          beatmapset_id: req.body.beatmapsetId,
+          game_mode: req.body.gameMode,
+          reason: req.body.reason,
+          reviewed_at: new Date(),
+          reviewer_id: res.typedLocals.user.id,
+          score: req.body.score,
+        },
+      ]);
+      await deleteExistingSubmission(connection);
 
-    res.json({
-      ...(await db.queryOne<Review>('SELECT * FROM reviews WHERE id = ?', [insertId])),
-      active_captain: activeCaptain,
+      res.json({
+        ...(await connection.queryOne<Review>('SELECT * FROM reviews WHERE id = ?', [insertId])),
+        active_captain: activeCaptain,
+      });
     });
   }),
 );
