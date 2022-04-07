@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { addOrUpdateReview, alertApiErrorMessage } from '../api';
 import { autoHeightRef } from '../auto-height';
 import { BeatmapInline } from '../BeatmapInline';
@@ -16,6 +16,27 @@ const messages = defineMessages({
   notAllowed: {
     defaultMessage: 'Not allowed',
     description: 'Aggregate review score shown on submissions table for maps that cannot be Loved',
+  },
+  selectScore: {
+    defaultMessage: 'Select a score',
+    description: 'Placeholder value for review score selector',
+  },
+
+  add: {
+    defaultMessage: 'Add',
+    description: 'Add button',
+  },
+  adding: {
+    defaultMessage: 'Adding...',
+    description: 'Add button when in progress',
+  },
+  update: {
+    defaultMessage: 'Update',
+    description: 'Update button',
+  },
+  updating: {
+    defaultMessage: 'Updating...',
+    description: 'Update button when in progress',
   },
 });
 
@@ -66,16 +87,20 @@ export default function ReviewEditor({
 
   return (
     <Modal close={() => setModalOpen(false)} open={modalOpen}>
-      <h2>
-        <BeatmapInline beatmapset={beatmapset} gameMode={gameMode} />
-        {' review'}
-      </h2>
+      <FormattedMessage
+        defaultMessage='{beatmapset} review'
+        description='Title of review modal'
+        tagName='h2'
+        values={{ beatmapset: <BeatmapInline beatmapset={beatmapset} gameMode={gameMode} /> }}
+      />
       <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
         <table>
           <tbody>
             <tr>
               <td>
-                <label htmlFor='score'>Score</label>
+                <label htmlFor='score'>
+                  <FormattedMessage defaultMessage='Score' description='Review score input label' />
+                </label>
               </td>
               <td>
                 <select
@@ -88,7 +113,7 @@ export default function ReviewEditor({
                   }
                 >
                   <option hidden value=''>
-                    Select a score
+                    {intl.formatMessage(messages.selectScore)}
                   </option>
                   {selectableReviewScores.map((score) => (
                     <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
@@ -106,7 +131,12 @@ export default function ReviewEditor({
             </tr>
             <tr>
               <td>
-                <label htmlFor='reason'>Reason</label>
+                <label htmlFor='reason'>
+                  <FormattedMessage
+                    defaultMessage='Reason'
+                    description='Review reason input label'
+                  />
+                </label>
               </td>
               <td>
                 <textarea
@@ -120,13 +150,15 @@ export default function ReviewEditor({
           </tbody>
         </table>
         <button type='submit' className='modal-submit-button'>
-          {busy
-            ? review == null
-              ? 'Adding...'
-              : 'Updating...'
-            : review == null
-            ? 'Add'
-            : 'Update'}
+          {intl.formatMessage(
+            busy
+              ? review == null
+                ? messages.adding
+                : messages.updating
+              : review == null
+              ? messages.add
+              : messages.update,
+          )}
         </button>
       </Form>
     </Modal>
