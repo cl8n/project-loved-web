@@ -306,14 +306,9 @@ export function Picks() {
                     Unlock nominations
                   </button>
                 ) : (
-                  <>
-                    <button type='button' className='angry' onClick={() => toggleLock(gameMode)}>
-                      Lock nominations
-                    </button>
-                    <span className='important-bad'>
-                      ← Press this when all nominations are added!
-                    </span>
-                  </>
+                  <button type='button' className='angry' onClick={() => toggleLock(gameMode)}>
+                    Lock nominations
+                  </button>
                 ))}
             </div>
           )}
