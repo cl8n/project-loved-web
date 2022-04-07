@@ -93,9 +93,6 @@ export function Header() {
         <a href='https://osu.ppy.sh/beatmapsets?s=loved'>
           <FormattedMessage defaultMessage='Loved listing' description='Nav link' />
         </a>
-        <a href='https://osu.ppy.sh/community/forums/120'>
-          <FormattedMessage defaultMessage='Forum' description='Nav link' />
-        </a>
         <a href='https://osu.ppy.sh/wiki/Project_Loved'>
           <FormattedMessage defaultMessage='Wiki' description='Nav link' />
         </a>
