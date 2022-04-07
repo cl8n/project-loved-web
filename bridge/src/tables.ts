@@ -31,6 +31,7 @@ export const enum LogType {
   mapperConsentBeatmapsetCreated,
   mapperConsentBeatmapsetDeleted,
   mapperConsentBeatmapsetUpdated,
+  settingUpdated,
   // submissionCreated,
   // reviewCreated,
   // reviewDeleted,

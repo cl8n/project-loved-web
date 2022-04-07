@@ -35,6 +35,7 @@ export enum LogType {
   mapperConsentBeatmapsetCreated,
   mapperConsentBeatmapsetDeleted,
   mapperConsentBeatmapsetUpdated,
+  settingUpdated,
 }
 
 export enum MetadataState {

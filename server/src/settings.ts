@@ -18,7 +18,7 @@ export const settings: Record<string, any> = existsSync(settingsPath)
   ? JSON.parse(readFileSync(settingsPath, 'utf8'))
   : (writeFileSync(settingsPath, '{}'), {});
 
-function updateSettingInternal(key: string, value: unknown): void {
+function updateSetting(key: string, value: unknown): boolean {
   const keyParts = key.split('.');
   let modifyingScope = settings;
 
@@ -32,26 +32,28 @@ function updateSettingInternal(key: string, value: unknown): void {
     modifyingScope = modifyingScope[keyPart];
   }
 
-  modifyingScope[keyParts[keyParts.length - 1]] = value;
-}
-
-function writeSettings(): void {
-  writeFileSync(settingsPath, JSON.stringify(settings));
+  if (modifyingScope[keyParts[keyParts.length - 1]] === value) {
+    return false;
+  } else {
+    modifyingScope[keyParts[keyParts.length - 1]] = value;
+    return true;
+  }
 }
 
 export function accessSetting<T>(key: string): T {
   return accessNested(settings, key);
 }
 
-export function updateSetting(key: string, value: unknown): void {
-  updateSettingInternal(key, value);
-  writeSettings();
-}
+export function updateSettings(newSettings: Record<string, unknown>): string[] {
+  const modifiedSettings: string[] = [];
 
-export function updateSettings(newSettings: Record<string, unknown>): void {
   for (const [key, value] of Object.entries(newSettings)) {
-    updateSettingInternal(key, value);
+    if (updateSetting(key, value)) {
+      modifiedSettings.push(key);
+    }
   }
 
-  writeSettings();
+  writeFileSync(settingsPath, JSON.stringify(settings));
+
+  return modifiedSettings;
 }

@@ -1256,10 +1256,32 @@ router.get('/settings', isCaptainMiddleware, (_, res) => {
   res.json(settings);
 });
 
-router.put('/settings', isCaptainMiddleware, (req, res) => {
-  updateSettings(req.body);
-  res.json(settings);
-});
+router.put(
+  '/settings',
+  isCaptainMiddleware,
+  asyncHandler(async (req, res) => {
+    const modifiedSettings = updateSettings(req.body);
+
+    await db.transact(async (connection) => {
+      for (const setting of modifiedSettings) {
+        await dbLog(
+          LogType.settingUpdated,
+          {
+            actor: {
+              country: res.typedLocals.user.country,
+              id: res.typedLocals.user.id,
+              name: res.typedLocals.user.name,
+            },
+            setting,
+          },
+          connection,
+        );
+      }
+    });
+
+    res.json(settings);
+  }),
+);
 
 router.get(
   '/logs',

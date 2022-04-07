@@ -23,6 +23,7 @@ const logTemplates = {
     '{actor} deleted mapper consent for {user} on {beatmapset}',
   [LogType.mapperConsentBeatmapsetUpdated]:
     '{actor} updated mapper consent for {user} on {beatmapset}',
+  [LogType.settingUpdated]: '{actor} updated setting {setting}',
 };
 
 function logElementForTemplate(
@@ -50,6 +51,8 @@ function logElementForTemplate(
       return <UserInline user={values.to} />;
     case `${LogType.roleToggledAlumni}-markedOrUnmarked`:
       return values.role.alumni ? 'marked' : 'unmarked';
+    case `${LogType.settingUpdated}-setting`:
+      return <code>{values.setting}</code>;
   }
 
   return <Never />;
