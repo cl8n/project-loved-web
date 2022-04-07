@@ -40,6 +40,10 @@ const messages = defineMessages({
     defaultMessage: 'Are you sure you want to delete your review?',
     description: 'Confirmation to delete own review on a beatmapset',
   },
+  editReview: {
+    defaultMessage: 'Edit review',
+    description: 'Button to edit own review',
+  },
   expand: {
     defaultMessage: 'Expand',
     description: 'Button to expand dropdowns',
@@ -331,7 +335,7 @@ export default function SubmissionBeatmapset({
                   </button>
                 )}{' '}
                 <button type='button' onClick={() => setReviewModalOpen(true)}>
-                  {intl.formatMessage(messages.review)}
+                  {intl.formatMessage(review == null ? messages.review : messages.editReview)}
                 </button>{' '}
                 <Help>{intl.formatMessage(messages.reviewHelp, { key: <kbd>Ctrl</kbd> })}</Help>
               </div>
