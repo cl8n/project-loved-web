@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import { FormattedMessage } from 'react-intl';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { registerTextareaAutoHeightTrigger } from './auto-height';
+import BackToTopButton from './BackToTopButton';
 import { Header } from './Header';
 import { IntlProviderWrapper } from './intl';
 import Localization from './localization';
@@ -96,6 +97,7 @@ render(
               />
             </a>
           </footer>
+          <BackToTopButton />
         </IntlProviderWrapper>
       </OsuAuthProvider>
     </BrowserRouter>

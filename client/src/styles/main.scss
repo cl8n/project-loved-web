@@ -804,3 +804,10 @@ tr.sticky > th {
     margin-right: 1em;
   }
 }
+
+.back-to-top {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 10;
+}
