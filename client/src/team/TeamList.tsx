@@ -1,8 +1,8 @@
+import { Role } from 'loved-bridge/tables';
 import { defineMessages, useIntl } from 'react-intl';
 import type { ResponseError } from 'superagent';
 import type { GetTeamResponseBody } from '../api';
 import { apiErrorMessage } from '../api';
-import { Role } from '../interfaces';
 import { gameModeLongName, gameModes } from '../osu-helpers';
 import UserList from './UserList';
 

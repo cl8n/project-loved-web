@@ -1,49 +1,16 @@
-export enum AssigneeType {
-  metadata,
-  moderator,
-}
-
-export enum ConsentValue {
-  no,
-  yes,
-  unreachable,
-}
-
-export enum DescriptionState {
-  notReviewed,
-  reviewed,
-}
+import type {
+  ConsentValue,
+  DescriptionState,
+  MetadataState,
+  ModeratorState,
+  Role,
+} from 'loved-bridge/tables';
 
 export enum GameMode {
   osu,
   taiko,
   catch,
   mania,
-}
-
-export enum MetadataState {
-  unchecked,
-  needsChange,
-  good,
-}
-
-export enum ModeratorState {
-  unchecked,
-  needsChange,
-  sentToReview,
-  good,
-  notAllowed,
-}
-
-export enum Role {
-  admin,
-  captain,
-  metadata,
-  moderator,
-  news,
-  developer,
-  spectator,
-  video,
 }
 
 interface IGenericBeatmap {

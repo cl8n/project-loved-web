@@ -1,10 +1,10 @@
+import { ModeratorState } from 'loved-bridge/tables';
 import { useState } from 'react';
 import { alertApiErrorMessage, updateNominationModeration } from '../api';
 import { BeatmapInline } from '../BeatmapInline';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
 import type { INomination, PartialWithId } from '../interfaces';
-import { ModeratorState } from '../interfaces';
 import { Modal } from '../Modal';
 
 interface EditModerationProps {

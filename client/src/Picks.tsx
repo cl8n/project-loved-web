@@ -1,3 +1,10 @@
+import {
+  AssigneeType,
+  DescriptionState,
+  MetadataState,
+  ModeratorState,
+  Role,
+} from 'loved-bridge/tables';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
@@ -33,8 +40,6 @@ import type {
   IUser,
   PartialWithId,
 } from './interfaces';
-import { Role } from './interfaces';
-import { AssigneeType, DescriptionState, MetadataState, ModeratorState } from './interfaces';
 import ListInline from './ListInline';
 import ListInput from './ListInput';
 import { Modal } from './Modal';

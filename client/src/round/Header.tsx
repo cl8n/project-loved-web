@@ -1,7 +1,7 @@
+import { Role } from 'loved-bridge/tables';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import type { IRound, IUser } from '../interfaces';
-import { Role } from '../interfaces';
 import Markdown from '../Markdown';
 import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';

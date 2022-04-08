@@ -1,4 +1,4 @@
-import { Role } from './interfaces';
+import { Role } from 'loved-bridge/tables';
 import type { GameMode, IUserWithRoles } from './interfaces';
 
 export const allRoles = Object.values(Role).filter(

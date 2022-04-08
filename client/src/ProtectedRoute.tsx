@@ -1,7 +1,7 @@
+import type { Role } from 'loved-bridge/tables';
 import { FormattedMessage } from 'react-intl';
 import type { RouteProps } from 'react-router-dom';
 import { Route } from 'react-router-dom';
-import type { Role } from './interfaces';
 import { loginUrl, useOsuAuth } from './osuAuth';
 import { hasRole } from './permissions';
 import useTitle from './useTitle';

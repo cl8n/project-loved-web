@@ -1,3 +1,4 @@
+import { Role } from 'loved-bridge/tables';
 import type { MouseEvent } from 'react';
 import { useMemo, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
@@ -14,7 +15,6 @@ import heartIcon from '../images/icons8/heart.png';
 import musicalNotesIcon from '../images/icons8/musical-notes.png';
 import playIcon from '../images/icons8/play.png';
 import type { IReview } from '../interfaces';
-import { Role } from '../interfaces';
 import { GameMode } from '../interfaces';
 import { Never } from '../Never';
 import { useOsuAuth } from '../osuAuth';

@@ -1,5 +1,5 @@
+import { DescriptionState, MetadataState, ModeratorState } from 'loved-bridge/tables';
 import type { INominationWithPoll } from '../interfaces';
-import { DescriptionState, MetadataState, ModeratorState } from '../interfaces';
 import ListInline from '../ListInline';
 
 function descriptionClass(description: string | undefined, state: DescriptionState) {

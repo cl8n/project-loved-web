@@ -1,5 +1,5 @@
+import { Role } from 'loved-bridge/tables';
 import type { IUserRole } from '../../interfaces';
-import { Role } from '../../interfaces';
 import ListInline from '../../ListInline';
 import { gameModeLongName } from '../../osu-helpers';
 import { roleNames } from '../../permissions';

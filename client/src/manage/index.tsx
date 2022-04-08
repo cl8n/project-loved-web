@@ -1,5 +1,5 @@
+import { Role } from 'loved-bridge/tables';
 import { NavLink, Route, Switch } from 'react-router-dom';
-import { Role } from '../interfaces';
 import { ProtectedRoute } from '../ProtectedRoute';
 import useTitle from '../useTitle';
 import ApiObjects from './api-objects';

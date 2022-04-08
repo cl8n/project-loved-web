@@ -5,18 +5,18 @@ declare global {
   type TableDateType = unknown;
 }
 
-export const enum AssigneeType {
+export enum AssigneeType {
   metadata,
   moderator,
 }
 
-export const enum ConsentValue {
+export enum ConsentValue {
   no,
   yes,
   unreachable,
 }
 
-export const enum DescriptionState {
+export enum DescriptionState {
   notReviewed,
   reviewed,
 }
@@ -48,13 +48,13 @@ export enum LogType {
   // nominationDeleted,
 }
 
-export const enum MetadataState {
+export enum MetadataState {
   unchecked,
   needsChange,
   good,
 }
 
-export const enum ModeratorState {
+export enum ModeratorState {
   unchecked,
   needsChange,
   sentToReview,
@@ -62,7 +62,7 @@ export const enum ModeratorState {
   notAllowed,
 }
 
-export const enum Role {
+export enum Role {
   admin,
   captain,
   metadata,

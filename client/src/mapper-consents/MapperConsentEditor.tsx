@@ -1,3 +1,4 @@
+import { ConsentValue, Role } from 'loved-bridge/tables';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import type { IntlShape } from 'react-intl';
@@ -9,8 +10,6 @@ import type { FormSubmitHandler } from '../dom-helpers';
 import { valueCasts } from '../dom-helpers';
 import { Form } from '../dom-helpers';
 import type { IMapperBeatmapsetConsent, IMapperConsent } from '../interfaces';
-import { Role } from '../interfaces';
-import { ConsentValue } from '../interfaces';
 import ListInputCustom from '../ListInputCustom';
 import { Modal } from '../Modal';
 import { useOsuAuth } from '../osuAuth';

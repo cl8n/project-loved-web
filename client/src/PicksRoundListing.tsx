@@ -1,8 +1,8 @@
+import { Role } from 'loved-bridge/tables';
 import { Link, useHistory } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
 import { addRound, alertApiErrorMessage, apiErrorMessage, getRounds, useApi } from './api';
 import type { IRound } from './interfaces';
-import { Role } from './interfaces';
 import { useOsuAuth } from './osuAuth';
 import { hasRole } from './permissions';
 import PostDate from './round/PostDate';
