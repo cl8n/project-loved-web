@@ -24,9 +24,9 @@ function formatForEditing(messages: TranslatedMessages): Record<string, string> 
 function formatForExporting(messages: Record<string, string | undefined>): string {
   const exportingMessages: Record<string, { defaultMessage: string }> = {};
 
-  for (const message of Object.entries(messages)) {
-    if (message[1]) {
-      exportingMessages[message[0]] = { defaultMessage: message[1] };
+  for (const id of Object.keys(messages).sort()) {
+    if (messages[id]) {
+      exportingMessages[id] = { defaultMessage: messages[id]! };
     }
   }
 
