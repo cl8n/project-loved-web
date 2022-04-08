@@ -127,7 +127,7 @@ export interface Log {
   id: number;
   created_at: TableDateType;
   type: LogType;
-  values: string | null;
+  values: Record<string, unknown> | null;
 }
 
 export interface Nomination {

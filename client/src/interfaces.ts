@@ -1,5 +1,3 @@
-import type { LogType } from 'loved-bridge/tables';
-
 export enum AssigneeType {
   metadata,
   moderator,
@@ -86,13 +84,6 @@ export interface IBeatmapset {
   submitted_at: string;
   title: string;
   updated_at: string;
-}
-
-export interface ILog {
-  id: number;
-  created_at: string;
-  type: LogType;
-  values: Record<string, unknown> | null;
 }
 
 export interface INomination {

@@ -1,3 +1,4 @@
+import type { Log } from 'loved-bridge/tables';
 import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import type { Response as SuperAgentResponse, ResponseError } from 'superagent';
@@ -6,7 +7,6 @@ import type {
   AssigneeType,
   GameMode,
   IBeatmapset,
-  ILog,
   IMapperBeatmapsetConsent,
   IMapperConsent,
   INomination,
@@ -142,7 +142,7 @@ export function getSettings(): Response<ISettings> {
   return superagent.get('/api/settings');
 }
 
-export function getLogs(): Response<ILog[]> {
+export function getLogs(): Response<Log[]> {
   return superagent.get('/api/logs');
 }
 

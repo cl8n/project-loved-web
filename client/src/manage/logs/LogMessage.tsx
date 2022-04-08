@@ -1,7 +1,7 @@
+import type { Log } from 'loved-bridge/tables';
 import { LogType } from 'loved-bridge/tables';
 import type { ReactNode } from 'react';
 import { BeatmapInline } from '../../BeatmapInline';
-import type { ILog } from '../../interfaces';
 import { Never } from '../../Never';
 import { UserInline } from '../../UserInline';
 import { renderRole } from '../roles/RolesList';
@@ -58,7 +58,7 @@ function logElementForTemplate(
   return <Never />;
 }
 
-export default function LogMessage(log: ILog) {
+export default function LogMessage(log: Log) {
   const template = logTemplates[log.type] ?? '{invalid}';
   const templateRegex = /{([a-z]+)}/gi;
   const elements: ReactNode[] = [];
