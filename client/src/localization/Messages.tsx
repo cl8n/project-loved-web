@@ -1,9 +1,17 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import Message from './Message';
 
-type ExportedMessages = Record<string, { defaultMessage: string; description: string }>;
+type CategorizedEnglishMessages = {
+  category: string;
+  messages: { defaultMessage: string; description: string; id: string }[];
+}[];
+type EnglishMessages = Record<
+  string,
+  { category?: string; defaultMessage: string; description: string }
+>;
+type TranslatedMessages = Record<string, { defaultMessage: string }>;
 
-function formatForEditing(messages: ExportedMessages): Record<string, string> {
+function formatForEditing(messages: TranslatedMessages): Record<string, string> {
   const editingMessages: Record<string, string> = {};
 
   for (const message of Object.entries(messages)) {
@@ -25,7 +33,9 @@ function formatForExporting(messages: Record<string, string | undefined>): strin
   return JSON.stringify(exportingMessages, null, 2) + '\n';
 }
 
-function loadMessages(locale: string): Promise<ExportedMessages> {
+function loadMessages(locale: 'en'): Promise<EnglishMessages>;
+function loadMessages(locale: string): Promise<TranslatedMessages>;
+function loadMessages(locale: string): Promise<EnglishMessages | TranslatedMessages> {
   return import(
     /* webpackChunkName: "translations" */
     /* webpackMode: "lazy-once" */
@@ -40,7 +50,7 @@ interface MessagesProps {
 }
 
 export default function Messages({ locale }: MessagesProps) {
-  const [englishMessages, setEnglishMessages] = useState<ExportedMessages>();
+  const [englishMessages, setEnglishMessages] = useState<CategorizedEnglishMessages>();
   const [localeMessages, setLocaleMessages] = useState<Record<string, string | undefined>>();
   const updateMessage = useCallback((id: string, value: string) => {
     setLocaleMessages((prevState) => ({
@@ -50,11 +60,43 @@ export default function Messages({ locale }: MessagesProps) {
   }, []);
 
   useEffect(() => {
-    loadMessages('en').then(setEnglishMessages);
+    loadMessages('en').then((messages) => {
+      const sortedMessages = Object.entries(messages)
+        .sort((a, b) => a[1].description.localeCompare(b[1].description))
+        .sort((a, b) => {
+          const aCategory = a[1].category;
+          const bCategory = b[1].category;
+
+          if (aCategory == null || bCategory == null) {
+            return +(aCategory == null) - +(bCategory == null);
+          }
+
+          return aCategory.localeCompare(bCategory);
+        });
+      const categorizedMessages: CategorizedEnglishMessages = [];
+      let categoryIndex = -1;
+
+      for (const [id, message] of sortedMessages) {
+        const category = message.category ?? 'Uncategorized';
+
+        if (categorizedMessages[categoryIndex]?.category !== category) {
+          categoryIndex++;
+          categorizedMessages[categoryIndex] = { category, messages: [] };
+        }
+
+        categorizedMessages[categoryIndex].messages.push({
+          defaultMessage: message.defaultMessage,
+          description: message.description,
+          id,
+        });
+      }
+
+      setEnglishMessages(categorizedMessages);
+    });
   }, []);
   useEffect(() => {
-    loadMessages(locale).then((exportedMessages) => {
-      setLocaleMessages(formatForEditing(exportedMessages));
+    loadMessages(locale).then((messages) => {
+      setLocaleMessages(formatForEditing(messages));
     });
   }, [locale]);
 
@@ -85,15 +127,20 @@ export default function Messages({ locale }: MessagesProps) {
 
   return (
     <>
-      {Object.entries(englishMessages).map(([id, { defaultMessage, description }]) => (
-        <Message
-          key={id}
-          description={description}
-          englishMessage={defaultMessage}
-          id={id}
-          localeMessage={localeMessages[id]}
-          updateMessage={updateMessage}
-        />
+      {englishMessages.map((messageCategory) => (
+        <Fragment key={messageCategory.category}>
+          <h2>{messageCategory.category}</h2>
+          {messageCategory.messages.map(({ defaultMessage, description, id }) => (
+            <Message
+              key={id}
+              description={description}
+              englishMessage={defaultMessage}
+              id={id}
+              localeMessage={localeMessages[id]}
+              updateMessage={updateMessage}
+            />
+          ))}
+        </Fragment>
       ))}
     </>
   );

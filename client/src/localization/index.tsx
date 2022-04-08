@@ -26,7 +26,7 @@ export default function Localization() {
           'No locale selected'
         ) : (
           <>
-            <h2>{localeName != null ? `${localeName} (${locale})` : locale}</h2>
+            <h1>{localeName != null ? `${localeName} (${locale})` : locale}</h1>
             <Messages locale={locale} />
           </>
         )}
