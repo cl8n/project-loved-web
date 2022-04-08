@@ -1,3 +1,5 @@
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import { gameModeLongName } from 'loved-bridge/beatmaps/gameMode';
 import {
   AssigneeType,
   DescriptionState,
@@ -32,14 +34,7 @@ import { BeatmapInline } from './BeatmapInline';
 import type { FormSubmitHandler } from './dom-helpers';
 import { Form } from './dom-helpers';
 import Help from './Help';
-import type {
-  GameMode,
-  INomination,
-  INominationWithPoll,
-  IRound,
-  IUser,
-  PartialWithId,
-} from './interfaces';
+import type { INomination, INominationWithPoll, IRound, IUser, PartialWithId } from './interfaces';
 import ListInline from './ListInline';
 import ListInput from './ListInput';
 import { Modal } from './Modal';
@@ -47,7 +42,6 @@ import EditModeration from './nomination/EditModeration';
 import EditNominators from './nomination/EditNominators';
 import StatusLine from './nomination/StatusLine';
 import { Orderable } from './Orderable';
-import { gameModeLongName } from './osu-helpers';
 import { useOsuAuth } from './osuAuth';
 import { canActAs, hasRole } from './permissions';
 import Header from './round/Header';

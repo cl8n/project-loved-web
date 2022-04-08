@@ -1,3 +1,4 @@
+import { gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import { Fragment, useState } from 'react';
 import {
   alertApiErrorMessage,
@@ -8,7 +9,6 @@ import {
 } from '../../api';
 import type { FormSubmitHandler } from '../../dom-helpers';
 import { Form } from '../../dom-helpers';
-import { gameModeLongName, gameModes } from '../../osu-helpers';
 
 export default function SettingsForm() {
   const [busy, setBusy] = useState(false);

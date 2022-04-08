@@ -1,3 +1,4 @@
+import { gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { alertApiErrorMessage, updateUserRoles } from '../../api';
@@ -6,7 +7,6 @@ import { Form } from '../../dom-helpers';
 import type { IUserRole, IUserWithRoles } from '../../interfaces';
 import ListInputCustom from '../../ListInputCustom';
 import { Modal } from '../../Modal';
-import { gameModeLongName, gameModes } from '../../osu-helpers';
 import { allRoles, roleNames } from '../../permissions';
 import { UserInline } from '../../UserInline';
 

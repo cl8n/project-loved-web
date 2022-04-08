@@ -1,5 +1,6 @@
-import type { GameMode, IBeatmapset } from './interfaces';
-import { gameModeShortName } from './osu-helpers';
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import { gameModeShortName } from 'loved-bridge/beatmaps/gameMode';
+import type { IBeatmapset } from './interfaces';
 
 interface BeatmapInlineProps {
   artist?: string;

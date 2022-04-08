@@ -1,4 +1,4 @@
-export const enum GameMode {
+export enum GameMode {
   osu,
   taiko,
   catch,

@@ -1,3 +1,10 @@
+import {
+  GameMode,
+  gameModeFromShortName,
+  gameModeLongName,
+  gameModes,
+  gameModeShortName,
+} from 'loved-bridge/beatmaps/gameMode';
 import type { ChangeEvent } from 'react';
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
@@ -6,13 +13,6 @@ import { apiErrorMessage, getSubmissions, useApi } from '../api';
 import { dateFromString } from '../date-format';
 import Help from '../Help';
 import type { IReview } from '../interfaces';
-import { GameMode } from '../interfaces';
-import {
-  gameModeFromShortName,
-  gameModeLongName,
-  gameModes,
-  gameModeShortName,
-} from '../osu-helpers';
 import { useOsuAuth } from '../osuAuth';
 import useTitle from '../useTitle';
 import type { ToggleableColumn, ToggleableColumnsState } from './helpers';

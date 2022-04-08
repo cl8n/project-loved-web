@@ -1,7 +1,7 @@
+import { gameModeLongName } from 'loved-bridge/beatmaps/gameMode';
 import { Role } from 'loved-bridge/tables';
 import type { IUserRole } from '../../interfaces';
 import ListInline from '../../ListInline';
-import { gameModeLongName } from '../../osu-helpers';
 import { roleNames } from '../../permissions';
 
 export function renderRole(role: IUserRole) {

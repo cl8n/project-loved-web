@@ -1,3 +1,4 @@
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import type {
   ConsentValue,
   DescriptionState,
@@ -5,13 +6,6 @@ import type {
   ModeratorState,
   Role,
 } from 'loved-bridge/tables';
-
-export enum GameMode {
-  osu,
-  taiko,
-  catch,
-  mania,
-}
 
 interface IGenericBeatmap {
   id: number;

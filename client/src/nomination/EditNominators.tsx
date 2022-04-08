@@ -1,10 +1,11 @@
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import type { ResponseError } from 'superagent';
 import { alertApiErrorMessage, apiErrorMessage, updateNominators } from '../api';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
-import type { GameMode, INomination, IUser, PartialWithId } from '../interfaces';
+import type { INomination, IUser, PartialWithId } from '../interfaces';
 import { Modal } from '../Modal';
 import { UserInline } from '../UserInline';
 

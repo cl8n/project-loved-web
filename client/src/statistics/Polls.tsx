@@ -1,10 +1,11 @@
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import { gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import type { ChangeEvent } from 'react';
 import { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { apiErrorMessage, getPolls, useApi } from '../api';
 import { BeatmapInline } from '../BeatmapInline';
-import type { GameMode, IPoll } from '../interfaces';
-import { gameModeLongName, gameModes } from '../osu-helpers';
+import type { IPoll } from '../interfaces';
 
 const messages = defineMessages({
   all: {

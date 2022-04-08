@@ -1,3 +1,4 @@
+import { gameModeLongName, gameModes, gameModeShortName } from 'loved-bridge/beatmaps/gameMode';
 import { useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useHistory } from 'react-router-dom';
@@ -5,7 +6,6 @@ import { addSubmission, alertApiErrorMessage } from '../api';
 import { autoHeightRef } from '../auto-height';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
-import { gameModeLongName, gameModes, gameModeShortName } from '../osu-helpers';
 
 const messages = defineMessages({
   submit: {

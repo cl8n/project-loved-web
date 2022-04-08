@@ -1,3 +1,4 @@
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { Role } from 'loved-bridge/tables';
 import { useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
@@ -6,7 +7,7 @@ import { autoHeightRef } from '../auto-height';
 import { BeatmapInline } from '../BeatmapInline';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
-import type { GameMode, IBeatmapset, IReview } from '../interfaces';
+import type { IBeatmapset, IReview } from '../interfaces';
 import { Modal } from '../Modal';
 import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';

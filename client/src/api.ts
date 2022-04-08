@@ -1,10 +1,10 @@
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import type { AssigneeType, Log, MetadataState, ModeratorState, Role } from 'loved-bridge/tables';
 import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import type { Response as SuperAgentResponse, ResponseError } from 'superagent';
 import superagent from 'superagent';
 import type {
-  GameMode,
   IBeatmapset,
   IMapperBeatmapsetConsent,
   IMapperConsent,

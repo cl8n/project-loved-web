@@ -1,7 +1,6 @@
+import { GameMode, gameModeLongName } from 'loved-bridge/beatmaps/gameMode';
 import { FormattedMessage } from 'react-intl';
 import { Link } from 'react-router-dom';
-import { GameMode } from './interfaces';
-import { gameModeLongName } from './osu-helpers';
 import useTitle from './useTitle';
 
 export default function MorePages() {

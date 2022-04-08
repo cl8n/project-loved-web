@@ -1,5 +1,6 @@
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { Role } from 'loved-bridge/tables';
-import type { GameMode, IUserWithRoles } from './interfaces';
+import type { IUserWithRoles } from './interfaces';
 
 export const allRoles = Object.values(Role).filter(
   (roleEnumKey) => typeof roleEnumKey === 'number',
