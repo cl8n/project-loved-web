@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { locales } from '../intl';
 import useTitle from '../useTitle';
@@ -9,7 +8,6 @@ import Messages from './Messages';
 export default function Localization() {
   useTitle('Localization');
   const { locale } = useParams<{ locale: string | undefined }>();
-  const [localeInput, setLocaleInput] = useState('');
 
   if (locale != null && locale !== locale.toLowerCase()) {
     return <Redirect to={`/localization/${locale.toLowerCase()}`} />;
@@ -21,7 +19,7 @@ export default function Localization() {
     <>
       <div className='content-block'>
         <Header />
-        <HeaderControls {...{ locale, localeInput, setLocaleInput }} />
+        <HeaderControls locale={locale} />
       </div>
       <div className='content-block'>
         {locale == null || locale === 'en' ? (

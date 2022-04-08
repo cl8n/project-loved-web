@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { locales } from '../intl';
 
@@ -9,16 +10,11 @@ function exportMessages(): void {
 
 interface HeaderControlsProps {
   locale: string | undefined;
-  localeInput: string;
-  setLocaleInput: (value: string) => void;
 }
 
-export default function HeaderControls({
-  locale,
-  localeInput,
-  setLocaleInput,
-}: HeaderControlsProps) {
+export default function HeaderControls({ locale }: HeaderControlsProps) {
   const history = useHistory();
+  const [localeInput, setLocaleInput] = useState('');
 
   return (
     <div className='flex-bar'>
