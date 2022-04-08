@@ -1,7 +1,7 @@
+import { LogType } from 'loved-bridge/tables';
 import type { ReactNode } from 'react';
 import { BeatmapInline } from '../../BeatmapInline';
 import type { ILog } from '../../interfaces';
-import { LogType } from '../../interfaces';
 import { Never } from '../../Never';
 import { UserInline } from '../../UserInline';
 import { renderRole } from '../roles/RolesList';

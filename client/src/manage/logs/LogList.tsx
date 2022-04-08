@@ -1,6 +1,6 @@
+import type { LogType } from 'loved-bridge/tables';
 import { FormattedDate } from 'react-intl';
 import { apiErrorMessage, getLogs, useApi } from '../../api';
-import type { LogType } from '../../interfaces';
 import LogMessage from './LogMessage';
 
 interface LogListProps {

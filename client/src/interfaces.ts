@@ -1,3 +1,5 @@
+import type { LogType } from 'loved-bridge/tables';
+
 export enum AssigneeType {
   metadata,
   moderator,
@@ -19,23 +21,6 @@ export enum GameMode {
   taiko,
   catch,
   mania,
-}
-
-export enum LogType {
-  apiServerStarted,
-  loggedIn,
-  loggedOut,
-  userCreated,
-  userUpdated,
-  roleCreated,
-  roleDeleted,
-  roleToggledAlumni,
-  mapperConsentCreated,
-  mapperConsentUpdated,
-  mapperConsentBeatmapsetCreated,
-  mapperConsentBeatmapsetDeleted,
-  mapperConsentBeatmapsetUpdated,
-  settingUpdated,
 }
 
 export enum MetadataState {

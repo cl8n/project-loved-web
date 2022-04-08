@@ -21,7 +21,7 @@ export const enum DescriptionState {
   reviewed,
 }
 
-export const enum LogType {
+export enum LogType {
   apiServerStarted,
   loggedIn,
   loggedOut,

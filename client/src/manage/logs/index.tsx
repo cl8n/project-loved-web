@@ -1,5 +1,5 @@
+import { LogType } from 'loved-bridge/tables';
 import { useState } from 'react';
-import { LogType } from '../../interfaces';
 import useTitle from '../../useTitle';
 import LogList from './LogList';
 
