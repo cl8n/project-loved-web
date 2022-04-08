@@ -710,8 +710,15 @@ tr.sticky > th {
 }
 
 .message {
+  border-left: 2px solid transparent;
+  padding-left: 0.5em;
+
   > h3 {
     margin-bottom: 0.5em;
+  }
+
+  &-modified {
+    border-left-color: var(--control);
   }
 
   &-reference {
@@ -720,8 +727,7 @@ tr.sticky > th {
   }
 
   &-warning {
-    border-left: 2px solid var(--rating--3);
-    padding-left: 0.5em;
+    border-left-color: var(--rating--3);
   }
 }
 

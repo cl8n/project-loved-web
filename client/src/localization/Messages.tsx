@@ -52,10 +52,11 @@ interface MessagesProps {
 export default function Messages({ locale }: MessagesProps) {
   const [englishMessages, setEnglishMessages] = useState<CategorizedEnglishMessages>();
   const [localeMessages, setLocaleMessages] = useState<Record<string, string | undefined>>();
+  const [workingMessages, setWorkingMessages] = useState<Record<string, string | undefined>>();
   const updateMessage = useCallback((id: string, value: string) => {
-    setLocaleMessages((prevState) => ({
+    setWorkingMessages((prevState) => ({
       ...prevState,
-      [id]: value,
+      [id]: value || undefined,
     }));
   }, []);
 
@@ -96,17 +97,20 @@ export default function Messages({ locale }: MessagesProps) {
   }, []);
   useEffect(() => {
     loadMessages(locale).then((messages) => {
-      setLocaleMessages(formatForEditing(messages));
+      const messagesForEditing = formatForEditing(messages);
+
+      setLocaleMessages(messagesForEditing);
+      setWorkingMessages(messagesForEditing);
     });
   }, [locale]);
 
   useEffect(() => {
     const exportMessagesListener = () => {
-      if (localeMessages == null) {
+      if (workingMessages == null) {
         return;
       }
 
-      const blob = new Blob([formatForExporting(localeMessages)], { type: 'application/json' });
+      const blob = new Blob([formatForExporting(workingMessages)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement('a');
       anchor.href = url;
@@ -119,9 +123,9 @@ export default function Messages({ locale }: MessagesProps) {
 
     document.addEventListener('exportMessages', exportMessagesListener);
     return () => document.removeEventListener('exportMessages', exportMessagesListener);
-  }, [locale, localeMessages]);
+  }, [locale, workingMessages]);
 
-  if (englishMessages == null || localeMessages == null) {
+  if (englishMessages == null || localeMessages == null || workingMessages == null) {
     return <p>Loading messages...</p>;
   }
 
@@ -138,6 +142,7 @@ export default function Messages({ locale }: MessagesProps) {
               id={id}
               localeMessage={localeMessages[id]}
               updateMessage={updateMessage}
+              workingMessage={workingMessages[id]}
             />
           ))}
         </Fragment>
