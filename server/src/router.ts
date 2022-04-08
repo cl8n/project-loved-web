@@ -1286,15 +1286,7 @@ router.put(
 router.get(
   '/logs',
   asyncHandler(async (_, res) => {
-    const logs = await db.query<Log>('SELECT * FROM logs ORDER BY id DESC');
-
-    for (const log of logs) {
-      if (log.values != null) {
-        log.values = JSON.parse(log.values);
-      }
-    }
-
-    res.json(logs);
+    res.json(await db.query<Log>('SELECT * FROM logs ORDER BY id DESC'));
   }),
 );
 //#endregion

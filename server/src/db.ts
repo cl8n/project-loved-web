@@ -258,13 +258,17 @@ const db = new MysqlPool({
 
   charset: 'utf8mb4_general_ci',
   typeCast: function (field, next) {
-    if (field.type !== 'TINY' || field.length !== 1) {
-      return next();
+    if (field.type === 'TINY' && field.length === 1) {
+      const string = field.string();
+      return string === '0' ? false : string === '1' ? true : null;
     }
 
-    const string = field.string();
+    if (field.type === 'BLOB' && field.table === 'logs' && field.name === 'values') {
+      const string = field.string();
+      return string == null ? null : JSON.parse(string);
+    }
 
-    return string === '0' ? false : string === '1' ? true : null;
+    return next();
   },
 });
 export default db;
