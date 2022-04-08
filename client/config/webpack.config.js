@@ -1,5 +1,6 @@
 'use strict';
 
+const { interpolateName } = require('@formatjs/ts-transformer');
 const { createHash } = require('crypto');
 const path = require('path');
 const webpack = require('webpack');
@@ -395,8 +396,11 @@ module.exports = function (webpackEnv) {
                   [
                     require.resolve('babel-plugin-formatjs'),
                     {
-                      idInterpolationPattern: '[sha512:contenthash:base64:6]',
                       ast: true,
+                      overrideIdFn: (_, defaultMessage, description) =>
+                        interpolateName({}, '[sha512:contenthash:base64:6]', {
+                          content: `${defaultMessage}#${description.replace(/^\[[^\]]+\]\s*/, '')}`,
+                        }),
                     },
                   ],
                 ].filter(Boolean),
