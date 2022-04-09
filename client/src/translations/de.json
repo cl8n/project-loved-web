@@ -44,9 +44,6 @@
   "3E4vRf": {
     "defaultMessage": "niedrig"
   },
-  "3J+k4U": {
-    "defaultMessage": "Forum"
-  },
   "3RdYB+": {
     "defaultMessage": "Spielmodus:"
   },
@@ -170,9 +167,6 @@
   "NjIKQe": {
     "defaultMessage": "Unerreichbar"
   },
-  "O2IvSs": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} reichte die Map ein am {timestamp, date, long}} other{{user} reichte die Map ein}}"
-  },
   "Oep6va": {
     "defaultMessage": "Einreichen"
   },
@@ -193,9 +187,6 @@
   },
   "RL5Qu1": {
     "defaultMessage": "Zugelassen"
-  },
-  "RuFprR": {
-    "defaultMessage": "Andere"
   },
   "ScBgfg": {
     "defaultMessage": "Keine Präferenz"
@@ -370,6 +361,9 @@
   },
   "urIF1D": {
     "defaultMessage": "Beatmap-Set"
+  },
+  "uwBono": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} reichte die Map ein am {timestamp, date, long}} other{{user} reichte die Map ein}}"
   },
   "vDQerf": {
     "defaultMessage": "Umfragenergebnisse"

@@ -41,9 +41,6 @@
   "3E4vRf": {
     "defaultMessage": "Düşük"
   },
-  "3J+k4U": {
-    "defaultMessage": "Forum"
-  },
   "3Kch6P": {
     "defaultMessage": "Düşükten yükseğe"
   },
@@ -155,9 +152,6 @@
   "NjIKQe": {
     "defaultMessage": "Ulaşılamıyor"
   },
-  "O2IvSs": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} kullanıcısı {timestamp, date, long} tarihinde bu mapi gönderdi} other{{user} kullanıcısı bu mapi gönderdi}}"
-  },
   "Oep6va": {
     "defaultMessage": "Gönder"
   },
@@ -175,9 +169,6 @@
   },
   "RL5Qu1": {
     "defaultMessage": "Onaylı"
-  },
-  "RuFprR": {
-    "defaultMessage": "Diğer"
   },
   "ScBgfg": {
     "defaultMessage": "tercih yok"
@@ -328,6 +319,9 @@
   },
   "urIF1D": {
     "defaultMessage": "Beatmap seti"
+  },
+  "uwBono": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} kullanıcısı {timestamp, date, long} tarihinde bu mapi gönderdi} other{{user} kullanıcısı bu mapi gönderdi}}"
   },
   "vDQerf": {
     "defaultMessage": "Oylama sonuçları"

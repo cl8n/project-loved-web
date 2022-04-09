@@ -47,9 +47,6 @@
   "3FN4wO": {
     "defaultMessage": "Tämä kysely on päättynyt. Kiitos osallistumisestasi!"
   },
-  "3J+k4U": {
-    "defaultMessage": "Foorumi"
-  },
   "3Kch6P": {
     "defaultMessage": "Nouseva"
   },
@@ -176,9 +173,6 @@
   "NjIKQe": {
     "defaultMessage": "Ei saada yhteyttä"
   },
-  "O2IvSs": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} ehdotti tämän mapin {timestamp, date, long}} other{{user} ehdotti tämän mapin}}"
-  },
   "Oep6va": {
     "defaultMessage": "Lähetä"
   },
@@ -199,9 +193,6 @@
   },
   "RL5Qu1": {
     "defaultMessage": "Vahvistettu"
-  },
-  "RuFprR": {
-    "defaultMessage": "Muu"
   },
   "ScBgfg": {
     "defaultMessage": "ilman mielipidettä"
@@ -335,9 +326,6 @@
   "mucI2W": {
     "defaultMessage": "Väliaikainen tapa järjestää tätä listausta. {definition}"
   },
-  "nWt/xH": {
-    "defaultMessage": "Tämä listaus ei ole vielä aktiivisesti käytössä. Ehdotukset Google Forms -dokumentista tulevat siirtymään tänne, ja siitä lähtien kapteenit voivat käyttää tätä sivua Google Sheets -dokumentin sijasta. Voit nykyhetkellä lähettää ehdotuksesi tämän sivun tai Google Forms -dokumentin kautta."
-  },
   "necy1Q": {
     "defaultMessage": "Tämä listaus sisältää vain ehdotuksia lähetetty tästä sivustosta. Muut ehdotukset siirtyvät pian tänne vanhasta Google Sheets -dokumentista, jota siitä lähtien ei enää käytetä."
   },
@@ -382,6 +370,9 @@
   },
   "urIF1D": {
     "defaultMessage": "Beatmapsetti"
+  },
+  "uwBono": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} ehdotti tämän mapin {timestamp, date, long}} other{{user} ehdotti tämän mapin}}"
   },
   "vDQerf": {
     "defaultMessage": "Äänestystulokset"

@@ -44,9 +44,6 @@
   "3E4vRf": {
     "defaultMessage": "Нисък"
   },
-  "3J+k4U": {
-    "defaultMessage": "Форум"
-  },
   "3Kch6P": {
     "defaultMessage": "Възходящ"
   },
@@ -170,9 +167,6 @@
   "NjIKQe": {
     "defaultMessage": "Без връзка"
   },
-  "O2IvSs": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} предложи този бийтмап през {timestamp, date, long}} other{{user} предложи този бийтмап}}"
-  },
   "Oep6va": {
     "defaultMessage": "Изпрати"
   },
@@ -193,9 +187,6 @@
   },
   "RL5Qu1": {
     "defaultMessage": "Одобрен"
-  },
-  "RuFprR": {
-    "defaultMessage": "Друг"
   },
   "ScBgfg": {
     "defaultMessage": "без предпочитание"
@@ -370,6 +361,9 @@
   },
   "urIF1D": {
     "defaultMessage": "Бийтмап"
+  },
+  "uwBono": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} предложи този бийтмап през {timestamp, date, long}} other{{user} предложи този бийтмап}}"
   },
   "vDQerf": {
     "defaultMessage": "Резултати от гласуване"

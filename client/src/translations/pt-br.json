@@ -47,9 +47,6 @@
   "3FN4wO": {
     "defaultMessage": "Esta pesquisa está encerrada. Obrigado por participar!"
   },
-  "3J+k4U": {
-    "defaultMessage": "Fórum"
-  },
   "3Kch6P": {
     "defaultMessage": "Crescente"
   },
@@ -175,9 +172,6 @@
   },
   "NjIKQe": {
     "defaultMessage": "Não contatável"
-  },
-  "O2IvSs": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} enviou este mapa em {timestamp, date, long}} other{{user} enviou este mapa}}"
   },
   "Oep6va": {
     "defaultMessage": "Enviar"
@@ -376,6 +370,9 @@
   },
   "urIF1D": {
     "defaultMessage": "Beatmapset"
+  },
+  "uwBono": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} enviou este mapa em {timestamp, date, long}} other{{user} enviou este mapa}}"
   },
   "vDQerf": {
     "defaultMessage": "Resultados da votação"

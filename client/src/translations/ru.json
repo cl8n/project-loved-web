@@ -47,9 +47,6 @@
   "3FN4wO": {
     "defaultMessage": "Этот опрос был закрыт. Спасибо за ваше участие!"
   },
-  "3J+k4U": {
-    "defaultMessage": "Форум"
-  },
   "3Kch6P": {
     "defaultMessage": "По возрастанию"
   },
@@ -175,9 +172,6 @@
   },
   "NjIKQe": {
     "defaultMessage": "Недоступно"
-  },
-  "O2IvSs": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} утверждает карту {timestamp, date, long}} other{{user} утверждает карту}}"
   },
   "Oep6va": {
     "defaultMessage": "Отправить"
@@ -376,6 +370,9 @@
   },
   "urIF1D": {
     "defaultMessage": "Список карт"
+  },
+  "uwBono": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} утверждает карту {timestamp, date, long}} other{{user} утверждает карту}}"
   },
   "vDQerf": {
     "defaultMessage": "Результаты голосования"

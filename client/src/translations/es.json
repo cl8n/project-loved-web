@@ -41,9 +41,6 @@
   "3E4vRf": {
     "defaultMessage": "Bajo"
   },
-  "3J+k4U": {
-    "defaultMessage": "Foro"
-  },
   "3Kch6P": {
     "defaultMessage": "Ascendente"
   },
@@ -152,9 +149,6 @@
   "NjIKQe": {
     "defaultMessage": "No se puede contactar con el usuario."
   },
-  "O2IvSs": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} ha enviado este mapa el {timestamp, date, long}} other{{user} ha enviado este mapa}}"
-  },
   "Oep6va": {
     "defaultMessage": "Enviar"
   },
@@ -172,9 +166,6 @@
   },
   "RL5Qu1": {
     "defaultMessage": "Aprobado"
-  },
-  "RuFprR": {
-    "defaultMessage": "Otros"
   },
   "ScBgfg": {
     "defaultMessage": "Sin preferencia"
@@ -325,6 +316,9 @@
   },
   "urIF1D": {
     "defaultMessage": "Mapa"
+  },
+  "uwBono": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} ha enviado este mapa el {timestamp, date, long}} other{{user} ha enviado este mapa}}"
   },
   "vDQerf": {
     "defaultMessage": "Resultados de la encuesta"

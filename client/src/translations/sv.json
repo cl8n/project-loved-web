@@ -47,9 +47,6 @@
   "3FN4wO": {
     "defaultMessage": "Denna enkät är avslutad. Tack för din medverkan!"
   },
-  "3J+k4U": {
-    "defaultMessage": "Forum"
-  },
   "3Kch6P": {
     "defaultMessage": "Stigande"
   },
@@ -176,9 +173,6 @@
   "NjIKQe": {
     "defaultMessage": "Kan ej nås"
   },
-  "O2IvSs": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} skickade in denna map {timestamp, date, long}} other{{user} skickade in denna map}}"
-  },
   "Oep6va": {
     "defaultMessage": "Skicka in"
   },
@@ -199,9 +193,6 @@
   },
   "RL5Qu1": {
     "defaultMessage": "Godkänd"
-  },
-  "RuFprR": {
-    "defaultMessage": "Annat"
   },
   "ScBgfg": {
     "defaultMessage": "ingen preferens"
@@ -382,6 +373,9 @@
   },
   "urIF1D": {
     "defaultMessage": "Beatmapset"
+  },
+  "uwBono": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} skickade in denna map {timestamp, date, long}} other{{user} skickade in denna map}}"
   },
   "vDQerf": {
     "defaultMessage": "Röstningsresultat"

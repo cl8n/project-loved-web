@@ -68,9 +68,6 @@
   "3E4vRf": {
     "defaultMessage": "Thấp"
   },
-  "3J+k4U": {
-    "defaultMessage": "Diễn đàn"
-  },
   "5OS21f": {
     "defaultMessage": "Bên ngoài:"
   },
@@ -191,9 +188,6 @@
   "NjIKQe": {
     "defaultMessage": "Không thể đến được"
   },
-  "O2IvSs": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} đã nộp beatmap này vào {timestamp, date, long}} other{{user} đã nộp beatmap này}}"
-  },
   "PCZJkZ": {
     "defaultMessage": "Mã nguồn và nơi theo dõi vấn đề"
   },
@@ -211,9 +205,6 @@
   },
   "RL5Qu1": {
     "defaultMessage": "Đã chấp nhận"
-  },
-  "RuFprR": {
-    "defaultMessage": "Khác"
   },
   "ScBgfg": {
     "defaultMessage": "không thấy sự ưa thích"
@@ -370,6 +361,9 @@
   },
   "urIF1D": {
     "defaultMessage": "Bộ beatmap"
+  },
+  "uwBono": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} đã nộp beatmap này vào {timestamp, date, long}} other{{user} đã nộp beatmap này}}"
   },
   "vDQerf": {
     "defaultMessage": "Kết quả bình chọn"

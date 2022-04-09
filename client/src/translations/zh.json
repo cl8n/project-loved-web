@@ -44,9 +44,6 @@
   "39zfVl": {
     "defaultMessage": "一点支持"
   },
-  "3J+k4U": {
-    "defaultMessage": "论坛版块"
-  },
   "3Kch6P": {
     "defaultMessage": "升序"
   },
@@ -176,9 +173,6 @@
   "NjIKQe": {
     "defaultMessage": "无法下载"
   },
-  "O2IvSs": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} 提交了这张图  {timestamp, date, long}} other{{user} 提交了这张图}}"
-  },
   "Oep6va": {
     "defaultMessage": "提交"
   },
@@ -196,9 +190,6 @@
   },
   "RL5Qu1": {
     "defaultMessage": "通过"
-  },
-  "RuFprR": {
-    "defaultMessage": "其他"
   },
   "ScBgfg": {
     "defaultMessage": "没有"
@@ -376,6 +367,9 @@
   },
   "urIF1D": {
     "defaultMessage": "谱面集"
+  },
+  "uwBono": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} 提交了这张图  {timestamp, date, long}} other{{user} 提交了这张图}}"
   },
   "vDQerf": {
     "defaultMessage": "投票结果"
