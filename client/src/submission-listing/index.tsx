@@ -27,91 +27,91 @@ import SubmissionBeatmapset from './SubmissionBeatmapset';
 const messages = defineMessages({
   all: {
     defaultMessage: 'All',
-    description: 'osu!mania key mode option for submissions table',
+    description: '[Submissions] osu!mania key mode option for submissions table',
   },
   any: {
     defaultMessage: 'Any',
-    description: 'Review status option',
+    description: '[Submissions] Review status option',
   },
   artist: {
     defaultMessage: 'Artist',
-    description: 'Submissions table sort option',
+    description: '[Submissions] Submissions table sort option',
   },
   bpm: {
     defaultMessage: 'BPM',
-    description: 'Submissions table header',
+    description: '[Submissions] Submissions table header',
   },
   difficultyCount: {
     defaultMessage: 'Diffs',
-    description: 'Submissions table header',
+    description: '[Submissions] Submissions table header',
   },
   favoriteCount: {
     defaultMessage: 'Favs',
-    description: 'Submissions table header',
+    description: '[Submissions] Submissions table header',
   },
   gameMode: {
     defaultMessage: 'Game mode:',
-    description: 'Selector to change game mode',
+    description: '[General] Selector to change game mode',
   },
   keyModes: {
     defaultMessage: 'Keys',
-    description: 'Submissions table header',
+    description: '[Submissions] Submissions table header',
   },
   lovedAndRanked: {
     defaultMessage: 'Loved and ranked',
-    description: 'Beatmap status option',
+    description: '[Submissions] Beatmap status option',
   },
   notReviewed: {
     defaultMessage: 'Not reviewed',
-    description: 'Review status option',
+    description: '[Submissions] Review status option',
   },
   pendingAndGrave: {
     defaultMessage: 'Pending and grave',
-    description: 'Beatmap status option',
+    description: '[Submissions] Beatmap status option',
   },
   playCount: {
     defaultMessage: 'Plays',
-    description: 'Submissions table header',
+    description: '[Submissions] Submissions table header',
   },
   priority: {
     defaultMessage: 'Priority',
-    description: 'Submissions table header',
+    description: '[Submissions] Submissions table header',
   },
   rating: {
     defaultMessage: 'Rating',
-    description: 'Submissions table header',
+    description: '[Submissions] Submissions table header',
   },
   reviewed: {
     defaultMessage: 'Reviewed',
-    description: 'Review status option',
+    description: '[Submissions] Review status option',
   },
   score: {
     defaultMessage: 'Score',
-    description: 'Submissions table header',
+    description: '[Submissions] Submissions table header',
   },
   scoreHelp: {
     defaultMessage: 'A placeholder method to sort this listing. {definition}',
-    description: 'Help text for "Score" submissions table header',
+    description: '[Submissions] Help text for "Score" submissions table header',
   },
   status: {
     defaultMessage: 'Status',
-    description: 'Submissions table header',
+    description: '[Submissions] Submissions table header',
   },
   title: {
     defaultMessage: 'Title',
-    description: 'Submissions table sort option',
+    description: '[Submissions] Submissions table sort option',
   },
   year: {
     defaultMessage: 'Year',
-    description: 'Submissions table header',
+    description: '[Submissions] Submissions table header',
   },
   commonKeyModes: {
     defaultMessage: 'Common',
-    description: 'osu!mania key mode option group for common key modes',
+    description: '[Submissions] osu!mania key mode option group for common key modes',
   },
   uncommonKeyModes: {
     defaultMessage: 'Uncommon',
-    description: 'osu!mania key mode option group for uncommon key modes',
+    description: '[Submissions] osu!mania key mode option group for uncommon key modes',
   },
 });
 
@@ -313,7 +313,7 @@ export default function SubmissionListingContainer() {
     <>
       <FormattedMessage
         defaultMessage='Submitted maps'
-        description='Submissions table title'
+        description='[Submissions] Submissions table title'
         tagName='h1'
       />
       <div className='warning-box'>
@@ -322,7 +322,7 @@ export default function SubmissionListingContainer() {
             This listing only includes submissions sent from this website. Entries from the old
             Google sheets will be moved here soon, and then the Google sheets will be retired.
           '
-          description='Warning box above submissions table'
+          description='[Submissions] Warning box above submissions table'
         />
       </div>
       <div className='block-margin'>
@@ -339,7 +339,7 @@ export default function SubmissionListingContainer() {
             <>
               <FormattedMessage
                 defaultMessage='Key mode:'
-                description='Selector to change osu!mania key mode'
+                description='[Submissions] Selector to change osu!mania key mode'
                 tagName='span'
               />
               <select value={keyMode ?? 'all'} onChange={onKeyModeChange}>
@@ -363,7 +363,7 @@ export default function SubmissionListingContainer() {
           )}
           <FormattedMessage
             defaultMessage='Beatmap status:'
-            description='Selector to change beatmap status'
+            description='[Submissions] Selector to change beatmap status'
             tagName='span'
           />
           <select
@@ -381,7 +381,7 @@ export default function SubmissionListingContainer() {
           </select>
           <FormattedMessage
             defaultMessage='Search:'
-            description='Title for submissions search input'
+            description='[Submissions] Title for submissions search input'
             tagName='span'
           />
           <input
@@ -398,7 +398,7 @@ export default function SubmissionListingContainer() {
           <div className='flex-left slim-margin'>
             <FormattedMessage
               defaultMessage='My review status:'
-              description='Selector to change own review status filter'
+              description='[Submissions] Selector to change own review status filter'
               tagName='span'
             />
             <select
@@ -419,7 +419,7 @@ export default function SubmissionListingContainer() {
         <div className='flex-left slim-margin'>
           <FormattedMessage
             defaultMessage='Columns:'
-            description='Title for options to show or hide columns'
+            description='[Submissions] Title for options to show or hide columns'
             tagName='span'
           />
           <span className='flex-text'>
@@ -439,7 +439,7 @@ export default function SubmissionListingContainer() {
           </span>
           <FormattedMessage
             defaultMessage='Sort by:'
-            description='Title for sorting options'
+            description='[Submissions] Title for sorting options'
             tagName='span'
           />
           {sorts.map((sort, sortIndex) => (
@@ -717,12 +717,12 @@ function SubmissionListing({
             )}
             <FormattedMessage
               defaultMessage='Beatmapset'
-              description='Submissions table header'
+              description='[Submissions] Submissions table header'
               tagName='th'
             />
             <FormattedMessage
               defaultMessage='Mapper'
-              description='Submissions table header'
+              description='[Submissions] Submissions table header'
               tagName='th'
             />
             <th>

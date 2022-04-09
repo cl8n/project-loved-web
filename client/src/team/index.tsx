@@ -12,7 +12,7 @@ export default function Team() {
       <div className='content-block'>
         <FormattedMessage
           defaultMessage='Current team'
-          description='Team listing group title'
+          description='[Team] Team listing group title'
           tagName='h1'
         />
         <TeamList current={true} teamApi={teamApi} />
@@ -20,7 +20,7 @@ export default function Team() {
       <div className='content-block'>
         <FormattedMessage
           defaultMessage='Alumni'
-          description='Team listing group title'
+          description='[Team] Team listing group title'
           tagName='h1'
         />
         <TeamList current={false} teamApi={teamApi} />

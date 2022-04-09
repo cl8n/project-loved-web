@@ -30,7 +30,7 @@ export function ProtectedRoute(props: ProtectedRouteProps) {
           return (
             <FormattedMessage
               defaultMessage="I don't know who you are! Try <a>logging in</a> first."
-              description='Error message shown when trying to view a protected page before logging in'
+              description='[Errors] Error message shown when trying to view a protected page before logging in'
               tagName='p'
               values={{
                 a: (c: string) => <a href={loginUrl}>{c}</a>,
@@ -46,7 +46,7 @@ export function ProtectedRoute(props: ProtectedRouteProps) {
         return (
           <FormattedMessage
             defaultMessage="You aren't cool enough to see this page."
-            description='Error message shown when logged in but not having permission to view a page'
+            description='[Errors] Error message shown when logged in but not having permission to view a page'
             tagName='p'
           />
         );

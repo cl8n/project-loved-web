@@ -11,12 +11,12 @@ export function NotReady({ children }: PropsWithChildren<{}>) {
       <>
         <FormattedMessage
           defaultMessage='Under construction'
-          description='Title of page not yet ready for public access'
+          description='[Errors] Title of page not yet ready for public access'
           tagName='h1'
         />
         <FormattedMessage
           defaultMessage="This isn't available to you yet. Check back soon!"
-          description='Body of page not yet ready for public access'
+          description='[Errors] Body of page not yet ready for public access'
           tagName='p'
         />
       </>

@@ -16,28 +16,29 @@ import { reviewScoreClasses, reviewScoreMessages, reviewScoreSymbols } from './h
 const messages = defineMessages({
   notAllowed: {
     defaultMessage: 'Not allowed',
-    description: 'Aggregate review score shown on submissions table for maps that cannot be Loved',
+    description:
+      '[Submissions] Aggregate review score shown on submissions table for maps that cannot be Loved',
   },
   selectScore: {
     defaultMessage: 'Select a score',
-    description: 'Placeholder value for review score selector',
+    description: '[Reviews] Placeholder value for review score selector',
   },
 
   add: {
     defaultMessage: 'Add',
-    description: 'Add button',
+    description: '[General] Add button',
   },
   adding: {
     defaultMessage: 'Adding...',
-    description: 'Add button when in progress',
+    description: '[General] Add button when in progress',
   },
   update: {
     defaultMessage: 'Update',
-    description: 'Update button',
+    description: '[General] Update button',
   },
   updating: {
     defaultMessage: 'Updating...',
-    description: 'Update button when in progress',
+    description: '[General] Update button when in progress',
   },
 });
 
@@ -90,7 +91,7 @@ export default function ReviewEditor({
     <Modal close={() => setModalOpen(false)} open={modalOpen}>
       <FormattedMessage
         defaultMessage='{beatmapset} review'
-        description='Title of review modal'
+        description='[Reviews] Title of review modal'
         tagName='h2'
         values={{ beatmapset: <BeatmapInline beatmapset={beatmapset} gameMode={gameMode} /> }}
       />
@@ -100,7 +101,10 @@ export default function ReviewEditor({
             <tr>
               <td>
                 <label htmlFor='score'>
-                  <FormattedMessage defaultMessage='Score' description='Review score input label' />
+                  <FormattedMessage
+                    defaultMessage='Score'
+                    description='[Reviews] Review score input label'
+                  />
                 </label>
               </td>
               <td>
@@ -135,7 +139,7 @@ export default function ReviewEditor({
                 <label htmlFor='reason'>
                   <FormattedMessage
                     defaultMessage='Reason'
-                    description='Review reason input label'
+                    description='[Reviews] Review reason input label'
                   />
                 </label>
               </td>

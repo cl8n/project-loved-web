@@ -3,11 +3,11 @@ import { defineMessages, useIntl } from 'react-intl';
 const messages = defineMessages({
   no: {
     defaultMessage: 'No',
-    description: 'Boolean',
+    description: '[General] Boolean',
   },
   yes: {
     defaultMessage: 'Yes',
-    description: 'Boolean',
+    description: '[General] Boolean',
   },
 });
 

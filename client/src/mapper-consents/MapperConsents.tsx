@@ -13,32 +13,32 @@ import MapperConsentEditor from './MapperConsentEditor';
 const messages = defineMessages({
   noReply: {
     defaultMessage: 'No reply',
-    description: 'Mapper consent shown in mapper consents table',
+    description: '[Mapper consents] Mapper consent shown in mapper consents table',
   },
   unreachable: {
     defaultMessage: 'Unreachable',
-    description: 'Mapper consent shown in mapper consents table',
+    description: '[Mapper consents] Mapper consent shown in mapper consents table',
   },
   beatmapset: {
     defaultMessage: 'Beatmapset',
-    description: 'Mapper beatmapset consents table header',
+    description: '[Mapper consents] Mapper beatmapset consents table header',
   },
   consent: {
     defaultMessage: 'Consent',
-    description: 'Mapper beatmapset consents table header',
+    description: '[Mapper consents] Mapper beatmapset consents table header',
   },
   notes: {
     defaultMessage: 'Notes',
-    description: 'Mapper beatmapset consents table header',
+    description: '[Mapper consents] Mapper beatmapset consents table header',
   },
 
   no: {
     defaultMessage: 'No',
-    description: 'Boolean',
+    description: '[General] Boolean',
   },
   yes: {
     defaultMessage: 'Yes',
-    description: 'Boolean',
+    description: '[General] Boolean',
   },
 });
 export const consentMap = {
@@ -155,17 +155,17 @@ export default function MapperConsents() {
             {authUser != null && hasRole(authUser, Role.captain) && <th />}
             <FormattedMessage
               defaultMessage='Mapper'
-              description='Mapper consents table header'
+              description='[Mapper consents] Mapper consents table header'
               tagName='th'
             />
             <FormattedMessage
               defaultMessage='Consent'
-              description='Mapper consents table header'
+              description='[Mapper consents] Mapper consents table header'
               tagName='th'
             />
             <FormattedMessage
               defaultMessage='Notes'
-              description='Mapper consents table header'
+              description='[Mapper consents] Mapper consents table header'
               tagName='th'
             />
           </tr>

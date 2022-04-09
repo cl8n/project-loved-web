@@ -20,15 +20,15 @@ import { consentMap } from './MapperConsents';
 const messages = defineMessages({
   selectConsent: {
     defaultMessage: 'Select a consent option',
-    description: 'Mapper consent editor option',
+    description: '[Mapper consents] Mapper consent editor option',
   },
   submit: {
     defaultMessage: 'Submit',
-    description: 'Submit button',
+    description: '[General] Submit button',
   },
   submitting: {
     defaultMessage: 'Submitting...',
-    description: 'Submit button when in progress',
+    description: '[General] Submit button when in progress',
   },
 });
 
@@ -45,7 +45,7 @@ function renderMapperConsentBeatmapsetInput(intl: IntlShape) {
               <label htmlFor='beatmapset_id'>
                 <FormattedMessage
                   defaultMessage='Beatmapset ID'
-                  description='Mapper consent editor option'
+                  description='[Mapper consents] Mapper consent editor option'
                 />
               </label>
             </td>
@@ -63,7 +63,7 @@ function renderMapperConsentBeatmapsetInput(intl: IntlShape) {
               <label htmlFor='consent'>
                 <FormattedMessage
                   defaultMessage='Consent'
-                  description='Mapper consent editor option'
+                  description='[Mapper consents] Mapper consent editor option'
                 />
               </label>
             </td>
@@ -92,7 +92,7 @@ function renderMapperConsentBeatmapsetInput(intl: IntlShape) {
               <label htmlFor='consent_reason'>
                 <FormattedMessage
                   defaultMessage='Reason'
-                  description='Mapper consent editor option'
+                  description='[Mapper consents] Mapper consent editor option'
                 />
               </label>
             </td>
@@ -199,7 +199,7 @@ export default function MapperConsentEditor({
         <button type='button' onClick={() => setModalOpen(true)}>
           <FormattedMessage
             defaultMessage='Edit my consent'
-            description='Button to edit the mapper consent status of the current user'
+            description='[Mapper consents] Button to edit the mapper consent status of the current user'
           />
         </button>
       ) : (
@@ -212,7 +212,7 @@ export default function MapperConsentEditor({
       <Modal close={() => setModalOpen(false)} open={modalOpen}>
         <FormattedMessage
           defaultMessage='Editing {user}'
-          description='Title of mapper consent editor modal'
+          description='[Mapper consents] Title of mapper consent editor modal'
           tagName='h2'
           values={{ user: <UserInline user={editSelf ? authUser : consent!.mapper} /> }}
         />
@@ -224,7 +224,7 @@ export default function MapperConsentEditor({
                   <label htmlFor='consent'>
                     <FormattedMessage
                       defaultMessage='Consent'
-                      description='Mapper consent editor option'
+                      description='[Mapper consents] Mapper consent editor option'
                     />
                   </label>
                 </td>
@@ -268,7 +268,7 @@ export default function MapperConsentEditor({
                   <label htmlFor='consent_reason'>
                     <FormattedMessage
                       defaultMessage='Reason'
-                      description='Mapper consent editor option'
+                      description='[Mapper consents] Mapper consent editor option'
                     />
                   </label>
                 </td>
@@ -284,7 +284,7 @@ export default function MapperConsentEditor({
           </table>
           <FormattedMessage
             defaultMessage='Beatmapsets'
-            description='Sub-header for mapper consent editor'
+            description='[Mapper consents] Sub-header for mapper consent editor'
             tagName='h3'
           />
           <ListInputCustom

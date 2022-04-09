@@ -27,31 +27,31 @@ export const toggleableColumns = [
 const messages = defineMessages({
   strongRejection: {
     defaultMessage: 'strong rejection',
-    description: '-3 review score. Fits into {score} of the review line',
+    description: '[Reviews] -3 review score. Fits into {score} of the review line',
   },
   rejection: {
     defaultMessage: 'rejection',
-    description: '-2 review score. Fits into {score} of the review line',
+    description: '[Reviews] -2 review score. Fits into {score} of the review line',
   },
   lightRejection: {
     defaultMessage: 'light rejection',
-    description: '-1 review score. Fits into {score} of the review line',
+    description: '[Reviews] -1 review score. Fits into {score} of the review line',
   },
   noPreference: {
     defaultMessage: 'no preference',
-    description: '0 review score. Fits into {score} of the review line',
+    description: '[Reviews] 0 review score. Fits into {score} of the review line',
   },
   lightSupport: {
     defaultMessage: 'light support',
-    description: '+1 review score. Fits into {score} of the review line',
+    description: '[Reviews] +1 review score. Fits into {score} of the review line',
   },
   support: {
     defaultMessage: 'support',
-    description: '+2 review score. Fits into {score} of the review line',
+    description: '[Reviews] +2 review score. Fits into {score} of the review line',
   },
   strongSupport: {
     defaultMessage: 'strong support',
-    description: '+3 review score. Fits into {score} of the review line',
+    description: '[Reviews] +3 review score. Fits into {score} of the review line',
   },
 });
 

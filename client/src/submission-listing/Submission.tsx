@@ -18,7 +18,7 @@ export default function Submission({ submission }: SubmissionProps) {
             other {{user} submitted this map}
           }
         '
-        description='Submission line'
+        description='[Submissions] Submission line'
         values={{
           hasTimestamp: submission.submitted_at != null,
           timestamp: dateFromString(submission.submitted_at),
@@ -35,7 +35,7 @@ export default function Submission({ submission }: SubmissionProps) {
           {' ('}
           <FormattedMessage
             defaultMessage='New!'
-            description='Indicator for content recently updated'
+            description='[Submissions] Indicator for content recently updated'
           />
           )
         </span>

@@ -9,27 +9,27 @@ import UserList from './UserList';
 const messages = defineMessages({
   captains: {
     defaultMessage: '{gameMode} captains',
-    description: 'Team listing title',
+    description: '[Team] Team listing title',
   },
   developer: {
     defaultMessage: 'Developers',
-    description: 'Team listing title',
+    description: '[Team] Team listing title',
   },
   metadata: {
     defaultMessage: 'Metadata reviewers',
-    description: 'Team listing title',
+    description: '[Team] Team listing title',
   },
   moderator: {
     defaultMessage: 'Moderators',
-    description: 'Team listing title',
+    description: '[Team] Team listing title',
   },
   news: {
     defaultMessage: 'News editors / Managers',
-    description: 'Team listing title',
+    description: '[Team] Team listing title',
   },
   video: {
     defaultMessage: 'Video editors',
-    description: 'Team listing title',
+    description: '[Team] Team listing title',
   },
 });
 

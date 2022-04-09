@@ -30,115 +30,119 @@ import SubmissionsList from './SubmissionsList';
 const messages = defineMessages({
   close: {
     defaultMessage: 'Close',
-    description: 'Button to close forms, dropdowns, modals, etc.',
+    description: '[General] Button to close forms, dropdowns, modals, etc.',
   },
   deleteReview: {
     defaultMessage: 'Delete review',
-    description: 'Button to delete own review',
+    description: '[Reviews] Button to delete own review',
   },
   deleteReviewConfirm: {
     defaultMessage: 'Are you sure you want to delete your review?',
-    description: 'Confirmation to delete own review on a beatmapset',
+    description: '[Reviews] Confirmation to delete own review on a beatmapset',
   },
   editReview: {
     defaultMessage: 'Edit review',
-    description: 'Button to edit own review',
+    description: '[Reviews] Button to edit own review',
   },
   expand: {
     defaultMessage: 'Expand',
-    description: 'Button to expand dropdowns',
+    description: '[General] Button to expand dropdowns',
   },
   failedVoting: {
     defaultMessage: 'Failed voting',
     description:
-      'Aggregate review score shown on submissions table for maps that failed community voting',
+      '[Submissions] Aggregate review score shown on submissions table for maps that failed community voting',
   },
   inVoting: {
     defaultMessage: 'In voting',
     description:
-      'Aggregate review score shown on submissions table for maps currently in community voting',
+      '[Submissions] Aggregate review score shown on submissions table for maps currently in community voting',
   },
   passedVoting: {
     defaultMessage: 'Passed voting',
     description:
-      'Aggregate review score shown on submissions table for maps that passed community voting',
+      '[Submissions] Aggregate review score shown on submissions table for maps that passed community voting',
   },
   nominated: {
     defaultMessage: 'Nominated',
     description:
-      'Aggregate review score shown on submissions table for maps nominated by captains for future voting',
+      '[Submissions] Aggregate review score shown on submissions table for maps nominated by captains for future voting',
   },
   nominatedForRound: {
     defaultMessage: 'This map has been nominated for {roundName}.',
-    description: 'Help text explaining that a map has been nominated',
+    description: '[Submissions] Help text explaining that a map has been nominated',
   },
   notAllowed: {
     defaultMessage: 'Not allowed',
-    description: 'Aggregate review score shown on submissions table for maps that cannot be Loved',
+    description:
+      '[Submissions] Aggregate review score shown on submissions table for maps that cannot be Loved',
   },
   notAllowedMapperBanned: {
     defaultMessage: 'The mapset host is banned.',
-    description: 'Help text explaining that a map cannot be Loved due to its mapper being banned',
+    description:
+      '[Submissions] Help text explaining that a map cannot be Loved due to its mapper being banned',
   },
   notAllowedNoConsent: {
     defaultMessage:
       'The mapper has requested for this map to not be involved with the Loved category.',
     description:
-      'Help text explaining that a map cannot be Loved due to its mapper not consenting to it',
+      '[Submissions] Help text explaining that a map cannot be Loved due to its mapper not consenting to it',
   },
   notAllowedTooShort: {
     defaultMessage: 'Every map in this set is too short (under 30 seconds).',
-    description: 'Help text explaining that a map cannot be Loved due to its length',
+    description: '[Submissions] Help text explaining that a map cannot be Loved due to its length',
   },
   review: {
     defaultMessage: 'Review',
-    description: 'Button to add or update own review',
+    description: '[Reviews] Button to add or update own review',
   },
   reviewHelp: {
     defaultMessage:
       'You can also hold {key} while clicking on the mapset to open the review modal.',
     description:
-      'Help text explaining that the review modal can be opened with a keyboard shortcut',
+      '[Reviews] Help text explaining that the review modal can be opened with a keyboard shortcut',
   },
   high: {
     defaultMessage: 'High',
-    description: 'Aggregate review score shown on submissions table',
+    description: '[Submissions] Aggregate review score shown on submissions table',
   },
   medium: {
     defaultMessage: 'Medium',
-    description: 'Aggregate review score shown on submissions table',
+    description: '[Submissions] Aggregate review score shown on submissions table',
   },
   low: {
     defaultMessage: 'Low',
-    description: 'Aggregate review score shown on submissions table',
+    description: '[Submissions] Aggregate review score shown on submissions table',
   },
   rejected: {
     defaultMessage: 'Rejected',
-    description: 'Aggregate review score shown on submissions table',
+    description: '[Submissions] Aggregate review score shown on submissions table',
   },
   pending: {
     defaultMessage: 'Pending',
-    description: 'Aggregate review score shown on submissions table for maps with no reviews',
+    description:
+      '[Submissions] Aggregate review score shown on submissions table for maps with no reviews',
   },
   lovedByVoting: {
     defaultMessage: 'Loved by vote',
-    description: 'Beatmap status shown on submissions table for maps that passed community voting',
+    description:
+      '[Submissions] Beatmap status shown on submissions table for maps that passed community voting',
   },
   ranked: {
     defaultMessage: 'Ranked',
-    description: 'Beatmap status',
+    description: '[Beatmaps] Beatmap status',
   },
   approved: {
     defaultMessage: 'Approved',
-    description: 'Beatmap status',
+    description: '[Beatmaps] Beatmap status',
   },
   qualified: {
     defaultMessage: 'Qualified',
-    description: 'Beatmap status',
+    description: '[Beatmaps] Beatmap status',
   },
   loved: {
     defaultMessage: 'Loved',
-    description: 'Beatmap status',
+    description: '[Beatmaps] Beatmap status',
   },
 });
 

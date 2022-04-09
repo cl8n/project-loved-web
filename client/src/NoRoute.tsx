@@ -7,7 +7,7 @@ export function NoRoute() {
   return (
     <FormattedMessage
       defaultMessage="There's nothing here =("
-      description='Body of "not found" page'
+      description='[Errors] Body of "not found" page'
       tagName='span'
     />
   );

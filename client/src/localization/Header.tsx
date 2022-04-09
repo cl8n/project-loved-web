@@ -5,7 +5,7 @@ export default function Header() {
     <>
       <FormattedMessage
         defaultMessage='Localization'
-        description='Localization page title'
+        description='[Localization] Localization page title'
         tagName='h1'
       />
       <p>To translate this website:</p>

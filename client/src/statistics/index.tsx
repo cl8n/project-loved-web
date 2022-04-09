@@ -9,7 +9,7 @@ export default function Statistics() {
     <div className='content-block'>
       <FormattedMessage
         defaultMessage='Poll results'
-        description='Poll results title'
+        description='[Poll results] Poll results title'
         tagName='h1'
       />
       <Polls />

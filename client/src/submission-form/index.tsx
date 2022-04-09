@@ -14,7 +14,7 @@ export default function SubmissionForm() {
     <>
       <FormattedMessage
         defaultMessage='Submit a map for Loved!'
-        description='Submission form title'
+        description='[Submission form] Submission form title'
         tagName='h1'
       />
       <FormattedMessage
@@ -24,7 +24,7 @@ export default function SubmissionForm() {
           you can add your thoughts about the map here.</p>
           <p>Some things to keep in mind:</p>
         '
-        description='Submission form intro'
+        description='[Submission form] Submission form intro'
         values={{
           p: (c: ReactNode) => <p>{c}</p>,
           submissionsLink,
@@ -37,7 +37,7 @@ export default function SubmissionForm() {
             What you write on this form will be visible publicly, so don't write something that you don't want others
             to see. You don't have to fill in the reason field if you don't want to.
           "
-          description='Submission form list item 1'
+          description='[Submission form] Submission form list item 1'
           tagName='li'
         />
         <FormattedMessage
@@ -45,7 +45,7 @@ export default function SubmissionForm() {
             If the map you submit is either very unpopular or completely unplayable, captains may never check it.
             Please only submit maps that you believe would add genuine value to the Loved category.
           '
-          description='Submission form list item 2'
+          description='[Submission form] Submission form list item 2'
           tagName='li'
         />
         <FormattedMessage
@@ -54,7 +54,7 @@ export default function SubmissionForm() {
             that maps get Loved is limited, so it's possible that the captains will continually find better picks than
             the map you submit.
           "
-          description='Submission form list item 3'
+          description='[Submission form] Submission form list item 3'
           tagName='li'
         />
         <FormattedMessage
@@ -62,7 +62,7 @@ export default function SubmissionForm() {
             After you submit a map, you can check on its status on
             <submissionsLink>the "Submissions" page</submissionsLink>.
           '
-          description='Submission form list item 4'
+          description='[Submission form] Submission form list item 4'
           tagName='li'
           values={{ submissionsLink }}
         />
@@ -70,7 +70,7 @@ export default function SubmissionForm() {
       {authUser == null ? (
         <FormattedMessage
           defaultMessage='You must <a>log in</a> to fill out the form.'
-          description='Submission form login prompt'
+          description='[Submission form] Submission form login prompt'
           tagName='b'
           values={{
             a: (c: ReactNode) => <a href={loginUrl}>{c}</a>,

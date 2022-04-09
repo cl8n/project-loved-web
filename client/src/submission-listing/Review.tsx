@@ -18,7 +18,7 @@ export default function Review({ review }: ReviewProps) {
       <li>
         <FormattedMessage
           defaultMessage='{user} marked as <score>not allowed</score> on {timestamp, date, long}'
-          description='Review line for marking the map as not allowed'
+          description='[Reviews] Review line for marking the map as not allowed'
           values={{
             score: (c: ReactNode) => <span className={'review ' + scoreClass}>{c}</span>,
             timestamp: dateFromString(review.reviewed_at),
@@ -38,7 +38,7 @@ export default function Review({ review }: ReviewProps) {
     <li>
       <FormattedMessage
         defaultMessage='{user} reviewed with {score} on {timestamp, date, long}'
-        description='Review line'
+        description='[Reviews] Review line'
         values={{
           score: (
             <span className={'review ' + scoreClass}>
@@ -51,7 +51,7 @@ export default function Review({ review }: ReviewProps) {
               <UserInline user={review.captain} />{' '}
               <FormattedMessage
                 defaultMessage='(captain)'
-                description='Suffix on user for review listing'
+                description='[Reviews] Suffix on user for review listing'
               />
             </b>
           ) : (
@@ -62,7 +62,7 @@ export default function Review({ review }: ReviewProps) {
                   {' '}
                   <FormattedMessage
                     defaultMessage='(alumni)'
-                    description='Suffix on user for review listing'
+                    description='[Reviews] Suffix on user for review listing'
                   />
                 </>
               )}

@@ -5,11 +5,11 @@ import missingFlag from './images/flags/__.png';
 const messages = defineMessages({
   flag: {
     defaultMessage: '{country} flag',
-    description: 'Country flag image alt text',
+    description: '[Flag icons] Country flag image alt text',
   },
   unknownCountry: {
     defaultMessage: 'Unknown country',
-    description: 'Shown in flag image alt text for the "?" flag',
+    description: '[Flag icons] Shown in flag image alt text for the "?" flag',
   },
 });
 

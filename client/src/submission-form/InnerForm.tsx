@@ -10,15 +10,16 @@ import { Form } from '../dom-helpers';
 const messages = defineMessages({
   submit: {
     defaultMessage: 'Submit',
-    description: 'Submit button',
+    description: '[General] Submit button',
   },
   submitAndStay: {
     defaultMessage: 'Submit and stay on page',
-    description: "Submit button that doesn't navigate to the submissions page afterward",
+    description:
+      "[Submission form] Submit button that doesn't navigate to the submissions page afterward",
   },
   submitting: {
     defaultMessage: 'Submitting...',
-    description: 'Submit button when in progress',
+    description: '[General] Submit button when in progress',
   },
 });
 
@@ -58,7 +59,7 @@ export default function InnerForm() {
         <label htmlFor='beatmapset'>
           <FormattedMessage
             defaultMessage='Beatmapset link or ID'
-            description='Submission form beatmapset input prompt'
+            description='[Submission form] Submission form beatmapset input prompt'
           />
         </label>
       </h2>
@@ -73,7 +74,7 @@ export default function InnerForm() {
         <label htmlFor='gameModes'>
           <FormattedMessage
             defaultMessage='For which game modes do you want this map to be Loved?'
-            description='Submission form game mode input prompt'
+            description='[Submission form] Submission form game mode input prompt'
           />
         </label>
       </h2>
@@ -93,7 +94,7 @@ export default function InnerForm() {
         <label htmlFor='reason'>
           <FormattedMessage
             defaultMessage='Why do you want this map to be Loved? <fade>(optional)</fade>'
-            description='Submission form reason input prompt'
+            description='[Submission form] Submission form reason input prompt'
             values={{
               fade: (c: string) => <span className='faded'>{c}</span>,
             }}

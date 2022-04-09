@@ -10,44 +10,44 @@ import type { IPoll } from '../interfaces';
 const messages = defineMessages({
   all: {
     defaultMessage: 'All',
-    description: 'Game mode option for poll results table',
+    description: '[Poll results] Game mode option for poll results table',
   },
   ascending: {
     defaultMessage: 'Ascending',
-    description: 'Round order option for poll results table',
+    description: '[Poll results] Round order option for poll results table',
   },
   descending: {
     defaultMessage: 'Descending',
-    description: 'Round order option for poll results table',
+    description: '[Poll results] Round order option for poll results table',
   },
   percentAndTotal: {
     defaultMessage: 'Percent and total',
-    description: 'Result display option for poll results table',
+    description: '[Poll results] Result display option for poll results table',
   },
   resultDisplay: {
     defaultMessage: 'Result display:',
-    description: 'Selector to change result display in poll results table',
+    description: '[Poll results] Selector to change result display in poll results table',
   },
   roundOrder: {
     defaultMessage: 'Round order:',
-    description: 'Selector to change round order in poll results table',
+    description: '[Poll results] Selector to change round order in poll results table',
   },
   yesAndNo: {
     defaultMessage: 'Yes and no',
-    description: 'Result display option for poll results table',
+    description: '[Poll results] Result display option for poll results table',
   },
   pollInProgress: {
     defaultMessage: 'Poll in progress',
-    description: 'Placeholder for results for ongoing polls',
+    description: '[Poll results] Placeholder for results for ongoing polls',
   },
 
   deletedBeatmapset: {
     defaultMessage: 'Deleted beatmapset',
-    description: 'Placeholder for beatmapsets that were deleted from osu!',
+    description: '[General] Placeholder for beatmapsets that were deleted from osu!',
   },
   gameMode: {
     defaultMessage: 'Game mode:',
-    description: 'Selector to change game mode',
+    description: '[General] Selector to change game mode',
   },
 });
 
@@ -127,31 +127,31 @@ export default function Polls() {
           <tr className='sticky'>
             <FormattedMessage
               defaultMessage='Round'
-              description='Poll results table header'
+              description='[Poll results] Poll results table header'
               tagName='th'
             />
             {gameMode == null && (
               <FormattedMessage
                 defaultMessage='Game mode'
-                description='Poll results table header'
+                description='[Poll results] Poll results table header'
                 tagName='th'
               />
             )}
             <FormattedMessage
               defaultMessage='Beatmapset'
-              description='Poll results table header'
+              description='[Poll results] Poll results table header'
               tagName='th'
             />
             {showPercent ? (
               <>
                 <FormattedMessage
                   defaultMessage='Percent'
-                  description='Poll results table header'
+                  description='[Poll results] Poll results table header'
                   tagName='th'
                 />
                 <FormattedMessage
                   defaultMessage='Total'
-                  description='Poll results table header'
+                  description='[Poll results] Poll results table header'
                   tagName='th'
                 />
               </>
@@ -159,19 +159,19 @@ export default function Polls() {
               <>
                 <FormattedMessage
                   defaultMessage='Yes'
-                  description='Poll results table header'
+                  description='[Poll results] Poll results table header'
                   tagName='th'
                 />
                 <FormattedMessage
                   defaultMessage='No'
-                  description='Poll results table header'
+                  description='[Poll results] Poll results table header'
                   tagName='th'
                 />
               </>
             )}
             <FormattedMessage
               defaultMessage='Poll topic'
-              description='Poll results table header'
+              description='[Poll results] Poll results table header'
               tagName='th'
             />
           </tr>
