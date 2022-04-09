@@ -1,6 +1,9 @@
 'use strict';
 
-const { interpolateName } = require('@formatjs/ts-transformer');
+const { parse: formatjsParse } = require('@formatjs/icu-messageformat-parser');
+const { hoistSelectors: formatjsHoistSelectors } = require('@formatjs/icu-messageformat-parser/manipulator');
+const { printAST: formatjsPrintAst } = require('@formatjs/icu-messageformat-parser/printer');
+const { interpolateName: formatjsInterpolateName } = require('@formatjs/ts-transformer');
 const { createHash } = require('crypto');
 const path = require('path');
 const webpack = require('webpack');
@@ -397,10 +400,15 @@ module.exports = function (webpackEnv) {
                     require.resolve('babel-plugin-formatjs'),
                     {
                       ast: true,
-                      overrideIdFn: (_, defaultMessage, description) =>
-                        interpolateName({}, '[sha512:contenthash:base64:6]', {
+                      overrideIdFn: (_, defaultMessage, description) => {
+                        defaultMessage = formatjsPrintAst(
+                          formatjsHoistSelectors(formatjsParse(defaultMessage)),
+                        );
+
+                        return formatjsInterpolateName({}, '[sha512:contenthash:base64:6]', {
                           content: `${defaultMessage}#${description.replace(/^\[[^\]]+\]\s*/, '')}`,
-                        }),
+                        });
+                      },
                     },
                   ],
                 ].filter(Boolean),
