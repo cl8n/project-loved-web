@@ -90,11 +90,13 @@ export default function Localization() {
 
   useEffect(() => {
     const exportMessagesListener = () => {
-      if (workingMessages == null) {
+      if (englishMessageIds == null || workingMessages == null) {
         return;
       }
 
-      const blob = new Blob([formatForExporting(workingMessages)], { type: 'application/json' });
+      const blob = new Blob([formatForExporting(workingMessages, englishMessageIds)], {
+        type: 'application/json',
+      });
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement('a');
       anchor.href = url;
@@ -107,7 +109,7 @@ export default function Localization() {
 
     document.addEventListener('exportMessages', exportMessagesListener);
     return () => document.removeEventListener('exportMessages', exportMessagesListener);
-  }, [locale, workingMessages]);
+  }, [englishMessageIds, locale, workingMessages]);
 
   if (locale != null && locale !== locale.toLowerCase()) {
     return <Redirect to={`/localization/${locale.toLowerCase()}`} />;

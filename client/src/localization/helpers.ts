@@ -18,11 +18,14 @@ export function formatForEditing(messages: TranslatedMessages): Record<string, s
   return editingMessages;
 }
 
-export function formatForExporting(messages: Record<string, string | undefined>): string {
+export function formatForExporting(
+  messages: Record<string, string | undefined>,
+  validIds: string[],
+): string {
   const exportingMessages: Record<string, { defaultMessage: string }> = {};
 
   for (const id of Object.keys(messages).sort()) {
-    if (messages[id]) {
+    if (messages[id] && validIds.includes(id)) {
       exportingMessages[id] = { defaultMessage: messages[id]! };
     }
   }
