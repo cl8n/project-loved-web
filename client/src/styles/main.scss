@@ -65,6 +65,12 @@ button:not(.fake-a) {
     background-color: var(--accent-hover);
     color: var(--content);
   }
+
+  &[disabled] {
+    cursor: initial;
+    opacity: 0.4;
+    pointer-events: none;
+  }
 }
 
 .modal-submit-button {
@@ -764,16 +770,6 @@ tr.sticky > th {
     margin-left: 0.5em;
     margin-right: 0.5em;
     min-width: 2.5em;
-
-    &[disabled] {
-      cursor: initial;
-      opacity: 0.4;
-
-      &:hover {
-        background-color: var(--accent);
-        color: var(--background);
-      }
-    }
 
     &.selected {
       background-color: var(--secondary-accent);
