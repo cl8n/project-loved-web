@@ -14,6 +14,21 @@ export default function Localization() {
   const [englishMessages, setEnglishMessages] = useState<CategorizedEnglishMessages>();
   const [localeMessages, setLocaleMessages] = useState<Record<string, string | undefined>>();
   const [workingMessages, setWorkingMessages] = useState<Record<string, string | undefined>>();
+  const englishMessageIds = useMemo(() => {
+    if (englishMessages == null) {
+      return undefined;
+    }
+
+    const ids: string[] = [];
+
+    for (const { messages } of englishMessages) {
+      for (const { id } of messages) {
+        ids.push(id);
+      }
+    }
+
+    return ids;
+  }, [englishMessages]);
   const updateMessage = useCallback((id: string, value: string) => {
     setWorkingMessages((prevState) => ({
       ...prevState,
@@ -99,12 +114,19 @@ export default function Localization() {
   }
 
   const localeName = locales.find(({ code }) => code === locale)?.name;
+  const progress =
+    englishMessageIds == null || workingMessages == null
+      ? undefined
+      : ([
+          englishMessageIds.reduce((sum, id) => (workingMessages[id] ? sum + 1 : sum), 0),
+          englishMessageIds.length,
+        ] as const);
 
   return (
     <>
       <div className='content-block'>
         <Header />
-        <HeaderControls locale={locale} />
+        <HeaderControls locale={locale} progress={progress} />
       </div>
       <div className='content-block'>
         {locale == null || locale === 'en' ? (

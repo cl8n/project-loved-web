@@ -10,9 +10,10 @@ function exportMessages(): void {
 
 interface HeaderControlsProps {
   locale: string | undefined;
+  progress: readonly [number, number] | undefined;
 }
 
-export default function HeaderControls({ locale }: HeaderControlsProps) {
+export default function HeaderControls({ locale, progress }: HeaderControlsProps) {
   const history = useHistory();
   const [localeInput, setLocaleInput] = useState('');
 
@@ -49,9 +50,23 @@ export default function HeaderControls({ locale }: HeaderControlsProps) {
           Change locale
         </button>
       </div>
-      <button type='button' onClick={exportMessages}>
-        Export messages
-      </button>
+      <div className='flex-left'>
+        {progress != null && (
+          <>
+            <meter max={progress[1]} value={progress[0]} />
+            <span>
+              {progress[0]} / {progress[1]}
+            </span>
+          </>
+        )}
+        <button
+          type='button'
+          disabled={progress == null || progress[0] === 0}
+          onClick={exportMessages}
+        >
+          Export messages
+        </button>
+      </div>
     </div>
   );
 }
