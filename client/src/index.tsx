@@ -11,6 +11,7 @@ import Manage from './manage';
 import MapperConsentsPage from './mapper-consents/MapperConsentsPage';
 import MorePages from './MorePages';
 import { NoRoute } from './NoRoute';
+import { NotReady } from './NotReady';
 import { OsuAuthProvider } from './osuAuth';
 import { Picks } from './Picks';
 import { PicksRoundListing } from './PicksRoundListing';
@@ -20,6 +21,7 @@ import './styles/main.scss';
 import SubmissionForm from './submission-form';
 import SubmissionListingContainer from './submission-listing';
 import SurveyClosed from './survey/SurveyClosed';
+import SurveyResults from './survey/SurveyResults';
 import Team from './team';
 
 registerTextareaAutoHeightTrigger();
@@ -71,6 +73,11 @@ render(
               </Route>
               <Route exact path='/survey/closed'>
                 <SurveyClosed />
+              </Route>
+              <Route exact path='/survey/:survey'>
+                <NotReady>
+                  <SurveyResults />
+                </NotReady>
               </Route>
               <Route>
                 <NoRoute />

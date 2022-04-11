@@ -1,0 +1,21 @@
+.survey-question {
+  display: flex;
+  align-items: center;
+
+  &-info {
+    flex-grow: 1;
+    padding-bottom: 2.5em;
+    text-align: center;
+
+    > h2 {
+      font-weight: normal;
+      margin-top: 0;
+      margin-bottom: 0.5em;
+    }
+
+    > span {
+      font-size: 2em;
+      font-weight: bold;
+    }
+  }
+}
