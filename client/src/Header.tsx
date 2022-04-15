@@ -1,5 +1,3 @@
-import type { ChangeEvent } from 'react';
-import { useEffect, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { NavLink, Link } from 'react-router-dom';
 import globeIcon from './images/icons8/globe.png';
@@ -7,6 +5,7 @@ import sunIcon from './images/icons8/sun.png';
 import { locales, useLocaleState } from './intl';
 import { loginUrl, useOsuAuth } from './osuAuth';
 import { hasRole } from './permissions';
+import { useThemeState } from './theme';
 import { UserInline } from './UserInline';
 
 const messages = defineMessages({
@@ -146,21 +145,10 @@ function LocaleSelector() {
 
 function ThemeSelector() {
   const intl = useIntl();
-  const [theme, setTheme] = useState(
-    localStorage.getItem('theme') ??
-      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
-  );
-  const onThemeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    localStorage.setItem('theme', event.target.value);
-    setTheme(event.target.value);
-  };
-
-  useEffect(() => {
-    document.querySelector('html')!.dataset.theme = theme;
-  }, [theme]);
+  const [theme, setTheme] = useThemeState();
 
   return (
-    <select onChange={onThemeChange} value={theme}>
+    <select onChange={(event) => setTheme(event.target.value as 'dark' | 'light')} value={theme}>
       <option value='dark'>{intl.formatMessage(messages.dark)}</option>
       <option value='light'>{intl.formatMessage(messages.light)}</option>
     </select>
