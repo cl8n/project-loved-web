@@ -36,6 +36,8 @@ export default function Questions({
     return surveyData.questions.map((questionData, index) => {
       const answers: Record<string, number> =
         questionData.type === '1to5' ? { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } : {};
+      let countedResponses = 0;
+      let countedTotal = 0;
 
       for (const response of responses) {
         const answer = response.answers[index];
@@ -43,12 +45,18 @@ export default function Questions({
         if (answer != null) {
           answers[answer] ??= 0;
           answers[answer]++;
+
+          if (questionData.type === '1to5') {
+            countedResponses++;
+            countedTotal += parseInt(answer, 10);
+          }
         }
       }
 
       return {
         ...questionData,
         answers: Object.entries(answers).map(([name, count]) => ({ count, name })),
+        average: countedResponses > 0 ? countedTotal / countedResponses : undefined,
       };
     });
   }, [gameMode, surveyData, userIdentity]);
@@ -81,7 +89,7 @@ export default function Questions({
       <h1>{surveyData.title}</h1>
       {questions.map(
         (question, index) =>
-          question.type !== 'open-ended' && <Question key={index} question={question as any} />,
+          question.type !== 'open-ended' && <Question key={index} {...question} />,
       )}
       {questions.map(
         (question, index) =>
@@ -89,7 +97,11 @@ export default function Questions({
             <Fragment key={index}>
               <h2>{question.question}</h2>
               {question.answers.map((answer, index) => (
-                <p key={index}>{answer.name}</p>
+                <div key={index} className='survey-question-open-ended'>
+                  <span>“</span>
+                  <p>{answer.name}</p>
+                  <span>”</span>
+                </div>
               ))}
             </Fragment>
           ),
