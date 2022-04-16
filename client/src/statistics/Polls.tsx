@@ -1,6 +1,5 @@
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
-import type { ChangeEvent } from 'react';
 import { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { apiErrorMessage, getPolls, useApi } from '../api';
@@ -8,9 +7,9 @@ import { BeatmapInline } from '../BeatmapInline';
 import type { IPoll } from '../interfaces';
 
 const messages = defineMessages({
-  all: {
-    defaultMessage: 'All',
-    description: '[Poll results] Game mode option for poll results table',
+  any: {
+    defaultMessage: 'Any',
+    description: '[General] Selector option indicating that any of the choices are valid',
   },
   ascending: {
     defaultMessage: 'Ascending',
@@ -85,18 +84,20 @@ export default function Polls() {
     return <span>Loading poll results...</span>;
   }
 
-  const onGameModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const value = event.currentTarget.value;
-
-    setGameMode(value === 'all' ? undefined : parseInt(value));
-  };
-
   return (
     <>
       <div className='flex-left'>
         <label htmlFor='gameMode'>{intl.formatMessage(messages.gameMode)}</label>
-        <select name='gameMode' value={gameMode ?? 'all'} onChange={onGameModeChange}>
-          <option value='all'>{intl.formatMessage(messages.all)}</option>
+        <select
+          name='gameMode'
+          value={gameMode}
+          onChange={(event) =>
+            setGameMode(
+              event.currentTarget.value ? parseInt(event.currentTarget.value, 10) : undefined,
+            )
+          }
+        >
+          <option value=''>{intl.formatMessage(messages.any)}</option>
           {gameModes.map((m) => (
             <option key={m} value={m}>
               {gameModeLongName(m)}

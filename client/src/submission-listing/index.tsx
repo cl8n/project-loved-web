@@ -25,13 +25,9 @@ import SortButton from './SortButton';
 import SubmissionBeatmapset from './SubmissionBeatmapset';
 
 const messages = defineMessages({
-  all: {
-    defaultMessage: 'All',
-    description: '[Submissions] osu!mania key mode option for submissions table',
-  },
   any: {
     defaultMessage: 'Any',
-    description: '[Submissions] Review status option',
+    description: '[General] Selector option indicating that any of the choices are valid',
   },
   artist: {
     defaultMessage: 'Artist',
@@ -285,8 +281,7 @@ export default function SubmissionListingContainer() {
     }
   };
   const onKeyModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const newKeyMode =
-      event.currentTarget.value === 'all' ? null : parseInt(event.currentTarget.value);
+    const newKeyMode = event.currentTarget.value ? parseInt(event.currentTarget.value, 10) : null;
 
     if (newKeyMode !== keyMode) {
       history.push(getNewSubmissionsListingPath(gameMode, newKeyMode, 1));
@@ -342,8 +337,8 @@ export default function SubmissionListingContainer() {
                 description='[Submissions] Selector to change osu!mania key mode'
                 tagName='span'
               />
-              <select value={keyMode ?? 'all'} onChange={onKeyModeChange}>
-                <option value='all'>{intl.formatMessage(messages.all)}</option>
+              <select value={keyMode ?? undefined} onChange={onKeyModeChange}>
+                <option value=''>{intl.formatMessage(messages.any)}</option>
                 <optgroup label={intl.formatMessage(messages.commonKeyModes)}>
                   {[4, 7].map((keyMode) => (
                     <option key={keyMode} value={keyMode}>
