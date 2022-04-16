@@ -1,5 +1,6 @@
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { Fragment, useEffect, useMemo, useState } from 'react';
+import { UserInline } from '../UserInline';
 import type { ComparingStatistic, SurveyData, UserIdentity } from './helpers';
 import { loadSurveyData } from './helpers';
 import type { QuestionProps } from './Question';
@@ -149,6 +150,21 @@ export default function Questions({
           question.type === 'open-ended' && (
             <Fragment key={index}>
               <h2>{question.question}</h2>
+              <div className='warning-box'>
+                The responses here are unedited, but I removed some that didn't provide any feedback
+                about the project. Lots of them were nice "thank you"s, so thank you too everybody!
+                If you notice your comment was removed and you think it shouldn't have been, let me
+                know. —{' '}
+                <UserInline
+                  user={{
+                    avatar_url: '',
+                    banned: false,
+                    country: 'US',
+                    id: 3666350,
+                    name: 'clayton',
+                  }}
+                />
+              </div>
               {question.answers.map((answer, index) => (
                 <div key={index} className='survey-question-open-ended'>
                   <span>“</span>
