@@ -1,8 +1,11 @@
 import type { GameMode } from 'loved-bridge/build/beatmaps/gameMode';
 
-export type ComparingStatistic = 'joinYear' | 'rank';
+export const comparingStatistics = ['rank', 'joinYear'] as const;
+export const userIdentities = ['player', 'mapper'] as const;
+
+export type ComparingStatistic = typeof comparingStatistics[number];
 export type QuestionType = '1to5' | 'open-ended' | 'options';
-export type UserIdentity = 'player' | 'mapper';
+export type UserIdentity = typeof userIdentities[number];
 
 export interface SurveyData {
   questions: {

@@ -2,23 +2,30 @@ import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import type { ComparingStatistic, SurveyData, UserIdentity } from './helpers';
 import { loadSurveyData } from './helpers';
+import type { QuestionProps } from './Question';
 import Question from './Question';
 
+function arrayAverage(array: number[]): number | undefined {
+  return array.length === 0
+    ? undefined
+    : array.reduce((sum, value) => sum + value, 0) / array.length;
+}
+
 interface QuestionsProps {
-  comparingStat: ComparingStatistic | undefined;
+  comparingStatistic: ComparingStatistic | undefined;
   gameMode: GameMode | undefined;
   survey: string;
   userIdentity: UserIdentity | undefined;
 }
 
 export default function Questions({
-  comparingStat,
+  comparingStatistic,
   gameMode,
   survey,
   userIdentity,
 }: QuestionsProps) {
   const [surveyData, setSurveyData] = useState<SurveyData | null>();
-  const questions = useMemo(() => {
+  const questions: QuestionProps[] | null = useMemo(() => {
     if (surveyData == null) {
       return null;
     }
@@ -34,32 +41,78 @@ export default function Questions({
     }
 
     return surveyData.questions.map((questionData, index) => {
-      const answers: Record<string, number> =
-        questionData.type === '1to5' ? { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } : {};
-      let countedResponses = 0;
-      let countedTotal = 0;
+      if (questionData.type === 'open-ended') {
+        return {
+          answers: responses.map((response) => response.answers[index]).filter(Boolean) as string[],
+          question: questionData.question,
+          type: questionData.type,
+        };
+      }
 
-      for (const response of responses) {
-        const answer = response.answers[index];
+      // TODO: Typing is very difficult here
+      let answers: any;
+      let average: number | undefined;
 
-        if (answer != null) {
-          answers[answer] ??= 0;
-          answers[answer]++;
+      if (questionData.type === '1to5') {
+        average = arrayAverage(
+          responses
+            .map((response) => parseInt(response.answers[index] ?? '', 10))
+            .filter((answer) => !isNaN(answer)),
+        );
 
-          if (questionData.type === '1to5') {
-            countedResponses++;
-            countedTotal += parseInt(answer, 10);
+        if (comparingStatistic != null) {
+          const bucketedAnswers: Record<number, number[]> = {};
+
+          for (const response of responses) {
+            const answer = parseInt(response.answers[index] ?? '', 10);
+            const statistic = response.user[comparingStatistic];
+
+            if (isNaN(answer) || statistic == null) {
+              continue;
+            }
+
+            bucketedAnswers[statistic] ??= [];
+            bucketedAnswers[statistic].push(answer);
           }
+
+          answers = Object.entries(bucketedAnswers).map(([statistic, answers]) => ({
+            average: arrayAverage(answers)!,
+            statistic: parseInt(statistic, 10),
+          }));
         }
       }
 
-      return {
-        ...questionData,
-        answers: Object.entries(answers).map(([name, count]) => ({ count, name })),
-        average: countedResponses > 0 ? countedTotal / countedResponses : undefined,
-      };
+      if (answers == null) {
+        const answerCounts: Record<string, number> =
+          questionData.type === '1to5' ? { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } : {};
+
+        for (const response of responses) {
+          const answer = response.answers[index];
+
+          if (answer != null) {
+            answerCounts[answer] ??= 0;
+            answerCounts[answer]++;
+          }
+        }
+
+        answers = Object.entries(answerCounts).map(([name, count]) => ({ count, name }));
+      }
+
+      return questionData.type === '1to5'
+        ? {
+            answers,
+            average,
+            comparingStatistic,
+            question: questionData.question,
+            type: questionData.type,
+          }
+        : {
+            answers,
+            question: questionData.question,
+            type: questionData.type,
+          };
     });
-  }, [gameMode, surveyData, userIdentity]);
+  }, [comparingStatistic, gameMode, surveyData, userIdentity]);
 
   useEffect(() => {
     loadSurveyData(survey)
@@ -99,7 +152,7 @@ export default function Questions({
               {question.answers.map((answer, index) => (
                 <div key={index} className='survey-question-open-ended'>
                   <span>“</span>
-                  <p>{answer.name}</p>
+                  <p>{answer}</p>
                   <span>”</span>
                 </div>
               ))}
