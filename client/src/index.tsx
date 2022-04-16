@@ -11,7 +11,6 @@ import Manage from './manage';
 import MapperConsentsPage from './mapper-consents/MapperConsentsPage';
 import MorePages from './MorePages';
 import { NoRoute } from './NoRoute';
-import { NotReady } from './NotReady';
 import { OsuAuthProvider } from './osuAuth';
 import { Picks } from './Picks';
 import { PicksRoundListing } from './PicksRoundListing';
@@ -77,9 +76,7 @@ render(
                   <SurveyClosed />
                 </Route>
                 <Route exact path='/survey/:survey'>
-                  <NotReady>
-                    <SurveyResults />
-                  </NotReady>
+                  <SurveyResults />
                 </Route>
                 <Route>
                   <NoRoute />
