@@ -24,7 +24,7 @@ On the first run of the database container, the `project_loved` user will be cre
 
 ### Live data
 
-Regular data exports (sans `logs`, `log_values`, and `sessions`) are posted to <https://loved.sh/exports>. **This will drop and re-create all other tables!**
+Regular database exports (sans `sessions`) are posted to <https://loved.sh/exports>. **This will drop and re-create all other tables!**
 
 ```
 docker-compose exec database /import-live-data.sh [export URL]
