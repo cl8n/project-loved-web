@@ -71,7 +71,8 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
-    "build": "eslint --max-warnings 0 . && npm run extract-translations && npm run compile-translations && node scripts/build.js",
+    "build": "npm run lint && npm run extract-translations && npm run compile-translations && node scripts/build.js",
+    "lint": "eslint --max-warnings 0 .",
     "extract-translations": "formatjs extract --flatten --format config/messageFormatter.js --ignore 'src/**/*.d.ts' --out-file src/translations/en.json -- 'src/**/*.{ts,tsx}'",
     "compile-translations": "rm -rf src/compiled-translations && formatjs compile-folder --ast src/translations src/compiled-translations && rm -f src/compiled-translations/en.json"
   },

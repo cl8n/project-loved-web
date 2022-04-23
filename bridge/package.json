@@ -2,7 +2,8 @@
   "name": "loved-bridge",
   "private": true,
   "scripts": {
-    "build": "eslint --max-warnings 0 . && rm -rf build && tsc --noEmitOnError"
+    "build": "npm run lint && rm -rf build && tsc --noEmitOnError",
+    "lint": "eslint --max-warnings 0 ."
   },
   "devDependencies": {
     "@types/node": "^14.18.12",
