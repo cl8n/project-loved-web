@@ -344,8 +344,7 @@ export default function SubmissionBeatmapset({
               </div>
             )}
             <SubmissionsList
-              reviews={beatmapset.reviews}
-              submissions={beatmapset.submissions}
+              reviewsAndSubmissions={beatmapset.reviewsAndSubmissions}
               usersById={usersById}
             />
           </td>

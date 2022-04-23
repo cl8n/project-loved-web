@@ -1,35 +1,43 @@
 import type { GetSubmissionsResponseBody } from '../api';
 import type { IReview, ISubmission } from '../interfaces';
+import type { SubmittedBeatmapset } from './interfaces';
 import Review from './Review';
 import Submission from './Submission';
 
+function isReview(reviewOrSubmission: IReview | ISubmission): reviewOrSubmission is IReview {
+  return (reviewOrSubmission as any).score != null;
+}
+
 interface SubmissionsListProps {
-  reviews: IReview[];
-  submissions: ISubmission[];
+  reviewsAndSubmissions: SubmittedBeatmapset['reviewsAndSubmissions'];
   usersById: GetSubmissionsResponseBody['usersById'];
 }
 
-export default function SubmissionsList({ reviews, submissions, usersById }: SubmissionsListProps) {
+export default function SubmissionsList({
+  reviewsAndSubmissions,
+  usersById,
+}: SubmissionsListProps) {
   return (
     <ul className='submissions'>
-      {reviews.map((review) => (
-        <Review
-          key={'r' + review.id}
-          review={{
-            ...review,
-            captain: usersById[review.reviewer_id],
-          }}
-        />
-      ))}
-      {submissions.map((submission) => (
-        <Submission
-          key={submission.id}
-          submission={{
-            ...submission,
-            submitter: submission.submitter_id == null ? null : usersById[submission.submitter_id],
-          }}
-        />
-      ))}
+      {reviewsAndSubmissions.map((rOrS) =>
+        isReview(rOrS) ? (
+          <Review
+            key={'r' + rOrS.id}
+            review={{
+              ...rOrS,
+              captain: usersById[rOrS.reviewer_id],
+            }}
+          />
+        ) : (
+          <Submission
+            key={rOrS.id}
+            submission={{
+              ...rOrS,
+              submitter: rOrS.submitter_id == null ? null : usersById[rOrS.submitter_id],
+            }}
+          />
+        ),
+      )}
     </ul>
   );
 }

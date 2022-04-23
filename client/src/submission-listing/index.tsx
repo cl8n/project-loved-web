@@ -12,7 +12,7 @@ import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import { apiErrorMessage, getSubmissions, useApi } from '../api';
 import { dateFromString } from '../date-format';
 import Help from '../Help';
-import type { IReview } from '../interfaces';
+import type { IReview, ISubmission } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import useTitle from '../useTitle';
 import type { ToggleableColumn, ToggleableColumnsState } from './helpers';
@@ -527,6 +527,44 @@ function beatmapsetSortFn(
     );
 }
 
+function combineReviewsAndSubmissions(
+  reviews: IReview[],
+  submissions: ISubmission[],
+): (IReview | ISubmission)[] {
+  const reviewsAndSubmissions: (IReview | ISubmission)[] = [];
+  let reviewIndex = 0;
+  let submissionIndex = 0;
+
+  while (reviewIndex < reviews.length || submissionIndex < submissions.length) {
+    if (reviewIndex >= reviews.length) {
+      reviewsAndSubmissions.push(submissions[submissionIndex]);
+      submissionIndex++;
+      continue;
+    }
+
+    if (submissionIndex >= submissions.length) {
+      reviewsAndSubmissions.push(reviews[reviewIndex]);
+      reviewIndex++;
+      continue;
+    }
+
+    if (
+      reviews[reviewIndex].active_captain != null ||
+      submissions[submissionIndex].submitted_at == null ||
+      dateFromString(reviews[reviewIndex].reviewed_at).getTime() <=
+        dateFromString(submissions[submissionIndex].submitted_at as string).getTime()
+    ) {
+      reviewsAndSubmissions.push(reviews[reviewIndex]);
+      reviewIndex++;
+    } else {
+      reviewsAndSubmissions.push(submissions[submissionIndex]);
+      submissionIndex++;
+    }
+  }
+
+  return reviewsAndSubmissions;
+}
+
 function sortReviews(a: IReview, b: IReview): number {
   return (
     +(b.active_captain ?? -1) - +(a.active_captain ?? -1) ||
@@ -593,6 +631,10 @@ function SubmissionListing({
       .map((beatmapset) => ({
         ...beatmapset,
         creator: submissionsInfo.usersById[beatmapset.creator_id],
+        reviewsAndSubmissions: combineReviewsAndSubmissions(
+          beatmapset.reviews,
+          beatmapset.submissions,
+        ),
       }))
       .sort(beatmapsetSortFn(sorts[1], beatmapStatus))
       .sort(beatmapsetSortFn(sorts[0], beatmapStatus))
