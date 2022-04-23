@@ -4,6 +4,18 @@ This project contains the web client (<https://loved.sh>), web server (<https://
 
 The provided `docker-compose` configuration sets up a development environment with the client, API, MySQL, and Nginx. The client is served from http://localhost:8080 by default. Server environment variables under "API server options" and "MySQL connection options" are overridden in this environment.
 
+### Bridge package
+
+The `bridge` directory contains a package required by both the client and server, but it's not built automatically by either. You will need to rebuild it yourself if changes are made:
+
+```
+cd bridge
+npm install
+npm run build
+```
+
+The package will also need to be reinstalled in `client` and `server` if any of its dependencies change, with `npm install ../bridge`.
+
 ### Database migrations
 
 `/server/migrations` contains SQL to create the `project_loved` database schema. There are no backward migrations.
@@ -34,16 +46,26 @@ docker-compose run --rm api ./build/init-user.js <osu! username>
 
 ### Client
 
-```
-cd client
-npm install
-npm run build
-```
+- ```
+  cd bridge
+  npm install
+  npm run build
+  ```
+- ```
+  cd client
+  npm install
+  npm run build
+  ```
 
 The built webpage will be in `/client/build`; it's an SPA.
 
 ### Server
 
+- ```
+  cd bridge
+  npm install
+  npm run build
+  ```
 - ```
   cd server
   npm install
@@ -55,3 +77,5 @@ The built webpage will be in `/client/build`; it's an SPA.
   - With systemd: See provided `project-loved-web.example.service`
 
 Request paths under `/api` should proxy to the server, paths exactly matching files should serve the files, and everything else should serve the client's `index.html`.
+
+Also note that the `loved-bridge` package is installed as a link to `../bridge`, so it will need to be deployed either at that path or at the target of a symbolic link from that path.
