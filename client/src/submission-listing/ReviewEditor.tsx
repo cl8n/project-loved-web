@@ -11,7 +11,7 @@ import type { IBeatmapset, IReview } from '../interfaces';
 import { Modal } from '../Modal';
 import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
-import { reviewScoreClasses, reviewScoreMessages, reviewScoreSymbols } from './helpers';
+import { reviewScoreClasses, reviewScoreTitle } from './helpers';
 
 const messages = defineMessages({
   notAllowed: {
@@ -122,8 +122,7 @@ export default function ReviewEditor({
                   </option>
                   {selectableReviewScores.map((score) => (
                     <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
-                      {intl.formatMessage(reviewScoreMessages[score + 3])} (
-                      {reviewScoreSymbols[score + 3]})
+                      {reviewScoreTitle(intl, score)}
                     </option>
                   ))}
                   {hasRole(authUser, Role.captain, gameMode) && (

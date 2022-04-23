@@ -1,3 +1,4 @@
+import type { IntlShape } from 'react-intl';
 import { defineMessages } from 'react-intl';
 import { dateFromString } from '../date-format';
 import type { IReview, ISubmission } from '../interfaces';
@@ -110,7 +111,12 @@ export const reviewScoreMessages = [
 export const reviewScoreClasses = reviewScoreMessages.map(
   (_, score) => `review-score-${score - 3}`,
 );
-export const reviewScoreSymbols = ['-2', '-1.5', '-1', '0', '+1', '+1.5', '+2'] as const;
+const reviewScoreSymbols = ['-2', '-1.5', '-1', '0', '+1', '+1.5', '+2'] as const;
+
+export function reviewScoreTitle(intl: IntlShape, score: number): string {
+  const message = intl.formatMessage(reviewScoreMessages[score + 3]);
+  return `${message.charAt(0).toUpperCase()}${message.slice(1)} (${reviewScoreSymbols[score + 3]})`;
+}
 
 export function reviewIsNew(review: IReview | ISubmission): boolean {
   const submitDate = dateFromString(

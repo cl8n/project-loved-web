@@ -6,11 +6,7 @@ import { addReviews, alertApiErrorMessage } from '../api';
 import { autoHeightRef } from '../auto-height';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
-import {
-  reviewScoreClasses,
-  reviewScoreMessages,
-  reviewScoreSymbols,
-} from '../submission-listing/helpers';
+import { reviewScoreClasses, reviewScoreTitle } from '../submission-listing/helpers';
 
 const messages = defineMessages({
   selectScore: {
@@ -113,7 +109,7 @@ export default function InnerForm() {
         </option>
         {[3, 1].map((score) => (
           <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
-            {intl.formatMessage(reviewScoreMessages[score + 3])} ({reviewScoreSymbols[score + 3]})
+            {reviewScoreTitle(intl, score)}
           </option>
         ))}
       </select>
