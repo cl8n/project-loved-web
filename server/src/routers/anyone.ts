@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import type { Beatmapset, Consent, ConsentBeatmapset, Review, User } from 'loved-bridge/tables';
 import { LogType, Role } from 'loved-bridge/tables';
 import type { MysqlConnectionType } from '../db';
@@ -421,7 +422,7 @@ anyoneRouter.delete(
 );
 
 anyoneRouter.post(
-  '/submit',
+  '/review-many',
   asyncHandler(async (req, res) => {
     if (typeof req.body.beatmapsetId !== 'number') {
       return res.status(422).json({ error: 'Invalid beatmapset ID' });
@@ -435,10 +436,12 @@ anyoneRouter.post(
       return res.status(422).json({ error: 'No game modes selected' });
     }
 
-    // Checking for exactly null to validate input
-    // eslint-disable-next-line eqeqeq
-    if (req.body.reason !== null && typeof req.body.reason !== 'string') {
+    if (typeof req.body.reason !== 'string') {
       return res.status(422).json({ error: 'Invalid reason' });
+    }
+
+    if (req.body.score !== 1 && req.body.score !== 3) {
+      return res.status(422).json({ error: 'Invalid score' });
     }
 
     const beatmapset = await res.typedLocals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId);
@@ -465,33 +468,57 @@ anyoneRouter.post(
       });
     }
 
+    const deleteExistingSubmission = (connection: MysqlConnectionType, gameMode: GameMode) =>
+      connection.query(
+        `
+          DELETE FROM submissions
+          WHERE beatmapset_id = ?
+            AND game_mode = ?
+            AND submitter_id = ?
+            AND reason IS NULL
+        `,
+        [beatmapset.id, gameMode, res.typedLocals.user.id],
+      );
     const now = new Date();
 
-    try {
-      await db.query(
-        `
-          INSERT INTO submissions
-            (beatmapset_id, game_mode, reason, submitted_at, submitter_id)
-          VALUES ?
-        `,
-        [
-          req.body.gameModes.map((gameMode) => [
-            beatmapset.id,
-            gameMode,
-            req.body.reason,
-            now,
-            res.typedLocals.user.id,
-          ]),
-        ],
-      );
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      if (error.code !== 'ER_DUP_ENTRY') {
-        throw error;
-      }
+    await db.transact(async (connection) => {
+      for (const gameMode of req.body.gameModes as GameMode[]) {
+        const existingReview = await connection.queryOne<Pick<Review, 'id'>>(
+          `
+            SELECT id
+            FROM reviews
+            WHERE beatmapset_id = ?
+              AND game_mode = ?
+              AND reviewer_id = ?
+          `,
+          [beatmapset.id, gameMode, res.typedLocals.user.id],
+        );
 
-      return res.status(422).json({ error: 'You already submitted this map' });
-    }
+        if (existingReview != null) {
+          await connection.query('UPDATE reviews SET ? WHERE id = ?', [
+            {
+              reason: req.body.reason,
+              reviewed_at: now,
+              score: req.body.score,
+            },
+            existingReview.id,
+          ]);
+        } else {
+          await connection.query('INSERT INTO reviews SET ?', [
+            {
+              beatmapset_id: beatmapset.id,
+              game_mode: gameMode,
+              reason: req.body.reason,
+              reviewed_at: now,
+              reviewer_id: res.typedLocals.user.id,
+              score: req.body.score,
+            },
+          ]);
+        }
+
+        await deleteExistingSubmission(connection, gameMode);
+      }
+    });
 
     res.status(204).send();
   }),

@@ -67,16 +67,17 @@ export function addOrUpdateReview(
   return superagent.post('/api/review').send({ beatmapsetId, gameMode, reason, score });
 }
 
-export function addRound(): Response<{ id: number }> {
-  return superagent.post('/api/add-round');
-}
-
-export function addSubmission(
+export function addReviews(
   beatmapsetId: number,
   gameModes: GameMode[],
-  reason: string | null,
+  reason: string,
+  score: number,
 ): Response {
-  return superagent.post('/api/submit').send({ beatmapsetId, gameModes, reason });
+  return superagent.post('/api/review-many').send({ beatmapsetId, gameModes, reason, score });
+}
+
+export function addRound(): Response<{ id: number }> {
+  return superagent.post('/api/add-round');
 }
 
 export function addUser(name: string, storeBanned?: boolean): Response<IUser> {

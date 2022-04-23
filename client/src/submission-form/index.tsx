@@ -35,7 +35,7 @@ export default function SubmissionForm() {
         <FormattedMessage
           defaultMessage="
             What you write on this form will be visible publicly, so don't write something that you don't want others
-            to see. You don't have to fill in the reason field if you don't want to.
+            to see.
           "
           description='[Submission form] Submission form list item 1'
           tagName='li'

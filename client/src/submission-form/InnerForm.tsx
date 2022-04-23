@@ -2,12 +2,21 @@ import { gameModeLongName, gameModes, gameModeShortName } from 'loved-bridge/bea
 import { useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useHistory } from 'react-router-dom';
-import { addSubmission, alertApiErrorMessage } from '../api';
+import { addReviews, alertApiErrorMessage } from '../api';
 import { autoHeightRef } from '../auto-height';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
+import {
+  reviewScoreClasses,
+  reviewScoreMessages,
+  reviewScoreSymbols,
+} from '../submission-listing/helpers';
 
 const messages = defineMessages({
+  selectScore: {
+    defaultMessage: 'Select a score',
+    description: '[Reviews] Placeholder value for review score selector',
+  },
   submit: {
     defaultMessage: 'Submit',
     description: '[General] Submit button',
@@ -43,7 +52,7 @@ export default function InnerForm() {
 
     const beatmapsetId = parseInt(beatmapsetMatch[1]);
 
-    return addSubmission(beatmapsetId, form.gameModes, form.reason)
+    return addReviews(beatmapsetId, form.gameModes, form.reason, form.score)
       .then(() => {
         if (form.submitValue) {
           history.push(`/submissions/${gameModeShortName(form.gameModes[0])}`, beatmapsetId);
@@ -91,17 +100,32 @@ export default function InnerForm() {
         </tbody>
       </table>
       <h2>
-        <label htmlFor='reason'>
+        <label htmlFor='score'>
           <FormattedMessage
-            defaultMessage='Why do you want this map to be Loved? <fade>(optional)</fade>'
-            description='[Submission form] Submission form reason input prompt'
-            values={{
-              fade: (c: string) => <span className='faded'>{c}</span>,
-            }}
+            defaultMessage='How much do you support this map being Loved?'
+            description='[Submission form] Score input prompt'
           />
         </label>
       </h2>
-      <textarea name='reason' style={{ width: '100%' }} ref={autoHeightRef} />
+      <select name='score' required data-value-type='int'>
+        <option hidden value=''>
+          {intl.formatMessage(messages.selectScore)}
+        </option>
+        {[3, 1].map((score) => (
+          <option key={score} className={reviewScoreClasses[score + 3]} value={score}>
+            {intl.formatMessage(reviewScoreMessages[score + 3])} ({reviewScoreSymbols[score + 3]})
+          </option>
+        ))}
+      </select>
+      <h2>
+        <label htmlFor='reason'>
+          <FormattedMessage
+            defaultMessage='Why do you want this map to be Loved?'
+            description='[Submission form] Reason input prompt'
+          />
+        </label>
+      </h2>
+      <textarea name='reason' required style={{ width: '100%' }} ref={autoHeightRef} />
       <div className='flex-left spacer-margin'>
         <button type='submit' data-submit-value='leave'>
           {intl.formatMessage(busy ? messages.submitting : messages.submit)}
