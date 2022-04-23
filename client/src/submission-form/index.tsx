@@ -8,7 +8,7 @@ import InnerForm from './InnerForm';
 export default function SubmissionForm() {
   useTitle('Submit a map');
   const authUser = useOsuAuth().user;
-  const submissionsLink = (c: ReactNode) => <Link to='/submissions/osu'>{c}</Link>;
+  const submissionsLink = (c: ReactNode) => <Link to='/submissions'>{c}</Link>;
 
   return (
     <>
