@@ -112,7 +112,9 @@ export const reviewScoreClasses = reviewScoreMessages.map(
 );
 export const reviewScoreSymbols = ['-2', '-1.5', '-1', '0', '+1', '+1.5', '+2'] as const;
 
-export function submissionIsNew(submission: ISubmission): boolean {
-  const submitDate = dateFromString(submission.submitted_at);
+export function reviewIsNew(review: IReview | ISubmission): boolean {
+  const submitDate = dateFromString(
+    (review as IReview).reviewed_at ?? (review as ISubmission).submitted_at,
+  );
   return submitDate != null && Date.now() <= submitDate.getTime() + 604800000;
 }

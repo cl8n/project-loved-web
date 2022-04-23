@@ -21,8 +21,7 @@ import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
 import { UserInline } from '../UserInline';
 import type { ToggleableColumnsState } from './helpers';
-import { beatmapsetNotAllowed } from './helpers';
-import { submissionIsNew } from './helpers';
+import { beatmapsetNotAllowed, reviewIsNew } from './helpers';
 import type { SubmittedBeatmapset } from './interfaces';
 import ReviewEditor from './ReviewEditor';
 import SubmissionsList from './SubmissionsList';
@@ -248,7 +247,7 @@ export default function SubmissionBeatmapset({
           closed: !expanded,
           hover: hovered,
           'low-favorites': gameMode === GameMode.osu && beatmapset.favorite_count < 30,
-          new: beatmapset.submissions.some(submissionIsNew),
+          new: beatmapset.reviews.some(reviewIsNew) || beatmapset.submissions.some(reviewIsNew),
           'submission-beatmapset': true,
           voting:
             beatmapset.poll != null && (beatmapset.poll.in_progress || beatmapset.poll.passed),

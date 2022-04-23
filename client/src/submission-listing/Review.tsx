@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { dateFromString } from '../date-format';
 import type { IReview, IUser } from '../interfaces';
 import { UserInline } from '../UserInline';
-import { reviewScoreClasses, reviewScoreMessages } from './helpers';
+import { reviewIsNew, reviewScoreClasses, reviewScoreMessages } from './helpers';
 
 interface ReviewProps {
   review: IReview & { captain: IUser };
@@ -70,6 +70,16 @@ export default function Review({ review }: ReviewProps) {
           ),
         }}
       />
+      {reviewIsNew(review) && (
+        <span className='new'>
+          {' ('}
+          <FormattedMessage
+            defaultMessage='New!'
+            description='[Submissions] Indicator for content recently updated'
+          />
+          )
+        </span>
+      )}
       <div className={'submission-reason ' + scoreClass}>"{review.reason}"</div>
     </li>
   );
