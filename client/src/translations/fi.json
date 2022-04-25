@@ -294,7 +294,7 @@
     "defaultMessage": "Nimitetty"
   },
   "kr2W+L": {
-    "defaultMessage": "<p>Tämän lomakeen täyttäminen auttaa <teamLink>kapteeneja</teamLink> päättämään mitä mappeja he aikovat nimittää Loved-kategoriaan kuukausittaisissa äänestyksissä. Vaikka ajattelemasi mappi on jo <submissionsLink>ehdotettu</submissionsLink>, voit lisätä mielipiteesi siitä tähän.</p> <p>Huomioi kuitenkin näitä asioita:</p>"
+    "defaultMessage": "<p>Tämän lomakkeen täyttäminen auttaa <teamLink>kapteeneja</teamLink> päättämään, mitä mappeja he aikovat nimittää Loved-kategoriaan kuukausittaisissa äänestyksissä. Vaikka ajattelemasi mappi on jo <submissionsLink>ehdotettu</submissionsLink>, voit lisätä mielipiteesi siitä tähän.</p> <p>Huomioi kuitenkin näitä asioita:</p>"
   },
   "l39agD": {
     "defaultMessage": "Tila"
