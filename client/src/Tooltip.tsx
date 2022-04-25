@@ -19,6 +19,7 @@ export default function Tooltip({ children, content }: PropsWithChildren<Tooltip
       {visible && (
         <div className='tooltip-content'>
           {content}
+          <div className='tooltip-hover-area' />
           <div className='tooltip-triangle' />
         </div>
       )}

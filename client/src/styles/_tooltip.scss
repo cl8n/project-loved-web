@@ -17,6 +17,15 @@
     z-index: 1;
   }
 
+  &-hover-area {
+    bottom: calc(-0.5em - 1px);
+    left: -1px;
+    position: absolute;
+    right: -1px;
+    top: -1px;
+    z-index: -1;
+  }
+
   &-triangle {
     background-color: var(--accent-background);
     border-bottom: 1px solid var(--content);
@@ -27,5 +36,6 @@
     top: calc(100% + 1px);
     transform: translateX(-50%) translateY(-50%) rotateZ(45deg);
     width: 10px;
+    z-index: -1;
   }
 }
