@@ -4,6 +4,7 @@ import { FormattedMessage } from 'react-intl';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { registerTextareaAutoHeightTrigger } from './auto-height';
 import BackToTopButton from './BackToTopButton';
+import CurrentNewsPostNotice from './CurrentNewsPostNotice';
 import { Header } from './Header';
 import { IntlProviderWrapper } from './intl';
 import Localization from './localization';
@@ -37,12 +38,15 @@ render(
               <Switch>
                 <Redirect exact from='/' to='/submissions' />
                 <Route exact path='/submissions/:gameMode(mania)/:keyMode(\d+K)/:page(\d+)?'>
+                  <CurrentNewsPostNotice />
                   <SubmissionListingContainer />
                 </Route>
                 <Route exact path='/submissions/:gameMode?/:page(\d+)?'>
+                  <CurrentNewsPostNotice />
                   <SubmissionListingContainer />
                 </Route>
                 <Route exact path='/submit'>
+                  <CurrentNewsPostNotice />
                   <SubmissionForm />
                 </Route>
                 <Route exact path='/mappers'>

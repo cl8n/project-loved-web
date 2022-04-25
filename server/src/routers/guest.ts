@@ -34,6 +34,44 @@ guestRouter.get('/', (_, res) => {
 });
 
 guestRouter.get(
+  '/current-news-post',
+  asyncHandler(async (_, res) => {
+    const ongoingPoll = await db.queryOne<Pick<Poll, 'round_id'>>(`
+      SELECT round_id
+      FROM polls
+      WHERE ended_at > NOW()
+      ORDER BY id DESC
+      LIMIT 1
+    `);
+
+    if (ongoingPoll == null) {
+      return res.status(404).send();
+    }
+
+    const round = await db.queryOne<Pick<Round, 'name' | 'news_posted_at'>>(
+      `
+        SELECT name, news_posted_at
+        FROM rounds
+        WHERE id = ?
+      `,
+      [ongoingPoll.round_id],
+    );
+
+    if (round?.news_posted_at == null) {
+      return res.status(404).send();
+    }
+
+    const slugDate = round.news_posted_at.toISOString().slice(0, 10);
+    const slugName = round.name.toLowerCase().replace(/\W+/g, '-');
+
+    res.json({
+      roundName: round.name,
+      url: `https://osu.ppy.sh/home/news/${slugDate}-project-loved-${slugName}`,
+    });
+  }),
+);
+
+guestRouter.get(
   '/mapper-consents',
   asyncHandler(async (_, res) => {
     const beatmapsetConsentsByMapperId = groupBy<

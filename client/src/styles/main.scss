@@ -814,3 +814,10 @@ tr.sticky > th {
   right: 0;
   z-index: 10;
 }
+
+.news-post-notice {
+  border-bottom: 1px dashed var(--accent);
+  padding-bottom: 1rem;
+  font-size: 1.5em;
+  text-align: center;
+}
