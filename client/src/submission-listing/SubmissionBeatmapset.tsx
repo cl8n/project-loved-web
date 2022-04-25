@@ -1,6 +1,6 @@
 import { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { Role } from 'loved-bridge/tables';
-import type { MouseEvent } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import { useMemo, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
@@ -17,8 +17,9 @@ import musicalNotesIcon from '../images/icons8/musical-notes.png';
 import playIcon from '../images/icons8/play.png';
 import type { IReview } from '../interfaces';
 import { Never } from '../Never';
-import { useOsuAuth } from '../osuAuth';
+import { loginUrl, useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
+import Tooltip from '../Tooltip';
 import { UserInline } from '../UserInline';
 import type { ToggleableColumnsState } from './helpers';
 import { beatmapsetNotAllowed, reviewIsNew } from './helpers';
@@ -100,6 +101,10 @@ const messages = defineMessages({
       'You can also hold {key} while clicking on the mapset to open the review modal.',
     description:
       '[Reviews] Help text explaining that the review modal can be opened with a keyboard shortcut',
+  },
+  reviewNotLoggedIn: {
+    defaultMessage: 'You must <a>log in</a> to post reviews.',
+    description: '[Reviews] Help text explaining that reviewing requires being logged in',
   },
   high: {
     defaultMessage: 'High',
@@ -201,7 +206,8 @@ export default function SubmissionBeatmapset({
     );
   }, [beatmapset, gameMode, intl]);
 
-  const canReview = authUser != null && beatmapset.ranked_status <= 0;
+  const possibleToReview = beatmapset.ranked_status <= 0;
+  const canReview = possibleToReview && authUser != null;
   const review =
     authUser == null
       ? undefined
@@ -330,7 +336,7 @@ export default function SubmissionBeatmapset({
             <div className='submission-selector' />
           </td>
           <td className='normal-wrap' colSpan={11}>
-            {canReview && (
+            {canReview ? (
               <div className='review-button-container'>
                 {review != null && (
                   <button type='button' onClick={onDeleteReviewClick} className='angry'>
@@ -342,6 +348,20 @@ export default function SubmissionBeatmapset({
                 </button>{' '}
                 <Help>{intl.formatMessage(messages.reviewHelp, { key: <kbd>Ctrl</kbd> })}</Help>
               </div>
+            ) : (
+              possibleToReview && (
+                <div className='review-button-container'>
+                  <Tooltip
+                    content={intl.formatMessage(messages.reviewNotLoggedIn, {
+                      a: (c: ReactNode) => <a href={loginUrl}>{c}</a>,
+                    })}
+                  >
+                    <button type='button' disabled>
+                      {intl.formatMessage(messages.review)}
+                    </button>
+                  </Tooltip>
+                </div>
+              )
             )}
             <SubmissionsList
               reviewsAndSubmissions={beatmapset.reviewsAndSubmissions}
