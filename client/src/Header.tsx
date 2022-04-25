@@ -66,11 +66,7 @@ export function Header() {
         )}
       </div>
       <nav>
-        <NavLink
-          className='attention'
-          isActive={(_, location) => location.pathname.startsWith('/submissions')}
-          to='/'
-        >
+        <NavLink className='attention' to='/submissions'>
           <FormattedMessage defaultMessage='Submissions' description='[Header] Nav link' />
         </NavLink>
         <NavLink className='attention' to='/submit'>
