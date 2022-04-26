@@ -794,9 +794,7 @@ router.post(
 
     const user = await res.typedLocals.osu.createOrRefreshUser(req.body.name, {
       byName: true,
-      // Overload doesn't support boolean
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      storeBanned: !!req.body.storeBanned as any,
+      storeBanned: !!req.body.storeBanned,
     });
 
     if (user == null) {
