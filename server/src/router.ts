@@ -1064,6 +1064,18 @@ router.post(
       return res.status(404).json({ error: 'User not found' });
     }
 
+    const logActor = {
+      banned: res.typedLocals.user.banned,
+      country: res.typedLocals.user.country,
+      id: res.typedLocals.user.id,
+      name: res.typedLocals.user.name,
+    };
+    const logUser = {
+      banned: user.banned,
+      country: user.country,
+      id: user.id,
+      name: user.name,
+    };
     const userRoles = await db.query<UserRole>('SELECT * FROM user_roles WHERE user_id = ?', [
       user.id,
     ]);
@@ -1078,13 +1090,9 @@ router.post(
           await dbLog(
             LogType.roleCreated,
             {
-              actor: {
-                country: res.typedLocals.user.country,
-                id: res.typedLocals.user.id,
-                name: res.typedLocals.user.name,
-              },
+              actor: logActor,
               role: newRole,
-              user: { country: user.country, id: user.id, name: user.name },
+              user: logUser,
             },
             connection,
           );
@@ -1092,13 +1100,9 @@ router.post(
           await dbLog(
             LogType.roleToggledAlumni,
             {
-              actor: {
-                country: res.typedLocals.user.country,
-                id: res.typedLocals.user.id,
-                name: res.typedLocals.user.name,
-              },
+              actor: logActor,
               role: newRole,
-              user: { country: user.country, id: user.id, name: user.name },
+              user: logUser,
             },
             connection,
           );
@@ -1114,13 +1118,9 @@ router.post(
         await dbLog(
           LogType.roleDeleted,
           {
-            actor: {
-              country: res.typedLocals.user.country,
-              id: res.typedLocals.user.id,
-              name: res.typedLocals.user.name,
-            },
+            actor: logActor,
             role: deletedRole,
-            user: { country: user.country, id: user.id, name: user.name },
+            user: logUser,
           },
           connection,
         );
@@ -1269,6 +1269,7 @@ router.put(
           LogType.settingUpdated,
           {
             actor: {
+              banned: res.typedLocals.user.banned,
               country: res.typedLocals.user.country,
               id: res.typedLocals.user.id,
               name: res.typedLocals.user.name,

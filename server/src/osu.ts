@@ -485,6 +485,7 @@ export class Osu {
       );
 
       const logUser = {
+        banned: dbFieldsWithPK.banned,
         country: dbFieldsWithPK.country,
         id: dbFieldsWithPK.id,
         name: dbFieldsWithPK.name,
@@ -497,6 +498,7 @@ export class Osu {
           LogType.userUpdated,
           {
             from: {
+              banned: currentInDb.banned,
               country: currentInDb.country,
               id: currentInDb.id,
               name: currentInDb.name,

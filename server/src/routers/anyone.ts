@@ -70,11 +70,17 @@ anyoneRouter.post(
     }
 
     const logActor = {
+      banned: res.typedLocals.user.banned,
       country: res.typedLocals.user.country,
       id: res.typedLocals.user.id,
       name: res.typedLocals.user.name,
     };
-    const logUser = { country: user.country, id: user.id, name: user.name };
+    const logUser = {
+      banned: user.banned,
+      country: user.country,
+      id: user.id,
+      name: user.name,
+    };
 
     // For easier typing in transaction
     const newConsent = req.body.consent;

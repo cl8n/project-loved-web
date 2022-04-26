@@ -155,7 +155,7 @@ db.initialize().then(() => {
       request.session.userId = user.id;
 
       await dbLog(LogType.loggedIn, {
-        user: { country: user.country, id: user.id, name: user.name },
+        user: { banned: user.banned, country: user.country, id: user.id, name: user.name },
       });
 
       response.redirect(backUrl || '/');
@@ -258,7 +258,7 @@ db.initialize().then(() => {
       }
 
       await dbLog(LogType.loggedOut, {
-        user: { country: user.country, id: user.id, name: user.name },
+        user: { banned: user.banned, country: user.country, id: user.id, name: user.name },
       });
 
       await response.typedLocals.osu.revokeToken();
