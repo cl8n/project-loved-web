@@ -26,33 +26,25 @@ export const toggleableColumns = [
 ] as const;
 
 const messages = defineMessages({
-  strongRejection: {
-    defaultMessage: 'strong rejection',
-    description: '[Reviews] -3 review score. Fits into {score} of the review line',
+  veryNegative: {
+    defaultMessage: 'strong opposition',
+    description: '[Reviews] Very negative review score. Fits into {score} of the review line',
   },
-  rejection: {
-    defaultMessage: 'rejection',
-    description: '[Reviews] -2 review score. Fits into {score} of the review line',
-  },
-  lightRejection: {
-    defaultMessage: 'light rejection',
-    description: '[Reviews] -1 review score. Fits into {score} of the review line',
+  negative: {
+    defaultMessage: 'opposition',
+    description: '[Reviews] Negative review score. Fits into {score} of the review line',
   },
   noPreference: {
     defaultMessage: 'no preference',
-    description: '[Reviews] 0 review score. Fits into {score} of the review line',
+    description: '[Reviews] Neutral review score. Fits into {score} of the review line',
   },
-  lightSupport: {
-    defaultMessage: 'light support',
-    description: '[Reviews] +1 review score. Fits into {score} of the review line',
-  },
-  support: {
+  positive: {
     defaultMessage: 'support',
-    description: '[Reviews] +2 review score. Fits into {score} of the review line',
+    description: '[Reviews] Positive review score. Fits into {score} of the review line',
   },
-  strongSupport: {
+  veryPositive: {
     defaultMessage: 'strong support',
-    description: '[Reviews] +3 review score. Fits into {score} of the review line',
+    description: '[Reviews] Very positive review score. Fits into {score} of the review line',
   },
 });
 
@@ -100,13 +92,13 @@ export function displayRange(values: number[], displayFn?: (value: number) => st
 }
 
 export const reviewScoreMessages = [
-  messages.strongRejection,
-  messages.rejection,
-  messages.lightRejection,
+  messages.veryNegative,
+  messages.negative,
+  messages.negative,
   messages.noPreference,
-  messages.lightSupport,
-  messages.support,
-  messages.strongSupport,
+  messages.positive,
+  messages.positive,
+  messages.veryPositive,
 ] as const;
 export const reviewScoreClasses = reviewScoreMessages.map(
   (_, score) => `review-score-${score - 3}`,
