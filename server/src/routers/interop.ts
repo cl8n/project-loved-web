@@ -250,7 +250,7 @@ interopRouter.get(
     // TODO waste of tokens and requests, it should re-use a client until token is invalid
     const osu = new Osu();
     await osu.getClientCredentialsToken();
-    const topic = await osu.getForumTopic(topicId).catch(() => null);
+    const topic = await osu.getForumTopic(topicId);
 
     if (topic == null) {
       return res.status(404).json({ error: 'Invalid topic ID' });

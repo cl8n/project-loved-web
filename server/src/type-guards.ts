@@ -7,6 +7,7 @@ import type {
   Role,
   UserRole,
 } from 'loved-bridge/tables';
+import type { ResponseError } from 'superagent';
 
 export function isAssigneeType(type: unknown): type is AssigneeType {
   return isInteger(type) && type >= 0 && type <= 1;
@@ -115,6 +116,10 @@ export function isRepliesRecord(replies: unknown): replies is Record<GameMode, n
       ([gameMode, postId]) => isGameMode(parseInt(gameMode, 10)) && isInteger(postId),
     )
   );
+}
+
+export function isResponseError(error: unknown): error is ResponseError {
+  return isRecord(error) && error.response != null && isInteger(error.status);
 }
 
 export function isRoleId(roleId: unknown): roleId is Role {

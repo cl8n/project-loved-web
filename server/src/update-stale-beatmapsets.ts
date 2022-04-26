@@ -28,11 +28,7 @@ const beatmapsetCount = parseInt(process.argv[2], 10);
   );
 
   for (const { id } of beatmapsetIds) {
-    const beatmapset = await osu.createOrRefreshBeatmapset(id, true).catch(() => null);
-
-    if (beatmapset == null) {
-      console.error(`Could not update beatmapset #${id}`);
-    }
+    await osu.createOrRefreshBeatmapset(id, true);
   }
 
   await Promise.all([db.close(), osu.revokeToken()]);

@@ -17,6 +17,7 @@ import superagent from 'superagent';
 import db from './db';
 import Limiter from './Limiter';
 import { dbLog, systemLog } from './log';
+import { isResponseError } from './type-guards';
 
 if (
   process.env.OSU_CLIENT_ID == null ||
@@ -133,32 +134,49 @@ export class Osu {
     await this.#limiter.run(() => this.#apiAgent.delete(`${apiBaseUrl}/oauth/tokens/current`));
   }
 
-  async getForumTopic(topicId: number): Promise<OsuApiForumTopic> {
-    const response = await this.#limiter.run(() =>
-      this.#apiAgent.get(`${apiBaseUrl}/forums/topics/${topicId}`),
-    );
+  getForumTopic(topicId: number): Promise<OsuApiForumTopic | null> {
+    return this.#limiter
+      .run(() => this.#apiAgent.get(`${apiBaseUrl}/forums/topics/${topicId}`))
+      .then((response) => response.body)
+      .catch((error) => {
+        if (isResponseError(error) && (error.status === 403 || error.status === 404)) {
+          return null;
+        }
 
-    return response.body;
+        throw error;
+      });
   }
 
-  async #getBeatmapset(beatmapsetId: number): Promise<OsuApiBeatmapset> {
-    const response = await this.#limiter.run(() =>
-      this.#apiAgent.get(`${apiBaseUrl}/beatmapsets/${beatmapsetId}`),
-    );
+  #getBeatmapset(beatmapsetId: number): Promise<OsuApiBeatmapset | null> {
+    return this.#limiter
+      .run(() => this.#apiAgent.get(`${apiBaseUrl}/beatmapsets/${beatmapsetId}`))
+      .then((response) => response.body)
+      .catch((error) => {
+        if (isResponseError(error) && error.status === 404) {
+          return null;
+        }
 
-    return response.body;
+        throw error;
+      });
   }
 
-  async #getUser(userIdOrName: number | string | undefined, byName: boolean): Promise<OsuApiUser> {
-    const response = await this.#limiter.run(() =>
-      userIdOrName == null
-        ? this.#apiAgent.get(`${apiBaseUrl}/me`)
-        : this.#apiAgent
-            .get(`${apiBaseUrl}/users/${userIdOrName}`)
-            .query({ key: byName ? 'username' : 'id' }),
-    );
+  #getUser(userIdOrName: number | string | undefined, byName: boolean): Promise<OsuApiUser | null> {
+    return this.#limiter
+      .run(() =>
+        userIdOrName == null
+          ? this.#apiAgent.get(`${apiBaseUrl}/me`)
+          : this.#apiAgent
+              .get(`${apiBaseUrl}/users/${userIdOrName}`)
+              .query({ key: byName ? 'username' : 'id' }),
+      )
+      .then((response) => response.body)
+      .catch((error) => {
+        if (isResponseError(error) && error.status === 404) {
+          return null;
+        }
 
-    return response.body;
+        throw error;
+      });
   }
   //#endregion
 
@@ -189,7 +207,7 @@ export class Osu {
       }
     }
 
-    const beatmapset = await this.#getBeatmapset(beatmapsetId).catch(() => null);
+    const beatmapset = await this.#getBeatmapset(beatmapsetId);
 
     if (beatmapset == null) {
       return null;
@@ -413,7 +431,7 @@ export class Osu {
       }
     }
 
-    const user = await this.#getUser(userIdOrName, byName).catch(() => null);
+    const user = await this.#getUser(userIdOrName, byName);
 
     if (currentInDb == null && user != null) {
       currentInDb = await db.queryOne<User>('SELECT * FROM users WHERE id = ?', [user.id]);
