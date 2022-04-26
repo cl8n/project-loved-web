@@ -662,6 +662,10 @@ tr.sticky > th {
     color: var(--control-heavy);
   }
 
+  .selector-indicator {
+    cursor: default;
+  }
+
   > td {
     padding-top: 0.5em;
 
