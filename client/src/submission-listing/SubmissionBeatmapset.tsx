@@ -484,7 +484,7 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
     );
   }
 
-  if (beatmapset.reviews.length === 0) {
+  if (!beatmapset.reviews.some((review) => review.active_captain)) {
     return <td className='priority low'>{intl.formatMessage(messages.pending)}</td>;
   }
 

@@ -502,10 +502,10 @@ const beatmapsetSortFns: Record<
   favoriteCount: (a, b) => a.favorite_count - b.favorite_count,
   playCount: (a, b) => a.play_count - b.play_count,
   priority: (a, b) =>
-    compareOrFallback(a, b, (beatmapset) => beatmapset.nominated_round_name != null) ??
+    compareOrFallback(a, b, (set) => set.nominated_round_name != null) ??
     compareOrFallback(b, a, beatmapsetNotAllowed) ??
-    compareOrFallback(b, a, (beatmapset) => beatmapset.poll != null && !beatmapset.poll.passed) ??
-    compareOrFallback(b, a, (beatmapset) => beatmapset.reviews.length === 0) ??
+    compareOrFallback(b, a, (set) => set.poll != null && !set.poll.passed) ??
+    compareOrFallback(b, a, (set) => !set.reviews.some((review) => review.active_captain)) ??
     a.review_score - b.review_score,
   rating: (a, b) => a.review_score_all - b.review_score_all,
   score: (a, b) => a.score - b.score,
