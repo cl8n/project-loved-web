@@ -28,7 +28,7 @@ a, .fake-a {
   background: none;
 
   &-thumb {
-    background-color: var(--accent-light);
+    background-color: var(--accent);
   }
 }
 
@@ -36,6 +36,7 @@ html {
   color: var(--content);
   font-family: Verdana, Tahoma, Arial, sans-serif;
   font-size: 14px;
+  scrollbar-color: var(--accent) var(--accent-background);
   text-size-adjust: none;
 }
 
