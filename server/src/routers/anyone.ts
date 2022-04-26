@@ -10,6 +10,7 @@ import { dbLog } from '../log';
 import {
   isGameMode,
   isGameModeArray,
+  isInteger,
   isMapperConsent,
   isMapperConsentBeatmapsetArray,
 } from '../type-guards';
@@ -273,7 +274,7 @@ anyoneRouter.post(
 anyoneRouter.post(
   '/review',
   asyncHandler(async (req, res) => {
-    if (typeof req.body.beatmapsetId !== 'number') {
+    if (!isInteger(req.body.beatmapsetId)) {
       return res.status(422).json({ error: 'Invalid beatmapset ID' });
     }
 
@@ -286,7 +287,7 @@ anyoneRouter.post(
     }
 
     if (
-      typeof req.body.score !== 'number' ||
+      !isInteger(req.body.score) ||
       req.body.score === 0 ||
       req.body.score < -4 ||
       req.body.score > 3
@@ -424,7 +425,7 @@ anyoneRouter.delete(
 anyoneRouter.post(
   '/review-many',
   asyncHandler(async (req, res) => {
-    if (typeof req.body.beatmapsetId !== 'number') {
+    if (!isInteger(req.body.beatmapsetId)) {
       return res.status(422).json({ error: 'Invalid beatmapset ID' });
     }
 

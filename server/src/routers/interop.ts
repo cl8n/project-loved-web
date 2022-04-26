@@ -16,7 +16,7 @@ import { asyncHandler } from '../express-helpers';
 import { groupBy } from '../helpers';
 import { Osu } from '../osu';
 import { accessSetting } from '../settings';
-import { isPollArray, isPollResultsArray, isRepliesRecord } from '../type-guards';
+import { isInteger, isPollArray, isPollResultsArray, isRepliesRecord } from '../type-guards';
 
 const interopRouter = Router();
 export default interopRouter;
@@ -348,7 +348,7 @@ interopRouter.get(
 interopRouter.post(
   '/results-post-ids',
   asyncHandler(async (req, res) => {
-    if (typeof req.body.roundId !== 'number') {
+    if (!isInteger(req.body.roundId)) {
       return res.status(422).json({ error: 'Missing round ID' });
     }
 

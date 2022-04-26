@@ -30,7 +30,8 @@ import { settings, updateSettings, accessSetting } from './settings';
 import {
   isAssigneeType,
   isGameMode,
-  isNumberArray,
+  isInteger,
+  isIntegerArray,
   isRecord,
   isStringArray,
   isUserRoleWithoutUserIdArray,
@@ -286,7 +287,7 @@ router.get(
 router.post(
   '/nomination-submit',
   asyncHandler(async (req, res) => {
-    if (typeof req.body.beatmapsetId !== 'number') {
+    if (!isInteger(req.body.beatmapsetId)) {
       return res.status(422).json({ error: 'Invalid beatmapset ID' });
     }
 
@@ -456,7 +457,7 @@ router.post(
       return res.status(422).json({ error: 'Invalid description' });
     }
 
-    if (typeof req.body.nominationId !== 'number') {
+    if (!isInteger(req.body.nominationId)) {
       return res.status(422).json({ error: 'Invalid nomination ID' });
     }
 
@@ -719,7 +720,7 @@ router.post(
   '/update-nominators',
   isCaptainMiddleware,
   asyncHandler(async (req, res) => {
-    if (!isNumberArray(req.body.nominatorIds) || req.body.nominatorIds.length === 0) {
+    if (!isIntegerArray(req.body.nominatorIds) || req.body.nominatorIds.length === 0) {
       return res.status(422).json({ error: 'Invalid nominator IDs' });
     }
 
@@ -841,7 +842,7 @@ router.post(
       return res.status(422).json({ error: 'Invalid round params' });
     }
 
-    if (typeof req.body.roundId !== 'number') {
+    if (!isInteger(req.body.roundId)) {
       return res.status(422).json({ error: 'Invalid round ID' });
     }
 
@@ -940,7 +941,7 @@ router.post(
         req.body.nominationId,
       ]);
 
-      if (isNumberArray(req.body.excludedBeatmapIds) && req.body.excludedBeatmapIds.length > 0) {
+      if (isIntegerArray(req.body.excludedBeatmapIds) && req.body.excludedBeatmapIds.length > 0) {
         await connection.query(
           'INSERT INTO nomination_excluded_beatmaps (beatmap_id, nomination_id) VALUES ?',
           [req.body.excludedBeatmapIds.map((id) => [id, req.body.nominationId])],
@@ -985,7 +986,7 @@ router.post(
         [req.body.nominationId, req.body.type],
       );
 
-      if (isNumberArray(req.body.assigneeIds) && req.body.assigneeIds.length > 0) {
+      if (isIntegerArray(req.body.assigneeIds) && req.body.assigneeIds.length > 0) {
         await connection.query(
           'INSERT INTO nomination_assignees (assignee_id, nomination_id, type) VALUES ?',
           [req.body.assigneeIds.map((id) => [id, req.body.nominationId, req.body.type])],
@@ -1053,7 +1054,7 @@ router.post(
       return res.status(422).json({ error: 'Invalid roles' });
     }
 
-    if (typeof req.body.userId !== 'number') {
+    if (!isInteger(req.body.userId)) {
       return res.status(422).json({ error: 'Invalid user ID' });
     }
 
@@ -1150,7 +1151,7 @@ router.post(
   '/update-api-object',
   isAdminMiddleware,
   asyncHandler(async (req, res) => {
-    if (typeof req.body.id !== 'number') {
+    if (!isInteger(req.body.id)) {
       return res.status(422).json({ error: 'Invalid ID' });
     }
 

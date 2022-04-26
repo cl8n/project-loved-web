@@ -9,21 +9,33 @@ import type {
 } from 'loved-bridge/tables';
 
 export function isAssigneeType(type: unknown): type is AssigneeType {
-  return typeof type === 'number' && type >= 0 && type <= 1;
+  return isInteger(type) && type >= 0 && type <= 1;
 }
 
 export function isConsentValue(consent: unknown): consent is ConsentValue | null {
   // Checking for exactly null to validate input
   // eslint-disable-next-line eqeqeq
-  return consent === null || (typeof consent === 'number' && consent >= 0 && consent <= 2);
+  return consent === null || (isInteger(consent) && consent >= 0 && consent <= 2);
 }
 
 export function isGameMode(gameMode: unknown): gameMode is GameMode {
-  return typeof gameMode === 'number' && gameMode >= 0 && gameMode <= 3;
+  return isInteger(gameMode) && gameMode >= 0 && gameMode <= 3;
 }
 
 export function isGameModeArray(gameModes: unknown): gameModes is GameMode[] {
   return Array.isArray(gameModes) && gameModes.every(isGameMode);
+}
+
+/**
+ * The type guard on this is intentionally not correct when `integer` is of type number but not an
+ * integer. Only use it when such inputs would not be referred to later.
+ */
+export function isInteger(integer: unknown): integer is number {
+  return Number.isSafeInteger(integer);
+}
+
+export function isIntegerArray(integers: unknown): integers is number[] {
+  return Array.isArray(integers) && integers.every(isInteger);
 }
 
 export function isMapperConsent(
@@ -35,7 +47,7 @@ export function isMapperConsent(
     // Checking for exactly null to validate input
     // eslint-disable-next-line eqeqeq
     (consent.consent_reason === null || typeof consent.consent_reason === 'string') &&
-    typeof consent.user_id === 'number'
+    isInteger(consent.user_id)
   );
 }
 
@@ -47,17 +59,13 @@ export function isMapperConsentBeatmapsetArray(
     beatmapsets.every(
       (beatmapset) =>
         isRecord(beatmapset) &&
-        typeof beatmapset.beatmapset_id === 'number' &&
+        isInteger(beatmapset.beatmapset_id) &&
         typeof beatmapset.consent === 'boolean' &&
         // Checking for exactly null to validate input
         // eslint-disable-next-line eqeqeq
         (beatmapset.consent_reason === null || typeof beatmapset.consent_reason === 'string'),
     )
   );
-}
-
-export function isNumberArray(numbers: unknown): numbers is number[] {
-  return Array.isArray(numbers) && numbers.every((number) => typeof number === 'number');
 }
 
 export function isPollArray(polls: unknown): polls is {
@@ -73,12 +81,12 @@ export function isPollArray(polls: unknown): polls is {
     polls.every(
       (poll) =>
         isRecord(poll) &&
-        typeof poll.beatmapsetId === 'number' &&
+        isInteger(poll.beatmapsetId) &&
         typeof poll.endedAt === 'string' &&
         isGameMode(poll.gameMode) &&
-        typeof poll.roundId === 'number' &&
+        isInteger(poll.roundId) &&
         typeof poll.startedAt === 'string' &&
-        typeof poll.topicId === 'number',
+        isInteger(poll.topicId),
     )
   );
 }
@@ -91,11 +99,7 @@ export function isPollResultsArray(polls: unknown): polls is {
   return (
     Array.isArray(polls) &&
     polls.every(
-      (poll) =>
-        isRecord(poll) &&
-        typeof poll.id === 'number' &&
-        typeof poll.no === 'number' &&
-        typeof poll.yes === 'number',
+      (poll) => isRecord(poll) && isInteger(poll.id) && isInteger(poll.no) && isInteger(poll.yes),
     )
   );
 }
@@ -108,13 +112,13 @@ export function isRepliesRecord(replies: unknown): replies is Record<GameMode, n
   return (
     isRecord(replies) &&
     Object.entries(replies).every(
-      ([gameMode, postId]) => isGameMode(parseInt(gameMode, 10)) && typeof postId === 'number',
+      ([gameMode, postId]) => isGameMode(parseInt(gameMode, 10)) && isInteger(postId),
     )
   );
 }
 
 export function isRoleId(roleId: unknown): roleId is Role {
-  return typeof roleId === 'number' && roleId >= 0 && roleId <= 7;
+  return isInteger(roleId) && roleId >= 0 && roleId <= 7;
 }
 
 export function isStringArray(strings: unknown): strings is string[] {
