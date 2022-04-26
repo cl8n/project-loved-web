@@ -628,10 +628,6 @@ tr.sticky > th {
     background-color: var(--control-background);
   }
 
-  &.low-favorites, &.low-favorites:not(.closed) + tr {
-    background-color: var(--rating--3-background);
-  }
-
   &.voting, &.voting:not(.closed) + tr {
     background-color: var(--rating-3-background);
   }

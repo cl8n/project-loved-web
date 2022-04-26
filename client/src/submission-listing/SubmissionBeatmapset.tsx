@@ -77,6 +77,11 @@ const messages = defineMessages({
     description:
       '[Submissions] Aggregate review score shown on submissions table for maps that cannot be Loved',
   },
+  notAllowedLowFavorites: {
+    defaultMessage: 'The map has too few favorites.',
+    description:
+      '[Submissions] Help text explaining that a map cannot be Loved due to having too few favorites',
+  },
   notAllowedMapperBanned: {
     defaultMessage: 'The mapset host is banned.',
     description:
@@ -252,7 +257,6 @@ export default function SubmissionBeatmapset({
         className={classNames({
           closed: !expanded,
           hover: hovered,
-          'low-favorites': gameMode === GameMode.osu && beatmapset.favorite_count < 30,
           new: beatmapset.reviews.some(reviewIsNew) || beatmapset.submissions.some(reviewIsNew),
           'submission-beatmapset': true,
           voting:
@@ -467,6 +471,15 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
       <td className='priority rejected'>
         {intl.formatMessage(messages.notAllowed)}{' '}
         <Help>{intl.formatMessage(messages.notAllowedTooShort)}</Help>
+      </td>
+    );
+  }
+
+  if (beatmapset.low_favorites) {
+    return (
+      <td className='priority rejected'>
+        {intl.formatMessage(messages.notAllowed)}{' '}
+        <Help>{intl.formatMessage(messages.notAllowedLowFavorites)}</Help>
       </td>
     );
   }

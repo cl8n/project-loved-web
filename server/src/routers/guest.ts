@@ -1,7 +1,6 @@
 import { createHash } from 'crypto';
 import { Router } from 'express';
-import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
-import { gameModes } from 'loved-bridge/beatmaps/gameMode';
+import { GameMode, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import { reviewRating } from 'loved-bridge/beatmaps/reviewRating';
 import type {
   Beatmap,
@@ -198,6 +197,7 @@ guestRouter.get(
         beatmap_counts: Record<GameMode, number>;
         consent: boolean | null;
         key_modes: number[];
+        low_favorites: boolean;
         maximum_length: number;
         modal_bpm: number;
         nominated_round_name: string | null;
@@ -357,6 +357,7 @@ guestRouter.get(
           (k) => k != null,
         ) as number[]
       ).sort((a, b) => a - b);
+      beatmapset.low_favorites = gameMode === GameMode.osu && beatmapset.favorite_count < 30;
       beatmapset.maximum_length = Math.max(
         ...beatmapsForGameMode.map((beatmap) => beatmap.total_length),
       );

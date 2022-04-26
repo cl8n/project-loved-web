@@ -152,6 +152,7 @@ export interface GetSubmissionsResponseBody {
     beatmap_counts: Record<GameMode, number>;
     consent: boolean | null;
     key_modes: number[];
+    low_favorites: boolean;
     maximum_length: number;
     modal_bpm: number;
     nominated_round_name: string | null;
