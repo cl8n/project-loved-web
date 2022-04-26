@@ -42,8 +42,12 @@ html {
 
 body {
   background-color: var(--accent-background);
+  margin: 0;
+
   // Left margin equal to scrollbar width, so body doesn't shift
-  margin: 0 0 0 calc(100vw - 100%);
+  @media (min-width: calc(1100px + 2em)) {
+    margin-left: calc(100vw - 100%);
+  }
 }
 
 li {
