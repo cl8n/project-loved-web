@@ -567,6 +567,7 @@ function combineReviewsAndSubmissions(
 
 function sortReviews(a: IReview, b: IReview): number {
   return (
+    +(b.score < -3) - +(a.score < -3) ||
     +(b.active_captain ?? -1) - +(a.active_captain ?? -1) ||
     dateFromString(a.reviewed_at).getTime() - dateFromString(b.reviewed_at).getTime()
   );

@@ -170,7 +170,7 @@ guestRouter.get(
           AND user_roles.role_id = ?
           AND reviews.reviewer_id = user_roles.user_id
         WHERE reviews.game_mode = ?
-        ORDER BY active_captain DESC, reviews.reviewed_at ASC
+        ORDER BY (score < -3) DESC, active_captain DESC, reviews.reviewed_at ASC
       `,
       [gameMode, Role.captain, gameMode],
     );
