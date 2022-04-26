@@ -149,7 +149,7 @@ db.initialize().then(() => {
       const user = await osu.createOrRefreshUser();
 
       if (user == null) {
-        return response.status(500).json({ error: 'Could not get user info from osu! API' });
+        throw 'User not found using /me osu! API';
       }
 
       request.session.userId = user.id;
@@ -254,7 +254,7 @@ db.initialize().then(() => {
       const user = await response.typedLocals.osu.createOrRefreshUser(request.session.userId);
 
       if (user == null) {
-        return response.status(500).json({ error: 'Failed to load user info' });
+        throw 'User not found during log out';
       }
 
       await dbLog(LogType.loggedOut, {
