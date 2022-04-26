@@ -185,8 +185,10 @@ export class Osu {
     beatmapsetId: number,
     forceUpdate = false,
   ): Promise<(Beatmapset & { game_modes: Set<GameMode> }) | null> {
+    let currentInDb: Beatmapset | null | undefined;
+
     if (!forceUpdate) {
-      const currentInDb = await db.queryOne<Beatmapset>('SELECT * FROM beatmapsets WHERE id = ?', [
+      currentInDb = await db.queryOne<Beatmapset>('SELECT * FROM beatmapsets WHERE id = ?', [
         beatmapsetId,
       ]);
 
@@ -210,6 +212,28 @@ export class Osu {
     const beatmapset = await this.#getBeatmapset(beatmapsetId);
 
     if (beatmapset == null) {
+      if (forceUpdate) {
+        currentInDb = await db.queryOne<Beatmapset>('SELECT * FROM beatmapsets WHERE id = ?', [
+          beatmapsetId,
+        ]);
+      }
+
+      if (currentInDb == null) {
+        return null;
+      }
+
+      const now = new Date();
+      await db.transact(async (connection) => {
+        await connection.query(
+          'UPDATE beatmaps SET ? WHERE beatmapset_id = ? AND deleted_at IS NULL',
+          [{ deleted_at: now }, beatmapsetId],
+        );
+        await connection.query('UPDATE beatmapsets SET ? WHERE id = ? AND deleted_at IS NULL', [
+          { api_fetched_at: now, deleted_at: now },
+          beatmapsetId,
+        ]);
+      });
+
       return null;
     }
 
