@@ -466,10 +466,6 @@ export class Osu {
         return null;
       }
 
-      if (currentInDb != null) {
-        return currentInDb;
-      }
-
       if (!storeBanned) {
         return null;
       }
@@ -480,26 +476,32 @@ export class Osu {
       let dbFieldsWithPK: User;
 
       if (user == null) {
-        dbFields = {
-          api_fetched_at: new Date(),
-          avatar_url: sanitizeAvatarUrl('/images/layout/avatar-guest.png'),
-          banned: true,
-          country: '__',
-        } as Omit<User, 'id'>;
-
-        if (byName) {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          const nextBannedId = (await connection.queryOne<{ next_id: number }>(`
-            SELECT IF(COUNT(*) > 0, MAX(id) + 1, 4294000000) AS next_id
-            FROM users
-            WHERE id >= 4294000000
-          `))!.next_id;
-
-          dbFields.name = userIdOrName as string;
-          dbFieldsWithPK = { ...dbFields, id: nextBannedId };
+        if (currentInDb != null) {
+          dbFieldsWithPK = { ...currentInDb, api_fetched_at: new Date(), banned: true };
+          dbFields = { ...dbFieldsWithPK };
+          delete (dbFields as { id?: number }).id;
         } else {
-          dbFields.name = 'Banned user';
-          dbFieldsWithPK = { ...dbFields, id: userIdOrName as number };
+          dbFields = {
+            api_fetched_at: new Date(),
+            avatar_url: sanitizeAvatarUrl('/images/layout/avatar-guest.png'),
+            banned: true,
+            country: '__',
+          } as Omit<User, 'id'>;
+
+          if (byName) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const nextBannedId = (await connection.queryOne<{ next_id: number }>(`
+              SELECT IF(COUNT(*) > 0, MAX(id) + 1, 4294000000) AS next_id
+              FROM users
+              WHERE id >= 4294000000
+            `))!.next_id;
+
+            dbFields.name = userIdOrName as string;
+            dbFieldsWithPK = { ...dbFields, id: nextBannedId };
+          } else {
+            dbFields.name = 'Banned user';
+            dbFieldsWithPK = { ...dbFields, id: userIdOrName as number };
+          }
         }
       } else {
         dbFields = {
@@ -535,7 +537,11 @@ export class Osu {
 
       if (currentInDb == null) {
         await dbLog(LogType.userCreated, { user: logUser }, connection);
-      } else if (currentInDb.country !== logUser.country || currentInDb.name !== logUser.name) {
+      } else if (
+        currentInDb.banned !== logUser.banned ||
+        currentInDb.country !== logUser.country ||
+        currentInDb.name !== logUser.name
+      ) {
         await dbLog(
           LogType.userUpdated,
           {
