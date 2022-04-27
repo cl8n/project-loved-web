@@ -377,7 +377,8 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
   const onSearchInput = (event: FormEvent<HTMLInputElement>) => {
     const query = event.currentTarget.value;
 
-    if (!query) {
+    if (query.length < 2) {
+      setSearchResults(undefined);
       return;
     }
 
