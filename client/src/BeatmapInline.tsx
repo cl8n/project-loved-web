@@ -34,3 +34,13 @@ export function BeatmapInline(props: BeatmapInlineProps) {
     </span>
   );
 }
+
+export function beatmapText(beatmapset: IBeatmapset, showCreator?: boolean): string {
+  let text = `${beatmapset.artist} - ${beatmapset.title}`;
+
+  if (showCreator) {
+    text += ` (${beatmapset.creator_name})`;
+  }
+
+  return text;
+}

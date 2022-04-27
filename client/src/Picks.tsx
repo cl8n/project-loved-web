@@ -7,6 +7,7 @@ import {
   ModeratorState,
   Role,
 } from 'loved-bridge/tables';
+import type { FormEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
@@ -19,6 +20,7 @@ import {
   getCaptains,
   getNominations,
   lockNominations,
+  searchBeatmapsets,
   updateApiObject,
   updateExcludedBeatmaps,
   updateNominationAssignees,
@@ -30,11 +32,18 @@ import {
 } from './api';
 import { autoHeightRef } from './auto-height';
 import { BBCode } from './BBCode';
-import { BeatmapInline } from './BeatmapInline';
+import { BeatmapInline, beatmapText } from './BeatmapInline';
 import type { FormSubmitHandler } from './dom-helpers';
 import { Form } from './dom-helpers';
 import Help from './Help';
-import type { INomination, INominationWithPoll, IRound, IUser, PartialWithId } from './interfaces';
+import type {
+  IBeatmapset,
+  INomination,
+  INominationWithPoll,
+  IRound,
+  IUser,
+  PartialWithId,
+} from './interfaces';
 import ListInline from './ListInline';
 import ListInput from './ListInput';
 import { Modal } from './Modal';
@@ -44,6 +53,7 @@ import StatusLine from './nomination/StatusLine';
 import { Orderable } from './Orderable';
 import { useOsuAuth } from './osuAuth';
 import { canActAs, hasRole } from './permissions';
+import { useEffectExceptOnMount } from './react-helpers';
 import Header from './round/Header';
 import { UserInline } from './UserInline';
 import useTitle from './useTitle';
@@ -354,10 +364,39 @@ interface AddNominationProps {
 
 function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProps) {
   const [busy, setBusy] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [searchResults, setSearchResults] = useState<IBeatmapset[]>();
+  const [selectedBeatmapset, setSelectedBeatmapset] = useState<IBeatmapset>();
 
+  useEffectExceptOnMount(() => {
+    if (searchInputRef.current != null && selectedBeatmapset == null) {
+      searchInputRef.current.focus();
+    }
+  }, [selectedBeatmapset]);
+
+  const onSearchInput = (event: FormEvent<HTMLInputElement>) => {
+    const query = event.currentTarget.value;
+
+    if (!query) {
+      return;
+    }
+
+    searchBeatmapsets(query)
+      .then((response) => setSearchResults(response.body))
+      .catch(alertApiErrorMessage);
+  };
   const onSubmit: FormSubmitHandler = (form, then) => {
-    return addNomination(form.beatmapsetId, gameMode, form.parentId, roundId)
-      .then((response) => onNominationAdd(response.body))
+    if (selectedBeatmapset == null) {
+      window.alert('Select a beatmapset');
+      return null;
+    }
+
+    return addNomination(selectedBeatmapset.id, gameMode, form.parentId, roundId)
+      .then((response) => {
+        onNominationAdd(response.body);
+        setSearchResults(undefined);
+        setSelectedBeatmapset(undefined);
+      })
       .then(then)
       .catch(alertApiErrorMessage);
   };
@@ -367,8 +406,35 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
   return (
     <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
       <p className='flex-left'>
-        <label htmlFor='beatmapsetId'>Beatmapset ID</label>
-        <input type='number' name='beatmapsetId' required data-value-type='int' />
+        <label htmlFor='beatmapset'>Beatmapset</label>
+        <div className='beatmapset-search'>
+          {selectedBeatmapset == null ? (
+            <input ref={searchInputRef} type='text' name='beatmapset' onInput={onSearchInput} />
+          ) : (
+            <div
+              className='beatmapset-search-selection'
+              onClick={() => setSelectedBeatmapset(undefined)}
+            >
+              {beatmapText(selectedBeatmapset, true)}
+            </div>
+          )}
+          {!!searchResults?.length && (
+            <div className='beatmapset-search-results'>
+              {searchResults.map((beatmapset) => (
+                <button
+                  key={beatmapset.id}
+                  type='button'
+                  onClick={() => {
+                    setSearchResults(undefined);
+                    setSelectedBeatmapset(beatmapset);
+                  }}
+                >
+                  {beatmapText(beatmapset, true)}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         <span>
           <label htmlFor='parentId'>Parent nomination ID </label>
           <Help>

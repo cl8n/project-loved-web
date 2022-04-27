@@ -92,6 +92,45 @@ router.get(
 );
 
 router.get(
+  '/search-beatmapset',
+  asyncHandler(async (req, res) => {
+    const query = req.query.query;
+
+    if (!query) {
+      return res.status(422).json({ error: 'Empty search query' });
+    }
+
+    const hits = await db.query<Pick<Beatmapset, 'artist' | 'creator_name' | 'id' | 'title'>>(
+      `
+        SELECT artist, creator_name, id, title
+        FROM beatmapsets
+        WHERE MATCH (artist, creator_name, title) AGAINST (?)
+      `,
+      [query],
+    );
+
+    if (!isNaN(parseInt(query, 10))) {
+      const beatmapset = await db.queryOne<
+        Pick<Beatmapset, 'artist' | 'creator_name' | 'id' | 'title'>
+      >(
+        `
+          SELECT artist, creator_name, id, title
+          FROM beatmapsets
+          WHERE id = ?
+        `,
+        [query],
+      );
+
+      if (beatmapset != null) {
+        hits.unshift(beatmapset);
+      }
+    }
+
+    res.json(hits);
+  }),
+);
+
+router.get(
   '/nominations',
   asyncHandler(async (req, res) => {
     const round:

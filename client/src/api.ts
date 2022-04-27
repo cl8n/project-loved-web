@@ -196,6 +196,10 @@ export function lockNominations(roundId: number, gameMode: GameMode, lock: boole
   return superagent.post('/api/lock-nominations').send({ roundId, gameMode, lock });
 }
 
+export function searchBeatmapsets(query: string): Response<IBeatmapset[]> {
+  return superagent.get('/api/search-beatmapset').query({ query });
+}
+
 export function updateApiObject<T extends ApiObjectType>(type: T, id: number): Response {
   return superagent.post('/api/update-api-object').send({ type, id });
 }
