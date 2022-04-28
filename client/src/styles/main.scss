@@ -839,6 +839,7 @@ tr.sticky > th {
     flex-direction: column;
     border: 1px solid var(--content);
     border-top: none;
+    z-index: 1;
 
     > button {
       padding: 0.25em;
