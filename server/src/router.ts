@@ -334,15 +334,23 @@ router.post(
       return res.status(422).json({ error: 'Invalid game mode' });
     }
 
-    // TODO: can this be done with foreign constraint instead?
+    if (!isInteger(req.body.roundId)) {
+      return res.status(422).json({ error: 'Invalid round ID' });
+    }
+
     if (req.body.parentId != null) {
+      if (!isInteger(req.body.parentId)) {
+        return res.status(422).json({ error: 'Invalid parent nomination ID' });
+      }
+
       const parentNomination = await db.queryOne(
         `
           SELECT 1
           FROM nominations
           WHERE id = ?
+            AND round_id = ?
         `,
-        [req.body.parentId],
+        [req.body.parentId, req.body.roundId],
       );
 
       if (parentNomination == null) {
