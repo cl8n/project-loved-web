@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
-import { gameModes } from 'loved-bridge/beatmaps/gameMode';
+import { gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import type {
   Beatmap,
   Beatmapset,
@@ -711,8 +711,27 @@ router.delete(
       );
 
       if (nominator == null) {
-        return res.status(403).send({ error: 'Must be a nominator of this map' });
+        return res.status(403).json({ error: 'Must be a nominator of this map' });
       }
+    }
+
+    const childNominations = await db.query<Pick<Nomination, 'game_mode'>>(
+      `
+        SELECT game_mode
+        FROM nominations
+        WHERE parent_id = ?
+      `,
+      [req.query.nominationId],
+    );
+
+    if (childNominations.length > 0) {
+      const gameModes = childNominations
+        .map((nomination) => gameModeLongName(nomination.game_mode))
+        .join(', ');
+
+      return res.status(422).json({
+        error: `Nomination has children in game mode ${gameModes}`,
+      });
     }
 
     await db.transact(async (connection) => {
