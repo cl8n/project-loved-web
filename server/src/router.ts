@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
-import { gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
+import { GameMode, gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import type {
   Beatmap,
   Beatmapset,
+  Consent,
+  ConsentBeatmapset,
   Log,
   Nomination,
   NominationAssignee,
@@ -13,7 +14,14 @@ import type {
   User,
   UserRole,
 } from 'loved-bridge/tables';
-import { AssigneeType, DescriptionState, LogType, MetadataState, Role } from 'loved-bridge/tables';
+import {
+  AssigneeType,
+  ConsentValue,
+  DescriptionState,
+  LogType,
+  MetadataState,
+  Role,
+} from 'loved-bridge/tables';
 import db from './db';
 import { asyncHandler } from './express-helpers';
 import {
@@ -326,6 +334,7 @@ router.get(
 router.post(
   '/nomination-submit',
   asyncHandler(async (req, res) => {
+    //#region Validation
     if (!isInteger(req.body.beatmapsetId)) {
       return res.status(422).json({ error: 'Invalid beatmapset ID' });
     }
@@ -338,36 +347,67 @@ router.post(
       return res.status(422).json({ error: 'Invalid round ID' });
     }
 
+    // If there is a parent nomination ID, make sure it refers to an existing nomination with the
+    // same round, same beatmapset, and different game mode
     if (req.body.parentId != null) {
       if (!isInteger(req.body.parentId)) {
         return res.status(422).json({ error: 'Invalid parent nomination ID' });
       }
 
-      const parentNomination = await db.queryOne(
+      const parentNomination = await db.queryOne<
+        Pick<Nomination, 'beatmapset_id' | 'game_mode' | 'round_id'>
+      >(
         `
-          SELECT 1
+          SELECT beatmapset_id, game_mode, round_id
           FROM nominations
           WHERE id = ?
-            AND round_id = ?
         `,
-        [req.body.parentId, req.body.roundId],
+        [req.body.parentId],
       );
 
       if (parentNomination == null) {
-        return res.status(422).json({ error: 'Invalid parent nomination ID' });
+        return res.status(404).json({ error: 'Parent nomination not found' });
+      }
+
+      if (parentNomination.beatmapset_id !== req.body.beatmapsetId) {
+        return res.status(422).json({ error: 'Parent nomination must be for the same beatmapset' });
+      }
+
+      if (parentNomination.game_mode === req.body.gameMode) {
+        return res
+          .status(422)
+          .json({ error: 'Parent nomination must be in a different game mode' });
+      }
+
+      if (parentNomination.round_id !== req.body.roundId) {
+        return res.status(422).json({ error: 'Parent nomination must be for the same round' });
       }
     }
 
     const beatmapset = await res.typedLocals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId);
 
+    // Make sure the beatmapset exists
     if (beatmapset == null) {
-      return res.status(422).json({ error: 'Invalid beatmapset ID' });
+      return res.status(404).json({ error: 'Beatmapset not found' });
     }
 
+    // Make sure the beatmapset is not approved
+    // TODO: This should allow cases where the set is Loved but at least one difficulty in the
+    //       requested game mode is Pending/WIP/Graveyard
+    if (beatmapset.ranked_status > 0) {
+      return res.status(422).json({ error: 'Beatmapset is already Ranked/Loved/Qualified' });
+    }
+
+    // Make sure the beatmapset has beatmaps in the requested game mode
     if (!beatmapset.game_modes.has(req.body.gameMode)) {
       return res.status(422).json({
-        error: `Beatmapset has no beatmaps in game mode ${req.body.gameMode}`,
+        error: `Beatmapset has no beatmaps in game mode ${gameModeLongName(req.body.gameMode)}`,
       });
+    }
+
+    // If the nomination is for osu!standard, make sure it has enough favorites
+    if (req.body.gameMode === GameMode.osu && beatmapset.favorite_count < 30) {
+      return res.status(422).json({ error: 'osu! nominations must have at least 30 favorites' });
     }
 
     const existingNomination = await db.queryOne(
@@ -381,11 +421,106 @@ router.post(
       [req.body.roundId, req.body.gameMode, beatmapset.id],
     );
 
+    // Make sure the nomination is not a duplicate
     if (existingNomination != null) {
       return res.status(422).json({
         error: "Duplicate nomination. Refresh the page if you don't see it",
       });
     }
+
+    const captainReview = await db.queryOne(
+      `
+        SELECT 1
+        FROM reviews
+        WHERE beatmapset_id = ?
+          AND game_mode = ?
+          AND reviewer_id IN (
+            SELECT user_id
+            FROM user_roles
+            WHERE alumni = 0
+              AND game_mode = ?
+              AND role_id = ?
+          )
+      `,
+      [beatmapset.id, req.body.gameMode, req.body.gameMode, Role.captain],
+    );
+
+    // Make sure an active captain has reviewed the beatmapset
+    if (captainReview == null) {
+      return res.status(422).json({ error: 'No captains have reviewed this map' });
+    }
+
+    const notAllowedReview = await db.queryOne(
+      `
+        SELECT 1
+        FROM reviews
+        WHERE beatmapset_id = ?
+          AND game_mode = ?
+          AND score < -3
+      `,
+      [beatmapset.id, req.body.gameMode],
+    );
+
+    // Make sure the beatmapset has no "Not allowed" reviews
+    if (notAllowedReview != null) {
+      return res.status(422).json({ error: 'There is a "Not allowed" review on this map' });
+    }
+
+    const mapper = await db.queryOne<Pick<User, 'banned'>>(
+      `
+        SELECT banned
+        FROM users
+        WHERE id = ?
+      `,
+      [beatmapset.creator_id],
+    );
+
+    // Make sure the mapper is not banned
+    if (mapper == null || mapper.banned) {
+      return res.status(422).json({ error: 'The mapper is banned' });
+    }
+
+    const consent = await db.queryOne<Pick<Consent, 'consent'>>(
+      `
+        SELECT consent
+        FROM mapper_consents
+        WHERE user_id = ?
+      `,
+      [beatmapset.creator_id],
+    );
+    const consentBeatmapset = await db.queryOne<Pick<ConsentBeatmapset, 'consent'>>(
+      `
+        SELECT consent
+        FROM mapper_consent_beatmapsets
+        WHERE beatmapset_id = ?
+          AND user_id = ?
+      `,
+      [beatmapset.id, beatmapset.creator_id],
+    );
+    const consentValue = consentBeatmapset?.consent ?? consent?.consent;
+
+    // Make sure the mapper didn't reject the beatmapset
+    if (consentValue === ConsentValue.no || consentValue === false) {
+      return res.status(422).json({ error: 'The mapper does not want this map Loved' });
+    }
+
+    const allowedLengthBeatmap = await db.queryOne(
+      `
+        SELECT 1
+        FROM beatmaps
+        WHERE beatmapset_id = ?
+          AND deleted_at IS NULL
+          AND game_mode = ?
+          AND total_length >= 30
+      `,
+      [beatmapset.id, req.body.gameMode],
+    );
+
+    // Make sure at least one beatmap is 30 seconds or longer
+    if (allowedLengthBeatmap == null) {
+      return res.status(422).json({ error: 'Every beatmap in the beatmapset is too short' });
+    }
+    //#endregion
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const nominationCount = (await db.queryOne<{ count: number }>(
