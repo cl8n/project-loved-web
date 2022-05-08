@@ -2,7 +2,7 @@
 
 import 'dotenv/config';
 import AsyncLock from 'async-lock';
-import type { NextFunction, Request, Response } from 'express';
+import type { ErrorRequestHandler, Request, Response } from 'express';
 import express from 'express';
 import mysqlSessionStoreFactory from 'express-mysql-session';
 import session from 'express-session';
@@ -301,13 +301,11 @@ db.initialize().then(() => {
   // Express relies on there being 4 arguments in the signature of error handlers
   // Also for some reason this has to be typed manually
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  app.use(function (error: unknown, _request: Request, response: Response, _next: NextFunction) {
-    // TODO: can probably do better than these logs
-    //log(logTypes.error, `{plain}${error}`);
+  app.use(((error, _request, response, _next) => {
     systemLog(error, SyslogLevel.err);
 
     response.status(500).json({ error: 'Server error' });
-  });
+  }) as ErrorRequestHandler);
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const httpServer = app.listen(parseInt(process.env.PORT!, 10));
