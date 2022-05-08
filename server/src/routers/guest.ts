@@ -435,7 +435,7 @@ guestRouter.get(
       !process.env.SURVEY_LINK_TEMPLATE ||
       !process.env.SURVEY_LINK_TEMPLATE.includes('{confirmation}')
     ) {
-      return res.status(500).json({ error: 'Invalid survey configuration' });
+      throw 'Invalid survey configuration';
     }
 
     const user = res.typedLocals.user as UserWithRoles | undefined;
