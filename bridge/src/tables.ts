@@ -217,6 +217,7 @@ export interface Submission {
 export interface TokenInfo {
   accessToken: string;
   refreshToken: string;
+  scopes?: ('chat.write' | 'forum.write' | 'identify' | 'public')[];
   tokenExpiresAt: number;
 }
 

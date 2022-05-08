@@ -2,7 +2,6 @@
 
 import 'dotenv/config';
 import AsyncLock from 'async-lock';
-import { randomBytes } from 'crypto';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import mysqlSessionStoreFactory from 'express-mysql-session';
@@ -14,7 +13,7 @@ import db from './db';
 import { asyncHandler } from './express-helpers';
 import { hasLocalInteropKeyMiddleware, isAnyRoleMiddleware } from './guards';
 import { dbLog, systemLog } from './log';
-import { authRedirectUrl, Osu } from './osu';
+import { Osu, redirectToAuth } from './osu';
 import router from './router';
 import anyoneRouter from './routers/anyone';
 import guestRouter from './routers/guest';
@@ -112,11 +111,7 @@ db.initialize().then(() => {
       return response.status(403).json({ error: 'Already logged in!' });
     }
 
-    request.session.authState = randomBytes(32).toString('hex');
-    request.session.authBackUrl =
-      typeof request.query.back === 'string' ? request.query.back : request.get('Referrer');
-
-    response.redirect(authRedirectUrl(request.session.authState));
+    redirectToAuth(request, response, ['identify', 'public']);
   });
 
   app.get(
@@ -144,19 +139,41 @@ db.initialize().then(() => {
       }
 
       const osu = new Osu();
-      Object.assign(request.session, await osu.getToken(request.query.code));
-
+      const scopes: OsuApiScopes = JSON.parse(
+        Buffer.from(request.query.state, 'base64url').slice(8).toString(),
+      );
+      const tokenInfo = await osu.getToken(request.query.code, scopes);
       const user = await osu.createOrRefreshUser();
 
       if (user == null) {
         throw 'User not found using /me osu! API';
       }
 
-      request.session.userId = user.id;
+      const logUser = { banned: user.banned, country: user.country, id: user.id, name: user.name };
+      const scopesWithoutDefault = scopes.filter(
+        (scope) => scope !== 'identify' && scope !== 'public',
+      );
 
-      await dbLog(LogType.loggedIn, {
-        user: { banned: user.banned, country: user.country, id: user.id, name: user.name },
-      });
+      if (scopesWithoutDefault.length > 0) {
+        // TODO: Also support upgrading a token to more scopes
+        await db.transact(async (connection) => {
+          await connection.query('INSERT INTO extra_tokens SET ?', [
+            {
+              token: JSON.stringify(tokenInfo),
+              user_id: user.id,
+            },
+          ]);
+          await dbLog(
+            LogType.extraTokenCreated,
+            { scopes: scopesWithoutDefault, user: logUser },
+            connection,
+          );
+        });
+      } else {
+        Object.assign(request.session, tokenInfo);
+        request.session.userId = user.id;
+        await dbLog(LogType.loggedIn, { user: logUser });
+      }
 
       response.redirect(backUrl || '/');
     }),

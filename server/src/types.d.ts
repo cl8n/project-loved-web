@@ -103,6 +103,8 @@ interface OsuApiForumTopic {
   };
 }
 
+type OsuApiScopes = Exclude<import('loved-bridge/tables').TokenInfo['scopes'], undefined>;
+
 interface OsuApiUser {
   avatar_url: string;
   country_code: string;
