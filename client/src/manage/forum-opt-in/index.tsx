@@ -1,4 +1,5 @@
 import useTitle from '../../useTitle';
+import AuthorizeLink from './AuthorizeLink';
 
 export default function ForumOptIn() {
   useTitle('Forum opt-in');
@@ -16,7 +17,7 @@ export default function ForumOptIn() {
         instead.
       </p>
       <p>
-        <a href='/api/forum-opt-in'>Authorize forum posting on your account</a>
+        <AuthorizeLink />
       </p>
     </>
   );

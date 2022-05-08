@@ -33,7 +33,7 @@ import {
 } from './guards';
 import { cleanNominationDescription, getParams, groupBy } from './helpers';
 import { dbLog, systemLog } from './log';
-import { Osu } from './osu';
+import { Osu, redirectToAuth } from './osu';
 import { settings, updateSettings, accessSetting } from './settings';
 import {
   isAssigneeType,
@@ -1003,6 +1003,44 @@ router.post(
     }
 
     res.json(user);
+  }),
+);
+
+router.get(
+  '/has-extra-token',
+  asyncHandler(async (req, res) => {
+    const hasRole = currentUserRoles(req, res);
+
+    if (!hasRole([Role.captain, Role.news], undefined, true)) {
+      return res.status(403).json({ error: 'Must be a captain or news author' });
+    }
+
+    const existingExtraToken = await db.queryOne('SELECT 1 FROM extra_tokens WHERE user_id = ?', [
+      res.typedLocals.user.id,
+    ]);
+
+    res.json(existingExtraToken != null);
+  }),
+);
+
+router.get(
+  '/forum-opt-in',
+  asyncHandler(async (req, res) => {
+    const hasRole = currentUserRoles(req, res);
+
+    if (!hasRole([Role.captain, Role.news], undefined, true)) {
+      return res.status(403).json({ error: 'Must be a captain or news author' });
+    }
+
+    const existingExtraToken = await db.queryOne('SELECT 1 FROM extra_tokens WHERE user_id = ?', [
+      res.typedLocals.user.id,
+    ]);
+
+    if (existingExtraToken != null) {
+      return res.status(422).json({ error: 'Already have a forum opt-in token' });
+    }
+
+    redirectToAuth(req, res, ['forum.write', 'identify', 'public']);
   }),
 );
 //#endregion

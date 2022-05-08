@@ -115,6 +115,10 @@ export function getCurrentNewsPost(): Response<{ roundName: string; url: string 
   return superagent.get('/api/current-news-post');
 }
 
+export function getHasExtraToken(): Response<boolean> {
+  return superagent.get('/api/has-extra-token');
+}
+
 export function getNewsAuthors(): Response<IUser[]> {
   return superagent.get('/api/news-authors');
 }
