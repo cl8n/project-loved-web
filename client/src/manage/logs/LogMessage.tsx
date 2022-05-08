@@ -2,6 +2,7 @@ import type { Log } from 'loved-bridge/tables';
 import { LogType } from 'loved-bridge/tables';
 import type { ReactNode } from 'react';
 import { BeatmapInline } from '../../BeatmapInline';
+import ListInline from '../../ListInline';
 import { Never } from '../../Never';
 import { UserInline } from '../../UserInline';
 import { renderRole } from '../roles/RolesList';
@@ -24,6 +25,7 @@ const logTemplates = {
   [LogType.mapperConsentBeatmapsetUpdated]:
     '{actor} updated mapper consent for {user} on {beatmapset}',
   [LogType.settingUpdated]: '{actor} updated setting {setting}',
+  [LogType.extraTokenCreated]: '{user} created extra token with scopes {scopes}',
 };
 
 function logElementForTemplate(
@@ -53,6 +55,8 @@ function logElementForTemplate(
       return values.role.alumni ? 'marked' : 'unmarked';
     case `${LogType.settingUpdated}-setting`:
       return <code>{values.setting}</code>;
+    case `${LogType.extraTokenCreated}-scopes`:
+      return <ListInline<string> array={values.scopes} render={(scope) => <code>{scope}</code>} />;
   }
 
   return <Never />;
