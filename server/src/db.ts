@@ -263,7 +263,11 @@ const db = new MysqlPool({
       return string === '0' ? false : string === '1' ? true : null;
     }
 
-    if (field.type === 'BLOB' && field.table === 'logs' && field.name === 'values') {
+    if (
+      field.type === 'BLOB' &&
+      ((field.table === 'extra_tokens' && field.name === 'token') ||
+        (field.table === 'logs' && field.name === 'values'))
+    ) {
       const string = field.string();
       return string == null ? null : JSON.parse(string);
     }

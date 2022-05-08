@@ -124,6 +124,11 @@ export interface ConsentBeatmapset {
   consent_reason: string | null;
 }
 
+export interface ExtraToken {
+  user_id: number;
+  token: TokenInfo;
+}
+
 export interface Log {
   id: number;
   created_at: TableDateType;
