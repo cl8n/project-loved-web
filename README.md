@@ -24,7 +24,7 @@ On the first run of the database container, the `project_loved` user will be cre
 
 ### Live data
 
-Regular database exports (sans `sessions`) are posted to <https://loved.sh/exports>. **This will drop and re-create all other tables!**
+Regular database exports (sans `extra_tokens` and `sessions`) are posted to <https://loved.sh/exports>. **This will drop and re-create all other tables!**
 
 ```
 docker-compose exec database /import-live-data.sh [export URL]
@@ -35,6 +35,10 @@ docker-compose exec database /import-live-data.sh [export URL]
 ```
 docker-compose run --rm api ./build/init-user.js <osu! username>
 ```
+
+### TypeScript version
+
+To get accurate type checking and import hints, direct your code editor to use the TypeScript version installed in `server/node_modules` (4.7.0-beta). In VSCode, this option will be listed automatically. This will not be necessary once the project is updated to TypeScript 4.7.
 
 ## Deployment
 
