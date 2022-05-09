@@ -44,8 +44,7 @@ To get accurate type checking and import hints, direct your code editor to use t
 
 ### Dependencies
 
-- [Node.js](https://nodejs.org/en/download/) 14
-  - Preferably with npm 7 to support the new lockfile format
+- [Node.js](https://nodejs.org/en/download/) 16
 - [MySQL](https://dev.mysql.com/downloads/mysql/) 8
 
 ### Client

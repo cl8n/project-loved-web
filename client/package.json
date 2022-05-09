@@ -7,7 +7,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@svgr/webpack": "^5.5.0",
     "@types/escape-html": "^1.0.1",
-    "@types/node": "^14.18.12",
+    "@types/node": "^16.11.33",
     "@types/react": "^17.0.43",
     "@types/react-dom": "^17.0.14",
     "@types/react-router-dom": "^5.3.3",
@@ -94,6 +94,6 @@
     ]
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   }
 }
