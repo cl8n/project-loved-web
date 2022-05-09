@@ -1,9 +1,8 @@
 import type { LogType } from 'loved-bridge/tables';
 import { inspect } from 'util';
+import config from './config';
 import type { MysqlConnectionType } from './db';
 import db from './db';
-
-const syslogPrefix = process.env.LOG_SYSLOG_LEVEL_PREFIX === '1';
 
 export function dbLog(
   type: LogType,
@@ -20,7 +19,7 @@ export function dbLog(
 }
 
 export function systemLog(message: unknown, level: SyslogLevel): void {
-  if (syslogPrefix) {
+  if (config.syslogLevelPrefix) {
     if (typeof message !== 'string') {
       message = inspect(message, { depth: null });
     }

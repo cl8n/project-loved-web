@@ -18,6 +18,7 @@ import type {
 } from 'loved-bridge/tables';
 import { ConsentValue, Role } from 'loved-bridge/tables';
 import qs from 'querystring';
+import config from '../config';
 import db from '../db';
 import { asyncHandler } from '../express-helpers';
 import { currentUserRoles } from '../guards';
@@ -426,16 +427,8 @@ guestRouter.get(
 guestRouter.get(
   '/survey',
   asyncHandler(async (req, res) => {
-    if (!process.env.SURVEY_ID || req.query.id !== process.env.SURVEY_ID) {
+    if (req.query.id !== config.surveyId) {
       return res.status(404).json({ error: 'Survey not found' });
-    }
-
-    if (
-      !process.env.SURVEY_CONFIRMATION_SECRET ||
-      !process.env.SURVEY_LINK_TEMPLATE ||
-      !process.env.SURVEY_LINK_TEMPLATE.includes('{confirmation}')
-    ) {
-      throw 'Invalid survey configuration';
     }
 
     const user = res.typedLocals.user as UserWithRoles | undefined;
@@ -445,12 +438,9 @@ guestRouter.get(
     }
 
     const confirmation = createHash('md5')
-      .update(user.id + process.env.SURVEY_CONFIRMATION_SECRET)
+      .update(user.id + config.surveyConfirmationSecret)
       .digest('hex');
-    const link = process.env.SURVEY_LINK_TEMPLATE.replace(
-      '{confirmation}',
-      `${user.id}-${confirmation}`,
-    );
+    const link = config.surveyLinkTemplate.replace('{confirmation}', `${user.id}-${confirmation}`);
 
     res.redirect(link);
   }),

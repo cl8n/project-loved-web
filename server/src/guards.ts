@@ -2,6 +2,7 @@ import { createHash, timingSafeEqual } from 'crypto';
 import type { Request, RequestHandler, Response } from 'express';
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { Role } from 'loved-bridge/tables';
+import config from './config';
 import { accessSetting } from './settings';
 
 const normalRoles = [
@@ -57,10 +58,7 @@ function timingSafeStringEqual(a: string, b: string): boolean {
 }
 
 export const hasLocalInteropKeyMiddleware: RequestHandler = (request, response, next) => {
-  if (
-    process.env.INTEROP_VERSION == null ||
-    request.get('X-Loved-InteropVersion') !== process.env.INTEROP_VERSION
-  ) {
+  if (request.get('X-Loved-InteropVersion') !== config.interopVersion.toString()) {
     return response.status(422).json({ error: 'Unsupported program version' });
   }
 

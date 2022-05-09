@@ -16,27 +16,19 @@ import { LogType } from 'loved-bridge/tables';
 import qs from 'querystring';
 import type { Request, Response, SuperAgentStatic } from 'superagent';
 import superagent from 'superagent';
+import config from './config';
 import db from './db';
 import Limiter from './Limiter';
 import { dbLog, systemLog } from './log';
 import { isResponseError } from './type-guards';
 
-if (
-  process.env.OSU_BASE_URL == null ||
-  process.env.OSU_CLIENT_ID == null ||
-  process.env.OSU_CLIENT_REDIRECT == null ||
-  process.env.OSU_CLIENT_SECRET == null
-) {
-  throw 'Invalid osu! API client config';
-}
-
-const apiBaseUrl = `${process.env.OSU_BASE_URL}/api/v2`;
+const apiBaseUrl = `${config.osuBaseUrl}/api/v2`;
 const defaultApiScopes: OsuApiScopes = ['identify', 'public'];
 const retainApiObjectsFor = 2419200000; // 28 days
 const refreshTokenThreshold = 3600000; // 1 hour
 
 function sanitizeAvatarUrl(url: string): string {
-  return url.startsWith('/') ? process.env.OSU_BASE_URL + url : url;
+  return url.startsWith('/') ? config.osuBaseUrl + url : url;
 }
 
 function serializeTokenResponse(response: Response, scopes: OsuApiScopes): TokenInfo {
@@ -65,10 +57,10 @@ export function redirectToAuth(
     typeof request.query.back === 'string' ? request.query.back : request.get('Referrer');
 
   response.redirect(
-    `${process.env.OSU_BASE_URL}/oauth/authorize?` +
+    `${config.osuBaseUrl}/oauth/authorize?` +
       qs.stringify({
-        client_id: process.env.OSU_CLIENT_ID,
-        redirect_uri: process.env.OSU_CLIENT_REDIRECT,
+        client_id: config.osuClientId,
+        redirect_uri: config.osuClientRedirect,
         response_type: 'code',
         scope: scopes.join(' '),
         state: request.session.authState,
@@ -100,9 +92,9 @@ export class Osu {
   //#region Initializers
   async getClientCredentialsToken(): Promise<TokenInfo> {
     const tokenInfo = serializeTokenResponse(
-      await superagent.post(`${process.env.OSU_BASE_URL}/oauth/token`).type('form').send({
-        client_id: process.env.OSU_CLIENT_ID,
-        client_secret: process.env.OSU_CLIENT_SECRET,
+      await superagent.post(`${config.osuBaseUrl}/oauth/token`).type('form').send({
+        client_id: config.osuClientId,
+        client_secret: config.osuClientSecret,
         grant_type: 'client_credentials',
         scope: 'public',
       }),
@@ -115,12 +107,12 @@ export class Osu {
 
   async getToken(authorizationCode: string, scopes: OsuApiScopes): Promise<TokenInfo> {
     const tokenInfo = serializeTokenResponse(
-      await superagent.post(`${process.env.OSU_BASE_URL}/oauth/token`).type('form').send({
-        client_id: process.env.OSU_CLIENT_ID,
-        client_secret: process.env.OSU_CLIENT_SECRET,
+      await superagent.post(`${config.osuBaseUrl}/oauth/token`).type('form').send({
+        client_id: config.osuClientId,
+        client_secret: config.osuClientSecret,
         code: authorizationCode,
         grant_type: 'authorization_code',
-        redirect_uri: process.env.OSU_CLIENT_REDIRECT,
+        redirect_uri: config.osuClientRedirect,
       }),
       scopes,
     );
@@ -133,11 +125,11 @@ export class Osu {
     if (Date.now() >= this.#tokenExpiresAt - refreshTokenThreshold) {
       const tokenInfo = serializeTokenResponse(
         await superagent
-          .post(`${process.env.OSU_BASE_URL}/oauth/token`)
+          .post(`${config.osuBaseUrl}/oauth/token`)
           .type('form')
           .send({
-            client_id: process.env.OSU_CLIENT_ID,
-            client_secret: process.env.OSU_CLIENT_SECRET,
+            client_id: config.osuClientId,
+            client_secret: config.osuClientSecret,
             grant_type: 'refresh_token',
             refresh_token: this.#refreshToken,
             scope: this.#scopes.join(' '),

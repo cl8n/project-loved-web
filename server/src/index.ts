@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import 'dotenv/config';
 import AsyncLock from 'async-lock';
 import type { ErrorRequestHandler, Request, Response } from 'express';
 import express from 'express';
@@ -9,6 +8,7 @@ import session from 'express-session';
 import { createHttpTerminator } from 'http-terminator';
 import type { UserRole } from 'loved-bridge/tables';
 import { LogType } from 'loved-bridge/tables';
+import config from './config';
 import db from './db';
 import { asyncHandler } from './express-helpers';
 import { hasLocalInteropKeyMiddleware, isAnyRoleMiddleware } from './guards';
@@ -18,14 +18,6 @@ import router from './router';
 import anyoneRouter from './routers/anyone';
 import guestRouter from './routers/guest';
 import interopRouter from './routers/interop';
-
-if (
-  process.env.HTTPS_ALWAYS == null ||
-  process.env.PORT == null ||
-  process.env.SESSION_SECRET == null
-) {
-  throw 'Invalid API server config';
-}
 
 // Impossible to type
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -88,14 +80,13 @@ db.initialize().then(() => {
     session({
       cookie: {
         httpOnly: true,
-        secure: process.env.HTTPS_ALWAYS === '1',
+        secure: config.httpsAlways,
       },
       name: 'loved_sid',
       proxy: true,
       resave: false,
       saveUninitialized: false,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      secret: process.env.SESSION_SECRET!,
+      secret: config.sessionSecret,
       store: new MysqlSessionStore(
         {
           checkExpirationInterval: 1800000, // 30 minutes
@@ -307,8 +298,7 @@ db.initialize().then(() => {
     response.status(500).json({ error: 'Server error' });
   }) as ErrorRequestHandler);
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const httpServer = app.listen(parseInt(process.env.PORT!, 10));
+  const httpServer = app.listen(config.port);
   const httpTerminator = createHttpTerminator({ server: httpServer });
 
   dbLog(LogType.apiServerStarted);

@@ -1,12 +1,9 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
-import { join, isAbsolute, normalize } from 'path';
+import { join, normalize } from 'path';
+import config from './config';
 import { accessNested } from './helpers';
 
-if (process.env.STORAGE_PATH == null || !isAbsolute(process.env.STORAGE_PATH)) {
-  throw 'Invalid storage path';
-}
-
-const storagePath = normalize(process.env.STORAGE_PATH);
+const storagePath = normalize(config.storagePath);
 const settingsPath = join(storagePath, 'settings.json');
 
 if (!existsSync(storagePath)) {

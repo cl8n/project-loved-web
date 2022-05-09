@@ -1,15 +1,6 @@
 import type { Pool, PoolConnection, PoolConfig } from 'mysql';
 import { createPool } from 'mysql';
-
-if (
-  process.env.DB_DATABASE == null ||
-  process.env.DB_HOST == null ||
-  process.env.DB_PASSWORD == null ||
-  process.env.DB_PORT == null ||
-  process.env.DB_USER == null
-) {
-  throw 'Invalid MySQL config';
-}
+import config from './config';
 
 type Field = Date | boolean | number | string | null;
 type Row = Record<string, Field>;
@@ -191,7 +182,7 @@ class MysqlPool {
           FROM information_schema.COLUMNS
           WHERE TABLE_SCHEMA = ?
         `,
-        [process.env.DB_DATABASE],
+        [config.dbDatabase],
       )
     ).reduce<Record<string, string[]>>((prev, column) => {
       if (prev[column.TABLE_NAME] == null) {
@@ -250,11 +241,11 @@ class MysqlPool {
 }
 
 const db = new MysqlPool({
-  database: process.env.DB_DATABASE,
-  host: process.env.DB_HOST,
-  password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT, 10),
-  user: process.env.DB_USER,
+  database: config.dbDatabase,
+  host: config.dbHost,
+  password: config.dbPassword,
+  port: config.dbPort,
+  user: config.dbUser,
 
   charset: 'utf8mb4_general_ci',
   typeCast: function (field, next) {
