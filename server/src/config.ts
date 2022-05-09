@@ -49,25 +49,31 @@ function tryParseInt(value: string | null | undefined): number | undefined {
   }
 }
 
+function tryParseString(value: string | null | undefined): string | undefined {
+  if (value) {
+    return value;
+  }
+}
+
 partialConfig.httpsAlways = tryParseBoolean(process.env.HTTPS_ALWAYS);
 partialConfig.interopVersion = tryParseInt(process.env.INTEROP_VERSION);
 partialConfig.port = tryParseInt(process.env.PORT);
-partialConfig.sessionSecret = process.env.SESSION_SECRET;
-partialConfig.storagePath = process.env.STORAGE_PATH;
-partialConfig.dbDatabase = process.env.DB_DATABASE;
-partialConfig.dbHost = process.env.DB_HOST;
+partialConfig.sessionSecret = tryParseString(process.env.SESSION_SECRET);
+partialConfig.storagePath = tryParseString(process.env.STORAGE_PATH);
+partialConfig.dbDatabase = tryParseString(process.env.DB_DATABASE);
+partialConfig.dbHost = tryParseString(process.env.DB_HOST);
 partialConfig.dbPassword = process.env.DB_PASSWORD;
 partialConfig.dbPort = tryParseInt(process.env.DB_PORT);
-partialConfig.dbUser = process.env.DB_USER;
+partialConfig.dbUser = tryParseString(process.env.DB_USER);
 partialConfig.syslogLevelPrefix = tryParseBoolean(process.env.LOG_SYSLOG_LEVEL_PREFIX);
-partialConfig.osuBaseUrl = process.env.OSU_BASE_URL;
+partialConfig.osuBaseUrl = tryParseString(process.env.OSU_BASE_URL);
 partialConfig.osuLovedForumId = tryParseInt(process.env.OSU_LOVED_FORUM_ID);
 partialConfig.osuClientId = tryParseInt(process.env.OSU_CLIENT_ID);
-partialConfig.osuClientRedirect = process.env.OSU_CLIENT_REDIRECT;
-partialConfig.osuClientSecret = process.env.OSU_CLIENT_SECRET;
-partialConfig.surveyConfirmationSecret = process.env.SURVEY_CONFIRMATION_SECRET;
-partialConfig.surveyId = process.env.SURVEY_ID;
-partialConfig.surveyLinkTemplate = process.env.SURVEY_LINK_TEMPLATE;
+partialConfig.osuClientRedirect = tryParseString(process.env.OSU_CLIENT_REDIRECT);
+partialConfig.osuClientSecret = tryParseString(process.env.OSU_CLIENT_SECRET);
+partialConfig.surveyConfirmationSecret = tryParseString(process.env.SURVEY_CONFIRMATION_SECRET);
+partialConfig.surveyId = tryParseString(process.env.SURVEY_ID);
+partialConfig.surveyLinkTemplate = tryParseString(process.env.SURVEY_LINK_TEMPLATE);
 
 const optionalOptions = new Set([
   'interopVersion',
