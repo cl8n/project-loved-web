@@ -3,7 +3,7 @@ import { isAbsolute } from 'path';
 
 interface Config {
   httpsAlways: boolean;
-  interopVersion: number;
+  interopVersion: number | undefined;
   port: number;
   sessionSecret: string;
   storagePath: string;
@@ -18,9 +18,9 @@ interface Config {
   osuClientId: number;
   osuClientRedirect: string;
   osuClientSecret: string;
-  surveyConfirmationSecret: string;
-  surveyId: string;
-  surveyLinkTemplate: string;
+  surveyConfirmationSecret: string | undefined;
+  surveyId: string | undefined;
+  surveyLinkTemplate: string | undefined;
 }
 
 const partialConfig: { [K in keyof Config]?: Config[K] | undefined } = {};
@@ -69,8 +69,15 @@ partialConfig.surveyConfirmationSecret = process.env.SURVEY_CONFIRMATION_SECRET;
 partialConfig.surveyId = process.env.SURVEY_ID;
 partialConfig.surveyLinkTemplate = process.env.SURVEY_LINK_TEMPLATE;
 
+const optionalOptions = new Set([
+  'interopVersion',
+  'surveyConfirmationSecret',
+  'surveyId',
+  'surveyLinkTemplate',
+]);
+
 for (const [option, value] of Object.entries(partialConfig)) {
-  if (value == null) {
+  if (value == null && !optionalOptions.has(option)) {
     throw `Invalid config option ${option}: not set`;
   }
 }
@@ -83,6 +90,6 @@ if (!config.osuClientRedirect.endsWith('/auth/callback')) {
   throw 'Invalid config option osuClientRedirect: must end with "/auth/callback"';
 }
 
-if (!config.surveyLinkTemplate.includes('{confirmation}')) {
+if (config.surveyLinkTemplate != null && !config.surveyLinkTemplate.includes('{confirmation}')) {
   throw 'Invalid config option surveyLinkTemplate: must include "{confirmation}"';
 }

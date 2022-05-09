@@ -58,7 +58,10 @@ function timingSafeStringEqual(a: string, b: string): boolean {
 }
 
 export const hasLocalInteropKeyMiddleware: RequestHandler = (request, response, next) => {
-  if (request.get('X-Loved-InteropVersion') !== config.interopVersion.toString()) {
+  if (
+    config.interopVersion == null ||
+    request.get('X-Loved-InteropVersion') !== config.interopVersion.toString()
+  ) {
     return response.status(422).json({ error: 'Unsupported program version' });
   }
 

@@ -427,7 +427,12 @@ guestRouter.get(
 guestRouter.get(
   '/survey',
   asyncHandler(async (req, res) => {
-    if (req.query.id !== config.surveyId) {
+    if (
+      config.surveyConfirmationSecret == null ||
+      config.surveyId == null ||
+      config.surveyLinkTemplate == null ||
+      req.query.id !== config.surveyId
+    ) {
       return res.status(404).json({ error: 'Survey not found' });
     }
 
