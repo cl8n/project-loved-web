@@ -99,3 +99,5 @@ if (!config.osuClientRedirect.endsWith('/auth/callback')) {
 if (config.surveyLinkTemplate != null && !config.surveyLinkTemplate.includes('{confirmation}')) {
   throw 'Invalid config option surveyLinkTemplate: must include "{confirmation}"';
 }
+
+config.osuBaseUrl = config.osuBaseUrl.replace(/\/+$/, '');
