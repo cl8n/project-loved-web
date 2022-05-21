@@ -1,30 +1,39 @@
 {
-  "3E4vRf": {
-    "defaultMessage": "低"
-  },
-  "+9RCG/": {
-    "defaultMessage": "其他图标由{author}提供"
-  },
   "+3rK3I": {
     "defaultMessage": "未回复"
   },
+  "+9RCG/": {
+    "defaultMessage": "其他图标由 {author} 提供"
+  },
   "+bCbtl": {
-    "defaultMessage": "显示列:"
+    "defaultMessage": "显示列："
   },
   "+d4ZcX": {
     "defaultMessage": "版主"
   },
+  "+u3TIj": {
+    "defaultMessage": "评分"
+  },
+  "/5qic6": {
+    "defaultMessage": "原因"
+  },
   "/CNHO3": {
     "defaultMessage": "用 osu! 账号登录"
   },
-  "0+S3hP": {
-    "defaultMessage": "如果您提交的地图如果非常不受欢迎或完全不能玩，队长们可能永远不会检查它。请只提交您认为会给\"Loved\"类别带来真正价值的地图。"
-  },
-  "06WpMi": {
-    "defaultMessage": "计入排名"
+  "/JQDIJ": {
+    "defaultMessage": "谱面状态："
   },
   "/SSCZX": {
     "defaultMessage": "同意"
+  },
+  "0+S3hP": {
+    "defaultMessage": "如果你提交的谱面非常不受欢迎或完全不能玩，队长们可能永远不会检查它。请只提交你认为会给 Loved 类别带来真正价值的谱面。"
+  },
+  "06WpMi": {
+    "defaultMessage": "Ranked"
+  },
+  "07J8la": {
+    "defaultMessage": "你必须<a>登录</a>才能发布审阅。"
   },
   "0Vz3c/": {
     "defaultMessage": "百分比和总数"
@@ -33,55 +42,82 @@
     "defaultMessage": "评论"
   },
   "2YTMfX": {
-    "defaultMessage": "提交并停留在该页"
+    "defaultMessage": "提交并留在该页"
   },
   "2dOoEc": {
     "defaultMessage": "Metadata 审核"
   },
+  "31rEte": {
+    "defaultMessage": "回复者身份："
+  },
+  "34q5Z7": {
+    "defaultMessage": "更新"
+  },
   "38JPtF": {
     "defaultMessage": "投票中"
   },
-  "39zfVl": {
-    "defaultMessage": "一点支持"
+  "3E4vRf": {
+    "defaultMessage": "低"
+  },
+  "3FN4wO": {
+    "defaultMessage": "这项调查已关闭。感谢您的参与！"
   },
   "3Kch6P": {
     "defaultMessage": "升序"
   },
-  "5oqovx": {
-    "defaultMessage": "提交新地图"
+  "3RCzxp": {
+    "defaultMessage": "osu! 官网"
   },
   "3RdYB+": {
-    "defaultMessage": "游戏模式:"
+    "defaultMessage": "游戏模式："
+  },
+  "4xOZTS": {
+    "defaultMessage": "决定谱面是否 Loved 的投票论坛帖主页"
+  },
+  "54toJS": {
+    "defaultMessage": "暗黑"
   },
   "5NZbY5": {
-    "defaultMessage": "结果显示:"
+    "defaultMessage": "结果显示："
   },
   "5OS21f": {
-    "defaultMessage": "外部:"
+    "defaultMessage": "外部链接："
+  },
+  "5oqovx": {
+    "defaultMessage": "提交一个新谱面"
+  },
+  "6RxUSQ": {
+    "defaultMessage": "更多页面"
+  },
+  "6iCh6Z": {
+    "defaultMessage": "编辑我的意见"
   },
   "7CJMwD": {
     "defaultMessage": "优先级"
   },
-  "zn6DBN": {
-    "defaultMessage": "排序依据:"
-  },
-  "zSxa2k": {
-    "defaultMessage": "这张图已在 {roundName} 被提名。"
+  "7u3Yi2": {
+    "defaultMessage": "你也可以在单击谱面集时按住 {key} 以打开审阅模式。"
   },
   "8NqvA2": {
-    "defaultMessage": "键数:"
+    "defaultMessage": "键数："
   },
   "8bAHuK": {
     "defaultMessage": "关闭"
   },
   "8l6BC0": {
-    "defaultMessage": "谱面作家意见"
+    "defaultMessage": "谱师意见"
+  },
+  "8x1LMQ": {
+    "defaultMessage": "添加"
   },
   "9cv8r4": {
     "defaultMessage": "谱面集"
   },
+  "A1mh2c": {
+    "defaultMessage": "评价"
+  },
   "AGzOYr": {
-    "defaultMessage": "提交一张想要Loved的图!"
+    "defaultMessage": "提交一张想要 Loved 的谱面！"
   },
   "BGA5hC": {
     "defaultMessage": "开发者"
@@ -89,29 +125,47 @@
   "BSKWqB": {
     "defaultMessage": "审核团队"
   },
+  "Bc30qK": {
+    "defaultMessage": "排名"
+  },
   "Be0kKF": {
-    "defaultMessage": "即使你提交的地图确实有一些优点，也可能永远不会被提名为 \"Loved\"。目前变成\"Loved\"的地图的速度是有限制的，所以队长们有可能不断地找到比您提交的地图更好的选择。"
+    "defaultMessage": "即使你提交的谱面确实有一些优点，也可能永远不会被提名为 Loved。目前变成 Loved 的谱面的速度是有限的，所以队长们会不断地寻找更好的提交。"
+  },
+  "Bppfuf": {
+    "defaultMessage": "（Alumni）"
+  },
+  "Bsld0J": {
+    "defaultMessage": "搜索："
   },
   "CCGzFA": {
-    "defaultMessage": "已通过投票"
+    "defaultMessage": "投票已通过"
   },
   "CIAu6S": {
     "defaultMessage": "Wiki"
+  },
+  "Cg4Je8": {
+    "defaultMessage": "中立"
   },
   "CxsxoI": {
     "defaultMessage": "提交中..."
   },
   "Do+EPJ": {
-    "defaultMessage": "{user}在{timestamp, date, long}给出了{score}分"
+    "defaultMessage": "{user} 在 {timestamp, date, long} 给出了 {score}"
   },
-  "EqGiDp": {
-    "defaultMessage": "你在这个表格上写的东西会公开可见，所以不要写一些你不想让别人看到的东西。如果你不愿意，你不必填写原因栏。"
+  "E7ffvt": {
+    "defaultMessage": "强烈支持"
   },
   "F1tQfW": {
     "defaultMessage": "标题"
   },
+  "FVFRKC": {
+    "defaultMessage": "wiki 页面"
+  },
   "G1mG5h": {
-    "defaultMessage": "谱面作者要求该地图不被分到\"Loved\"类别。"
+    "defaultMessage": "谱师要求该谱面不被分到 Loved 类别。"
+  },
+  "H+WN2F": {
+    "defaultMessage": "反对"
   },
   "H65rvb": {
     "defaultMessage": "你离看到这个页面还有的练呢。"
@@ -123,10 +177,13 @@
     "defaultMessage": "挑选"
   },
   "HvpI7B": {
-    "defaultMessage": "谱面已删除"
+    "defaultMessage": "谱面集已删除"
   },
   "IO8Ye2": {
     "defaultMessage": "分数"
+  },
+  "IWPQ9l": {
+    "defaultMessage": "选择一个选项"
   },
   "IiYTWb": {
     "defaultMessage": "当前团队"
@@ -134,44 +191,74 @@
   "Ipzb3R": {
     "defaultMessage": "未通过"
   },
+  "IuLFa/": {
+    "defaultMessage": "已审阅"
+  },
+  "J0oKMn": {
+    "defaultMessage": "玩家"
+  },
+  "JFDpsO": {
+    "defaultMessage": "你在此表格上写的内容将是公开可见的，不要写一些不希望别人看到的东西。"
+  },
   "JHNIy2": {
-    "defaultMessage": "投票轮次:"
+    "defaultMessage": "投票轮次："
   },
   "JPKVz4": {
-    "defaultMessage": "谱面"
+    "defaultMessage": "谱面集"
   },
   "JPSkxB": {
-    "defaultMessage": "{country} 棋"
+    "defaultMessage": "{country} 旗帜"
   },
   "Jy6JW8": {
     "defaultMessage": "我不知道你是谁！要不先试试<a>登录</a>？"
   },
+  "K4bZ6F": {
+    "defaultMessage": "Discord 服务器"
+  },
   "LBBZpt": {
     "defaultMessage": "游戏模式"
   },
-  "Ll1LUO": {
-    "defaultMessage": "强烈支持"
-  },
   "Lm++cZ": {
     "defaultMessage": "Loved 计划"
+  },
+  "MItLwF": {
+    "defaultMessage": "审阅"
   },
   "MLkhaQ": {
     "defaultMessage": "投票中"
   },
   "MUDTXQ": {
-    "defaultMessage": "谱面链接或谱面ID"
+    "defaultMessage": "谱面链接或ID"
+  },
+  "MXeEOs": {
+    "defaultMessage": "未审阅"
+  },
+  "Mo+8Ww": {
+    "defaultMessage": "账号年限"
   },
   "MoR8Of": {
-    "defaultMessage": "谱面作家意见"
+    "defaultMessage": "谱师意见"
   },
   "N4xf2i": {
     "defaultMessage": "收藏数"
   },
+  "N72lge": {
+    "defaultMessage": "数据导出"
+  },
   "NG8X9U": {
     "defaultMessage": "建设中"
   },
+  "Nee/tG": {
+    "defaultMessage": "支持"
+  },
   "NjIKQe": {
     "defaultMessage": "无法下载"
+  },
+  "OZm2HC": {
+    "defaultMessage": "你有多支持这张谱面？"
+  },
+  "OcsUKU": {
+    "defaultMessage": "我的审阅状态："
   },
   "Oep6va": {
     "defaultMessage": "提交"
@@ -179,35 +266,41 @@
   "PCZJkZ": {
     "defaultMessage": "网站源码和使用反馈"
   },
-  "PpxIZP": {
-    "defaultMessage": "强烈反对"
+  "PuVvCo": {
+    "defaultMessage": "键位数"
   },
   "R0gvL0": {
     "defaultMessage": "艺术家"
   },
   "RHg+09": {
-    "defaultMessage": "你想提名这张图的哪些游戏模式？"
+    "defaultMessage": "你想提名这张谱面的哪些游戏模式？"
   },
   "RL5Qu1": {
-    "defaultMessage": "通过"
+    "defaultMessage": "Approved"
   },
-  "ScBgfg": {
-    "defaultMessage": "没有"
+  "SKAH57": {
+    "defaultMessage": "原因"
+  },
+  "SNqK4E": {
+    "defaultMessage": "谱面集"
   },
   "Sti+Y3": {
-    "defaultMessage": "提交地图之后, 你可以在<submissionsLink>提交页面</submissionsLink>检查地图状态。"
+    "defaultMessage": "提交谱面之后, 你可以在<submissionsLink>提交页面</submissionsLink>检查谱面状态。"
+  },
+  "T8mfr2": {
+    "defaultMessage": "你确定要删除你的审阅记录吗？"
   },
   "Tf7XH9": {
     "defaultMessage": "评论"
   },
   "TqI9fE": {
-    "defaultMessage": "管理:"
+    "defaultMessage": "管理："
   },
   "TrDD+Y": {
-    "defaultMessage": "你必须<a>登录</a>后填写此表。"
+    "defaultMessage": "你必须<a>登录</a>后才能填写此表。"
   },
   "U1fcdw": {
-    "defaultMessage": "新的编辑/管理"
+    "defaultMessage": "新闻编辑/管理"
   },
   "UjLvid": {
     "defaultMessage": "展开"
@@ -215,10 +308,13 @@
   "UxNmCh": {
     "defaultMessage": "中"
   },
-  "V5W+3b": {
-    "defaultMessage": "意见"
+  "UzL89/": {
+    "defaultMessage": "（队长）"
   },
-  "aHJR9F": {
+  "V11p0B": {
+    "defaultMessage": "计入排名"
+  },
+  "V5W+3b": {
     "defaultMessage": "意见"
   },
   "VHEp9G": {
@@ -230,47 +326,83 @@
   "WEpxnj": {
     "defaultMessage": "游玩次数"
   },
-  "WjsRpS": {
-    "defaultMessage": "这个谱面集中每个谱面都太短了(低于30秒)"
+  "WLJwOC": {
+    "defaultMessage": "审核团队 wiki 页面"
   },
-  "Y620ue": {
-    "defaultMessage": "所有"
+  "WXZA2u": {
+    "defaultMessage": "Loved 项目的畅所欲言频道；不是非常活跃且很少被检查"
+  },
+  "WjsRpS": {
+    "defaultMessage": "这个谱面集中每个谱面都太短了（低于 30 秒）。"
+  },
+  "WlIgyS": {
+    "defaultMessage": "你为什么想让这张谱面 Loved？"
+  },
+  "XiH1Li": {
+    "defaultMessage": "（在 {channel} 内）"
+  },
+  "YhVhtI": {
+    "defaultMessage": "这个谱面的收藏数太少了。"
+  },
+  "YzUPhx": {
+    "defaultMessage": "{gameMode} Project 项目常规服务器"
   },
   "ZEsdcm": {
-    "defaultMessage": "投票主题"
+    "defaultMessage": "投票帖"
   },
   "ZWbq0S": {
     "defaultMessage": "年份"
   },
   "ZZqLxU": {
-    "defaultMessage": "难度"
+    "defaultMessage": "难度数"
   },
-  "bKfIQC": {
-    "defaultMessage": "你为什么希望这个谱面被\"Loved\" <fade>(可选l)</fade>"
+  "Ze8fJ0": {
+    "defaultMessage": "选择一个评价"
+  },
+  "a/VT/Q": {
+    "defaultMessage": "关于 Loved 项目的 wiki 页面"
+  },
+  "aHJR9F": {
+    "defaultMessage": "意见"
+  },
+  "aXImqo": {
+    "defaultMessage": "编辑审阅记录"
   },
   "bcLpeC": {
     "defaultMessage": "非普通模式"
   },
-  "c/0N4+": {
-    "defaultMessage": "拒绝"
+  "c/1pjl": {
+    "defaultMessage": "横向对比："
   },
   "c2UCNp": {
     "defaultMessage": "百分比"
+  },
+  "cDLqbq": {
+    "defaultMessage": "未计入排名"
   },
   "ccf+6T": {
     "defaultMessage": "{gameMode} 队长"
   },
   "cwgho6": {
-    "defaultMessage": "提交中"
+    "defaultMessage": "待办"
   },
   "dG9/uH": {
     "defaultMessage": "Qualified"
   },
-  "e6WZri": {
-    "defaultMessage": "支持"
+  "dv53Wk": {
+    "defaultMessage": "用来翻译和本地化网站的工具"
+  },
+  "eJYnVj": {
+    "defaultMessage": "更多"
+  },
+  "g+oXPh": {
+    "defaultMessage": "更新中..."
   },
   "gLG6dL": {
-    "defaultMessage": "已提交地图"
+    "defaultMessage": "已提交谱面"
+  },
+  "gWofsq": {
+    "defaultMessage": "无"
   },
   "gvLZL5": {
     "defaultMessage": "登出"
@@ -281,8 +413,11 @@
   "iCkWun": {
     "defaultMessage": "投票轮次"
   },
+  "iy6RR2": {
+    "defaultMessage": "删除审阅记录"
+  },
   "jVP2nx": {
-    "defaultMessage": "这个谱面上传者已经被封号了"
+    "defaultMessage": "这个谱面的谱师已经被封号了。"
   },
   "jlkqJz": {
     "defaultMessage": "管理"
@@ -291,7 +426,7 @@
     "defaultMessage": "已提名"
   },
   "kr2W+L": {
-    "defaultMessage": "<p>填写这个表格帮助<teamLink>队长们</teamLink>决定每周提名哪些地图。即使一个地图已经被<submissionsLink>提交</submissionsLink>, 你也可以写一写你的想法。</p> <p>需要注意的事项:</p>"
+    "defaultMessage": "<p>填写这个表格帮助<teamLink>队长们</teamLink>决定每周提名哪些谱面。即使一个谱面已被<submissionsLink>提交</submissionsLink>，你也可以写一写你的想法。</p> <p>需要注意的事项:</p>"
   },
   "l39agD": {
     "defaultMessage": "状态"
@@ -299,11 +434,8 @@
   "lMSjPi": {
     "defaultMessage": "这个还没对你开放。回头再试试？"
   },
-  "lRk8DP": {
-    "defaultMessage": "轻微不同意"
-  },
   "lULo+e": {
-    "defaultMessage": "在投票中失败"
+    "defaultMessage": "投票未通过"
   },
   "lbC8H+": {
     "defaultMessage": "谱面作家"
@@ -315,7 +447,7 @@
     "defaultMessage": "统计"
   },
   "mhBW5h": {
-    "defaultMessage": "谱面作者"
+    "defaultMessage": "谱师"
   },
   "mhVjD+": {
     "defaultMessage": "旗帜图标来自 {author}"
@@ -323,14 +455,32 @@
   "mucI2W": {
     "defaultMessage": "列表排序方式 {definition}"
   },
-  "wGcwBN": {
-    "defaultMessage": "高"
+  "nAQn+f": {
+    "defaultMessage": "点击这里在 {roundName} 进行投票！"
+  },
+  "nUQEC7": {
+    "defaultMessage": "强烈反对"
   },
   "necy1Q": {
     "defaultMessage": "这个列表只包括从这个网站发送的作品。旧的谷歌表格将很快被移到这里，然后谷歌表格将废弃。"
   },
+  "nkWBfH": {
+    "defaultMessage": "Loved 项目的主要维护及针对性讨论频道"
+  },
   "nn9fFb": {
     "defaultMessage": "BPM"
+  },
+  "nvvuiw": {
+    "defaultMessage": "视频剪辑"
+  },
+  "o0LXIL": {
+    "defaultMessage": "关于 Loved 项目贡献者的 wiki 页面"
+  },
+  "oFqE9e": {
+    "defaultMessage": "谱师通常会告知他们的谱面在 Loved 计划中的用途。这个表格显示了每个谱师是否同意让 Loved 计划把他们的谱面放上去进行投票，并有可能给他们计入排名。请注意，无论曾经是否在这里同意过，谱师们仍可以在任何时候要求将他们的谱面从 Loved 计划中删除。"
+  },
+  "p9Evn8": {
+    "defaultMessage": "本地化"
   },
   "pLUxkj": {
     "defaultMessage": "否"
@@ -353,40 +503,79 @@
   "qfEiSZ": {
     "defaultMessage": "总计"
   },
+  "rFOang": {
+    "defaultMessage": "谱面集 ID"
+  },
+  "rnfyPi": {
+    "defaultMessage": "审阅 {beatmapset}"
+  },
   "rv3gh8": {
-    "defaultMessage": "{user} 在 {timestamp, date, long} 将此标记为 <score>不被允许</score>"
+    "defaultMessage": "{user} 在 {timestamp, date, long} 将此标记为 <score>未通过</score>"
   },
   "sG6ons": {
-    "defaultMessage": "已Loved图列表"
+    "defaultMessage": "Loved 列表"
   },
   "tCV6dl": {
-    "defaultMessage": "显示语言: {selector}"
+    "defaultMessage": "语言：{selector}"
+  },
+  "toLR7w": {
+    "defaultMessage": "调查结果"
+  },
+  "u/O22d": {
+    "defaultMessage": "正在编辑 {user}"
   },
   "uNpYlX": {
-    "defaultMessage": "强烈反对"
+    "defaultMessage": "驳回"
+  },
+  "uizAlD": {
+    "defaultMessage": "论坛"
   },
   "urIF1D": {
     "defaultMessage": "谱面集"
   },
+  "utiTez": {
+    "defaultMessage": "意见"
+  },
   "uwBono": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} 提交了这张图  {timestamp, date, long}} other{{user} 提交了这张图}}"
+    "defaultMessage": "{hasTimestamp,select,true{{user} 提交了这张谱面  {timestamp, date, long}} other{{user} 提交了这张谱面}}"
+  },
+  "v96otU": {
+    "defaultMessage": "明亮"
   },
   "vDQerf": {
     "defaultMessage": "投票结果"
   },
+  "vLehYo": {
+    "defaultMessage": "调查已关闭"
+  },
+  "wGcwBN": {
+    "defaultMessage": "高"
+  },
   "wOZypU": {
-    "defaultMessage": "校友"
+    "defaultMessage": "Alumni"
+  },
+  "xJhR0t": {
+    "defaultMessage": "任意"
+  },
+  "xR9DcO": {
+    "defaultMessage": "添加中..."
+  },
+  "xcT7oB": {
+    "defaultMessage": "备份（几乎）全部网站数据"
   },
   "xv9aUB": {
     "defaultMessage": "是否"
   },
-  "y+BE4P": {
-    "defaultMessage": "所有"
-  },
   "yQeX5q": {
-    "defaultMessage": "主题: {selector}"
+    "defaultMessage": "主题：{selector}"
   },
-  "PuVvCo": {
-    "defaultMessage": "键位数"
+  "zSxa2k": {
+    "defaultMessage": "这张图已在 {roundName} 被提名。"
+  },
+  "zgiklH": {
+    "defaultMessage": "谱师"
+  },
+  "zn6DBN": {
+    "defaultMessage": "排序依据："
   }
 }
