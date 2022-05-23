@@ -30,7 +30,7 @@ export default function Manage() {
         <Route exact path='/admin/manage/logs'>
           <Logs />
         </Route>
-        <ProtectedRoute exact path='/admin/manage/forum-opt-in' role={Role.captain}>
+        <ProtectedRoute exact path='/admin/manage/forum-opt-in' role={[Role.captain, Role.news]}>
           <ForumOptIn />
         </ProtectedRoute>
         <ProtectedRoute exact path='/admin/manage/settings' role={Role.captain}>

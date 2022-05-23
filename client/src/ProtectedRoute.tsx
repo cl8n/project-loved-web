@@ -7,7 +7,7 @@ import { hasRole } from './permissions';
 import useTitle from './useTitle';
 
 interface ProtectedRouteProps extends RouteProps {
-  role?: Role | 'any';
+  role?: Role | readonly Role[] | 'any';
 }
 
 export function ProtectedRoute(props: ProtectedRouteProps) {
