@@ -14,6 +14,7 @@ interface Config {
   dbUser: string;
   syslogLevelPrefix: boolean;
   osuBaseUrl: string;
+  osuBaseUrlExternal: string;
   osuLovedForumId: number;
   osuClientId: number;
   osuClientRedirect: string;
@@ -67,6 +68,7 @@ partialConfig.dbPort = tryParseInt(process.env.DB_PORT);
 partialConfig.dbUser = tryParseString(process.env.DB_USER);
 partialConfig.syslogLevelPrefix = tryParseBoolean(process.env.LOG_SYSLOG_LEVEL_PREFIX);
 partialConfig.osuBaseUrl = tryParseString(process.env.OSU_BASE_URL);
+partialConfig.osuBaseUrlExternal = tryParseString(process.env.OSU_BASE_URL_EXTERNAL);
 partialConfig.osuLovedForumId = tryParseInt(process.env.OSU_LOVED_FORUM_ID);
 partialConfig.osuClientId = tryParseInt(process.env.OSU_CLIENT_ID);
 partialConfig.osuClientRedirect = tryParseString(process.env.OSU_CLIENT_REDIRECT);
@@ -77,6 +79,7 @@ partialConfig.surveyLinkTemplate = tryParseString(process.env.SURVEY_LINK_TEMPLA
 
 const optionalOptions = new Set([
   'interopVersion',
+  'osuBaseUrlExternal',
   'surveyConfirmationSecret',
   'surveyId',
   'surveyLinkTemplate',
@@ -101,3 +104,4 @@ if (config.surveyLinkTemplate != null && !config.surveyLinkTemplate.includes('{c
 }
 
 config.osuBaseUrl = config.osuBaseUrl.replace(/\/+$/, '');
+config.osuBaseUrlExternal ??= config.osuBaseUrl;

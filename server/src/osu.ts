@@ -28,7 +28,7 @@ const retainApiObjectsFor = 2419200000; // 28 days
 const refreshTokenThreshold = 3600000; // 1 hour
 
 function sanitizeAvatarUrl(url: string): string {
-  return url.startsWith('/') ? config.osuBaseUrl + url : url;
+  return url.startsWith('/') ? config.osuBaseUrlExternal + url : url;
 }
 
 function serializeTokenResponse(response: Response, scopes: OsuApiScopes): TokenInfo {
@@ -57,7 +57,7 @@ export function redirectToAuth(
     typeof request.query.back === 'string' ? request.query.back : request.get('Referrer');
 
   response.redirect(
-    `${config.osuBaseUrl}/oauth/authorize?` +
+    `${config.osuBaseUrlExternal}/oauth/authorize?` +
       qs.stringify({
         client_id: config.osuClientId,
         redirect_uri: config.osuClientRedirect,
