@@ -148,9 +148,85 @@ export class Osu {
     await this.#limiter.run(() => this.#apiAgent.delete(`${apiBaseUrl}/oauth/tokens/current`));
   }
 
-  getForumTopic(topicId: number): Promise<OsuApiForumTopic | null> {
+  createForumTopic(
+    forumId: number,
+    title: string,
+    body: string,
+    options?: {
+      coverId?: number;
+      poll?: {
+        hideResults?: boolean;
+        lengthDays?: number;
+        maxOptions?: number;
+        options: string[];
+        title: string;
+        voteChangeAllowed?: boolean;
+      };
+    },
+  ): Promise<{ post: OsuApiForumPost; topic: OsuApiForumTopic } | null> {
+    const requestBody: Record<string, unknown> = {
+      forum_id: forumId,
+      title,
+      body,
+      cover_id: options?.coverId,
+    };
+
+    if (options?.poll != null) {
+      requestBody.with_poll = true;
+      requestBody.forum_topic_poll = {
+        hide_results: options.poll.hideResults,
+        length_days: options.poll.lengthDays,
+        max_options: options.poll.maxOptions,
+        options: options.poll.options.join('\r\n'),
+        title: options.poll.title,
+        vote_change: options.poll.voteChangeAllowed,
+      };
+    }
+
+    return this.#limiter
+      .run(() => this.#apiAgent.post(`${apiBaseUrl}/forums/topics`).send(requestBody))
+      .then((response) => response.body)
+      .catch((error) => {
+        if (isResponseError(error) && error.status === 403) {
+          return null;
+        }
+
+        throw error;
+      });
+  }
+
+  createForumTopicReply(topicId: number, body: string): Promise<OsuApiForumPost | null> {
+    return this.#limiter
+      .run(() => this.#apiAgent.post(`${apiBaseUrl}/forums/topics/${topicId}/reply`).send({ body }))
+      .then((response) => response.body)
+      .catch((error) => {
+        if (isResponseError(error) && (error.status === 403 || error.status === 404)) {
+          return null;
+        }
+
+        throw error;
+      });
+  }
+
+  getForumTopic(topicId: number): Promise<{
+    posts: OsuApiForumPost[];
+    topic: OsuApiForumTopic;
+  } | null> {
     return this.#limiter
       .run(() => this.#apiAgent.get(`${apiBaseUrl}/forums/topics/${topicId}`))
+      .then((response) => response.body)
+      .catch((error) => {
+        if (isResponseError(error) && (error.status === 403 || error.status === 404)) {
+          return null;
+        }
+
+        throw error;
+      });
+  }
+
+  updateForumPost(postId: number, body: string): Promise<OsuApiForumPost | null> {
+    return this.#limiter
+      .run(() => this.#apiAgent.put(`${apiBaseUrl}/forums/posts/${postId}`).send({ body }))
       .then((response) => response.body)
       .catch((error) => {
         if (isResponseError(error) && (error.status === 403 || error.status === 404)) {

@@ -72,35 +72,55 @@ interface OsuApiBeatmapset {
   user_id: number;
 }
 
-interface OsuApiForumTopic {
-  posts: {
-    body: {
-      html: string;
-      raw: string;
-    };
-    created_at: string;
-    deleted_at: string | null;
-    edited_at: string | null;
-    edited_by_id: number | null;
-    forum_id: number;
-    id: number;
-    topic_id: number;
-    user_id: number;
-  }[];
-  topic: {
-    created_at: string;
-    deleted_at: string | null;
-    first_post_id: number;
-    forum_id: number;
-    id: number;
-    is_locked: boolean;
-    last_post_id: number;
-    post_count: number;
-    title: string;
-    type: 'announcement' | 'normal' | 'sticky';
-    updated_at: string;
-    user_id: number;
+interface OsuApiForumPost {
+  body: {
+    html: string;
+    raw: string;
   };
+  created_at: string;
+  deleted_at: string | null;
+  edited_at: string | null;
+  edited_by_id: number | null;
+  forum_id: number;
+  id: number;
+  topic_id: number;
+  user_id: number;
+}
+
+interface OsuApiForumTopic {
+  created_at: string;
+  deleted_at: string | null;
+  first_post_id: number;
+  forum_id: number;
+  id: number;
+  is_locked: boolean;
+  last_post_id: number;
+  poll?: {
+    allow_vote_change: boolean;
+    ended_at: string | null;
+    hide_incomplete_results: boolean;
+    last_vote_at: string | null;
+    max_votes: number;
+    options: {
+      id: number;
+      text: {
+        bbcode: string;
+        html: string;
+      };
+      vote_count?: number;
+    }[];
+    started_at: string;
+    title: {
+      bbcode: string;
+      html: string;
+    };
+    total_vote_count: number;
+  } | null;
+  post_count: number;
+  title: string;
+  type: 'announcement' | 'normal' | 'sticky';
+  updated_at: string;
+  user_id: number;
 }
 
 type OsuApiScopes = Exclude<import('loved-bridge/tables').TokenInfo['scopes'], undefined>;

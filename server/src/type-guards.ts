@@ -69,26 +69,22 @@ export function isMapperConsentBeatmapsetArray(
   );
 }
 
-export function isPollArray(polls: unknown): polls is {
-  beatmapsetId: number;
-  endedAt: string;
-  gameMode: GameMode;
+export function isNewsRequestBody(body: unknown): body is {
+  mainTopicBodies: Partial<Record<GameMode, string>>;
+  nominationTopicBodies: Record<number, string>;
   roundId: number;
-  startedAt: string;
-  topicId: number;
-}[] {
+} {
   return (
-    Array.isArray(polls) &&
-    polls.every(
-      (poll) =>
-        isRecord(poll) &&
-        isInteger(poll.beatmapsetId) &&
-        typeof poll.endedAt === 'string' &&
-        isGameMode(poll.gameMode) &&
-        isInteger(poll.roundId) &&
-        typeof poll.startedAt === 'string' &&
-        isInteger(poll.topicId),
-    )
+    isRecord(body) &&
+    isRecord(body.mainTopicBodies) &&
+    Object.entries(body.mainTopicBodies).every(
+      ([key, value]) => isGameMode(parseInt(key, 10)) && typeof value === 'string',
+    ) &&
+    isRecord(body.nominationTopicBodies) &&
+    Object.entries(body.nominationTopicBodies).every(
+      ([key, value]) => !isNaN(parseInt(key, 10)) && typeof value === 'string',
+    ) &&
+    isInteger(body.roundId)
   );
 }
 

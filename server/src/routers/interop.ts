@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
-import { gameModes } from 'loved-bridge/beatmaps/gameMode';
+import { gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import type {
   Beatmap,
   Beatmapset,
+  ExtraToken,
   Nomination,
   NominationAssignee,
   Poll,
@@ -11,12 +12,14 @@ import type {
   RoundGameMode,
   User,
 } from 'loved-bridge/tables';
+import config from '../config';
 import db from '../db';
 import { asyncHandler } from '../express-helpers';
 import { groupBy } from '../helpers';
+import { mainPostTitle, nominationPollTitle, nominationTopicTitle } from '../news';
 import { Osu } from '../osu';
 import { accessSetting } from '../settings';
-import { isInteger, isPollArray, isPollResultsArray, isRepliesRecord } from '../type-guards';
+import { isInteger, isNewsRequestBody, isPollResultsArray, isRepliesRecord } from '../type-guards';
 
 const interopRouter = Router();
 export default interopRouter;
@@ -273,27 +276,262 @@ interopRouter.get(
 );
 
 interopRouter.post(
-  '/polls',
+  '/news',
   asyncHandler(async (req, res) => {
-    if (!isPollArray(req.body)) {
-      return res.status(422).json({ error: 'Body must be an array of polls' });
+    if (!isNewsRequestBody(req.body)) {
+      return res.status(422).json({ error: 'Invalid request body' });
     }
 
-    await db.query(
-      'INSERT INTO polls (beatmapset_id, ended_at, game_mode, round_id, started_at, topic_id) VALUES ?',
-      [
-        req.body.map((poll) => [
-          poll.beatmapsetId,
-          new Date(poll.endedAt),
-          poll.gameMode,
-          poll.roundId,
-          new Date(poll.startedAt),
-          poll.topicId,
-        ]),
-      ],
+    // TODO: Build topic bodies (currently done by management client)
+    const { mainTopicBodies, nominationTopicBodies, roundId } = req.body;
+    const round = await db.queryOne<Pick<Round, 'id' | 'name' | 'news_author_id'>>(
+      `
+        SELECT id, name, news_author_id
+        FROM rounds
+        WHERE id = ?
+      `,
+      [roundId],
     );
 
-    res.status(204).send();
+    if (round == null) {
+      return res.status(404).json({ error: 'Round not found' });
+    }
+
+    const nominations = await db.queryWithGroups<Nomination & { beatmapset: Beatmapset }>(
+      `
+        SELECT nominations.*, beatmapsets:beatmapset
+        FROM nominations
+        INNER JOIN beatmapsets
+          ON nominations.beatmapset_id = beatmapsets.id
+        WHERE nominations.round_id = ?
+      `,
+      [roundId],
+    );
+
+    const nominationIdsMissingAuthor = nominations
+      .filter((nomination) => nomination.description_author_id == null)
+      .map((nomination) => nomination.id);
+
+    if (nominationIdsMissingAuthor.length > 0) {
+      return res.status(422).json({
+        error: `No description author for nominations ${nominationIdsMissingAuthor.join(', ')}`,
+      });
+    }
+
+    const nominationIdsMissingTopicBody = nominations
+      .map((nomination) => nomination.id)
+      .filter((id) => nominationTopicBodies[id] == null);
+
+    if (nominationIdsMissingTopicBody.length > 0) {
+      return res.status(422).json({
+        error: `Missing topic body for nominations ${nominationIdsMissingTopicBody.join(', ')}`,
+      });
+    }
+
+    const newsAuthorExtraToken = await db.queryOne<Pick<ExtraToken, 'token'>>(
+      `
+        SELECT token
+        FROM extra_tokens
+        WHERE user_id = ?
+      `,
+      [round.news_author_id],
+    );
+
+    if (newsAuthorExtraToken == null) {
+      return res.status(403).json({ error: 'News author does not have forum write permission' });
+    }
+
+    const newsAuthorOsu = new Osu(newsAuthorExtraToken.token);
+
+    try {
+      const newToken = await newsAuthorOsu.tryRefreshToken();
+
+      if (newToken != null) {
+        await db.query(
+          `
+            UPDATE extra_tokens
+            SET token = ?
+            WHERE user_id = ?
+          `,
+          [JSON.stringify(newToken), round.news_author_id],
+        );
+      }
+    } catch {
+      return res.status(403).json({
+        error: 'Error refreshing forum write token for news author. Re-authorize and try again',
+      });
+    }
+
+    const captainExtraTokens = await db.query<ExtraToken>(
+      `
+        SELECT *
+        FROM extra_tokens
+        WHERE user_id IN (?)
+      `,
+      [nominations.map((nomination) => nomination.description_author_id)],
+    );
+    const captainOsuByUserId: Partial<Record<number, Osu>> = {};
+    const refreshErrorUserIds: number[] = [];
+
+    for (const extraToken of captainExtraTokens) {
+      const osu = new Osu(extraToken.token);
+      captainOsuByUserId[extraToken.user_id] = osu;
+
+      const newToken = await osu.tryRefreshToken().catch(() => {
+        refreshErrorUserIds.push(extraToken.user_id);
+      });
+
+      if (newToken != null) {
+        await db.query(
+          `
+            UPDATE extra_tokens
+            SET token = ?
+            WHERE user_id = ?
+          `,
+          [JSON.stringify(newToken), extraToken.user_id],
+        );
+      }
+    }
+
+    if (refreshErrorUserIds.length > 0) {
+      return res.status(403).json({
+        error:
+          `Error refreshing forum write token for users ${refreshErrorUserIds.join(', ')}.` +
+          '\nAsk them to re-authorize, then try again',
+      });
+    }
+
+    const firstPostsByNominationId: Partial<Record<number, { body: string; id: number }>> = {};
+    const gameModesReversed = [...gameModes].reverse();
+    const nominationTopicIds: Partial<Record<number, number>> = {};
+
+    // Post in reverse so that it looks in-order on the topic listing
+    for (const gameMode of gameModesReversed) {
+      const nominationsForModeReversed = nominations
+        .filter((nomination) => nomination.game_mode === gameMode)
+        .reverse();
+
+      for (const nomination of nominationsForModeReversed) {
+        const existingPoll = await db.queryOne<Pick<Poll, 'topic_id'>>(
+          `
+            SELECT topic_id
+            FROM polls
+            WHERE beatmapset_id = ?
+              AND game_mode = ?
+              AND round_id = ?
+          `,
+          [nomination.beatmapset_id, gameMode, roundId],
+        );
+
+        if (existingPoll == null) {
+          const nominationOsu =
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            captainOsuByUserId[nomination.description_author_id!] ?? newsAuthorOsu;
+          const topic = await nominationOsu.createForumTopic(
+            config.osuLovedForumId,
+            nominationTopicTitle(nomination),
+            nominationTopicBodies[nomination.id],
+            {
+              poll: {
+                hideResults: true,
+                lengthDays: 10,
+                maxOptions: 1,
+                options: ['Yes', 'No'],
+                title: nominationPollTitle(nomination),
+                voteChangeAllowed: true,
+              },
+            },
+          );
+
+          if (topic?.topic.poll?.ended_at == null) {
+            throw `Unexpected nomination topic response from osu! API for nomination #${nomination.id}`;
+          }
+
+          await db.query('INSERT INTO polls SET ?', [
+            {
+              beatmapset_id: nomination.beatmapset_id,
+              ended_at: new Date(topic.topic.poll.ended_at),
+              game_mode: gameMode,
+              round_id: roundId,
+              started_at: new Date(topic.topic.poll.started_at),
+              topic_id: topic.topic.id,
+            },
+          ]);
+
+          firstPostsByNominationId[nomination.id] = {
+            body: topic.post.body.raw,
+            id: topic.post.id,
+          };
+          nominationTopicIds[nomination.id] = topic.topic.id;
+        } else {
+          const topic = await newsAuthorOsu.getForumTopic(existingPoll.topic_id);
+
+          if (topic?.topic.poll?.ended_at == null) {
+            throw `Unexpected nomination topic response from osu! API for nomination #${nomination.id}`;
+          }
+
+          firstPostsByNominationId[nomination.id] = {
+            body: topic.posts[0].body.raw,
+            id: topic.posts[0].id,
+          };
+          nominationTopicIds[nomination.id] = topic.topic.id;
+        }
+      }
+    }
+
+    const mainPostTopicIdsByGameMode: Partial<Record<GameMode, number>> = {};
+
+    // Post in reverse so that it looks in-order on the topic listing
+    for (const gameMode of gameModesReversed) {
+      const mainTopicBody = mainTopicBodies[gameMode];
+
+      if (mainTopicBody == null) {
+        continue;
+      }
+
+      const topic = await newsAuthorOsu.createForumTopic(
+        config.osuLovedForumId,
+        mainPostTitle(gameMode, round),
+        mainTopicBody.replace(
+          /{{(\d+)_TOPIC_ID}}/g,
+          (_, nominationId) => nominationTopicIds[nominationId]?.toString() ?? '',
+        ),
+      );
+
+      if (topic == null) {
+        throw (
+          'Unexpected main topic response from osu! API for game mode ' + gameModeLongName(gameMode)
+        );
+      }
+
+      mainPostTopicIdsByGameMode[gameMode] = topic.topic.id;
+    }
+
+    for (const nomination of nominations) {
+      const firstPost = firstPostsByNominationId[nomination.id];
+      const mainPostTopicId = mainPostTopicIdsByGameMode[nomination.game_mode];
+
+      if (firstPost == null || mainPostTopicId == null) {
+        throw `Missing first post or main topic ID for nomination #${nomination.id}`;
+      }
+
+      const nominationOsu =
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        captainOsuByUserId[nomination.description_author_id!] ?? newsAuthorOsu;
+
+      nominationOsu.updateForumPost(
+        firstPost.id,
+        firstPost.body.replace('{{MAIN_TOPIC_ID}}', mainPostTopicId.toString()),
+      );
+    }
+
+    res.json({
+      mainTopicIds: Object.values(mainPostTopicIdsByGameMode),
+      nominationTopicIds,
+    });
+
+    // TODO: Pin main topics (currently done by management client)
+    // TODO: Post Discord announcements (currently done by management client)
   }),
 );
 
@@ -378,5 +616,34 @@ interopRouter.post(
     );
 
     res.status(204).send();
+  }),
+);
+
+interopRouter.get(
+  '/topic-ids',
+  asyncHandler(async (req, res) => {
+    if (req.query.roundId == null) {
+      return res.status(422).json({ error: 'Missing round ID' });
+    }
+
+    res.json(
+      groupBy<Nomination['id'], Poll['topic_id']>(
+        await db.query<Pick<Nomination, 'id'> & Pick<Poll, 'topic_id'>>(
+          `
+            SELECT nominations.id, polls.topic_id
+            FROM nominations
+            INNER JOIN polls
+              ON nominations.beatmapset_id = polls.beatmapset_id
+              AND nominations.game_mode = polls.game_mode
+              AND nominations.round_id = polls.round_id
+            WHERE nominations.round_id = ?
+          `,
+          [req.query.roundId],
+        ),
+        'id',
+        'topic_id',
+        true,
+      ),
+    );
   }),
 );
