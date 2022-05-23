@@ -522,7 +522,7 @@ export class Osu {
           api_fetched_at: new Date(),
           avatar_url: sanitizeAvatarUrl(user.avatar_url),
           banned: false,
-          country: user.country_code,
+          country: user.country_code ?? '__',
           name: user.username,
         };
         dbFieldsWithPK = { ...dbFields, id: user.id };
