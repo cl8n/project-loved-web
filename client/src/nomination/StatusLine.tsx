@@ -21,17 +21,6 @@ function metadataClass(state: MetadataState) {
   }
 }
 
-function metadataText(state: MetadataState) {
-  switch (state) {
-    case MetadataState.unchecked:
-      return 'Not checked';
-    case MetadataState.needsChange:
-      return 'Needs change';
-    case MetadataState.good:
-      return 'Good';
-  }
-}
-
 function moderationClass(state: ModeratorState) {
   switch (state) {
     case ModeratorState.unchecked:
@@ -69,10 +58,7 @@ export default function StatusLine({
     <span className={descriptionClass(nomination.description, nomination.description_state)}>
       Description
     </span>,
-    <span>
-      <span className={metadataClass(nomination.metadata_state)}>Metadata</span>
-      <i> {`(${metadataText(nomination.metadata_state)})`}</i>
-    </span>,
+    <span className={metadataClass(nomination.metadata_state)}>Metadata</span>,
   ];
 
   if (!ignoreModeratorChecks) {
