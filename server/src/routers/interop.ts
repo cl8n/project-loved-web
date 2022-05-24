@@ -241,40 +241,6 @@ interopRouter.get(
   }),
 );
 
-interopRouter.get(
-  '/forum-topic',
-  asyncHandler(async (req, res) => {
-    const topicId = parseInt(req.query.topicId ?? '', 10);
-
-    if (isNaN(topicId)) {
-      return res.status(422).json({ error: 'Invalid topic ID' });
-    }
-
-    // TODO waste of tokens and requests, it should re-use a client until token is invalid
-    const osu = new Osu();
-    await osu.getClientCredentialsToken();
-    const topic = await osu.getForumTopic(topicId);
-
-    if (topic == null) {
-      return res.status(404).json({ error: 'Invalid topic ID' });
-    }
-
-    if (topic.topic.first_post_id !== topic.posts[0].id) {
-      return res
-        .status(422)
-        .json({ error: 'Topic `first_post_id` does not match the first post `id`' });
-    }
-
-    res.json({
-      first_post_body: topic.posts[0].body.raw,
-      first_post_created_at: topic.posts[0].created_at,
-      first_post_id: topic.posts[0].id,
-    });
-
-    await osu.revokeToken();
-  }),
-);
-
 interopRouter.post(
   '/news',
   asyncHandler(async (req, res) => {
