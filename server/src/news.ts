@@ -11,13 +11,16 @@ export function mainPostTitle(gameMode: GameMode, round: Pick<Round, 'name'>): s
   return `[${gameModeLongNameModified(gameMode)}] Project Loved: ${round.name}`;
 }
 
-export function nominationPollTitle({ beatmapset }: NewsPostNomination): string {
-  return `Should ${beatmapset.artist} - ${beatmapset.title} be Loved?`;
+export function nominationPollTitle(nomination: NewsPostNomination): string {
+  const artist = nomination.overwrite_artist ?? nomination.beatmapset.artist;
+  const title = nomination.overwrite_title ?? nomination.beatmapset.title;
+
+  return `Should ${artist} - ${title} be Loved?`;
 }
 
 export function nominationTopicTitle(nomination: NewsPostNomination): string {
-  let artist = nomination.beatmapset.artist;
-  let title = nomination.beatmapset.title;
+  let artist = nomination.overwrite_artist ?? nomination.beatmapset.artist;
+  let title = nomination.overwrite_title ?? nomination.beatmapset.title;
 
   const getTopicTitle = () =>
     `[${gameModeLongNameModified(nomination.game_mode)}] ` +
