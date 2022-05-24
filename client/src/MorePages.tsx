@@ -70,6 +70,15 @@ export default function MorePages() {
           />
         </li>
         <li>
+          <a href='https://discord.gg/phgtyS4UCh'>osu!catch Project Loved</a>
+          <br />
+          <FormattedMessage
+            defaultMessage='General server for {gameMode} Project Loved'
+            description='[Discord] Game mode Discord server description'
+            values={{ gameMode: gameModeLongName(GameMode.catch) }}
+          />
+        </li>
+        <li>
           <a href='https://discord.gg/Ededv7m'>osu!mania Loved Community</a>
           <br />
           <FormattedMessage
