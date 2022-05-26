@@ -270,6 +270,7 @@ interopRouter.post(
         INNER JOIN beatmapsets
           ON nominations.beatmapset_id = beatmapsets.id
         WHERE nominations.round_id = ?
+        ORDER BY nominations.order ASC, nominations.id ASC
       `,
       [roundId],
     );
