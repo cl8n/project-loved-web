@@ -25,13 +25,7 @@ import {
 } from '../news';
 import { Osu } from '../osu';
 import { accessSetting } from '../settings';
-import {
-  isInteger,
-  isNewsRequestBody,
-  isPollResultsArray,
-  isRepliesRecord,
-  isResultsRequestBody,
-} from '../type-guards';
+import { isNewsRequestBody, isResultsRequestBody } from '../type-guards';
 
 const interopRouter = Router();
 export default interopRouter;
@@ -514,34 +508,6 @@ interopRouter.post(
   }),
 );
 
-interopRouter.post(
-  '/polls/complete',
-  asyncHandler<unknown[]>(async (req, res) => {
-    if (!isPollResultsArray(req.body)) {
-      return res.status(422).json({ error: 'Body must be an array of poll results' });
-    }
-
-    await db.transact((connection) =>
-      Promise.all(
-        (
-          req.body as {
-            id: number;
-            no: number;
-            yes: number;
-          }[]
-        ).map((pollResults) =>
-          connection.query(
-            'UPDATE polls SET ? WHERE id = ? AND result_no IS NULL AND result_yes IS NULL',
-            [{ result_no: pollResults.no, result_yes: pollResults.yes }, pollResults.id],
-          ),
-        ),
-      ),
-    );
-
-    res.status(204).send();
-  }),
-);
-
 interopRouter.get(
   '/rounds-available',
   asyncHandler(async (_, res) => {
@@ -852,42 +818,6 @@ interopRouter.post(
               WHERE id = ?
             `,
             [nomination.poll.result_no, nomination.poll.result_yes, nomination.poll.id],
-          ),
-        ),
-      ),
-    );
-
-    res.status(204).send();
-  }),
-);
-
-interopRouter.post(
-  '/results-post-ids',
-  asyncHandler(async (req, res) => {
-    if (!isInteger(req.body.roundId)) {
-      return res.status(422).json({ error: 'Missing round ID' });
-    }
-
-    if (!isRepliesRecord(req.body.replies) || Object.keys(req.body.replies).length === 0) {
-      return res.status(422).json({ error: 'Missing reply IDs' });
-    }
-
-    if ((await db.queryOne('SELECT 1 FROM rounds WHERE id = ?', [req.body.roundId])) == null) {
-      return res.status(422).json({ error: 'Invalid round ID' });
-    }
-
-    await db.transact((connection) =>
-      Promise.all(
-        Object.entries(req.body.replies as Record<GameMode, number>).map(([gameMode, postId]) =>
-          connection.query(
-            `
-              UPDATE round_game_modes
-              SET results_post_id = ?
-              WHERE round_id = ?
-                AND game_mode = ?
-                AND results_post_id IS NULL
-            `,
-            [postId, req.body.roundId, gameMode],
           ),
         ),
       ),

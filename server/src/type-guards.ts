@@ -88,30 +88,8 @@ export function isNewsRequestBody(body: unknown): body is {
   );
 }
 
-export function isPollResultsArray(polls: unknown): polls is {
-  id: number;
-  no: number;
-  yes: number;
-}[] {
-  return (
-    Array.isArray(polls) &&
-    polls.every(
-      (poll) => isRecord(poll) && isInteger(poll.id) && isInteger(poll.no) && isInteger(poll.yes),
-    )
-  );
-}
-
 export function isRecord(record: unknown): record is Record<number | string, unknown> {
   return typeof record === 'object' && record != null;
-}
-
-export function isRepliesRecord(replies: unknown): replies is Record<GameMode, number> {
-  return (
-    isRecord(replies) &&
-    Object.entries(replies).every(
-      ([gameMode, postId]) => isGameMode(parseInt(gameMode, 10)) && isInteger(postId),
-    )
-  );
 }
 
 export function isResponseError(error: unknown): error is ResponseError {
