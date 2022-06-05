@@ -118,6 +118,20 @@ export function isResponseError(error: unknown): error is ResponseError {
   return isRecord(error) && error.response != null && isInteger(error.status);
 }
 
+export function isResultsRequestBody(body: unknown): body is {
+  mainTopicIds: Partial<Record<GameMode, number>>;
+  roundId: number;
+} {
+  return (
+    isRecord(body) &&
+    isRecord(body.mainTopicIds) &&
+    Object.entries(body.mainTopicIds).every(
+      ([key, value]) => isGameMode(parseInt(key, 10)) && isInteger(value),
+    ) &&
+    isInteger(body.roundId)
+  );
+}
+
 export function isRoleId(roleId: unknown): roleId is Role {
   return isInteger(roleId) && roleId >= 0 && roleId <= 7;
 }

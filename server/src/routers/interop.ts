@@ -16,10 +16,22 @@ import config from '../config';
 import db from '../db';
 import { asyncHandler } from '../express-helpers';
 import { groupBy } from '../helpers';
-import { mainPostTitle, nominationPollTitle, nominationTopicTitle } from '../news';
+import {
+  mainClosingReply,
+  mainPostTitle,
+  nominationClosingReply,
+  nominationPollTitle,
+  nominationTopicTitle,
+} from '../news';
 import { Osu } from '../osu';
 import { accessSetting } from '../settings';
-import { isInteger, isNewsRequestBody, isPollResultsArray, isRepliesRecord } from '../type-guards';
+import {
+  isInteger,
+  isNewsRequestBody,
+  isPollResultsArray,
+  isRepliesRecord,
+  isResultsRequestBody,
+} from '../type-guards';
 
 const interopRouter = Router();
 export default interopRouter;
@@ -547,6 +559,305 @@ interopRouter.get(
         ORDER BY rounds.id DESC
       `),
     );
+  }),
+);
+
+interopRouter.post(
+  '/results',
+  asyncHandler(async (req, res) => {
+    if (!isResultsRequestBody(req.body)) {
+      return res.status(422).json({ error: 'Invalid request body' });
+    }
+
+    const round = await db.queryOne<Round>(
+      `
+        SELECT *
+        FROM rounds
+        WHERE id = ?
+      `,
+      [req.body.roundId],
+    );
+
+    if (round == null) {
+      return res.status(404).json({ error: 'Round not found' });
+    }
+
+    const roundGameModes = groupBy<RoundGameMode['game_mode'], RoundGameMode>(
+      await db.query<RoundGameMode>(
+        `
+          SELECT *
+          FROM round_game_modes
+          WHERE round_id = ?
+        `,
+        [round.id],
+      ),
+      'game_mode',
+      null,
+      true,
+    );
+
+    const nominations = await db.queryWithGroups<
+      Nomination & {
+        beatmapset: Beatmapset;
+        beatmapset_creators?: User[];
+        poll:
+          | (Poll & {
+              passed?: boolean;
+              yesRatio?: number;
+            })
+          | null;
+      }
+    >(
+      `
+        SELECT nominations.*, beatmapset:beatmapset, polls:poll
+        FROM nominations
+        INNER JOIN beatmapsets
+          ON nominations.beatmapset_id = beatmapsets.id
+        LEFT JOIN polls
+          ON nominations.beatmapset_id = polls.beatmapset_id
+          AND nominations.game_mode = polls.game_mode
+          AND nominations.round_id = polls.round_id
+        WHERE nominations.round_id = ?
+        ORDER BY nominations.order ASC, nominations.id ASC
+      `,
+      [round.id],
+    );
+
+    const nominationIdsMissingAuthor = nominations
+      .filter((nomination) => nomination.description_author_id == null)
+      .map((nomination) => nomination.id);
+
+    if (nominationIdsMissingAuthor.length > 0) {
+      return res.status(422).json({
+        error: `No description author for nominations ${nominationIdsMissingAuthor.join(', ')}`,
+      });
+    }
+
+    const now = new Date();
+    for (const nomination of nominations) {
+      if (nomination.poll == null || nomination.poll.ended_at > now) {
+        return res.status(422).json({ error: 'Polls are not yet complete' });
+      }
+
+      if (nomination.poll.result_no != null || nomination.poll.result_yes != null) {
+        return res.status(422).json({ error: 'Poll results have already been stored' });
+      }
+    }
+
+    const gameModesPresentReversed: GameMode[] = [];
+
+    for (const gameMode of [...gameModes].reverse()) {
+      const gameModeHasNominations = nominations.some(
+        (nomination) => nomination.game_mode === gameMode,
+      );
+
+      if ((req.body.mainTopicIds[gameMode] != null) !== gameModeHasNominations) {
+        return res.status(422).json({
+          error: `Nominations and main topics do not agree about ${gameModeLongName(
+            gameMode,
+          )}'s presence`,
+        });
+      }
+
+      if (gameModeHasNominations) {
+        gameModesPresentReversed.push(gameMode);
+      }
+    }
+
+    const beatmapsetCreatorsByNominationId = groupBy<Nomination['id'], User>(
+      await db.queryWithGroups<{
+        id: Nomination['id'];
+        creator: User;
+      }>(
+        `
+          SELECT nominations.id, creators:creator
+          FROM nominations
+          INNER JOIN beatmapset_creators
+            ON nominations.beatmapset_id = beatmapset_creators.beatmapset_id
+            AND nominations.game_mode = beatmapset_creators.game_mode
+          INNER JOIN users AS creators
+            ON beatmapset_creators.creator_id = creators.id
+          WHERE nominations.round_id = ?
+        `,
+        [round.id],
+      ),
+      'id',
+      'creator',
+    );
+
+    const clientCredentialsOsu = new Osu();
+    await clientCredentialsOsu.getClientCredentialsToken();
+
+    for (const nomination of nominations) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const poll = nomination.poll!;
+      const topic = await clientCredentialsOsu.getForumTopic(poll.topic_id);
+
+      if (
+        topic?.topic.poll == null ||
+        topic.topic.poll.options.length !== 2 ||
+        topic.topic.poll.options[0].text.bbcode !== 'Yes' ||
+        topic.topic.poll.options[1].text.bbcode !== 'No' ||
+        topic.topic.poll.options[0].vote_count == null ||
+        topic.topic.poll.options[1].vote_count == null
+      ) {
+        throw `Unexpected nomination poll response from osu! API for nomination #${nomination.id}`;
+      }
+
+      poll.result_yes = topic.topic.poll.options[0].vote_count;
+      poll.result_no = topic.topic.poll.options[1].vote_count;
+      poll.yesRatio = poll.result_yes / (poll.result_no + poll.result_yes);
+      poll.passed = poll.yesRatio >= roundGameModes[nomination.game_mode].voting_threshold;
+
+      nomination.beatmapset_creators = beatmapsetCreatorsByNominationId[nomination.id];
+    }
+
+    const nominationsChecked = nominations as (Nomination & {
+      beatmapset: Beatmapset;
+      beatmapset_creators: User[];
+      description_author_id: number;
+      poll: Poll & {
+        passed: boolean;
+        result_no: number;
+        result_yes: number;
+        yesRatio: number;
+      };
+    })[];
+
+    const newsAuthorExtraToken = await db.queryOne<Pick<ExtraToken, 'token'>>(
+      `
+        SELECT token
+        FROM extra_tokens
+        WHERE user_id = ?
+      `,
+      [round.news_author_id],
+    );
+
+    if (newsAuthorExtraToken == null) {
+      return res.status(403).json({ error: 'News author does not have forum write permission' });
+    }
+
+    const newsAuthorOsu = new Osu(newsAuthorExtraToken.token);
+
+    try {
+      const newToken = await newsAuthorOsu.tryRefreshToken();
+
+      if (newToken != null) {
+        await db.query(
+          `
+            UPDATE extra_tokens
+            SET token = ?
+            WHERE user_id = ?
+          `,
+          [JSON.stringify(newToken), round.news_author_id],
+        );
+      }
+    } catch {
+      return res.status(403).json({
+        error: 'Error refreshing forum write token for news author. Re-authorize and try again',
+      });
+    }
+
+    const captainExtraTokens = await db.query<ExtraToken>(
+      `
+        SELECT *
+        FROM extra_tokens
+        WHERE user_id IN (?)
+      `,
+      [nominationsChecked.map((nomination) => nomination.description_author_id)],
+    );
+    const captainOsuByUserId: Partial<Record<number, Osu>> = {};
+    const refreshErrorUserIds: number[] = [];
+
+    for (const extraToken of captainExtraTokens) {
+      const osu = new Osu(extraToken.token);
+      captainOsuByUserId[extraToken.user_id] = osu;
+
+      const newToken = await osu.tryRefreshToken().catch(() => {
+        refreshErrorUserIds.push(extraToken.user_id);
+      });
+
+      if (newToken != null) {
+        await db.query(
+          `
+            UPDATE extra_tokens
+            SET token = ?
+            WHERE user_id = ?
+          `,
+          [JSON.stringify(newToken), extraToken.user_id],
+        );
+      }
+    }
+
+    if (refreshErrorUserIds.length > 0) {
+      return res.status(403).json({
+        error:
+          `Error refreshing forum write token for users ${refreshErrorUserIds.join(', ')}.` +
+          '\nAsk them to re-authorize, then try again',
+      });
+    }
+
+    // Post in reverse so that it looks in-order on the topic listing
+    for (const gameMode of gameModesPresentReversed) {
+      const nominationsForModeReversed = nominationsChecked
+        .filter((nomination) => nomination.game_mode === gameMode)
+        .reverse();
+
+      for (const nomination of nominationsForModeReversed) {
+        const osu = captainOsuByUserId[nomination.description_author_id] ?? newsAuthorOsu;
+
+        await osu.createForumTopicReply(
+          nomination.poll.topic_id,
+          nominationClosingReply(nomination),
+        );
+      }
+    }
+
+    // Post in reverse so that it looks in-order on the topic listing
+    for (const gameMode of gameModesPresentReversed) {
+      const post = await newsAuthorOsu.createForumTopicReply(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        req.body.mainTopicIds[gameMode]!,
+        mainClosingReply(
+          nominationsChecked.filter((nomination) => nomination.game_mode === gameMode),
+          roundGameModes[gameMode].voting_threshold,
+        ),
+      );
+
+      if (post == null) {
+        throw `Unexpected main reply response from osu! API for game mode ${gameModeLongName(
+          gameMode,
+        )}`;
+      }
+
+      await db.query(
+        `
+          UPDATE round_game_modes
+          SET results_post_id = ?
+          WHERE round_id = ?
+            AND game_mode = ?
+            AND results_post_id IS NULL
+        `,
+        [post.id, round.id, gameMode],
+      );
+    }
+
+    await db.transact((connection) =>
+      Promise.all(
+        nominationsChecked.map((nomination) =>
+          connection.query(
+            `
+              UPDATE polls
+              SET result_no = ?, result_yes = ?
+              WHERE id = ?
+            `,
+            [nomination.poll.result_no, nomination.poll.result_yes, nomination.poll.id],
+          ),
+        ),
+      ),
+    );
+
+    res.status(204).send();
   }),
 );
 
