@@ -575,7 +575,7 @@ interopRouter.post(
       }
     >(
       `
-        SELECT nominations.*, beatmapset:beatmapset, polls:poll
+        SELECT nominations.*, beatmapsets:beatmapset, polls:poll
         FROM nominations
         INNER JOIN beatmapsets
           ON nominations.beatmapset_id = beatmapsets.id
