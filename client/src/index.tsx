@@ -52,10 +52,11 @@ render(
                 <Route exact path='/mappers'>
                   <MapperConsentsPage />
                 </Route>
-                <Route exact path='/team'>
+                <Route exact path='/contributors'>
                   <Team />
                 </Route>
-                <Redirect exact from='/captains' to='/team' />
+                <Redirect exact from='/captains' to='/contributors' />
+                <Redirect exact from='/team' to='/contributors' />
                 <Route exact path='/statistics'>
                   <Statistics />
                 </Route>

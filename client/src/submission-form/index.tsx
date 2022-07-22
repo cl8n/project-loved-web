@@ -28,7 +28,7 @@ export default function SubmissionForm() {
         values={{
           p: (c: ReactNode) => <p>{c}</p>,
           submissionsLink,
-          teamLink: (c: ReactNode) => <Link to='/team'>{c}</Link>,
+          teamLink: (c: ReactNode) => <Link to='/contributors'>{c}</Link>,
         }}
       />
       <ul>

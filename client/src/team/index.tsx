@@ -4,14 +4,14 @@ import useTitle from '../useTitle';
 import TeamList from './TeamList';
 
 export default function Team() {
-  useTitle('The team');
+  useTitle('Contributors');
   const teamApi = useApi(getTeam);
 
   return (
     <>
       <div className='content-block'>
         <FormattedMessage
-          defaultMessage='Current team'
+          defaultMessage='Current'
           description='[Team] Team listing group title'
           tagName='h1'
         />

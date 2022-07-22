@@ -75,8 +75,8 @@ export function Header() {
         <NavLink to='/mappers'>
           <FormattedMessage defaultMessage='Mapper consents' description='[Header] Nav link' />
         </NavLink>
-        <NavLink to='/team'>
-          <FormattedMessage defaultMessage='Team' description='[Header] Nav link' />
+        <NavLink to='/contributors'>
+          <FormattedMessage defaultMessage='Contributors' description='[Header] Nav link' />
         </NavLink>
         <NavLink to='/statistics'>
           <FormattedMessage defaultMessage='Statistics' description='[Header] Nav link' />

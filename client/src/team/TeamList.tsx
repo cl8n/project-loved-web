@@ -24,7 +24,7 @@ const messages = defineMessages({
     description: '[Team] Team listing title',
   },
   news: {
-    defaultMessage: 'News editors / Managers',
+    defaultMessage: 'News editors',
     description: '[Team] Team listing title',
   },
   video: {
@@ -43,11 +43,11 @@ export default function TeamList({ current, teamApi }: TeamListProps) {
   const [team, teamError] = teamApi;
 
   if (teamError != null) {
-    return <span className='panic'>Failed to load team members: {apiErrorMessage(teamError)}</span>;
+    return <span className='panic'>Failed to load contributors: {apiErrorMessage(teamError)}</span>;
   }
 
   if (team == null) {
-    return <span>Loading team members...</span>;
+    return <span>Loading contributors...</span>;
   }
 
   const teamUsers = current ? team.current : team.alumni;
