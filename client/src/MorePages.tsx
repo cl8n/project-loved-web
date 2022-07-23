@@ -61,6 +61,15 @@ export default function MorePages() {
           />
         </li>
         <li>
+          <a href='https://discord.gg/gn58Uk5sTE'>osu! Project Loved</a>
+          <br />
+          <FormattedMessage
+            defaultMessage='General server for {gameMode} Project Loved'
+            description='[Discord] Game mode Discord server description'
+            values={{ gameMode: gameModeLongName(GameMode.osu) }}
+          />
+        </li>
+        <li>
           <a href='https://discord.com/invite/GhfjtZ6'>Project Loved: Taiko</a>
           <br />
           <FormattedMessage
