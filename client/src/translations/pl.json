@@ -1,0 +1,239 @@
+{
+  "+3rK3I": {
+    "defaultMessage": "Brak odpowiedzi"
+  },
+  "+9RCG/": {
+    "defaultMessage": "Inne ikony autorstwa {author}"
+  },
+  "+d4ZcX": {
+    "defaultMessage": "Moderatorzy"
+  },
+  "/5qic6": {
+    "defaultMessage": "Powód"
+  },
+  "/CNHO3": {
+    "defaultMessage": "Zaloguj się przez osu!"
+  },
+  "06WpMi": {
+    "defaultMessage": "Rankingowa"
+  },
+  "2SX61V": {
+    "defaultMessage": "Komentarz"
+  },
+  "2dOoEc": {
+    "defaultMessage": "Recenzenci metadanych"
+  },
+  "34q5Z7": {
+    "defaultMessage": "Zaktualizuj"
+  },
+  "3RdYB+": {
+    "defaultMessage": "Tryb gry:"
+  },
+  "54toJS": {
+    "defaultMessage": "Ciemny"
+  },
+  "5OS21f": {
+    "defaultMessage": "Zewnętrzne"
+  },
+  "5oqovx": {
+    "defaultMessage": "Zgłoś mapę"
+  },
+  "6iCh6Z": {
+    "defaultMessage": "Edytuj moją zgodę"
+  },
+  "8bAHuK": {
+    "defaultMessage": "Zamknij"
+  },
+  "8l6BC0": {
+    "defaultMessage": "Zgody twórców"
+  },
+  "8x1LMQ": {
+    "defaultMessage": "Dodaj"
+  },
+  "BGA5hC": {
+    "defaultMessage": "Programiści"
+  },
+  "CIAu6S": {
+    "defaultMessage": "Wiki"
+  },
+  "CxsxoI": {
+    "defaultMessage": "Zgłaszanie..."
+  },
+  "FALILK": {
+    "defaultMessage": "Obecni członkowie zespołu"
+  },
+  "H65rvb": {
+    "defaultMessage": "Nie masz wystarczających uprawnień, by wyświetlić tę stronę."
+  },
+  "Hf1vPz": {
+    "defaultMessage": "Wybory"
+  },
+  "HvpI7B": {
+    "defaultMessage": "Usunięta beatmapa"
+  },
+  "IWPQ9l": {
+    "defaultMessage": "Wybierz rodzaj zgody"
+  },
+  "IhLq/K": {
+    "defaultMessage": "Ochotnicy"
+  },
+  "JPKVz4": {
+    "defaultMessage": "Beatmapa"
+  },
+  "JPSkxB": {
+    "defaultMessage": "Flaga kraju {country}"
+  },
+  "Jy6JW8": {
+    "defaultMessage": "Musisz się <a>zalogować</a>, by wyświetlić tę stronę."
+  },
+  "K4bZ6F": {
+    "defaultMessage": "Serwery Discord"
+  },
+  "Lm++cZ": {
+    "defaultMessage": "Project Loved"
+  },
+  "MoR8Of": {
+    "defaultMessage": "Zgody twórców"
+  },
+  "N72lge": {
+    "defaultMessage": "Zbiory danych"
+  },
+  "NG8X9U": {
+    "defaultMessage": "W trakcie tworzenia"
+  },
+  "NjIKQe": {
+    "defaultMessage": "Nieosiągalny"
+  },
+  "Oep6va": {
+    "defaultMessage": "Zgłoś"
+  },
+  "PCZJkZ": {
+    "defaultMessage": "Kod źródłowy i monitor problemów"
+  },
+  "RL5Qu1": {
+    "defaultMessage": "Zatwierdzona"
+  },
+  "SNqK4E": {
+    "defaultMessage": "Beatmapy"
+  },
+  "Tf7XH9": {
+    "defaultMessage": "Komentarz"
+  },
+  "TqI9fE": {
+    "defaultMessage": "Admin:"
+  },
+  "UjLvid": {
+    "defaultMessage": "Rozwiń"
+  },
+  "V5W+3b": {
+    "defaultMessage": "Zgoda"
+  },
+  "WXZA2u": {
+    "defaultMessage": "Ogólny kanał o Project Loved - mało aktywny i rzadko sprawdzany"
+  },
+  "XiH1Li": {
+    "defaultMessage": "(na kanale {channel})"
+  },
+  "YzUPhx": {
+    "defaultMessage": "Ogólny serwer Project Loved dla trybu {gameMode}"
+  },
+  "aHJR9F": {
+    "defaultMessage": "Zgoda"
+  },
+  "ccf+6T": {
+    "defaultMessage": "Kapitanowie trybu {gameMode}"
+  },
+  "dG9/uH": {
+    "defaultMessage": "Zakwalifikowana"
+  },
+  "dv53Wk": {
+    "defaultMessage": "Narzędzia do tłumaczenia tej strony"
+  },
+  "eJYnVj": {
+    "defaultMessage": "Więcej"
+  },
+  "g+oXPh": {
+    "defaultMessage": "Aktualizowanie..."
+  },
+  "gWofsq": {
+    "defaultMessage": "Żaden"
+  },
+  "gvLZL5": {
+    "defaultMessage": "Wyloguj się"
+  },
+  "jlkqJz": {
+    "defaultMessage": "Zarządzaj"
+  },
+  "lMSjPi": {
+    "defaultMessage": "Ta strona nie jest jeszcze dostępna. Sprawdź ponownie później!"
+  },
+  "lbC8H+": {
+    "defaultMessage": "Twórca"
+  },
+  "lz1fkx": {
+    "defaultMessage": "Tak"
+  },
+  "me3BjX": {
+    "defaultMessage": "Statystyki"
+  },
+  "mhVjD+": {
+    "defaultMessage": "Ikony flag autorstwa {author}"
+  },
+  "nkWBfH": {
+    "defaultMessage": "Główny kanał do dyskusji o zarządzaniu i dalszym rozwoju Project Loved"
+  },
+  "oFqE9e": {
+    "defaultMessage": "Twórcy są zazwyczaj świadomi obecności swoich beatmap w kategorii ulubionych beatmap społeczności. Poniższa tabelka przedstawia zgodę każdego twórcy na wykorzystanie swoich beatmap w Project Loved, poddanie ich głosowaniu i ewentualną zmianę ich aktualnego statusu. Miej na uwadze, że twórcy mogą zażądać usunięcia swoich beatmap z kategorii ulubionych beatmap społeczności, nawet jeśli wyrazili wcześniej na to zgodę."
+  },
+  "p9Evn8": {
+    "defaultMessage": "Tłumaczenie"
+  },
+  "pLUxkj": {
+    "defaultMessage": "Nie"
+  },
+  "pXOU6C": {
+    "defaultMessage": "Nic tu nie ma =("
+  },
+  "phKBIX": {
+    "defaultMessage": "Nieznany kraj"
+  },
+  "pvfxi+": {
+    "defaultMessage": "Zgłoszenia"
+  },
+  "qYCjeT": {
+    "defaultMessage": "Ulubiona społeczności"
+  },
+  "rFOang": {
+    "defaultMessage": "ID beatmapy"
+  },
+  "sG6ons": {
+    "defaultMessage": "Lista ulubionych beatmap społeczności"
+  },
+  "tCV6dl": {
+    "defaultMessage": "Język: {selector}"
+  },
+  "u/O22d": {
+    "defaultMessage": "Edytowanie zgody {user}"
+  },
+  "utiTez": {
+    "defaultMessage": "Zgoda"
+  },
+  "v96otU": {
+    "defaultMessage": "Jasny"
+  },
+  "wOZypU": {
+    "defaultMessage": "Alumni"
+  },
+  "xJhR0t": {
+    "defaultMessage": "Jakikolwiek"
+  },
+  "xR9DcO": {
+    "defaultMessage": "Dodawanie..."
+  },
+  "xcT7oB": {
+    "defaultMessage": "Kopie zapasowe (prawie) wszystkich danych z tej strony"
+  },
+  "yQeX5q": {
+    "defaultMessage": "Motyw: {selector}"
+  }
+}
