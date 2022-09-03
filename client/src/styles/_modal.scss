@@ -1,7 +1,9 @@
 .modal {
   background-color: var(--background);
   max-width: 800px;
+  max-height: calc(100% - 4em);
   padding: 1em;
+  overflow-y: auto;
 
   &:focus, &:focus-visible {
     outline: none;
