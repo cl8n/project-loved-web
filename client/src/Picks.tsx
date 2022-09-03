@@ -540,7 +540,8 @@ function Nomination({
     ((hasRole(authUser, Role.metadata) && metadataAssigned) || hasRole(authUser, Role.news));
   const canEditModeration =
     !round.done && !failedVoting && hasRole(authUser, Role.moderator) && moderationAssigned;
-  const canEditNominators = !round.done && !locked && isNominator;
+  const canEditNominators =
+    !round.done && !locked && hasRole(authUser, Role.captain, nomination.game_mode);
 
   return (
     <div className='box nomination'>
