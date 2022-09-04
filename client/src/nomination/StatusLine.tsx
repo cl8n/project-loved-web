@@ -55,9 +55,11 @@ export default function StatusLine({
   votingResult,
 }: StatusLineProps) {
   const infoArray = [
+    // eslint-disable-next-line react/jsx-key
     <span className={descriptionClass(nomination.description, nomination.description_state)}>
       Description
     </span>,
+    // eslint-disable-next-line react/jsx-key
     <span className={metadataClass(nomination.metadata_state)}>Metadata</span>,
   ];
 

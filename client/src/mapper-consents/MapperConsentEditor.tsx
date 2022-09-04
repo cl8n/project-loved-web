@@ -7,8 +7,7 @@ import { addOrUpdateMapperConsent, alertApiErrorMessage } from '../api';
 import { autoHeightRef } from '../auto-height';
 import { BoolView } from '../BoolView';
 import type { FormSubmitHandler } from '../dom-helpers';
-import { valueCasts } from '../dom-helpers';
-import { Form } from '../dom-helpers';
+import { Form, valueCasts } from '../dom-helpers';
 import type { IMapperBeatmapsetConsent, IMapperConsent } from '../interfaces';
 import ListInputCustom from '../ListInputCustom';
 import { Modal } from '../Modal';
@@ -145,11 +144,14 @@ export default function MapperConsentEditor({
       beatmapset_id: valueCasts.int,
       consent: valueCasts.bool,
       consent_reason: valueCasts.string,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any; // TODO: typing
     let currentBeatmapset = -1;
     let i = 0;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     for (; i < controlsCount && (controls[i] as any).name !== 'beatmapset_id'; i++) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const control = controls[i] as any; // TODO: typing
 
       if (control.name === 'consent') {
@@ -160,6 +162,7 @@ export default function MapperConsentEditor({
     }
 
     for (; i < controlsCount; i++) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const control = controls[i] as any; // TODO: typing
 
       if (!['beatmapset_id', 'consent', 'consent_reason'].includes(control.name)) {

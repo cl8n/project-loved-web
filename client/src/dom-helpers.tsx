@@ -10,6 +10,7 @@ export function classNames(classOptions: Record<string, boolean>): string {
 }
 
 function setFormDisabled(form: HTMLFormElement, disabled: boolean) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const controls = form.elements as any; // TODO: typing
   const controlsCount = controls.length;
 
@@ -23,6 +24,8 @@ function setFormDisabled(form: HTMLFormElement, disabled: boolean) {
 }
 
 export type FormSubmitHandler = (
+  // TODO look into Record<string, unknown>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   values: Record<string, any>,
   then: () => void,
   inputs: HTMLFormControlsCollection,
@@ -71,13 +74,14 @@ export function Form({
     const form = event.currentTarget;
     const controls = form.elements;
     const controlsCount = controls.length;
-    const values: Record<string, any> = {};
+    const values: Record<string, unknown> = {};
 
     if (submitValue != null) {
       values.submitValue = submitValue;
     }
 
     for (let i = 0; i < controlsCount; i++) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const control = controls[i] as any; // TODO: typing
 
       if (control.type === 'submit') {
@@ -105,7 +109,7 @@ export function Form({
 
       if (arrayType) {
         if (value != null) {
-          values[control.name].push(value);
+          (values[control.name] as unknown[]).push(value);
         }
       } else {
         values[control.name] = value;
@@ -136,6 +140,7 @@ export function Form({
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <form className={className} onClick={handleSubmitButtonClick} onSubmit={handleSubmit} ref={ref}>
       {children}
     </form>

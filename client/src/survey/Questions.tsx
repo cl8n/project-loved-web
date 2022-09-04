@@ -51,6 +51,7 @@ export default function Questions({
       }
 
       // TODO: Typing is very difficult here
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let answers: any;
       let average: number | undefined;
 

@@ -33,7 +33,7 @@ interface ApiObjectTypes {
 }
 type ApiObjectType = keyof ApiObjectTypes;
 
-export function isApiObjectType(type: any): type is ApiObjectType {
+export function isApiObjectType(type: string): type is ApiObjectType {
   return ['beatmapset', 'user'].includes(type);
 }
 

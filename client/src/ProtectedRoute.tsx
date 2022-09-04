@@ -10,21 +10,22 @@ interface ProtectedRouteProps extends RouteProps {
   role?: Role | readonly Role[] | 'any';
 }
 
-export function ProtectedRoute(props: ProtectedRouteProps) {
+export function ProtectedRoute({ children, role, ...props }: ProtectedRouteProps) {
   const authUser = useOsuAuth().user;
   useTitle(
     authUser == null
       ? 'Unauthenticated'
-      : props.role != null && !hasRole(authUser, props.role)
+      : role != null && !hasRole(authUser, role)
       ? 'Unauthorized'
       : null,
   );
 
+  delete props.component;
+  delete props.render;
+
   return (
     <Route
       {...props}
-      children={undefined}
-      component={undefined}
       render={() => {
         if (authUser == null) {
           return (
@@ -39,8 +40,8 @@ export function ProtectedRoute(props: ProtectedRouteProps) {
           );
         }
 
-        if (props.role == null || hasRole(authUser, props.role)) {
-          return props.children;
+        if (role == null || hasRole(authUser, role)) {
+          return children;
         }
 
         return (

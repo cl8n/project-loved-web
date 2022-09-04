@@ -7,7 +7,7 @@ type ThemeContextValue = [Theme, (theme: Theme) => void];
 
 const themeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-export function ThemeProvider({ children }: PropsWithChildren<{}>) {
+export function ThemeProvider({ children }: PropsWithChildren<unknown>) {
   const [theme, setTheme] = useState(
     (localStorage.getItem('theme') as Theme | null) ??
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),

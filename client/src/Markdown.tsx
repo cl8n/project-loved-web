@@ -8,6 +8,7 @@ const processor = unified().use(remarkParse).use(osuWikiLinks).use(remarkHtml).f
 
 function osuWikiLinks(): Transformer {
   return (tree) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     visit(tree, ['image', 'link'], (node: any) => {
       if (node.url.startsWith('/wiki/')) {
         node.url = 'https://osu.ppy.sh' + node.url;

@@ -126,6 +126,8 @@ function ComparingChart({ answers, comparingStatistic }: ComparingChartProps) {
   );
 }
 
+// TODO no idea how to type this
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function XAxisTick({ x, y, payload }: any) {
   const colors = useColors();
 
@@ -144,7 +146,7 @@ function XAxisTick({ x, y, payload }: any) {
       x={x}
       y={y}
       dy={12}
-      fill={(answerColors as any)[payload.value] ?? colors.content}
+      fill={answerColors[payload.value as keyof typeof answerColors] ?? colors.content}
       textAnchor='middle'
     >
       {payload.value}

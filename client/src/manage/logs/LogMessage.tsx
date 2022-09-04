@@ -31,6 +31,8 @@ const logTemplates = {
 function logElementForTemplate(
   type: LogType,
   parameter: string,
+  // TODO should be Record<string, unknown> and type check the values
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   values: Record<string, any>,
 ): ReactNode {
   switch (parameter) {

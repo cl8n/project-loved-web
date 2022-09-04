@@ -5,7 +5,7 @@ import Review from './Review';
 import Submission from './Submission';
 
 function isReview(reviewOrSubmission: IReview | ISubmission): reviewOrSubmission is IReview {
-  return (reviewOrSubmission as any).score != null;
+  return (reviewOrSubmission as { score?: IReview['score'] }).score != null;
 }
 
 interface SubmissionsListProps {

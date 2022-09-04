@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
-import { Fragment } from 'react';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 
 function removeButtonRenderer(id: number) {
   const removeItem = () => {

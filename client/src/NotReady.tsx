@@ -3,7 +3,7 @@ import { FormattedMessage } from 'react-intl';
 import { useOsuAuth } from './osuAuth';
 import { hasRole } from './permissions';
 
-export function NotReady({ children }: PropsWithChildren<{}>) {
+export function NotReady({ children }: PropsWithChildren<unknown>) {
   const authUser = useOsuAuth().user;
 
   if (children == null || authUser == null || !hasRole(authUser, 'any')) {

@@ -1,6 +1,5 @@
 import type { PropsWithChildren } from 'react';
-import { useEffect } from 'react';
-import { createContext, useMemo } from 'react';
+import { createContext, useEffect, useMemo } from 'react';
 import superagent from 'superagent';
 import { alertApiErrorMessage, authRemember, useApi } from './api';
 import type { IUserWithRoles } from './interfaces';
@@ -15,7 +14,7 @@ const authContext = createContext<OsuAuthContextValue | undefined>(undefined);
 
 export const loginUrl = '/api/auth/begin';
 
-export function OsuAuthProvider({ children }: PropsWithChildren<{}>) {
+export function OsuAuthProvider({ children }: PropsWithChildren<unknown>) {
   const [user, userError, setUser] = useApi(authRemember);
   const contextValue = useMemo(
     () => ({

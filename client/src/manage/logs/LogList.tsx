@@ -8,7 +8,7 @@ interface LogListProps {
 }
 
 export default function LogList({ typesVisible }: LogListProps) {
-  let [logs, logsError] = useApi(getLogs);
+  const [logs, logsError] = useApi(getLogs);
 
   if (logsError != null) {
     return <span className='panic'>Failed to load logs: {apiErrorMessage(logsError)}</span>;
@@ -18,9 +18,9 @@ export default function LogList({ typesVisible }: LogListProps) {
     return <span>Loading logs...</span>;
   }
 
-  if (Object.values(typesVisible).some((visible) => visible)) {
-    logs = logs.filter((log) => typesVisible[log.type]);
-  }
+  const visibleLogs = Object.values(typesVisible).some((visible) => visible)
+    ? logs.filter((log) => typesVisible[log.type])
+    : [...logs];
 
   return (
     <table>
@@ -32,7 +32,7 @@ export default function LogList({ typesVisible }: LogListProps) {
         </tr>
       </thead>
       <tbody>
-        {logs.map((log) => (
+        {visibleLogs.map((log) => (
           <tr key={log.id}>
             <td>#{log.id}</td>
             <td>

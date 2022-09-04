@@ -33,7 +33,7 @@ export const locales = [
   { code: 'zh', name: '简体中文' },
 ] as const;
 
-export function IntlProviderWrapper({ children }: PropsWithChildren<{}>) {
+export function IntlProviderWrapper({ children }: PropsWithChildren<unknown>) {
   const [locale, setLocale] = useState(() => {
     const storageLocale = localStorage.getItem('locale');
 

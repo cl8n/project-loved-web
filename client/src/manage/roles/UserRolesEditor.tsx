@@ -95,6 +95,7 @@ export default function UserRolesEditor({ onRolesUpdate, user }: UserRolesEditor
     let currentRole = -1;
 
     for (let i = 0; i < controlsCount; i++) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const control = controls[i] as any; // TODO: typing
 
       if (!['role_id', 'game_mode', 'alumni'].includes(control.name)) {
