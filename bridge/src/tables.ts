@@ -1,5 +1,5 @@
-import type { GameMode } from './beatmaps/gameMode';
-import type { RankedStatus } from './beatmaps/rankedStatus';
+import type { GameMode } from './beatmaps/gameMode.js';
+import type { RankedStatus } from './beatmaps/rankedStatus.js';
 
 declare global {
   type TableDateType = unknown;

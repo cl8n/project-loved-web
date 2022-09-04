@@ -12,20 +12,20 @@ import type {
   RoundGameMode,
   User,
 } from 'loved-bridge/tables';
-import config from '../config';
-import db from '../db';
-import { asyncHandler } from '../express-helpers';
-import { groupBy } from '../helpers';
+import config from '../config.js';
+import db from '../db.js';
+import { asyncHandler } from '../express-helpers.js';
+import { groupBy } from '../helpers.js';
 import {
   mainClosingReply,
   mainPostTitle,
   nominationClosingReply,
   nominationPollTitle,
   nominationTopicTitle,
-} from '../news';
-import { Osu } from '../osu';
-import { accessSetting } from '../settings';
-import { isNewsRequestBody, isResultsRequestBody } from '../type-guards';
+} from '../news.js';
+import { Osu } from '../osu.js';
+import { accessSetting } from '../settings.js';
+import { isNewsRequestBody, isResultsRequestBody } from '../type-guards.js';
 
 const interopRouter = Router();
 export default interopRouter;

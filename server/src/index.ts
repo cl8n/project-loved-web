@@ -8,16 +8,16 @@ import session from 'express-session';
 import { createHttpTerminator } from 'http-terminator';
 import type { UserRole } from 'loved-bridge/tables';
 import { LogType } from 'loved-bridge/tables';
-import config from './config';
-import db from './db';
-import { asyncHandler } from './express-helpers';
-import { hasLocalInteropKeyMiddleware, isAnyRoleMiddleware } from './guards';
-import { dbLog, systemLog } from './log';
-import { Osu, redirectToAuth } from './osu';
-import router from './router';
-import anyoneRouter from './routers/anyone';
-import guestRouter from './routers/guest';
-import interopRouter from './routers/interop';
+import config from './config.js';
+import db from './db.js';
+import { asyncHandler } from './express-helpers.js';
+import { hasLocalInteropKeyMiddleware, isAnyRoleMiddleware } from './guards.js';
+import { dbLog, systemLog } from './log.js';
+import { Osu, redirectToAuth } from './osu.js';
+import router from './router.js';
+import anyoneRouter from './routers/anyone.js';
+import guestRouter from './routers/guest.js';
+import interopRouter from './routers/interop.js';
 
 // Impossible to type
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

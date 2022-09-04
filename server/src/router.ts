@@ -22,19 +22,19 @@ import {
   MetadataState,
   Role,
 } from 'loved-bridge/tables';
-import db from './db';
-import { asyncHandler } from './express-helpers';
+import db from './db.js';
+import { asyncHandler } from './express-helpers.js';
 import {
   currentUserRoles,
   isAdminMiddleware,
   isCaptainMiddleware,
   isModeratorMiddleware,
   isNewsAuthorMiddleware,
-} from './guards';
-import { cleanNominationDescription, getParams, groupBy } from './helpers';
-import { dbLog, systemLog } from './log';
-import { Osu, redirectToAuth } from './osu';
-import { settings, updateSettings, accessSetting } from './settings';
+} from './guards.js';
+import { cleanNominationDescription, getParams, groupBy } from './helpers.js';
+import { dbLog, systemLog } from './log.js';
+import { Osu, redirectToAuth } from './osu.js';
+import { settings, updateSettings, accessSetting } from './settings.js';
 import {
   isAssigneeType,
   isGameMode,
@@ -43,7 +43,7 @@ import {
   isRecord,
   isStringArray,
   isUserRoleWithoutUserIdArray,
-} from './type-guards';
+} from './type-guards.js';
 
 const router = Router();
 export default router;

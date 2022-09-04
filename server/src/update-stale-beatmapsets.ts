@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import type { Beatmapset } from 'loved-bridge/tables';
-import db from './db';
-import { Osu } from './osu';
+import db from './db.js';
+import { Osu } from './osu.js';
 
 if (process.argv.length !== 3) {
   console.error('Usage: update-stale-beatmapsets.js <beatmapset count>');

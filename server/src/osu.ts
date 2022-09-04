@@ -16,11 +16,11 @@ import { LogType } from 'loved-bridge/tables';
 import qs from 'querystring';
 import type { Request, Response, SuperAgentStatic } from 'superagent';
 import superagent from 'superagent';
-import config from './config';
-import db from './db';
-import Limiter from './Limiter';
-import { dbLog, systemLog } from './log';
-import { isResponseError } from './type-guards';
+import config from './config.js';
+import db from './db.js';
+import Limiter from './Limiter.js';
+import { dbLog, systemLog } from './log.js';
+import { isResponseError } from './type-guards.js';
 
 const apiBaseUrl = `${config.osuBaseUrl}/api/v2`;
 const defaultApiScopes: OsuApiScopes = ['identify', 'public'];

@@ -1,8 +1,8 @@
 import type { LogType } from 'loved-bridge/tables';
 import { inspect } from 'util';
-import config from './config';
-import type { MysqlConnectionType } from './db';
-import db from './db';
+import config from './config.js';
+import type { MysqlConnectionType } from './db.js';
+import db from './db.js';
 
 export function dbLog(
   type: LogType,

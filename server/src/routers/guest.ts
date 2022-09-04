@@ -18,13 +18,13 @@ import type {
 } from 'loved-bridge/tables';
 import { ConsentValue, Role } from 'loved-bridge/tables';
 import qs from 'querystring';
-import config from '../config';
-import db from '../db';
-import { asyncHandler } from '../express-helpers';
-import { currentUserRoles } from '../guards';
-import { groupBy, modeBy } from '../helpers';
-import { accessSetting } from '../settings';
-import { isGameMode } from '../type-guards';
+import config from '../config.js';
+import db from '../db.js';
+import { asyncHandler } from '../express-helpers.js';
+import { currentUserRoles } from '../guards.js';
+import { groupBy, modeBy } from '../helpers.js';
+import { accessSetting } from '../settings.js';
+import { isGameMode } from '../type-guards.js';
 
 const guestRouter = Router();
 export default guestRouter;

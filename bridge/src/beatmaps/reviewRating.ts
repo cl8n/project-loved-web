@@ -1,4 +1,4 @@
-import type { Review } from '../tables';
+import type { Review } from '../tables.js';
 
 const reviewRatingScale = new Map([
   [-3, -6.5],

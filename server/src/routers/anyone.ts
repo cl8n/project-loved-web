@@ -2,18 +2,18 @@ import { Router } from 'express';
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import type { Beatmapset, Consent, ConsentBeatmapset, Review, User } from 'loved-bridge/tables';
 import { LogType, Role } from 'loved-bridge/tables';
-import type { MysqlConnectionType } from '../db';
-import db from '../db';
-import { asyncHandler } from '../express-helpers';
-import { currentUserRoles } from '../guards';
-import { dbLog } from '../log';
+import type { MysqlConnectionType } from '../db.js';
+import db from '../db.js';
+import { asyncHandler } from '../express-helpers.js';
+import { currentUserRoles } from '../guards.js';
+import { dbLog } from '../log.js';
 import {
   isGameMode,
   isGameModeArray,
   isInteger,
   isMapperConsent,
   isMapperConsentBeatmapsetArray,
-} from '../type-guards';
+} from '../type-guards.js';
 
 const anyoneRouter = Router();
 export default anyoneRouter;

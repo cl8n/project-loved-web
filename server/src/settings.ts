@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join, normalize } from 'path';
-import config from './config';
-import { accessNested } from './helpers';
+import config from './config.js';
+import { accessNested } from './helpers.js';
 
 const storagePath = normalize(config.storagePath);
 const settingsPath = join(storagePath, 'settings.json');

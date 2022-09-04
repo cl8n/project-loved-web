@@ -1,4 +1,4 @@
-import type { Beatmapset } from '../tables';
+import type { Beatmapset } from '../tables.js';
 
 export const enum RankedStatus {
   graveyard = -2,

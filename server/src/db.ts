@@ -1,6 +1,6 @@
 import type { Pool, PoolConnection, PoolConfig } from 'mysql';
 import { createPool } from 'mysql';
-import config from './config';
+import config from './config.js';
 
 type Field = Date | boolean | number | string | null;
 type Row = Record<string, Field>;

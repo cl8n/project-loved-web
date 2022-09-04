@@ -5,12 +5,13 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:import/recommended",
     "plugin:import/typescript",
-    "plugin:node/recommended-module",
+    "plugin:n/recommended",
     "../.eslintrc.json"
   ],
   "settings": {
-    "node": {
-      "tryExtensions": [".js", ".ts", ".d.ts"]
+    "import/resolver": {
+      "node": true,
+      "typescript": true
     }
   }
 }

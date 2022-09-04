@@ -2,8 +2,8 @@ import { createHash, timingSafeEqual } from 'crypto';
 import type { Request, RequestHandler, Response } from 'express';
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { Role } from 'loved-bridge/tables';
-import config from './config';
-import { accessSetting } from './settings';
+import config from './config.js';
+import { accessSetting } from './settings.js';
 
 const normalRoles = [
   Role.captain,
