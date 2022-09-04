@@ -1,6 +1,10 @@
 {
   "root": true,
   "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
     "plugin:prettier/recommended"
   ],
   "rules": {
@@ -13,7 +17,14 @@
         "alphabetize": { "order": "asc", "caseInsensitive": true },
         "groups": [["builtin", "external", "internal"], "parent", "sibling"]
       }
-    ]
+    ],
+    "no-empty": ["error", { "allowEmptyCatch": true }]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": true,
+      "typescript": true
+    }
   },
   "overrides": [
     {
