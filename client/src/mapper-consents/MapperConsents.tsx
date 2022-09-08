@@ -1,4 +1,8 @@
 import { ConsentValue, Role } from 'loved-bridge/tables';
+import { useState } from 'react';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import { useHistory } from 'react-router-dom';
+import PageSelector from 'src/submission-listing/PageSelector';
 import { apiErrorMessage, getMapperConsents, useApi } from '../api';
 import type { IMapperConsent, IUser } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
@@ -7,13 +11,42 @@ import MapperConsent from './MapperConsent';
 import MapperConsentAdder from './MapperConsentAdder';
 import MapperConsentEditor from './MapperConsentEditor';
 
+const messages = defineMessages({
+  consent: {
+    defaultMessage: 'Mapper consent:',
+    description: '[Mapper consents] Selector to change mapper consent',
+  }
+});
 interface MapperConsentsProps {
-  consentValue?: ConsentValue | null
+  page: number
 }
 
-export default function MapperConsents({ consentValue = ConsentValue.yes }: MapperConsentsProps) {
+const pageSize = 50;
+
+const allConsentValues = ["any", "no", "yes", "unreachable", "no reply"];
+type CompleteConsentValue = typeof allConsentValues[number];
+
+function getNewMapperConsentsPath(
+  page: number
+) {
+  let path = "/mappers";
+
+  if (page > 1)
+    path += `/${page}`;
+
+  return path;
+}
+
+export default function MapperConsents({
+  page,
+}: MapperConsentsProps) {
   const authUser = useOsuAuth().user;
   const [consents, consentError, setConsents] = useApi(getMapperConsents);
+  const [currentConsentValue, setConsentValue] = useState<CompleteConsentValue>('any');
+  const history = useHistory();
+  const [search, setSearch] = useState('');
+  const intl = useIntl();
+
 
   if (consentError != null) {
     return (
@@ -24,6 +57,22 @@ export default function MapperConsents({ consentValue = ConsentValue.yes }: Mapp
   if (consents == null) {
     return <span>Loading mapper consents...</span>;
   }
+
+  const pageCount = Math.ceil(consents.length / pageSize);
+  const collator = new Intl.Collator("en-US");
+
+  const setPage = (newPage: number, replace?: boolean) => {
+    if (newPage !== page) {
+      if (replace) {
+        history.replace(
+          getNewMapperConsentsPath(newPage),
+          history.location.state,
+        );
+      } else {
+        history.push(getNewMapperConsentsPath(newPage));
+      }
+    }
+  };
 
   const onConsentAdd = (user: IUser) => {
     setConsents((prev) => {
@@ -60,6 +109,25 @@ export default function MapperConsents({ consentValue = ConsentValue.yes }: Mapp
     });
   };
 
+  const checkConsentValue = (consent: IMapperConsent) => {
+    if (currentConsentValue == "any") {
+      return true;
+    }
+
+    if (currentConsentValue == "no reply" && consent.consent == null) {
+      return true;
+    }
+
+    if (currentConsentValue == "no" && consent.consent == ConsentValue.no
+      || currentConsentValue == "yes" && consent.consent == ConsentValue.yes
+      || currentConsentValue == "unreachable" && consent.consent == ConsentValue.unreachable) {
+      return true;
+    }
+
+    return false;
+  }
+
+
   return (
     <>
       {authUser != null && (
@@ -72,6 +140,40 @@ export default function MapperConsents({ consentValue = ConsentValue.yes }: Mapp
           {hasRole(authUser, Role.captain) && <MapperConsentAdder onConsentAdd={onConsentAdd} />}
         </div>
       )}
+      <div className='block-margin'>
+        <div className='flex-left'>
+          <label htmlFor='consentValue'>{intl.formatMessage(messages.consent)}</label>
+          <select
+            name="consentValue"
+            value={currentConsentValue}
+            onChange={(event) => {
+              setConsentValue(event.target.value);
+              setPage(1, true);
+            }}
+          >
+            {allConsentValues.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
+          <FormattedMessage
+            defaultMessage='Search:'
+            description='[Submissions] Title for submissions search input'
+            tagName='span'
+          />
+          <input
+            type='search'
+            className='flex-grow'
+            value={search}
+            onChange={(event) => {
+              setSearch(event.currentTarget.value);
+              setPage(1, true);
+            }}
+          />
+        </div>
+      </div>
+      <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
       <table className='main-table'>
         <thead>
           <tr className='sticky'>
@@ -94,19 +196,18 @@ export default function MapperConsents({ consentValue = ConsentValue.yes }: Mapp
           </tr>
         </thead>
         <tbody>
-          {consents.map((consent) => {
-            if (consent && consent.consent === consentValue) {
+          {consents
+            .sort((a, b) => collator.compare(a.mapper.name, b.mapper.name))
+            .filter((consent) =>
+              consent.mapper.name.toLowerCase().includes(search.toLowerCase())
+              && checkConsentValue(consent))
+            .slice((page - 1) * pageSize, page * pageSize)
+            .map((consent) => {
               return <MapperConsent
                 consent={consent}
                 onConsentUpdate={onConsentUpdate}
               />
-            } else if (!consent) {
-              return <MapperConsent
-                consent={consent}
-                onConsentUpdate={onConsentUpdate}
-              />
-            }
-          })}
+            })}
         </tbody>
       </table>
     </>
