@@ -126,9 +126,6 @@ db.initialize().then(() => {
         return response.status(422).json({ error: 'No authorization code provided' });
       }
 
-      console.log(request.session);
-      console.log(request.query.state)
-
       if (!request.query.state || request.query.state !== state) {
         return response.status(422).json({ error: 'Invalid state. Try logging in again' });
       }
