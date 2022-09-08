@@ -212,7 +212,9 @@ export function Picks() {
     !round.done && !nominationsLocked(gameMode) && hasRole(authUser, Role.captain, gameMode);
   const canEditRound = !round.done && hasRole(authUser, Role.news);
   const canLock = (gameMode: GameMode) =>
-    !round.done && (hasRole(authUser, Role.news) || hasRole(authUser, Role.captain, gameMode));
+    !round.done &&
+    nominationsByGameMode[gameMode].length > 0 &&
+    (hasRole(authUser, Role.news) || hasRole(authUser, Role.captain, gameMode));
   const canOrder = canAdd;
 
   const roundGameModes: GameMode[] = Object.keys(round.game_modes).map((gameMode) =>
