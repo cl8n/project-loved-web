@@ -80,12 +80,13 @@ db.initialize().then(() => {
     session({
       cookie: {
         httpOnly: true,
+        maxAge: 604800000, // 7 days
         secure: config.httpsAlways,
-        maxAge: 604800000
       },
       name: 'loved_sid',
       proxy: true,
       resave: false,
+      rolling: true,
       saveUninitialized: false,
       secret: config.sessionSecret,
       store: new MysqlSessionStore(
@@ -125,9 +126,6 @@ db.initialize().then(() => {
       if (!request.query.code) {
         return response.status(422).json({ error: 'No authorization code provided' });
       }
-
-      console.log(request.session);
-      console.log(request.query.state)
 
       if (!request.query.state || request.query.state !== state) {
         return response.status(422).json({ error: 'Invalid state. Try logging in again' });
