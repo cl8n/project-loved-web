@@ -216,7 +216,8 @@ export function Picks() {
     !round.done &&
     nominationsByGameMode[gameMode].length > 0 &&
     (hasRole(authUser, Role.news) || hasRole(authUser, Role.captain, gameMode));
-  const canOrder = canAdd;
+  const canOrder = (gameMode: GameMode) =>
+    canAdd(gameMode) && nominationsByGameMode[gameMode].length > 1;
 
   const roundGameModes: GameMode[] = Object.keys(round.game_modes).map((gameMode) =>
     parseInt(gameMode, 10),
@@ -224,12 +225,13 @@ export function Picks() {
 
   const showNomination = (nomination: INomination) =>
     !showTodo ||
-    ordering[nomination.game_mode] ||
+    (ordering[nomination.game_mode] && canOrder(nomination.game_mode)) ||
     canAdd(nomination.game_mode) ||
     nominationProgressWarnings(nomination, authUser).size > 0;
   const showNominations = (gameMode: GameMode) =>
     !showTodo ||
     ordering[gameMode] ||
+    (ordering[gameMode] && canOrder(gameMode)) ||
     canAdd(gameMode) ||
     nominationsByGameMode[gameMode].some(showNomination);
 
