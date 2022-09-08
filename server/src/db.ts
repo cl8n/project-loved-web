@@ -1,4 +1,4 @@
-import type { Pool, PoolConnection, PoolConfig } from 'mysql';
+import type { Pool, PoolConfig, PoolConnection } from 'mysql';
 import { createPool } from 'mysql';
 import config from './config.js';
 

@@ -25,5 +25,10 @@
       { "name": "NavLink", "linkAttribute": "to" },
       { "name": "Link", "linkAttribute": "to" }
     ]
-  }
+  },
+  "ignorePatterns": [
+    "/config/",
+    "/scripts/",
+    "/src/compiled-translations/"
+  ]
 }

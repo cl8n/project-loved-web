@@ -1,5 +1,5 @@
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import { NavLink, Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import globeIcon from './images/icons8/globe.png';
 import sunIcon from './images/icons8/sun.png';
 import { locales, useLocaleState } from './intl';

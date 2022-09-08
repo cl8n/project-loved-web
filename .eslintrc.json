@@ -15,10 +15,12 @@
       "error",
       {
         "alphabetize": { "order": "asc", "caseInsensitive": true },
-        "groups": [["builtin", "external", "internal"], "parent", "sibling"]
+        "groups": [["builtin", "external"], "internal", "parent", "sibling"],
+        "newlines-between": "never"
       }
     ],
-    "no-empty": ["error", { "allowEmptyCatch": true }]
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "sort-imports": ["error", { "ignoreCase": true, "ignoreDeclarationSort": true }]
   },
   "settings": {
     "import/resolver": {
@@ -42,5 +44,6 @@
         "@typescript-eslint/consistent-type-imports": ["error", { "disallowTypeAnnotations": false }]
       }
     }
-  ]
+  ],
+  "ignorePatterns": ["/build/"]
 }

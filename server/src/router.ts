@@ -34,7 +34,7 @@ import {
 import { cleanNominationDescription, getParams, groupBy } from './helpers.js';
 import { dbLog, systemLog } from './log.js';
 import { Osu, redirectToAuth } from './osu.js';
-import { settings, updateSettings, accessSetting } from './settings.js';
+import { accessSetting, settings, updateSettings } from './settings.js';
 import {
   isAssigneeType,
   isGameMode,
