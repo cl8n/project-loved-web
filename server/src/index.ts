@@ -86,6 +86,7 @@ db.initialize().then(() => {
       name: 'loved_sid',
       proxy: true,
       resave: false,
+      rolling: true,
       saveUninitialized: false,
       secret: config.sessionSecret,
       store: new MysqlSessionStore(
