@@ -1,5 +1,4 @@
-import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
-import { gameModeLongName } from 'loved-bridge/beatmaps/gameMode';
+import { GameMode, gameModeLongName } from 'loved-bridge/beatmaps/gameMode';
 import {
   AssigneeType,
   DescriptionState,
@@ -8,7 +7,7 @@ import {
   Role,
 } from 'loved-bridge/tables';
 import type { FormEvent } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
 import {
@@ -58,6 +57,16 @@ import Header from './round/Header';
 import { UserInline } from './UserInline';
 import useTitle from './useTitle';
 
+function orderingReducer(
+  prevState: Record<GameMode, boolean>,
+  gameMode: GameMode,
+): Record<GameMode, boolean> {
+  return {
+    ...prevState,
+    [gameMode]: !prevState[gameMode],
+  };
+}
+
 export function Picks() {
   const authUser = useOsuAuth().user!;
   const params = useParams() as { round: string };
@@ -70,8 +79,12 @@ export function Picks() {
   const captainsApi = useApi(getCaptains, [], {
     condition: hasRole(authUser, Role.captain),
   });
-  // TODO: Split by gamemode
-  const [ordering, setOrdering] = useState(false);
+  const [ordering, toggleOrdering] = useReducer(orderingReducer, {
+    [GameMode.osu]: false,
+    [GameMode.taiko]: false,
+    [GameMode.catch]: false,
+    [GameMode.mania]: false,
+  });
   const [showTodo, setShowTodo] = useState(false);
 
   if (roundInfoError != null) {
@@ -305,8 +318,8 @@ export function Picks() {
           {(canOrder(gameMode) || canLock(gameMode)) && (
             <div className='flex-left'>
               {canOrder(gameMode) && (
-                <button type='button' onClick={() => setOrdering((prev) => !prev)}>
-                  {ordering ? 'Done ordering' : 'Change order'}
+                <button type='button' onClick={() => toggleOrdering(gameMode)}>
+                  {ordering[gameMode] ? 'Done ordering' : 'Change order'}
                 </button>
               )}
               {canLock(gameMode) &&
@@ -322,7 +335,7 @@ export function Picks() {
             </div>
           )}
           <Orderable
-            enabled={ordering && canOrder(gameMode)}
+            enabled={ordering[gameMode] && canOrder(gameMode)}
             onMoveChild={(i, j) => onNominationMove(gameMode, i, j)}
           >
             {nominationsByGameMode[gameMode].filter(showNomination).map((nomination) => {
