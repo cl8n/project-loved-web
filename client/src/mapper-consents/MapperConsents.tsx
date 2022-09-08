@@ -7,89 +7,15 @@ import type { IMapperConsent, IUser } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
 import { UserInline } from '../UserInline';
+import MapperConsent from './MapperConsent';
 import MapperConsentAdder from './MapperConsentAdder';
 import MapperConsentEditor from './MapperConsentEditor';
 
-const messages = defineMessages({
-  noReply: {
-    defaultMessage: 'No reply',
-    description: '[Mapper consents] Mapper consent shown in mapper consents table',
-  },
-  unreachable: {
-    defaultMessage: 'Unreachable',
-    description: '[Mapper consents] Mapper consent shown in mapper consents table',
-  },
-  beatmapset: {
-    defaultMessage: 'Beatmapset',
-    description: '[Mapper consents] Mapper beatmapset consents table header',
-  },
-  consent: {
-    defaultMessage: 'Consent',
-    description: '[Mapper consents] Mapper beatmapset consents table header',
-  },
-  notes: {
-    defaultMessage: 'Notes',
-    description: '[Mapper consents] Mapper beatmapset consents table header',
-  },
-
-  no: {
-    defaultMessage: 'No',
-    description: '[General] Boolean',
-  },
-  yes: {
-    defaultMessage: 'Yes',
-    description: '[General] Boolean',
-  },
-});
-export const consentMap = {
-  null: [messages.noReply, 'pending'],
-  [ConsentValue.no]: [messages.no, 'error'],
-  [ConsentValue.yes]: [messages.yes, 'success'],
-  [ConsentValue.unreachable]: [messages.unreachable, 'pending'],
-} as const;
-
-function ConsentCell({ consent }: { consent: ConsentValue | boolean | null }) {
-  const intl = useIntl();
-
-  if (consent === true) {
-    consent = ConsentValue.yes;
-  } else if (consent === false) {
-    consent = ConsentValue.no;
-  }
-
-  const [consentMessage, className] = consentMap[consent ?? 'null'];
-
-  return <td className={className}>{intl.formatMessage(consentMessage)}</td>;
+interface MapperConsentsProps {
+  consentValue?: ConsentValue | null
 }
 
-function MapperBeatmapsetConsents({ consent }: { consent: IMapperConsent }) {
-  const intl = useIntl();
-
-  return (
-    <table className='beatmapset-consents'>
-      <thead>
-        <tr>
-          <th>{intl.formatMessage(messages.beatmapset)}</th>
-          <th>{intl.formatMessage(messages.consent)}</th>
-          <th>{intl.formatMessage(messages.notes)}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {consent.beatmapset_consents.map((beatmapsetConsent) => (
-          <tr key={beatmapsetConsent.beatmapset.id}>
-            <td>
-              <BeatmapInline beatmapset={beatmapsetConsent.beatmapset} />
-            </td>
-            <ConsentCell consent={beatmapsetConsent.consent} />
-            <td>{beatmapsetConsent.consent_reason}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
-
-export default function MapperConsents() {
+export default function MapperConsents({ consentValue = ConsentValue.yes }: MapperConsentsProps) {
   const authUser = useOsuAuth().user;
   const [consents, consentError, setConsents] = useApi(getMapperConsents);
 
@@ -111,17 +37,18 @@ export default function MapperConsents() {
       return [
         existingConsent == null
           ? {
-              user_id: user.id,
-              beatmapset_consents: [],
-              consent: null,
-              consent_reason: null,
-              mapper: user,
-            }
+            user_id: user.id,
+            beatmapset_consents: [],
+            consent: null,
+            consent_reason: null,
+            mapper: user,
+          }
           : { ...existingConsent, mapper: user },
         ...consents.filter((consent) => consent.user_id !== user.id),
       ];
     });
   };
+
   const onConsentUpdate = (consent: IMapperConsent) => {
     setConsents((prev) => {
       const consents = [...prev!];
@@ -171,27 +98,19 @@ export default function MapperConsents() {
           </tr>
         </thead>
         <tbody>
-          {consents.map((consent) => (
-            <Fragment key={consent.user_id}>
-              <tr>
-                {authUser != null && hasRole(authUser, Role.captain) && (
-                  <MapperConsentEditor consent={consent} onConsentUpdate={onConsentUpdate} />
-                )}
-                <td>
-                  <UserInline user={consent.mapper} />
-                </td>
-                <ConsentCell consent={consent.consent} />
-                <td className='normal-wrap fix-column-layout'>{consent.consent_reason}</td>
-              </tr>
-              {consent.beatmapset_consents.length > 0 && (
-                <tr>
-                  <td colSpan={4}>
-                    <MapperBeatmapsetConsents consent={consent} />
-                  </td>
-                </tr>
-              )}
-            </Fragment>
-          ))}
+          {consents.map((consent) => {
+            if (consent && consent.consent === consentValue) {
+              return <MapperConsent
+                consent={consent}
+                onConsentUpdate={onConsentUpdate}
+              />
+            } else if (!consent) {
+              return <MapperConsent
+                consent={consent}
+                onConsentUpdate={onConsentUpdate}
+              />
+            }
+          })}
         </tbody>
       </table>
     </>
