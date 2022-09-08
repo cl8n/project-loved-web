@@ -1,12 +1,8 @@
 import { ConsentValue, Role } from 'loved-bridge/tables';
-import { Fragment } from 'react';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { apiErrorMessage, getMapperConsents, useApi } from '../api';
-import { BeatmapInline } from '../BeatmapInline';
 import type { IMapperConsent, IUser } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
-import { UserInline } from '../UserInline';
 import MapperConsent from './MapperConsent';
 import MapperConsentAdder from './MapperConsentAdder';
 import MapperConsentEditor from './MapperConsentEditor';
