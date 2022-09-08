@@ -81,6 +81,7 @@ db.initialize().then(() => {
       cookie: {
         httpOnly: true,
         secure: config.httpsAlways,
+        maxAge: 604800000
       },
       name: 'loved_sid',
       proxy: true,
@@ -124,6 +125,9 @@ db.initialize().then(() => {
       if (!request.query.code) {
         return response.status(422).json({ error: 'No authorization code provided' });
       }
+
+      console.log(request.session);
+      console.log(request.query.state)
 
       if (!request.query.state || request.query.state !== state) {
         return response.status(422).json({ error: 'Invalid state. Try logging in again' });
