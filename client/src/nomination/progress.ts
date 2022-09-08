@@ -2,7 +2,7 @@ import { DescriptionState, MetadataState, ModeratorState, Role } from 'loved-bri
 import type { INomination, IUserWithRoles } from '../interfaces';
 import { hasRole } from '../permissions';
 
-export const enum NominationProgressWarning {
+export enum NominationProgressWarning {
   descriptionMissing,
   descriptionNeedsReview,
   metadataAssigneesMissing,
@@ -14,10 +14,27 @@ export const enum NominationProgressWarning {
   moderatorSentToReview,
 }
 
+export const nominationProgressWarningMessages = {
+  [NominationProgressWarning.descriptionMissing]: 'Missing description',
+  [NominationProgressWarning.descriptionNeedsReview]: 'Description needs to be reviewed',
+  [NominationProgressWarning.metadataAssigneesMissing]: 'Metadata reviewers need to be assigned',
+  [NominationProgressWarning.metadataUnchecked]: 'Metadata needs to be checked',
+  [NominationProgressWarning.metadataNeedsChange]:
+    'Metadata needs to be re-checked after the map is updated',
+  [NominationProgressWarning.moderatorAssigneesMissing]: 'Moderators need to be assigned',
+  [NominationProgressWarning.moderatorUnchecked]: 'Content needs to be checked by a moderator',
+  [NominationProgressWarning.moderatorNeedsChange]:
+    'Content needs to be re-checked by a moderator after the map is updated',
+  [NominationProgressWarning.moderatorSentToReview]: 'Waiting on result of moderation review',
+} as const;
+const nominationProgressWarningValues = Object.values(NominationProgressWarning).filter(
+  (keyOrValue) => typeof keyOrValue === 'number',
+) as NominationProgressWarning[];
+
 export function nominationProgressWarnings(
   nomination: INomination,
   user: IUserWithRoles,
-): Set<NominationProgressWarning> {
+): NominationProgressWarning[] {
   const warnings = new Set<NominationProgressWarning>();
 
   if (hasRole(user, Role.captain, nomination.game_mode, true)) {
@@ -87,5 +104,5 @@ export function nominationProgressWarnings(
     }
   }
 
-  return warnings;
+  return nominationProgressWarningValues.filter((warning) => warnings.has(warning));
 }
