@@ -18,7 +18,7 @@ import useTitle from '../useTitle';
 import type { ToggleableColumn, ToggleableColumnsState } from './helpers';
 import { aggregateReviewScore, beatmapsetNotAllowed, toggleableColumns } from './helpers';
 import type { SubmittedBeatmapset } from './interfaces';
-import PageSelector from './PageSelector';
+import PageSelector from '../components/PageSelector';
 import SortButton from './SortButton';
 import SubmissionBeatmapset from './SubmissionBeatmapset';
 

@@ -2,7 +2,7 @@ import { ConsentValue, Role } from 'loved-bridge/tables';
 import { useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useHistory } from 'react-router-dom';
-import PageSelector from 'src/submission-listing/PageSelector';
+import PageSelector from '../components/PageSelector';
 import { apiErrorMessage, getMapperConsents, useApi } from '../api';
 import type { IMapperConsent, IUser } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
