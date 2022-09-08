@@ -80,8 +80,8 @@ db.initialize().then(() => {
     session({
       cookie: {
         httpOnly: true,
+        maxAge: 604800000, // 7 days
         secure: config.httpsAlways,
-        maxAge: 604800000
       },
       name: 'loved_sid',
       proxy: true,
