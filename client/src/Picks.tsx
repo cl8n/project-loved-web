@@ -48,6 +48,7 @@ import ListInput from './ListInput';
 import { Modal } from './Modal';
 import EditModeration from './nomination/EditModeration';
 import EditNominators from './nomination/EditNominators';
+import { nominationProgressWarnings } from './nomination/progress';
 import StatusLine from './nomination/StatusLine';
 import { Orderable } from './Orderable';
 import { useOsuAuth } from './osuAuth';
@@ -221,79 +222,16 @@ export function Picks() {
     parseInt(gameMode, 10),
   );
 
-  const showNomination = (nomination: INomination) => {
-    if (!showTodo) {
-      return true;
-    }
-
-    // Note: not bypassing admin for this role check, because ordering nominations could get
-    // very messed up if not all the nominations are showing
-    if (
-      !nominationsLocked(nomination.game_mode) &&
-      hasRole(authUser, Role.captain, nomination.game_mode)
-    ) {
-      return true;
-    }
-
-    if (hasRole(authUser, Role.captain, nomination.game_mode, true)) {
-      if (nomination.description == null) {
-        return true;
-      }
-
-      if (
-        nomination.description_author?.id === authUser.id &&
-        nomination.description_state !== DescriptionState.reviewed
-      ) {
-        return true;
-      }
-    }
-
-    if (hasRole(authUser, Role.metadata, undefined, true)) {
-      if (nomination.metadata_assignees.length === 0) {
-        return true;
-      }
-
-      if (
-        nomination.metadata_assignees.some((assignee) => assignee.id === authUser.id) &&
-        nomination.metadata_state === MetadataState.unchecked
-      ) {
-        return true;
-      }
-    }
-
-    if (hasRole(authUser, Role.moderator, undefined, true)) {
-      if (nomination.moderator_assignees.length === 0) {
-        return true;
-      }
-
-      if (
-        nomination.moderator_assignees.some((assignee) => assignee.id === authUser.id) &&
-        nomination.moderator_state === ModeratorState.unchecked
-      ) {
-        return true;
-      }
-    }
-
-    if (hasRole(authUser, Role.news, undefined, true)) {
-      if (
-        nomination.metadata_assignees.length === 0 ||
-        nomination.moderator_assignees.length === 0
-      ) {
-        return true;
-      }
-
-      if (
-        nomination.description != null &&
-        nomination.description_state !== DescriptionState.reviewed
-      ) {
-        return true;
-      }
-    }
-
-    return false;
-  };
+  const showNomination = (nomination: INomination) =>
+    !showTodo ||
+    ordering[nomination.game_mode] ||
+    canAdd(nomination.game_mode) ||
+    nominationProgressWarnings(nomination, authUser).size > 0;
   const showNominations = (gameMode: GameMode) =>
-    !showTodo || nominationsByGameMode[gameMode].some(showNomination);
+    !showTodo ||
+    ordering[gameMode] ||
+    canAdd(gameMode) ||
+    nominationsByGameMode[gameMode].some(showNomination);
 
   return (
     <>
