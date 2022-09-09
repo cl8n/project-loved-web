@@ -95,5 +95,7 @@ export function nominationProgressWarnings(
     }
   }
 
+  // Same as `[...warnings]` (and could really just return `warnings`), but we aren't using Set
+  // iteration in this project. I didn't yet look into if that would be worth changing.
   return nominationProgressWarningValues.filter((warning) => warnings.has(warning));
 }
