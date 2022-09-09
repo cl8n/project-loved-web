@@ -48,7 +48,11 @@ import ListInput from './ListInput';
 import { Modal } from './Modal';
 import EditModeration from './nomination/EditModeration';
 import EditNominators from './nomination/EditNominators';
-import { nominationProgressWarnings } from './nomination/progress';
+import type { NominationProgressWarning } from './nomination/progress';
+import {
+  nominationProgressWarningMessages,
+  nominationProgressWarnings,
+} from './nomination/progress';
 import StatusLine from './nomination/StatusLine';
 import { Orderable } from './Orderable';
 import { useOsuAuth } from './osuAuth';
@@ -223,11 +227,18 @@ export function Picks() {
     parseInt(gameMode, 10),
   );
 
+  const nominationProgressWarningsCache: Record<INomination['id'], NominationProgressWarning[]> =
+    {};
+  const getNominationProgressWarnings = (nomination: INomination) =>
+    (nominationProgressWarningsCache[nomination.id] ??= round.done
+      ? []
+      : nominationProgressWarnings(nomination, authUser));
+
   const showNomination = (nomination: INomination) =>
     !showTodo ||
     (ordering[nomination.game_mode] && canOrder(nomination.game_mode)) ||
     canAdd(nomination.game_mode) ||
-    nominationProgressWarnings(nomination, authUser).size > 0;
+    getNominationProgressWarnings(nomination).length > 0;
   const showNominations = (gameMode: GameMode) =>
     !showTodo ||
     ordering[gameMode] ||
@@ -300,6 +311,7 @@ export function Picks() {
                   onNominationDelete={onNominationDelete}
                   onNominationUpdate={onNominationUpdate}
                   parentGameMode={parent?.game_mode}
+                  progressWarnings={getNominationProgressWarnings(nomination)}
                   round={round}
                 />
               );
@@ -413,6 +425,7 @@ interface NominationProps {
   onNominationDelete: (nominationId: number) => void;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   parentGameMode?: GameMode;
+  progressWarnings: NominationProgressWarning[];
   round: IRound;
 }
 
@@ -424,6 +437,7 @@ function Nomination({
   onNominationDelete,
   onNominationUpdate,
   parentGameMode,
+  progressWarnings,
   round,
 }: NominationProps) {
   const authUser = useOsuAuth().user!;
@@ -455,10 +469,7 @@ function Nomination({
 
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
   const descriptionStarted = nomination.description != null;
-  const isNominator = canActAs(
-    authUser,
-    nomination.nominators.map((n) => n.id),
-  );
+  const hasProgressWarnings = progressWarnings.length > 0;
   const metadataAssigned = nomination.metadata_assignees.length > 0;
   const metadataDone = nomination.metadata_state === MetadataState.good;
   const metadataStarted = nomination.metadata_state !== MetadataState.unchecked;
@@ -479,7 +490,13 @@ function Nomination({
     !(failedVoting && !moderationAssigned) &&
     !moderationDone &&
     hasRole(authUser, [Role.moderator, Role.news]);
-  const canDelete = !round.done && !locked && isNominator;
+  const canDelete =
+    !round.done &&
+    !locked &&
+    canActAs(
+      authUser,
+      nomination.nominators.map((n) => n.id),
+    );
   const canEditDescription =
     !round.done &&
     ((!descriptionDone && hasRole(authUser, Role.captain, nomination.game_mode)) ||
@@ -492,14 +509,23 @@ function Nomination({
   const canEditMetadata =
     !round.done &&
     !failedVoting &&
-    ((hasRole(authUser, Role.metadata) && metadataAssigned) || hasRole(authUser, Role.news));
+    (canActAs(
+      authUser,
+      nomination.metadata_assignees.map((a) => a.id),
+    ) ||
+      hasRole(authUser, Role.news));
   const canEditModeration =
-    !round.done && !failedVoting && hasRole(authUser, Role.moderator) && moderationAssigned;
+    !round.done &&
+    !failedVoting &&
+    canActAs(
+      authUser,
+      nomination.moderator_assignees.map((a) => a.id),
+    );
   const canEditNominators =
     !round.done && !locked && hasRole(authUser, Role.captain, nomination.game_mode);
 
   return (
-    <div className='box nomination'>
+    <div className={`box nomination${hasProgressWarnings ? ' nomination--warning' : ''}`}>
       <div className='flex-bar'>
         <span>
           <h3 className='nomination-title'>
@@ -642,6 +668,16 @@ function Nomination({
         onNominationUpdate={onNominationUpdate}
         text={nomination.description}
       />
+      {hasProgressWarnings && (
+        <div className='nomination__warnings'>
+          {progressWarnings.map((warning) => (
+            <span key={warning}>
+              <span className='nomination__warning-icon'>!</span>
+              {nominationProgressWarningMessages[warning]}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

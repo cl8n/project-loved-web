@@ -80,7 +80,7 @@ db.initialize().then(() => {
     session({
       cookie: {
         httpOnly: true,
-        maxAge: 604800000, // 7 days
+        maxAge: 2592000000, // 30 days
         secure: config.httpsAlways,
       },
       name: 'loved_sid',
@@ -92,7 +92,7 @@ db.initialize().then(() => {
       store: new MysqlSessionStore(
         {
           checkExpirationInterval: 1800000, // 30 minutes
-          expiration: 604800000, // 7 days
+          expiration: 2592000000, // 30 days
         },
         db.pool,
       ),
