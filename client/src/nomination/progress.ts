@@ -37,17 +37,8 @@ export function nominationProgressWarnings(
 ): NominationProgressWarning[] {
   const warnings = new Set<NominationProgressWarning>();
 
-  if (hasRole(user, Role.captain, nomination.game_mode, true)) {
-    if (nomination.description == null) {
-      warnings.add(NominationProgressWarning.descriptionMissing);
-    }
-
-    if (
-      nomination.description_author?.id === user.id &&
-      nomination.description_state === DescriptionState.notReviewed
-    ) {
-      warnings.add(NominationProgressWarning.descriptionNeedsReview);
-    }
+  if (nomination.description == null && hasRole(user, Role.captain, nomination.game_mode, true)) {
+    warnings.add(NominationProgressWarning.descriptionMissing);
   }
 
   if (hasRole(user, Role.metadata, undefined, true)) {
