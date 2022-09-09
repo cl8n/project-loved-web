@@ -470,10 +470,6 @@ function Nomination({
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
   const descriptionStarted = nomination.description != null;
   const hasProgressWarnings = progressWarnings.length > 0;
-  const isNominator = canActAs(
-    authUser,
-    nomination.nominators.map((n) => n.id),
-  );
   const metadataAssigned = nomination.metadata_assignees.length > 0;
   const metadataDone = nomination.metadata_state === MetadataState.good;
   const metadataStarted = nomination.metadata_state !== MetadataState.unchecked;
@@ -494,7 +490,13 @@ function Nomination({
     !(failedVoting && !moderationAssigned) &&
     !moderationDone &&
     hasRole(authUser, [Role.moderator, Role.news]);
-  const canDelete = !round.done && !locked && isNominator;
+  const canDelete =
+    !round.done &&
+    !locked &&
+    canActAs(
+      authUser,
+      nomination.nominators.map((n) => n.id),
+    );
   const canEditDescription =
     !round.done &&
     ((!descriptionDone && hasRole(authUser, Role.captain, nomination.game_mode)) ||
@@ -507,9 +509,18 @@ function Nomination({
   const canEditMetadata =
     !round.done &&
     !failedVoting &&
-    ((hasRole(authUser, Role.metadata) && metadataAssigned) || hasRole(authUser, Role.news));
+    (canActAs(
+      authUser,
+      nomination.metadata_assignees.map((a) => a.id),
+    ) ||
+      hasRole(authUser, Role.news));
   const canEditModeration =
-    !round.done && !failedVoting && hasRole(authUser, Role.moderator) && moderationAssigned;
+    !round.done &&
+    !failedVoting &&
+    canActAs(
+      authUser,
+      nomination.moderator_assignees.map((a) => a.id),
+    );
   const canEditNominators =
     !round.done && !locked && hasRole(authUser, Role.captain, nomination.game_mode);
 
