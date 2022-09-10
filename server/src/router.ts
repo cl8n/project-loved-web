@@ -1291,10 +1291,31 @@ router.post(
       return res.status(422).json({ error: 'Invalid user ID' });
     }
 
+    if (
+      req.body.roles.some(
+        (role) => role.alumni && (role.role_id === Role.admin || role.role_id === Role.spectator),
+      )
+    ) {
+      return res.status(422).json({ error: 'Cannot set alumni status for admin or spectator' });
+    }
+
     const user = await db.queryOne<User>('SELECT * FROM users WHERE id = ?', [req.body.userId]);
 
     if (user == null) {
       return res.status(404).json({ error: 'User not found' });
+    }
+
+    const userRoles = await db.query<UserRole>('SELECT * FROM user_roles WHERE user_id = ?', [
+      user.id,
+    ]);
+
+    if (
+      !userRoles.some((role) => !role.alumni && role.role_id === Role.admin) &&
+      req.body.roles.some((role) => !role.alumni && role.role_id === Role.admin)
+    ) {
+      return res.status(422).json({
+        error: 'Cannot add admin role. If you are a developer, use the "init-user" script instead',
+      });
     }
 
     const logActor = {
@@ -1309,9 +1330,6 @@ router.post(
       id: user.id,
       name: user.name,
     };
-    const userRoles = await db.query<UserRole>('SELECT * FROM user_roles WHERE user_id = ?', [
-      user.id,
-    ]);
 
     await db.transact(async (connection) => {
       for (const newRole of req.body.roles as Omit<UserRole, 'user_id'>[]) {
