@@ -111,7 +111,7 @@ export function isResultsRequestBody(body: unknown): body is {
 }
 
 export function isRoleId(roleId: unknown): roleId is Role {
-  return isInteger(roleId) && roleId >= 0 && roleId <= 7;
+  return isInteger(roleId) && roleId >= 0 && roleId <= 8;
 }
 
 export function isStringArray(strings: unknown): strings is string[] {

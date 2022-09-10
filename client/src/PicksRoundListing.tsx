@@ -94,7 +94,7 @@ export function PicksRoundListing() {
     <>
       <div className='content-block'>
         <h1>Current rounds</h1>
-        {hasRole(authUser, Role.news) && <AddRound />}
+        {hasRole(authUser, Role.newsAuthor) && <AddRound />}
         <PicksRoundListingInner rounds={rounds?.incomplete_rounds} roundsError={roundsError} />
       </div>
       <div className='content-block'>

@@ -78,20 +78,21 @@ export function nominationProgressWarnings(
     }
   }
 
-  if (hasRole(user, Role.news, undefined, true)) {
+  if (
+    hasRole(user, Role.newsEditor, undefined, true) &&
+    nomination.description != null &&
+    nomination.description_state === DescriptionState.notReviewed
+  ) {
+    warnings.add(NominationProgressWarning.descriptionNeedsReview);
+  }
+
+  if (hasRole(user, Role.newsAuthor, undefined, true)) {
     if (nomination.metadata_assignees.length === 0) {
       warnings.add(NominationProgressWarning.metadataAssigneesMissing);
     }
 
     if (nomination.moderator_assignees.length === 0) {
       warnings.add(NominationProgressWarning.moderatorAssigneesMissing);
-    }
-
-    if (
-      nomination.description != null &&
-      nomination.description_state === DescriptionState.notReviewed
-    ) {
-      warnings.add(NominationProgressWarning.descriptionNeedsReview);
     }
   }
 

@@ -668,7 +668,7 @@ router.post(
 
     if (
       !(prevState !== DescriptionState.reviewed && hasRole(Role.captain, gameMode)) &&
-      !(prevDescription != null && hasRole(Role.news))
+      !(prevDescription != null && hasRole(Role.newsEditor))
     ) {
       return res.status(403).send();
     }
@@ -690,7 +690,7 @@ router.post(
           : prevDescription == null
           ? res.typedLocals.user.id
           : prevAuthorId,
-        hasRole(Role.news) && prevDescription != null && req.body.description != null
+        hasRole(Role.newsEditor) && prevDescription != null && req.body.description != null
           ? DescriptionState.reviewed
           : DescriptionState.notReviewed,
         req.body.nominationId,
@@ -719,7 +719,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const hasRole = currentUserRoles(req, res);
 
-    if (!hasRole([Role.metadata, Role.news])) {
+    if (!hasRole([Role.metadata, Role.newsAuthor])) {
       return res.status(403).json({ error: 'Must be a metadata checker or news author' });
     }
 
@@ -963,7 +963,7 @@ router.post(
 
     const hasRole = currentUserRoles(req, res);
 
-    if (!hasRole(Role.news) && !hasRole(Role.captain, req.body.gameMode)) {
+    if (!hasRole(Role.newsAuthor) && !hasRole(Role.captain, req.body.gameMode)) {
       return res.status(403).json({ error: 'Must be a news author or captain for this game mode' });
     }
 
@@ -1007,7 +1007,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const hasRole = currentUserRoles(req, res);
 
-    if (!hasRole([Role.captain, Role.news], undefined, true)) {
+    if (!hasRole([Role.captain, Role.newsAuthor], undefined, true)) {
       return res.status(403).json({ error: 'Must be a captain or news author' });
     }
 
@@ -1024,7 +1024,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const hasRole = currentUserRoles(req, res);
 
-    if (!hasRole([Role.captain, Role.news], undefined, true)) {
+    if (!hasRole([Role.captain, Role.newsAuthor], undefined, true)) {
       return res.status(403).json({ error: 'Must be a captain or news author' });
     }
 
@@ -1122,7 +1122,7 @@ router.get(
             AND user_roles.alumni = 0
           ORDER BY users.name ASC
         `,
-        [Role.news],
+        [Role.newsAuthor],
       ),
     );
   }),
@@ -1205,8 +1205,8 @@ router.post(
     const hasRole = currentUserRoles(req, res);
     const typeString = typeStrings[req.body.type];
 
-    if (!hasRole([Role.news, typeRoles[req.body.type]])) {
-      return res.status(403).json({ error: `Must have ${typeString} or news role` });
+    if (!hasRole([Role.newsAuthor, typeRoles[req.body.type]])) {
+      return res.status(403).json({ error: `Must have ${typeString} or news author role` });
     }
 
     await db.transact(async (connection) => {
@@ -1297,6 +1297,13 @@ router.post(
       )
     ) {
       return res.status(422).json({ error: 'Cannot set alumni status for admin or spectator' });
+    }
+
+    if (
+      req.body.roles.some((role) => !role.alumni && role.role_id === Role.newsAuthor) &&
+      !req.body.roles.some((role) => !role.alumni && role.role_id === Role.newsEditor)
+    ) {
+      return res.status(422).json({ error: 'Cannot set news author without news editor' });
     }
 
     const user = await db.queryOne<User>('SELECT * FROM users WHERE id = ?', [req.body.userId]);

@@ -68,10 +68,11 @@ export enum Role {
   captain,
   metadata,
   moderator,
-  news,
+  newsEditor,
   developer,
   spectator,
   video,
+  newsAuthor,
 }
 
 export interface Beatmap {
