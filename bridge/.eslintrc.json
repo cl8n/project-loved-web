@@ -3,5 +3,8 @@
   "extends": [
     "../.eslintrc.json",
     "plugin:n/recommended"
-  ]
+  ],
+  "rules": {
+    "n/no-unsupported-features/es-syntax": "off"
+  }
 }
