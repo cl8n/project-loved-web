@@ -50,7 +50,6 @@ export default router;
 
 // TODO: rethink guards
 
-//#region captain
 router.get(
   '/captains',
   isCaptainMiddleware,
@@ -1039,9 +1038,6 @@ router.get(
     redirectToAuth(req, res, ['forum.write', 'identify', 'public']);
   }),
 );
-//#endregion
-
-//#region admin
 
 router.post('/add-round', isNewsAuthorMiddleware, (_, res) => {
   db.transact(async (connection) => {
@@ -1549,4 +1545,3 @@ router.get(
     res.json(await db.query<Log>('SELECT * FROM logs ORDER BY id DESC'));
   }),
 );
-//#endregion
