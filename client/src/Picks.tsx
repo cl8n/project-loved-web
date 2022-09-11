@@ -1065,7 +1065,7 @@ function Description({
 
   const editors = edits
     .map((edit) => edit.editor)
-    .filter((u1, i, all) => all.findIndex((u2) => u1.id === u2.id) === i);
+    .filter((u1, i, all) => u1.id !== author?.id && all.findIndex((u2) => u1.id === u2.id) === i);
 
   return editing ? (
     <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
