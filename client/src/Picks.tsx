@@ -1,4 +1,5 @@
 import { GameMode, gameModeLongName } from 'loved-bridge/beatmaps/gameMode';
+import type { NominationDescriptionEdit } from 'loved-bridge/tables';
 import {
   AssigneeType,
   DescriptionState,
@@ -664,6 +665,7 @@ function Nomination({
       <Description
         author={nomination.description_author}
         canEdit={canEditDescription}
+        edits={nomination.description_edits}
         nominationId={nomination.id}
         onNominationUpdate={onNominationUpdate}
         text={nomination.description}
@@ -1028,6 +1030,7 @@ function GodMenu({ nomination, onNominationUpdate }: GodMenuProps) {
 interface DescriptionProps {
   author?: IUser;
   canEdit: boolean;
+  edits: (NominationDescriptionEdit & { editor: IUser })[];
   nominationId: number;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   text?: string;
@@ -1036,6 +1039,7 @@ interface DescriptionProps {
 function Description({
   author,
   canEdit,
+  edits,
   nominationId,
   onNominationUpdate,
   text,
@@ -1058,6 +1062,10 @@ function Description({
       .catch(alertApiErrorMessage)
       .finally(() => setEditing(false));
   };
+
+  const editors = edits
+    .map((edit) => edit.editor)
+    .filter((u1, i, all) => all.findIndex((u2) => u1.id === u2.id) === i);
 
   return editing ? (
     <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
@@ -1094,6 +1102,12 @@ function Description({
         <>
           <div style={{ marginBottom: '0.25em' }}>
             Description by <UserInline user={author! /* TODO: type properly */} />
+            {editors.length > 0 && (
+              <>
+                {' (edited by '}
+                <ListInline array={editors} render={(user) => <UserInline user={user} />} />)
+              </>
+            )}
             {canEdit && (
               <>
                 {' — '}

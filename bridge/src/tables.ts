@@ -159,6 +159,14 @@ export interface NominationAssignee {
   type: AssigneeType;
 }
 
+export interface NominationDescriptionEdit {
+  id: number;
+  description: string | null;
+  edited_at: TableDateType;
+  editor_id: number;
+  nomination_id: number;
+}
+
 export interface NominationExcludedBeatmap {
   beatmap_id: number;
   nomination_id: number;

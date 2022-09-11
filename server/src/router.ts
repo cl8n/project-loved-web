@@ -8,6 +8,7 @@ import type {
   Log,
   Nomination,
   NominationAssignee,
+  NominationDescriptionEdit,
   Poll,
   Round,
   RoundGameMode,
@@ -183,6 +184,25 @@ router.get(
       ),
       'nomination_id',
     );
+    const descriptionEditsByNominationId = groupBy<
+      Nomination['id'],
+      NominationDescriptionEdit & { editor: User }
+    >(
+      await db.queryWithGroups<NominationDescriptionEdit & { editor: User }>(
+        `
+        SELECT nomination_description_edits.*, editors:editor
+        FROM nominations
+        INNER JOIN nomination_description_edits
+          ON nominations.id = nomination_description_edits.nomination_id
+        INNER JOIN users AS editors
+          ON nomination_description_edits.editor_id = editors.id
+        WHERE nominations.round_id = ?
+        ORDER BY nomination_description_edits.edited_at ASC
+      `,
+        [req.query.roundId],
+      ),
+      'nomination_id',
+    );
     const includesByNominationId = groupBy<
       Nomination['id'],
       {
@@ -238,6 +258,7 @@ router.get(
       beatmapset: Beatmapset;
       beatmapset_creators?: User[];
       description_author: User | null;
+      description_edits?: (NominationDescriptionEdit & { editor: User })[];
       metadata_assignees?: User[];
       moderator_assignees?: User[];
       nominators?: User[];
@@ -311,6 +332,7 @@ router.get(
 
         return a.name.localeCompare(b.name);
       });
+      nomination.description_edits = descriptionEditsByNominationId[nomination.id] || [];
       nomination.nominators = nominatorsByNominationId[nomination.id] || [];
 
       const assignees = assigneesByNominationId[nomination.id] || [];
@@ -573,6 +595,7 @@ router.post(
       beatmapset?: Beatmapset;
       beatmapset_creators?: User[];
       description_author: null;
+      description_edits?: [];
       metadata_assignees?: [];
       moderator_assignees?: [];
       nominators?: User[];
@@ -619,6 +642,7 @@ router.post(
 
       return a.name.localeCompare(b.name);
     });
+    nomination.description_edits = [];
     nomination.nominators = nominators;
     nomination.metadata_assignees = [];
     nomination.moderator_assignees = [];
@@ -676,28 +700,46 @@ router.post(
       return res.status(403).json({ error: "Can't remove description as editor" });
     }
 
-    await db.query(
-      `
-        UPDATE nominations
-        SET description = ?, description_author_id = ?, description_state = ?
-        WHERE id = ?
-      `,
-      [
-        cleanNominationDescription(req.body.description),
-        req.body.description == null
-          ? null
-          : prevDescription == null
-          ? res.typedLocals.user.id
-          : prevAuthorId,
-        hasRole(Role.newsEditor) && prevDescription != null && req.body.description != null
-          ? DescriptionState.reviewed
-          : DescriptionState.notReviewed,
-        req.body.nominationId,
-      ],
-    );
+    const description = cleanNominationDescription(req.body.description);
+
+    await db.transact(async (connection) => {
+      await connection.query(
+        `
+          UPDATE nominations
+          SET description = ?, description_author_id = ?, description_state = ?
+          WHERE id = ?
+        `,
+        [
+          description,
+          description == null
+            ? null
+            : prevDescription == null
+            ? res.typedLocals.user.id
+            : prevAuthorId,
+          hasRole(Role.newsEditor) && prevDescription != null && description != null
+            ? DescriptionState.reviewed
+            : DescriptionState.notReviewed,
+          req.body.nominationId,
+        ],
+      );
+
+      if (description !== prevDescription) {
+        await connection.query(`INSERT INTO nomination_description_edits SET ?`, [
+          {
+            description,
+            edited_at: new Date(),
+            editor_id: res.typedLocals.user.id,
+            nomination_id: req.body.nominationId,
+          },
+        ]);
+      }
+    });
 
     const nomination = await db.queryOneWithGroups<
-      Nomination & { description_author: User | null }
+      Nomination & {
+        description_author: User | null;
+        description_edits?: (NominationDescriptionEdit & { editor: User })[];
+      }
     >(
       `
         SELECT nominations.*, description_authors:description_author
@@ -705,6 +747,24 @@ router.post(
         LEFT JOIN users AS description_authors
           ON nominations.description_author_id = description_authors.id
         WHERE nominations.id = ?
+      `,
+      [req.body.nominationId],
+    );
+
+    if (nomination == null) {
+      throw 'Missing nomination on description update';
+    }
+
+    nomination.description_edits = await db.queryWithGroups<
+      NominationDescriptionEdit & { editor: User }
+    >(
+      `
+        SELECT nomination_description_edits.*, editors:editor
+        FROM nomination_description_edits
+        INNER JOIN users AS editors
+          ON nomination_description_edits.editor_id = editors.id
+        WHERE nomination_description_edits.nomination_id = ?
+        ORDER BY nomination_description_edits.edited_at ASC
       `,
       [req.body.nominationId],
     );
@@ -878,6 +938,9 @@ router.delete(
 
     await db.transact(async (connection) => {
       await connection.query('DELETE FROM nomination_assignees WHERE nomination_id = ?', [
+        req.query.nominationId,
+      ]);
+      await connection.query('DELETE FROM nomination_description_edits WHERE nomination_id = ?', [
         req.query.nominationId,
       ]);
       await connection.query('DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?', [
