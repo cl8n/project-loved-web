@@ -3,8 +3,9 @@ import { useParams } from 'react-router-dom';
 import useTitle from '../useTitle';
 import MapperConsents from './MapperConsents';
 
-type MapperConsentPageParams = 
-  | { page: `${number}`} | undefined;
+interface MapperConsentPageParams {
+  page: `${number}` | undefined;
+}
 
 export default function MapperConsentsPage() {
   useTitle('Mapper consents');
@@ -24,7 +25,7 @@ export default function MapperConsentsPage() {
         tagName='p'
       />
       <MapperConsents
-        page={params?.page == null ? 1 : parseInt(params.page)}
+        page={params.page == null ? 1 : parseInt(params.page)}
        />
     </>
   );
