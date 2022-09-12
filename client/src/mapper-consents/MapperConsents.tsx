@@ -24,7 +24,14 @@ interface MapperConsentsProps {
 const pageSize = 50;
 
 const allConsentValues = ["any", "no", "yes", "unreachable", "no reply"];
-type CompleteConsentValue = ConsentValue | "null" | "any";
+type CompleteConsentValue = ConsentValue | keyof typeof ConsentValue | "null" | "any";
+const consentValueObject = {
+  "yes": ConsentValue.yes,
+  "no": ConsentValue.no,
+  "unreachable": ConsentValue.unreachable,
+  "no reply": null,
+  "any": "any"
+} as const;
 
 function getNewMapperConsentsPath(
   page: number
@@ -42,7 +49,7 @@ export default function MapperConsents({
 }: MapperConsentsProps) {
   const authUser = useOsuAuth().user;
   const [consents, consentError, setConsents] = useApi(getMapperConsents);
-  const [currentConsentValue, setCurrentConsentValue] = useState<CompleteConsentValue>('any');
+  const [currentConsentValue, setCurrentConsentValue] = useState('any');
   const history = useHistory();
   const [search, setSearch] = useState('');
   const intl = useIntl();
@@ -114,9 +121,7 @@ export default function MapperConsents({
       return true;
     }
 
-    if (currentConsentValue == ConsentValue.no && consent.consent == ConsentValue.no
-      || currentConsentValue == ConsentValue.yes && consent.consent == ConsentValue.yes
-      || currentConsentValue == ConsentValue.unreachable && consent.consent == ConsentValue.unreachable) {
+    if (consentValueObject[currentConsentValue as keyof typeof consentValueObject] == consent.consent) {
       return true;
     }
 
@@ -148,7 +153,7 @@ export default function MapperConsents({
             name="consentValue"
             value={currentConsentValue}
             onChange={(event) => {
-              setCurrentConsentValue(event.target.value as CompleteConsentValue);
+              setCurrentConsentValue(event.target.value);
               setPage(1, true);
             }}
           >
