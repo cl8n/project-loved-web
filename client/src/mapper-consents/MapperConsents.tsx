@@ -42,7 +42,7 @@ export default function MapperConsents({
 }: MapperConsentsProps) {
   const authUser = useOsuAuth().user;
   const [consents, consentError, setConsents] = useApi(getMapperConsents);
-  const [currentConsentValue, setConsentValue] = useState<CompleteConsentValue>('any');
+  const [currentConsentValue, setCurrentConsentValue] = useState<CompleteConsentValue>('any');
   const history = useHistory();
   const [search, setSearch] = useState('');
   const intl = useIntl();
