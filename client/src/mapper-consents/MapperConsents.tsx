@@ -58,7 +58,6 @@ export default function MapperConsents({
     return <span>Loading mapper consents...</span>;
   }
 
-  const pageCount = Math.ceil(consents.length / pageSize);
   const collator = new Intl.Collator("en-US");
 
   const setPage = (newPage: number, replace?: boolean) => {
@@ -127,6 +126,12 @@ export default function MapperConsents({
     return false;
   }
 
+  const filteredConsents = consents.sort((a, b) => collator.compare(a.mapper.name, b.mapper.name))
+    .filter((consent) =>
+      consent.mapper.name.toLowerCase().includes(search.toLowerCase())
+      && checkConsentValue(consent));
+
+  const pageCount = Math.ceil(filteredConsents.length / pageSize);
 
   return (
     <>
@@ -147,7 +152,7 @@ export default function MapperConsents({
             name="consentValue"
             value={currentConsentValue}
             onChange={(event) => {
-              setConsentValue(event.target.value);
+              setCurrentConsentValue(event.target.value);
               setPage(1, true);
             }}
           >
@@ -196,11 +201,7 @@ export default function MapperConsents({
           </tr>
         </thead>
         <tbody>
-          {consents
-            .sort((a, b) => collator.compare(a.mapper.name, b.mapper.name))
-            .filter((consent) =>
-              consent.mapper.name.toLowerCase().includes(search.toLowerCase())
-              && checkConsentValue(consent))
+          {filteredConsents
             .slice((page - 1) * pageSize, page * pageSize)
             .map((consent) => {
               return <MapperConsent
