@@ -24,7 +24,7 @@ interface MapperConsentsProps {
 const pageSize = 50;
 
 const allConsentValues = ["any", "no", "yes", "unreachable", "no reply"];
-type CompleteConsentValue = typeof allConsentValues[number];
+type CompleteConsentValue = ConsentValue | "null" | "any";
 
 function getNewMapperConsentsPath(
   page: number
@@ -47,7 +47,6 @@ export default function MapperConsents({
   const [search, setSearch] = useState('');
   const intl = useIntl();
 
-
   if (consentError != null) {
     return (
       <span className='panic'>Failed to load mapper consents: {apiErrorMessage(consentError)}</span>
@@ -57,9 +56,7 @@ export default function MapperConsents({
   if (consents == null) {
     return <span>Loading mapper consents...</span>;
   }
-
-  const collator = new Intl.Collator("en-US");
-
+  
   const setPage = (newPage: number, replace?: boolean) => {
     if (newPage !== page) {
       if (replace) {
@@ -113,21 +110,20 @@ export default function MapperConsents({
       return true;
     }
 
-    if (currentConsentValue == "no reply" && consent.consent == null) {
+    if (currentConsentValue == "null" && consent.consent == null) {
       return true;
     }
 
-    if (currentConsentValue == "no" && consent.consent == ConsentValue.no
-      || currentConsentValue == "yes" && consent.consent == ConsentValue.yes
-      || currentConsentValue == "unreachable" && consent.consent == ConsentValue.unreachable) {
+    if (currentConsentValue == ConsentValue.no && consent.consent == ConsentValue.no
+      || currentConsentValue == ConsentValue.yes && consent.consent == ConsentValue.yes
+      || currentConsentValue == ConsentValue.unreachable && consent.consent == ConsentValue.unreachable) {
       return true;
     }
 
     return false;
   }
 
-  const filteredConsents = consents.sort((a, b) => collator.compare(a.mapper.name, b.mapper.name))
-    .filter((consent) =>
+  const filteredConsents = consents.filter((consent) =>
       consent.mapper.name.toLowerCase().includes(search.toLowerCase())
       && checkConsentValue(consent));
 
@@ -152,7 +148,7 @@ export default function MapperConsents({
             name="consentValue"
             value={currentConsentValue}
             onChange={(event) => {
-              setCurrentConsentValue(event.target.value);
+              setCurrentConsentValue(event.target.value as CompleteConsentValue);
               setPage(1, true);
             }}
           >
@@ -205,6 +201,7 @@ export default function MapperConsents({
             .slice((page - 1) * pageSize, page * pageSize)
             .map((consent) => {
               return <MapperConsent
+                key={consent.user_id}
                 consent={consent}
                 onConsentUpdate={onConsentUpdate}
               />
