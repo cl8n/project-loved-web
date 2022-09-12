@@ -208,6 +208,7 @@ export default function MapperConsents({
             })}
         </tbody>
       </table>
+      <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
     </>
   );
 }
