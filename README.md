@@ -36,10 +36,6 @@ docker-compose exec database /import-live-data.sh [export URL]
 docker-compose run --rm api ./build/init-user.js <osu! username>
 ```
 
-### TypeScript version
-
-To get accurate type checking and import hints, direct your code editor to use the TypeScript version installed in `server/node_modules` (4.7.0-beta). In VSCode, this option will be listed automatically. This will not be necessary once the project is updated to TypeScript 4.7.
-
 ## Deployment
 
 ### Dependencies
