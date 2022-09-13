@@ -24,9 +24,7 @@ export default function MapperConsentsPage() {
         description='[Mapper consents] Mapper consents description'
         tagName='p'
       />
-      <MapperConsents
-        page={params.page == null ? 1 : parseInt(params.page)}
-       />
+      <MapperConsents page={params.page == null ? 1 : parseInt(params.page)} />
     </>
   );
 }

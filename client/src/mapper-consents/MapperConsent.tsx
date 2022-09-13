@@ -89,30 +89,32 @@ function MapperBeatmapsetConsents({ consent }: { consent: IMapperConsent }) {
 }
 
 interface MapperConsentProps {
-  consent: IMapperConsent,
-  onConsentUpdate: (consent: IMapperConsent) => void
+  consent: IMapperConsent;
+  onConsentUpdate: (consent: IMapperConsent) => void;
 }
 
 export default function MapperConsent({ consent, onConsentUpdate }: MapperConsentProps) {
   const authUser = useOsuAuth().user;
 
-  return <Fragment key={consent.user_id}>
-    <tr>
-      {authUser != null && hasRole(authUser, Role.captain) && (
-        <MapperConsentEditor consent={consent} onConsentUpdate={onConsentUpdate} />
-      )}
-      <td>
-        <UserInline user={consent.mapper} />
-      </td>
-      <ConsentCell consent={consent.consent} />
-      <td className='normal-wrap fix-column-layout'>{consent.consent_reason}</td>
-    </tr>
-    {consent.beatmapset_consents.length > 0 && (
+  return (
+    <Fragment key={consent.user_id}>
       <tr>
-        <td colSpan={4}>
-          <MapperBeatmapsetConsents consent={consent} />
+        {authUser != null && hasRole(authUser, Role.captain) && (
+          <MapperConsentEditor consent={consent} onConsentUpdate={onConsentUpdate} />
+        )}
+        <td>
+          <UserInline user={consent.mapper} />
         </td>
+        <ConsentCell consent={consent.consent} />
+        <td className='normal-wrap fix-column-layout'>{consent.consent_reason}</td>
       </tr>
-    )}
-  </Fragment>;
+      {consent.beatmapset_consents.length > 0 && (
+        <tr>
+          <td colSpan={4}>
+            <MapperBeatmapsetConsents consent={consent} />
+          </td>
+        </tr>
+      )}
+    </Fragment>
+  );
 }

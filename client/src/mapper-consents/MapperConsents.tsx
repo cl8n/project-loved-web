@@ -2,8 +2,8 @@ import { ConsentValue, Role } from 'loved-bridge/tables';
 import { useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useHistory } from 'react-router-dom';
-import PageSelector from '../components/PageSelector';
 import { apiErrorMessage, getMapperConsents, useApi } from '../api';
+import PageSelector from '../components/PageSelector';
 import type { IMapperConsent, IUser } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
@@ -17,7 +17,6 @@ const messages = defineMessages({
     description: '[Mapper consents] Selector to change mapper consent',
   },
 
-  
   no: {
     defaultMessage: 'No',
     description: '[General] Boolean',
@@ -41,42 +40,39 @@ const messages = defineMessages({
 });
 
 const consentValueMessageMap = {
-  "yes": messages.yes,
-  "no": messages.no,
-  "unreachable": messages.unreachable,
-  "no reply": messages.noReply,
-  "any": messages.any
+  yes: messages.yes,
+  no: messages.no,
+  unreachable: messages.unreachable,
+  'no reply': messages.noReply,
+  any: messages.any,
 } as const;
 
 interface MapperConsentsProps {
-  page: number
+  page: number;
 }
 
 const pageSize = 50;
 
-const allConsentValues = ["any", "no", "yes", "unreachable", "no reply"];
+const allConsentValues = ['any', 'no', 'yes', 'unreachable', 'no reply'];
 const consentValueMap = {
-  "yes": ConsentValue.yes,
-  "no": ConsentValue.no,
-  "unreachable": ConsentValue.unreachable,
-  "no reply": null,
-  "any": "any"
+  yes: ConsentValue.yes,
+  no: ConsentValue.no,
+  unreachable: ConsentValue.unreachable,
+  'no reply': null,
+  any: 'any',
 } as const;
 
-function getNewMapperConsentsPath(
-  page: number
-) {
-  let path = "/mappers";
+function getNewMapperConsentsPath(page: number) {
+  let path = '/mappers';
 
-  if (page > 1)
+  if (page > 1) {
     path += `/${page}`;
+  }
 
   return path;
 }
 
-export default function MapperConsents({
-  page,
-}: MapperConsentsProps) {
+export default function MapperConsents({ page }: MapperConsentsProps) {
   const authUser = useOsuAuth().user;
   const [consents, consentError, setConsents] = useApi(getMapperConsents);
   const [currentConsentValue, setCurrentConsentValue] = useState('any');
@@ -93,14 +89,11 @@ export default function MapperConsents({
   if (consents == null) {
     return <span>Loading mapper consents...</span>;
   }
-  
+
   const setPage = (newPage: number, replace?: boolean) => {
     if (newPage !== page) {
       if (replace) {
-        history.replace(
-          getNewMapperConsentsPath(newPage),
-          history.location.state,
-        );
+        history.replace(getNewMapperConsentsPath(newPage), history.location.state);
       } else {
         history.push(getNewMapperConsentsPath(newPage));
       }
@@ -115,12 +108,12 @@ export default function MapperConsents({
       return [
         existingConsent == null
           ? {
-            user_id: user.id,
-            beatmapset_consents: [],
-            consent: null,
-            consent_reason: null,
-            mapper: user,
-          }
+              user_id: user.id,
+              beatmapset_consents: [],
+              consent: null,
+              consent_reason: null,
+              mapper: user,
+            }
           : { ...existingConsent, mapper: user },
         ...consents.filter((consent) => consent.user_id !== user.id),
       ];
@@ -143,11 +136,11 @@ export default function MapperConsents({
   };
 
   const checkConsentValue = (consent: IMapperConsent) => {
-    if (currentConsentValue == "any") {
+    if (currentConsentValue == 'any') {
       return true;
     }
 
-    if (currentConsentValue == "null" && consent.consent == null) {
+    if (currentConsentValue == 'null' && consent.consent == null) {
       return true;
     }
 
@@ -156,11 +149,13 @@ export default function MapperConsents({
     }
 
     return false;
-  }
+  };
 
-  const filteredConsents = consents.filter((consent) =>
-      consent.mapper.name.toLowerCase().includes(search.toLowerCase())
-      && checkConsentValue(consent));
+  const filteredConsents = consents.filter(
+    (consent) =>
+      consent.mapper.name.toLowerCase().includes(search.toLowerCase()) &&
+      checkConsentValue(consent),
+  );
 
   const pageCount = Math.ceil(filteredConsents.length / pageSize);
 
@@ -180,7 +175,7 @@ export default function MapperConsents({
         <div className='flex-left'>
           <label htmlFor='consentValue'>{intl.formatMessage(messages.consent)}</label>
           <select
-            name="consentValue"
+            name='consentValue'
             value={currentConsentValue}
             onChange={(event) => {
               setCurrentConsentValue(event.target.value);
@@ -232,15 +227,15 @@ export default function MapperConsents({
           </tr>
         </thead>
         <tbody>
-          {filteredConsents
-            .slice((page - 1) * pageSize, page * pageSize)
-            .map((consent) => {
-              return <MapperConsent
+          {filteredConsents.slice((page - 1) * pageSize, page * pageSize).map((consent) => {
+            return (
+              <MapperConsent
                 key={consent.user_id}
                 consent={consent}
                 onConsentUpdate={onConsentUpdate}
               />
-            })}
+            );
+          })}
         </tbody>
       </table>
       <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
