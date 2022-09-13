@@ -15,8 +15,39 @@ const messages = defineMessages({
   consent: {
     defaultMessage: 'Mapper consent:',
     description: '[Mapper consents] Selector to change mapper consent',
-  }
+  },
+
+  
+  no: {
+    defaultMessage: 'No',
+    description: '[General] Boolean',
+  },
+  yes: {
+    defaultMessage: 'Yes',
+    description: '[General] Boolean',
+  },
+  any: {
+    defaultMessage: 'Any',
+    description: '[General] Selector option indicating that any of the choices are valid',
+  },
+  noReply: {
+    defaultMessage: 'No reply',
+    description: '[Mapper consents] Mapper consent shown in mapper consents table',
+  },
+  unreachable: {
+    defaultMessage: 'Unreachable',
+    description: '[Mapper consents] Mapper consent shown in mapper consents table',
+  },
 });
+
+const consentValueMessageMap = {
+  "yes": messages.yes,
+  "no": messages.no,
+  "unreachable": messages.unreachable,
+  "no reply": messages.noReply,
+  "any": messages.any
+} as const;
+
 interface MapperConsentsProps {
   page: number
 }
@@ -24,8 +55,7 @@ interface MapperConsentsProps {
 const pageSize = 50;
 
 const allConsentValues = ["any", "no", "yes", "unreachable", "no reply"];
-type CompleteConsentValue = ConsentValue | keyof typeof ConsentValue | "null" | "any";
-const consentValueObject = {
+const consentValueMap = {
   "yes": ConsentValue.yes,
   "no": ConsentValue.no,
   "unreachable": ConsentValue.unreachable,
@@ -121,7 +151,7 @@ export default function MapperConsents({
       return true;
     }
 
-    if (consentValueObject[currentConsentValue as keyof typeof consentValueObject] == consent.consent) {
+    if (consentValueMap[currentConsentValue as keyof typeof consentValueMap] == consent.consent) {
       return true;
     }
 
@@ -159,7 +189,7 @@ export default function MapperConsents({
           >
             {allConsentValues.map((status) => (
               <option key={status} value={status}>
-                {status}
+                {intl.formatMessage(consentValueMessageMap[status as keyof typeof consentValueMap])}
               </option>
             ))}
           </select>
