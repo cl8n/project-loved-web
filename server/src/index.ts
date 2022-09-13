@@ -81,6 +81,7 @@ db.initialize().then(() => {
       cookie: {
         httpOnly: true,
         maxAge: 2592000000, // 30 days
+        sameSite: 'lax',
         secure: config.httpsAlways,
       },
       name: 'loved_sid',
