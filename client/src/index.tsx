@@ -37,14 +37,24 @@ render(
             <main className='big-center'>
               <Switch>
                 <Redirect exact from='/' to='/submissions' />
-                <Route exact path='/submissions/:gameMode(mania)/:keyMode(\d+K)/:page(\d+)?'>
+                <Route exact path='/submissions/:gameMode(mania)/:keyMode(\d+K)'>
                   <CurrentNewsPostNotice />
                   <SubmissionListingContainer />
                 </Route>
-                <Route exact path='/submissions/:gameMode?/:page(\d+)?'>
+                <Route exact path='/submissions/:gameMode?'>
                   <CurrentNewsPostNotice />
                   <SubmissionListingContainer />
                 </Route>
+                <Redirect
+                  exact
+                  from='/submissions/:gameMode(mania)/:keyMode(\d+K)/:page(\d+)'
+                  to='/submissions/:gameMode/:keyMode'
+                />
+                <Redirect
+                  exact
+                  from='/submissions/:gameMode/:page(\d+)'
+                  to='/submissions/:gameMode'
+                />
                 <Route exact path='/submit'>
                   <CurrentNewsPostNotice />
                   <SubmissionForm />

@@ -5,7 +5,7 @@ import {
   gameModes,
   gameModeShortName,
 } from 'loved-bridge/beatmaps/gameMode';
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, Dispatch } from 'react';
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
@@ -127,19 +127,11 @@ const allSorts = [
 ] as const;
 type Sort = typeof allSorts[number];
 
-function getNewSubmissionsListingPath(
-  gameMode: GameMode,
-  keyMode: number | null,
-  page: number,
-): string {
+function getNewSubmissionsListingPath(gameMode: GameMode, keyMode: number | null): string {
   let path = `/submissions/${gameModeShortName(gameMode)}`;
 
   if (keyMode != null) {
     path += `/${keyMode}K`;
-  }
-
-  if (page > 1) {
-    path += `/${page}`;
   }
 
   return path;
@@ -217,11 +209,10 @@ function sortsReducer(prevSorts: SortsState, action: SortsReducerAction): SortsS
 }
 
 type SubmissionListingParams =
-  | { gameMode: string | undefined; page: `${number}` | undefined }
+  | { gameMode: string | undefined }
   | {
       gameMode: `${'M' | 'm'}ania`;
       keyMode: `${number}${'K' | 'k'}`;
-      page: `${number}` | undefined;
     };
 
 export default function SubmissionListingContainer() {
@@ -240,6 +231,7 @@ export default function SubmissionListingContainer() {
     score: true,
     year: true,
   });
+  const [page, setPage] = useState(1);
   const [reviewStatus, setReviewStatus] = useState<ReviewStatus>('any');
   const [search, setSearch] = useState('');
   const [sorts, updateSort] = useReducer(sortsReducer, initialSortsState);
@@ -250,7 +242,6 @@ export default function SubmissionListingContainer() {
 
   const gameMode = gameModeFromShortName(params.gameMode?.toLowerCase());
   const keyMode = 'keyMode' in params ? parseInt(params.keyMode) : null;
-  const page = params.page == null ? 1 : parseInt(params.page);
 
   useTitle(
     gameMode == null
@@ -264,7 +255,6 @@ export default function SubmissionListingContainer() {
         to={getNewSubmissionsListingPath(
           gameModeFromShortName(localStorage.getItem('gameMode')) ?? GameMode.osu,
           null,
-          1,
         )}
       />
     );
@@ -275,29 +265,16 @@ export default function SubmissionListingContainer() {
 
     if (newGameMode !== gameMode) {
       localStorage.setItem('gameMode', gameModeShortName(newGameMode));
-      history.push(getNewSubmissionsListingPath(newGameMode, null, 1));
+      history.push(getNewSubmissionsListingPath(newGameMode, null));
+      setPage(1);
     }
   };
   const onKeyModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const newKeyMode = event.currentTarget.value ? parseInt(event.currentTarget.value, 10) : null;
 
     if (newKeyMode !== keyMode) {
-      history.push(getNewSubmissionsListingPath(gameMode, newKeyMode, 1));
-    }
-  };
-  const resetPageComponent = () => {
-    return <Redirect to={getNewSubmissionsListingPath(gameMode, keyMode, 1)} />;
-  };
-  const setPage = (newPage: number, replace?: boolean) => {
-    if (newPage !== page) {
-      if (replace) {
-        history.replace(
-          getNewSubmissionsListingPath(gameMode, keyMode, newPage),
-          history.location.state,
-        );
-      } else {
-        history.push(getNewSubmissionsListingPath(gameMode, keyMode, newPage));
-      }
+      history.push(getNewSubmissionsListingPath(gameMode, newKeyMode));
+      setPage(1);
     }
   };
 
@@ -363,7 +340,7 @@ export default function SubmissionListingContainer() {
             value={beatmapStatus}
             onChange={(event) => {
               setBeatmapStatus(event.currentTarget.value as BeatmapStatus);
-              setPage(1, true);
+              setPage(1);
             }}
           >
             {allBeatmapStatuses.map((status) => (
@@ -383,7 +360,7 @@ export default function SubmissionListingContainer() {
             value={search}
             onChange={(event) => {
               setSearch(event.currentTarget.value);
-              setPage(1, true);
+              setPage(1);
             }}
           />
         </div>
@@ -398,7 +375,7 @@ export default function SubmissionListingContainer() {
               value={reviewStatus}
               onChange={(event) => {
                 setReviewStatus(event.currentTarget.value as ReviewStatus);
-                setPage(1, true);
+                setPage(1);
               }}
             >
               {allReviewStatuses.map((status) => (
@@ -445,7 +422,7 @@ export default function SubmissionListingContainer() {
                     index: sortIndex as 0 | 1,
                     sort: event.currentTarget.value as Sort,
                   });
-                  setPage(1, true);
+                  setPage(1);
                 }}
               >
                 {sortOptions[sortIndex].map((sortOption) => (
@@ -464,7 +441,7 @@ export default function SubmissionListingContainer() {
                 ascending={sort.ascending}
                 toggle={() => {
                   updateSort({ action: 'toggleOrder', index: sortIndex as 0 | 1 });
-                  setPage(1, true);
+                  setPage(1);
                 }}
               />
             </span>
@@ -477,7 +454,6 @@ export default function SubmissionListingContainer() {
         gameMode={gameMode}
         keyMode={keyMode}
         page={page}
-        resetPageComponent={resetPageComponent}
         reviewStatus={reviewStatus}
         searchLowerCase={search.toLowerCase()}
         setPage={setPage}
@@ -579,10 +555,9 @@ interface SubmissionListingProps {
   gameMode: GameMode;
   keyMode: number | null;
   page: number;
-  resetPageComponent: () => JSX.Element;
   reviewStatus: ReviewStatus;
   searchLowerCase: string;
-  setPage: (page: number, replace?: boolean) => void;
+  setPage: Dispatch<number>;
   sorts: SortsState;
 }
 
@@ -592,7 +567,6 @@ function SubmissionListing({
   gameMode,
   keyMode,
   page,
-  resetPageComponent,
   reviewStatus,
   searchLowerCase,
   setPage,
@@ -657,7 +631,7 @@ function SubmissionListing({
     const submittedBeatmapsetPage = Math.floor(submittedBeatmapsetIndex / pageSize) + 1;
 
     if (page !== submittedBeatmapsetPage) {
-      setPage(submittedBeatmapsetPage, true);
+      setPage(submittedBeatmapsetPage);
       return;
     }
 
@@ -688,7 +662,8 @@ function SubmissionListing({
   const pageCount = Math.ceil(displayBeatmapsets.length / pageSize);
 
   if (page < 1 || page > pageCount) {
-    return resetPageComponent();
+    setPage(1);
+    return null;
   }
 
   const onReviewDelete = (deletedReview: IReview) => {
