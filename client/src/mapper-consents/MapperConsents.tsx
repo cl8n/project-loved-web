@@ -6,7 +6,7 @@ import PageSelector from '../components/PageSelector';
 import type { IMapperConsent, IUser } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
-import MapperConsent from './MapperConsent';
+import MapperConsent, { consentMap } from './MapperConsent';
 import MapperConsentAdder from './MapperConsentAdder';
 import MapperConsentEditor from './MapperConsentEditor';
 
@@ -38,29 +38,12 @@ const messages = defineMessages({
   },
 });
 
-const consentValueMessageMap = {
-  yes: messages.yes,
-  no: messages.no,
-  unreachable: messages.unreachable,
-  'no reply': messages.noReply,
-  any: messages.any,
-} as const;
-
 const pageSize = 50;
-
-const allConsentValues = ['any', 'no', 'yes', 'unreachable', 'no reply'];
-const consentValueMap = {
-  yes: ConsentValue.yes,
-  no: ConsentValue.no,
-  unreachable: ConsentValue.unreachable,
-  'no reply': null,
-  any: 'any',
-} as const;
 
 export default function MapperConsents() {
   const authUser = useOsuAuth().user;
   const [consents, consentError, setConsents] = useApi(getMapperConsents);
-  const [currentConsentValue, setCurrentConsentValue] = useState('any');
+  const [consentValue, setConsentValue] = useState<ConsentValue | null | 'any'>('any');
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const intl = useIntl();
@@ -76,7 +59,7 @@ export default function MapperConsents() {
   }
 
   const resetValues = () => {
-    setCurrentConsentValue('any');
+    setConsentValue('any');
     setSearch('');
     setPage(1);
   };
@@ -85,8 +68,6 @@ export default function MapperConsents() {
     setConsents((prev) => {
       const consents = [...prev!];
       const existingConsent = consents.find((existing) => existing.user_id === user.id);
-
-      resetValues();
 
       return [
         existingConsent == null
@@ -101,14 +82,13 @@ export default function MapperConsents() {
         ...consents.filter((consent) => consent.user_id !== user.id),
       ];
     });
+    resetValues();
   };
 
   const onConsentUpdate = (consent: IMapperConsent) => {
     setConsents((prev) => {
       const consents = [...prev!];
       const existingConsent = consents.find((existing) => existing.user_id === consent.user_id);
-
-      resetValues();
 
       if (existingConsent != null) {
         Object.assign(existingConsent, consent);
@@ -118,28 +98,13 @@ export default function MapperConsents() {
 
       return consents;
     });
-  };
-
-  const checkConsentValue = (consent: IMapperConsent) => {
-    if (currentConsentValue === 'any') {
-      return true;
-    }
-
-    if (currentConsentValue === 'null' && consent.consent == null) {
-      return true;
-    }
-
-    if (consentValueMap[currentConsentValue as keyof typeof consentValueMap] === consent.consent) {
-      return true;
-    }
-
-    return false;
+    resetValues();
   };
 
   const filteredConsents = consents.filter(
     (consent) =>
       consent.mapper.name.toLowerCase().includes(search.toLowerCase()) &&
-      checkConsentValue(consent),
+      (consentValue === 'any' || consent.consent === consentValue),
   );
   const pageCount = Math.ceil(filteredConsents.length / pageSize);
 
@@ -160,17 +125,22 @@ export default function MapperConsents() {
           <label htmlFor='consentValue'>{intl.formatMessage(messages.consent)}</label>
           <select
             name='consentValue'
-            value={currentConsentValue}
+            value={consentValue ?? undefined}
             onChange={(event) => {
-              setCurrentConsentValue(event.target.value);
+              const newConsentValue = event.currentTarget.value
+                ? parseInt(event.currentTarget.value, 10)
+                : null;
+              setConsentValue(Number.isNaN(newConsentValue) ? 'any' : newConsentValue);
               setPage(1);
             }}
           >
-            {allConsentValues.map((status) => (
-              <option key={status} value={status}>
-                {intl.formatMessage(consentValueMessageMap[status as keyof typeof consentValueMap])}
+            <option value='any'>{intl.formatMessage(messages.any)}</option>
+            {[ConsentValue.yes, ConsentValue.no, ConsentValue.unreachable].map((consentValue) => (
+              <option key={consentValue} value={consentValue}>
+                {intl.formatMessage(consentMap[consentValue][0])}
               </option>
             ))}
+            <option value=''>{intl.formatMessage(consentMap['null'][0])}</option>
           </select>
           <FormattedMessage
             defaultMessage='Search:'
