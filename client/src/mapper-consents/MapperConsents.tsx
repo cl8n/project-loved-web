@@ -141,62 +141,6 @@ export default function MapperConsents() {
       consent.mapper.name.toLowerCase().includes(search.toLowerCase()) &&
       checkConsentValue(consent),
   );
-
-  if (filteredConsents.length === 0 && page === 1) {
-    return (
-      <>
-        {authUser != null && (
-          <div className='flex-bar'>
-            <MapperConsentEditor
-              consent={consents.find((consent) => consent.user_id === authUser.id)}
-              editSelf={true}
-              onConsentUpdate={onConsentUpdate}
-            />
-            {hasRole(authUser, Role.captain) && <MapperConsentAdder onConsentAdd={onConsentAdd} />}
-          </div>
-        )}
-        <div className='block-margin'>
-          <div className='flex-left'>
-            <label htmlFor='consentValue'>{intl.formatMessage(messages.consent)}</label>
-            <select
-              name='consentValue'
-              value={currentConsentValue}
-              onChange={(event) => {
-                setCurrentConsentValue(event.target.value);
-                setPage(1);
-              }}
-            >
-              {allConsentValues.map((status) => (
-                <option key={status} value={status}>
-                  {intl.formatMessage(
-                    consentValueMessageMap[status as keyof typeof consentValueMap],
-                  )}
-                </option>
-              ))}
-            </select>
-            <FormattedMessage
-              defaultMessage='Search:'
-              description='[Submissions] Title for submissions search input'
-              tagName='span'
-            />
-            <input
-              type='search'
-              className='flex-grow'
-              value={search}
-              onChange={(event) => {
-                setSearch(event.currentTarget.value);
-                setPage(1);
-              }}
-            />
-          </div>
-        </div>
-        <span>
-          <b>No mapper consents to show!</b>
-        </span>
-      </>
-    );
-  }
-
   const pageCount = Math.ceil(filteredConsents.length / pageSize);
 
   return (
@@ -244,41 +188,47 @@ export default function MapperConsents() {
           />
         </div>
       </div>
-      <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
-      <table className='main-table'>
-        <thead>
-          <tr className='sticky'>
-            {authUser != null && hasRole(authUser, Role.captain) && <th />}
-            <FormattedMessage
-              defaultMessage='Mapper'
-              description='[Mapper consents] Mapper consents table header'
-              tagName='th'
-            />
-            <FormattedMessage
-              defaultMessage='Consent'
-              description='[Mapper consents] Mapper consents table header'
-              tagName='th'
-            />
-            <FormattedMessage
-              defaultMessage='Notes'
-              description='[Mapper consents] Mapper consents table header'
-              tagName='th'
-            />
-          </tr>
-        </thead>
-        <tbody>
-          {filteredConsents.slice((page - 1) * pageSize, page * pageSize).map((consent) => {
-            return (
-              <MapperConsent
-                key={consent.user_id}
-                consent={consent}
-                onConsentUpdate={onConsentUpdate}
-              />
-            );
-          })}
-        </tbody>
-      </table>
-      <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
+      {filteredConsents.length > 0 ? (
+        <>
+          <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
+          <table className='main-table'>
+            <thead>
+              <tr className='sticky'>
+                {authUser != null && hasRole(authUser, Role.captain) && <th />}
+                <FormattedMessage
+                  defaultMessage='Mapper'
+                  description='[Mapper consents] Mapper consents table header'
+                  tagName='th'
+                />
+                <FormattedMessage
+                  defaultMessage='Consent'
+                  description='[Mapper consents] Mapper consents table header'
+                  tagName='th'
+                />
+                <FormattedMessage
+                  defaultMessage='Notes'
+                  description='[Mapper consents] Mapper consents table header'
+                  tagName='th'
+                />
+              </tr>
+            </thead>
+            <tbody>
+              {filteredConsents.slice((page - 1) * pageSize, page * pageSize).map((consent) => {
+                return (
+                  <MapperConsent
+                    key={consent.user_id}
+                    consent={consent}
+                    onConsentUpdate={onConsentUpdate}
+                  />
+                );
+              })}
+            </tbody>
+          </table>
+          <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
+        </>
+      ) : (
+        <b>No mapper consents to show!</b>
+      )}
     </>
   );
 }
