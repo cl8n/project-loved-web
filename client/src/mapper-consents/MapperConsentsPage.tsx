@@ -1,16 +1,9 @@
 import { FormattedMessage } from 'react-intl';
-import { useParams } from 'react-router-dom';
 import useTitle from '../useTitle';
 import MapperConsents from './MapperConsents';
 
-interface MapperConsentPageParams {
-  page: `${number}` | undefined;
-}
-
 export default function MapperConsentsPage() {
   useTitle('Mapper consents');
-
-  const params = useParams<MapperConsentPageParams>();
 
   return (
     <>
@@ -24,7 +17,7 @@ export default function MapperConsentsPage() {
         description='[Mapper consents] Mapper consents description'
         tagName='p'
       />
-      <MapperConsents page={params.page == null ? 1 : parseInt(params.page)} />
+      <MapperConsents />
     </>
   );
 }

@@ -59,7 +59,7 @@ render(
                   <CurrentNewsPostNotice />
                   <SubmissionForm />
                 </Route>
-                <Route exact path='/mappers/:page(\d+)?'>
+                <Route exact path='/mappers'>
                   <MapperConsentsPage />
                 </Route>
                 <Route exact path='/contributors'>
