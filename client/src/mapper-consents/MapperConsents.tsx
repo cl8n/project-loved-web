@@ -62,21 +62,11 @@ const consentValueMap = {
   any: 'any',
 } as const;
 
-function getNewMapperConsentsPath(page: number) {
-  let path = '/mappers';
-
-  if (page > 1) {
-    path += `/${page}`;
-  }
-
-  return path;
-}
-
 export default function MapperConsents({ page }: MapperConsentsProps) {
   const authUser = useOsuAuth().user;
   const [consents, consentError, setConsents] = useApi(getMapperConsents);
   const [currentConsentValue, setCurrentConsentValue] = useState('any');
-  const history = useHistory();
+  const [currentPage, setCurrentPage] =  useState(page);
   const [search, setSearch] = useState('');
   const intl = useIntl();
 
@@ -89,16 +79,6 @@ export default function MapperConsents({ page }: MapperConsentsProps) {
   if (consents == null) {
     return <span>Loading mapper consents...</span>;
   }
-
-  const setPage = (newPage: number, replace?: boolean) => {
-    if (newPage !== page) {
-      if (replace) {
-        history.replace(getNewMapperConsentsPath(newPage), history.location.state);
-      } else {
-        history.push(getNewMapperConsentsPath(newPage));
-      }
-    }
-  };
 
   const onConsentAdd = (user: IUser) => {
     setConsents((prev) => {
@@ -179,7 +159,7 @@ export default function MapperConsents({ page }: MapperConsentsProps) {
               value={currentConsentValue}
               onChange={(event) => {
                 setCurrentConsentValue(event.target.value);
-                setPage(1, true);
+                setCurrentPage(1);
               }}
             >
               {allConsentValues.map((status) => (
@@ -199,7 +179,7 @@ export default function MapperConsents({ page }: MapperConsentsProps) {
               value={search}
               onChange={(event) => {
                 setSearch(event.currentTarget.value);
-                setPage(1, true);
+                setCurrentPage(1);
               }}
             />
           </div>
@@ -232,7 +212,7 @@ export default function MapperConsents({ page }: MapperConsentsProps) {
             value={currentConsentValue}
             onChange={(event) => {
               setCurrentConsentValue(event.target.value);
-              setPage(1, true);
+              setCurrentPage(1);
             }}
           >
             {allConsentValues.map((status) => (
@@ -252,12 +232,12 @@ export default function MapperConsents({ page }: MapperConsentsProps) {
             value={search}
             onChange={(event) => {
               setSearch(event.currentTarget.value);
-              setPage(1, true);
+              setCurrentPage(1);
             }}
           />
         </div>
       </div>
-      <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
+      <PageSelector page={currentPage} pageCount={pageCount} setPage={setCurrentPage} />
       <table className='main-table'>
         <thead>
           <tr className='sticky'>
@@ -280,7 +260,7 @@ export default function MapperConsents({ page }: MapperConsentsProps) {
           </tr>
         </thead>
         <tbody>
-          {filteredConsents.slice((page - 1) * pageSize, page * pageSize).map((consent) => {
+          {filteredConsents.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((consent) => {
             return (
               <MapperConsent
                 key={consent.user_id}
@@ -291,7 +271,7 @@ export default function MapperConsents({ page }: MapperConsentsProps) {
           })}
         </tbody>
       </table>
-      <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
+      <PageSelector page={currentPage} pageCount={pageCount} setPage={setCurrentPage} />
     </>
   );
 }
