@@ -1,9 +1,9 @@
 import { ConsentValue, Role } from 'loved-bridge/tables';
 import { Fragment } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { BeatmapInline } from 'src/BeatmapInline';
-import { useOsuAuth } from 'src/osuAuth';
+import { BeatmapInline } from '../BeatmapInline';
 import type { IMapperConsent } from '../interfaces';
+import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
 import { UserInline } from '../UserInline';
 import MapperConsentEditor from './MapperConsentEditor';
@@ -29,7 +29,6 @@ const messages = defineMessages({
     defaultMessage: 'Notes',
     description: '[Mapper consents] Mapper beatmapset consents table header',
   },
-
   no: {
     defaultMessage: 'No',
     description: '[General] Boolean',

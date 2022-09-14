@@ -14,11 +14,11 @@ import { dateFromString } from '../date-format';
 import Help from '../Help';
 import type { IReview, ISubmission } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
+import PageSelector from '../PageSelector';
 import useTitle from '../useTitle';
 import type { ToggleableColumn, ToggleableColumnsState } from './helpers';
 import { aggregateReviewScore, beatmapsetNotAllowed, toggleableColumns } from './helpers';
 import type { SubmittedBeatmapset } from './interfaces';
-import PageSelector from '../components/PageSelector';
 import SortButton from './SortButton';
 import SubmissionBeatmapset from './SubmissionBeatmapset';
 

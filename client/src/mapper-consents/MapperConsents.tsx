@@ -2,9 +2,9 @@ import { ConsentValue, Role } from 'loved-bridge/tables';
 import { useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { apiErrorMessage, getMapperConsents, useApi } from '../api';
-import PageSelector from '../components/PageSelector';
 import type { IMapperConsent, IUser } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
+import PageSelector from '../PageSelector';
 import { hasRole } from '../permissions';
 import MapperConsent, { consentMap } from './MapperConsent';
 import MapperConsentAdder from './MapperConsentAdder';
@@ -12,29 +12,12 @@ import MapperConsentEditor from './MapperConsentEditor';
 
 const messages = defineMessages({
   consent: {
-    defaultMessage: 'Mapper consent:',
+    defaultMessage: 'Consent:',
     description: '[Mapper consents] Selector to change mapper consent',
-  },
-
-  no: {
-    defaultMessage: 'No',
-    description: '[General] Boolean',
-  },
-  yes: {
-    defaultMessage: 'Yes',
-    description: '[General] Boolean',
   },
   any: {
     defaultMessage: 'Any',
     description: '[General] Selector option indicating that any of the choices are valid',
-  },
-  noReply: {
-    defaultMessage: 'No reply',
-    description: '[Mapper consents] Mapper consent shown in mapper consents table',
-  },
-  unreachable: {
-    defaultMessage: 'Unreachable',
-    description: '[Mapper consents] Mapper consent shown in mapper consents table',
   },
 });
 
@@ -183,15 +166,13 @@ export default function MapperConsents() {
               </tr>
             </thead>
             <tbody>
-              {filteredConsents.slice((page - 1) * pageSize, page * pageSize).map((consent) => {
-                return (
-                  <MapperConsent
-                    key={consent.user_id}
-                    consent={consent}
-                    onConsentUpdate={onConsentUpdate}
-                  />
-                );
-              })}
+              {filteredConsents.slice((page - 1) * pageSize, page * pageSize).map((consent) => (
+                <MapperConsent
+                  key={consent.user_id}
+                  consent={consent}
+                  onConsentUpdate={onConsentUpdate}
+                />
+              ))}
             </tbody>
           </table>
           <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
