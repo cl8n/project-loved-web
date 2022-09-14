@@ -1,4 +1,5 @@
 import { GameMode, gameModeLongName } from 'loved-bridge/beatmaps/gameMode';
+import type { NominationDescriptionEdit } from 'loved-bridge/tables';
 import {
   AssigneeType,
   DescriptionState,
@@ -79,7 +80,7 @@ export function Picks() {
   const [roundInfo, roundInfoError, setRoundInfo] = useApi(getNominations, [roundId]);
   useTitle(roundInfo == null ? `Round #${roundId}` : roundInfo.round.name);
   const assigneesApi = useApi(getAssignees, [], {
-    condition: hasRole(authUser, [Role.news, Role.metadata, Role.moderator]),
+    condition: hasRole(authUser, [Role.newsAuthor, Role.metadata, Role.moderator]),
   });
   const captainsApi = useApi(getCaptains, [], {
     condition: hasRole(authUser, Role.captain),
@@ -215,11 +216,11 @@ export function Picks() {
 
   const canAdd = (gameMode: GameMode) =>
     !round.done && !nominationsLocked(gameMode) && hasRole(authUser, Role.captain, gameMode);
-  const canEditRound = !round.done && hasRole(authUser, Role.news);
+  const canEditRound = !round.done && hasRole(authUser, Role.newsAuthor);
   const canLock = (gameMode: GameMode) =>
     !round.done &&
     nominationsByGameMode[gameMode].length > 0 &&
-    (hasRole(authUser, Role.news) || hasRole(authUser, Role.captain, gameMode));
+    (hasRole(authUser, Role.newsAuthor) || hasRole(authUser, Role.captain, gameMode));
   const canOrder = (gameMode: GameMode) =>
     canAdd(gameMode) && nominationsByGameMode[gameMode].length > 1;
 
@@ -484,12 +485,12 @@ function Nomination({
     !round.done &&
     !(failedVoting && !metadataAssigned) &&
     !metadataDone &&
-    hasRole(authUser, [Role.metadata, Role.news]);
+    hasRole(authUser, [Role.metadata, Role.newsAuthor]);
   const canAssignModeration =
     !round.done &&
     !(failedVoting && !moderationAssigned) &&
     !moderationDone &&
-    hasRole(authUser, [Role.moderator, Role.news]);
+    hasRole(authUser, [Role.moderator, Role.newsAuthor]);
   const canDelete =
     !round.done &&
     !locked &&
@@ -500,7 +501,7 @@ function Nomination({
   const canEditDescription =
     !round.done &&
     ((!descriptionDone && hasRole(authUser, Role.captain, nomination.game_mode)) ||
-      (descriptionStarted && hasRole(authUser, Role.news)));
+      (descriptionStarted && hasRole(authUser, Role.newsEditor)));
   const canEditDifficulties =
     !round.done &&
     !locked &&
@@ -513,7 +514,7 @@ function Nomination({
       authUser,
       nomination.metadata_assignees.map((a) => a.id),
     ) ||
-      hasRole(authUser, Role.news));
+      hasRole(authUser, Role.newsAuthor));
   const canEditModeration =
     !round.done &&
     !failedVoting &&
@@ -664,6 +665,7 @@ function Nomination({
       <Description
         author={nomination.description_author}
         canEdit={canEditDescription}
+        edits={nomination.description_edits}
         nominationId={nomination.id}
         onNominationUpdate={onNominationUpdate}
         text={nomination.description}
@@ -1028,6 +1030,7 @@ function GodMenu({ nomination, onNominationUpdate }: GodMenuProps) {
 interface DescriptionProps {
   author?: IUser;
   canEdit: boolean;
+  edits: (NominationDescriptionEdit & { editor: IUser })[];
   nominationId: number;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   text?: string;
@@ -1036,6 +1039,7 @@ interface DescriptionProps {
 function Description({
   author,
   canEdit,
+  edits,
   nominationId,
   onNominationUpdate,
   text,
@@ -1058,6 +1062,10 @@ function Description({
       .catch(alertApiErrorMessage)
       .finally(() => setEditing(false));
   };
+
+  const editors = edits
+    .map((edit) => edit.editor)
+    .filter((u1, i, all) => u1.id !== author?.id && all.findIndex((u2) => u1.id === u2.id) === i);
 
   return editing ? (
     <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
@@ -1094,6 +1102,12 @@ function Description({
         <>
           <div style={{ marginBottom: '0.25em' }}>
             Description by <UserInline user={author! /* TODO: type properly */} />
+            {editors.length > 0 && (
+              <>
+                {' (edited by '}
+                <ListInline array={editors} render={(user) => <UserInline user={user} />} />)
+              </>
+            )}
             {canEdit && (
               <>
                 {' — '}

@@ -81,6 +81,7 @@ db.initialize().then(() => {
       cookie: {
         httpOnly: true,
         maxAge: 2592000000, // 30 days
+        sameSite: 'lax',
         secure: config.httpsAlways,
       },
       name: 'loved_sid',
@@ -297,7 +298,9 @@ db.initialize().then(() => {
   app.use(((error, _request, response, _next) => {
     systemLog(error, SyslogLevel.err);
 
-    response.status(500).json({ error: 'Server error' });
+    if (!response.headersSent) {
+      response.status(500).json({ error: 'Server error' });
+    }
   }) as ErrorRequestHandler);
 
   const httpServer = app.listen(config.port);

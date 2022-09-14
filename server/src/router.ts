@@ -8,6 +8,7 @@ import type {
   Log,
   Nomination,
   NominationAssignee,
+  NominationDescriptionEdit,
   Poll,
   Round,
   RoundGameMode,
@@ -50,7 +51,6 @@ export default router;
 
 // TODO: rethink guards
 
-//#region captain
 router.get(
   '/captains',
   isCaptainMiddleware,
@@ -184,6 +184,25 @@ router.get(
       ),
       'nomination_id',
     );
+    const descriptionEditsByNominationId = groupBy<
+      Nomination['id'],
+      NominationDescriptionEdit & { editor: User }
+    >(
+      await db.queryWithGroups<NominationDescriptionEdit & { editor: User }>(
+        `
+        SELECT nomination_description_edits.*, editors:editor
+        FROM nominations
+        INNER JOIN nomination_description_edits
+          ON nominations.id = nomination_description_edits.nomination_id
+        INNER JOIN users AS editors
+          ON nomination_description_edits.editor_id = editors.id
+        WHERE nominations.round_id = ?
+        ORDER BY nomination_description_edits.edited_at ASC
+      `,
+        [req.query.roundId],
+      ),
+      'nomination_id',
+    );
     const includesByNominationId = groupBy<
       Nomination['id'],
       {
@@ -239,6 +258,7 @@ router.get(
       beatmapset: Beatmapset;
       beatmapset_creators?: User[];
       description_author: User | null;
+      description_edits?: (NominationDescriptionEdit & { editor: User })[];
       metadata_assignees?: User[];
       moderator_assignees?: User[];
       nominators?: User[];
@@ -312,6 +332,7 @@ router.get(
 
         return a.name.localeCompare(b.name);
       });
+      nomination.description_edits = descriptionEditsByNominationId[nomination.id] || [];
       nomination.nominators = nominatorsByNominationId[nomination.id] || [];
 
       const assignees = assigneesByNominationId[nomination.id] || [];
@@ -574,6 +595,7 @@ router.post(
       beatmapset?: Beatmapset;
       beatmapset_creators?: User[];
       description_author: null;
+      description_edits?: [];
       metadata_assignees?: [];
       moderator_assignees?: [];
       nominators?: User[];
@@ -620,6 +642,7 @@ router.post(
 
       return a.name.localeCompare(b.name);
     });
+    nomination.description_edits = [];
     nomination.nominators = nominators;
     nomination.metadata_assignees = [];
     nomination.moderator_assignees = [];
@@ -668,7 +691,7 @@ router.post(
 
     if (
       !(prevState !== DescriptionState.reviewed && hasRole(Role.captain, gameMode)) &&
-      !(prevDescription != null && hasRole(Role.news))
+      !(prevDescription != null && hasRole(Role.newsEditor))
     ) {
       return res.status(403).send();
     }
@@ -677,28 +700,46 @@ router.post(
       return res.status(403).json({ error: "Can't remove description as editor" });
     }
 
-    await db.query(
-      `
-        UPDATE nominations
-        SET description = ?, description_author_id = ?, description_state = ?
-        WHERE id = ?
-      `,
-      [
-        cleanNominationDescription(req.body.description),
-        req.body.description == null
-          ? null
-          : prevDescription == null
-          ? res.typedLocals.user.id
-          : prevAuthorId,
-        hasRole(Role.news) && prevDescription != null && req.body.description != null
-          ? DescriptionState.reviewed
-          : DescriptionState.notReviewed,
-        req.body.nominationId,
-      ],
-    );
+    const description = cleanNominationDescription(req.body.description);
+
+    await db.transact(async (connection) => {
+      await connection.query(
+        `
+          UPDATE nominations
+          SET description = ?, description_author_id = ?, description_state = ?
+          WHERE id = ?
+        `,
+        [
+          description,
+          description == null
+            ? null
+            : prevDescription == null
+            ? res.typedLocals.user.id
+            : prevAuthorId,
+          hasRole(Role.newsEditor) && prevDescription != null && description != null
+            ? DescriptionState.reviewed
+            : DescriptionState.notReviewed,
+          req.body.nominationId,
+        ],
+      );
+
+      if (description !== prevDescription) {
+        await connection.query(`INSERT INTO nomination_description_edits SET ?`, [
+          {
+            description,
+            edited_at: new Date(),
+            editor_id: res.typedLocals.user.id,
+            nomination_id: req.body.nominationId,
+          },
+        ]);
+      }
+    });
 
     const nomination = await db.queryOneWithGroups<
-      Nomination & { description_author: User | null }
+      Nomination & {
+        description_author: User | null;
+        description_edits?: (NominationDescriptionEdit & { editor: User })[];
+      }
     >(
       `
         SELECT nominations.*, description_authors:description_author
@@ -706,6 +747,24 @@ router.post(
         LEFT JOIN users AS description_authors
           ON nominations.description_author_id = description_authors.id
         WHERE nominations.id = ?
+      `,
+      [req.body.nominationId],
+    );
+
+    if (nomination == null) {
+      throw 'Missing nomination on description update';
+    }
+
+    nomination.description_edits = await db.queryWithGroups<
+      NominationDescriptionEdit & { editor: User }
+    >(
+      `
+        SELECT nomination_description_edits.*, editors:editor
+        FROM nomination_description_edits
+        INNER JOIN users AS editors
+          ON nomination_description_edits.editor_id = editors.id
+        WHERE nomination_description_edits.nomination_id = ?
+        ORDER BY nomination_description_edits.edited_at ASC
       `,
       [req.body.nominationId],
     );
@@ -719,7 +778,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const hasRole = currentUserRoles(req, res);
 
-    if (!hasRole([Role.metadata, Role.news])) {
+    if (!hasRole([Role.metadata, Role.newsAuthor])) {
       return res.status(403).json({ error: 'Must be a metadata checker or news author' });
     }
 
@@ -881,6 +940,9 @@ router.delete(
       await connection.query('DELETE FROM nomination_assignees WHERE nomination_id = ?', [
         req.query.nominationId,
       ]);
+      await connection.query('DELETE FROM nomination_description_edits WHERE nomination_id = ?', [
+        req.query.nominationId,
+      ]);
       await connection.query('DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?', [
         req.query.nominationId,
       ]);
@@ -963,7 +1025,7 @@ router.post(
 
     const hasRole = currentUserRoles(req, res);
 
-    if (!hasRole(Role.news) && !hasRole(Role.captain, req.body.gameMode)) {
+    if (!hasRole(Role.newsAuthor) && !hasRole(Role.captain, req.body.gameMode)) {
       return res.status(403).json({ error: 'Must be a news author or captain for this game mode' });
     }
 
@@ -1007,7 +1069,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const hasRole = currentUserRoles(req, res);
 
-    if (!hasRole([Role.captain, Role.news], undefined, true)) {
+    if (!hasRole([Role.captain, Role.newsAuthor], undefined, true)) {
       return res.status(403).json({ error: 'Must be a captain or news author' });
     }
 
@@ -1024,7 +1086,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const hasRole = currentUserRoles(req, res);
 
-    if (!hasRole([Role.captain, Role.news], undefined, true)) {
+    if (!hasRole([Role.captain, Role.newsAuthor], undefined, true)) {
       return res.status(403).json({ error: 'Must be a captain or news author' });
     }
 
@@ -1039,9 +1101,6 @@ router.get(
     redirectToAuth(req, res, ['forum.write', 'identify', 'public']);
   }),
 );
-//#endregion
-
-//#region admin
 
 router.post('/add-round', isNewsAuthorMiddleware, (_, res) => {
   db.transact(async (connection) => {
@@ -1122,7 +1181,7 @@ router.get(
             AND user_roles.alumni = 0
           ORDER BY users.name ASC
         `,
-        [Role.news],
+        [Role.newsAuthor],
       ),
     );
   }),
@@ -1205,8 +1264,8 @@ router.post(
     const hasRole = currentUserRoles(req, res);
     const typeString = typeStrings[req.body.type];
 
-    if (!hasRole([Role.news, typeRoles[req.body.type]])) {
-      return res.status(403).json({ error: `Must have ${typeString} or news role` });
+    if (!hasRole([Role.newsAuthor, typeRoles[req.body.type]])) {
+      return res.status(403).json({ error: `Must have ${typeString} or news author role` });
     }
 
     await db.transact(async (connection) => {
@@ -1291,10 +1350,38 @@ router.post(
       return res.status(422).json({ error: 'Invalid user ID' });
     }
 
+    if (
+      req.body.roles.some(
+        (role) => role.alumni && (role.role_id === Role.admin || role.role_id === Role.spectator),
+      )
+    ) {
+      return res.status(422).json({ error: 'Cannot set alumni status for admin or spectator' });
+    }
+
+    if (
+      req.body.roles.some((role) => !role.alumni && role.role_id === Role.newsAuthor) &&
+      !req.body.roles.some((role) => !role.alumni && role.role_id === Role.newsEditor)
+    ) {
+      return res.status(422).json({ error: 'Cannot set news author without news editor' });
+    }
+
     const user = await db.queryOne<User>('SELECT * FROM users WHERE id = ?', [req.body.userId]);
 
     if (user == null) {
       return res.status(404).json({ error: 'User not found' });
+    }
+
+    const userRoles = await db.query<UserRole>('SELECT * FROM user_roles WHERE user_id = ?', [
+      user.id,
+    ]);
+
+    if (
+      !userRoles.some((role) => !role.alumni && role.role_id === Role.admin) &&
+      req.body.roles.some((role) => !role.alumni && role.role_id === Role.admin)
+    ) {
+      return res.status(422).json({
+        error: 'Cannot add admin role. If you are a developer, use the "init-user" script instead',
+      });
     }
 
     const logActor = {
@@ -1309,9 +1396,6 @@ router.post(
       id: user.id,
       name: user.name,
     };
-    const userRoles = await db.query<UserRole>('SELECT * FROM user_roles WHERE user_id = ?', [
-      user.id,
-    ]);
 
     await db.transact(async (connection) => {
       for (const newRole of req.body.roles as Omit<UserRole, 'user_id'>[]) {
@@ -1524,4 +1608,3 @@ router.get(
     res.json(await db.query<Log>('SELECT * FROM logs ORDER BY id DESC'));
   }),
 );
-//#endregion

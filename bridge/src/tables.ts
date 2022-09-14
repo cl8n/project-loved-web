@@ -68,10 +68,11 @@ export enum Role {
   captain,
   metadata,
   moderator,
-  news,
+  newsEditor,
   developer,
   spectator,
   video,
+  newsAuthor,
 }
 
 export interface Beatmap {
@@ -156,6 +157,14 @@ export interface NominationAssignee {
   assignee_id: number;
   nomination_id: number;
   type: AssigneeType;
+}
+
+export interface NominationDescriptionEdit {
+  id: number;
+  description: string | null;
+  edited_at: TableDateType;
+  editor_id: number;
+  nomination_id: number;
 }
 
 export interface NominationExcludedBeatmap {

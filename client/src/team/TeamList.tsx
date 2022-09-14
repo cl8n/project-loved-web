@@ -23,7 +23,7 @@ const messages = defineMessages({
     defaultMessage: 'Moderators',
     description: '[Team] Team listing title',
   },
-  news: {
+  newsEditor: {
     defaultMessage: 'News editors',
     description: '[Team] Team listing title',
   },
@@ -51,7 +51,7 @@ export default function TeamList({ current, teamApi }: TeamListProps) {
   }
 
   const teamUsers = current ? team.current : team.alumni;
-  const newsUsers = teamUsers[Role.news]?.[-1];
+  const newsEditorUsers = teamUsers[Role.newsEditor]?.[-1];
   const metadataUsers = teamUsers[Role.metadata]?.[-1];
   const moderatorUsers = teamUsers[Role.moderator]?.[-1];
   const developerUsers = teamUsers[Role.developer]?.[-1];
@@ -74,8 +74,8 @@ export default function TeamList({ current, teamApi }: TeamListProps) {
           )
         );
       })}
-      {newsUsers != null && (
-        <UserList title={intl.formatMessage(messages.news)} users={newsUsers} />
+      {newsEditorUsers != null && (
+        <UserList title={intl.formatMessage(messages.newsEditor)} users={newsEditorUsers} />
       )}
       {metadataUsers != null && (
         <UserList title={intl.formatMessage(messages.metadata)} users={metadataUsers} />

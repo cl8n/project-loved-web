@@ -12,10 +12,11 @@ export const roleNames = {
   [Role.captain]: 'Captain',
   [Role.metadata]: 'Metadata reviewer',
   [Role.moderator]: 'Moderator',
-  [Role.news]: 'News editor',
+  [Role.newsEditor]: 'News editor',
   [Role.developer]: 'Developer',
   [Role.spectator]: 'Spectator',
   [Role.video]: 'Video editor',
+  [Role.newsAuthor]: 'News author',
 } as const;
 
 function hasRole(user: Readonly<IUserWithRoles>, roleIds: readonly Role[]): boolean {

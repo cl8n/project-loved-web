@@ -9,9 +9,10 @@ const normalRoles = [
   Role.captain,
   Role.metadata,
   Role.moderator,
-  Role.news,
+  Role.newsEditor,
   Role.developer,
   Role.video,
+  Role.newsAuthor,
 ] as const;
 
 function hasRole(user: Readonly<UserWithRoles>, roleIds: readonly Role[]): boolean {
@@ -107,4 +108,4 @@ export const isAdminMiddleware = hasRoleMiddleware([], 'Must be an admin');
 export const isAnyRoleMiddleware = hasRoleMiddleware(normalRoles, 'Must have a role');
 export const isCaptainMiddleware = hasRoleMiddleware([Role.captain], 'Must be a captain');
 export const isModeratorMiddleware = hasRoleMiddleware([Role.moderator], 'Must be a moderator');
-export const isNewsAuthorMiddleware = hasRoleMiddleware([Role.news], 'Must be a news author');
+export const isNewsAuthorMiddleware = hasRoleMiddleware([Role.newsAuthor], 'Must be a news author');

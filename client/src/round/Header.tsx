@@ -54,7 +54,7 @@ export default function Header({
       {editing ? (
         <RoundEditor close={() => setEditing(false)} onRoundUpdate={onRoundUpdate} round={round} />
       ) : (
-        (!showTodo || hasRole(authUser, Role.news, undefined, true)) && (
+        (!showTodo || hasRole(authUser, Role.newsAuthor, undefined, true)) && (
           <>
             <span>
               News post by <UserInline user={round.news_author} />

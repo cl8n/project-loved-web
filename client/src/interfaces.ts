@@ -4,6 +4,7 @@ import type {
   DescriptionState,
   MetadataState,
   ModeratorState,
+  NominationDescriptionEdit,
   Role,
 } from 'loved-bridge/tables';
 
@@ -54,6 +55,7 @@ export interface INomination {
   beatmapset_creators: IUser[];
   description?: string;
   description_author?: IUser;
+  description_edits: (NominationDescriptionEdit & { editor: IUser })[];
   description_state: DescriptionState;
   game_mode: GameMode;
   metadata_assignees: IUser[];
