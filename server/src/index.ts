@@ -298,7 +298,9 @@ db.initialize().then(() => {
   app.use(((error, _request, response, _next) => {
     systemLog(error, SyslogLevel.err);
 
-    response.status(500).json({ error: 'Server error' });
+    if (!response.headersSent) {
+      response.status(500).json({ error: 'Server error' });
+    }
   }) as ErrorRequestHandler);
 
   const httpServer = app.listen(config.port);
