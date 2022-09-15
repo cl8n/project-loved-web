@@ -106,22 +106,30 @@ export default function MapperConsents() {
           <label htmlFor='consentValue'>{intl.formatMessage(messages.consent)}</label>
           <select
             name='consentValue'
-            value={consentValue ?? undefined}
+            value={consentValue ?? 'null'}
             onChange={(event) => {
-              const newConsentValue = event.currentTarget.value
-                ? parseInt(event.currentTarget.value, 10)
-                : null;
-              setConsentValue(Number.isNaN(newConsentValue) ? 'any' : newConsentValue);
+              setConsentValue(
+                event.currentTarget.value === 'any'
+                  ? 'any'
+                  : event.currentTarget.value === 'null'
+                  ? null
+                  : parseInt(event.currentTarget.value, 10),
+              );
               setPage(1);
             }}
           >
             <option value='any'>{intl.formatMessage(messages.any)}</option>
-            {[ConsentValue.yes, ConsentValue.no, ConsentValue.unreachable].map((consentValue) => (
-              <option key={consentValue} value={consentValue}>
-                {intl.formatMessage(consentMap[consentValue][0])}
-              </option>
-            ))}
-            <option value=''>{intl.formatMessage(consentMap['null'][0])}</option>
+            {[ConsentValue.yes, ConsentValue.no, ConsentValue.unreachable, 'null' as const].map(
+              (consentValue) => (
+                <option
+                  key={consentValue}
+                  className={consentMap[consentValue][1]}
+                  value={consentValue}
+                >
+                  {intl.formatMessage(consentMap[consentValue][0])}
+                </option>
+              ),
+            )}
           </select>
           <FormattedMessage
             defaultMessage='Search:'
