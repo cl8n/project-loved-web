@@ -41,12 +41,11 @@ export default function MapperConsents() {
     return <span>Loading mapper consents...</span>;
   }
 
-  const resetValues = () => {
+  const resetFilters = () => {
     setConsentValue('any');
     setSearch('');
     setPage(1);
   };
-
   const onConsentAdd = (user: IUser) => {
     setConsents((prev) => {
       const consents = [...prev!];
@@ -65,9 +64,8 @@ export default function MapperConsents() {
         ...consents.filter((consent) => consent.user_id !== user.id),
       ];
     });
-    resetValues();
+    resetFilters();
   };
-
   const onConsentUpdate = (consent: IMapperConsent) => {
     setConsents((prev) => {
       const consents = [...prev!];
@@ -77,11 +75,11 @@ export default function MapperConsents() {
         Object.assign(existingConsent, consent);
       } else {
         consents.unshift(consent);
+        resetFilters();
       }
 
       return consents;
     });
-    resetValues();
   };
 
   const filteredConsents = consents.filter(
