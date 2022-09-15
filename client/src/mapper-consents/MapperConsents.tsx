@@ -1,97 +1,35 @@
 import { ConsentValue, Role } from 'loved-bridge/tables';
-import { Fragment } from 'react';
+import { useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { apiErrorMessage, getMapperConsents, useApi } from '../api';
-import { BeatmapInline } from '../BeatmapInline';
 import type { IMapperConsent, IUser } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
+import PageSelector from '../PageSelector';
 import { hasRole } from '../permissions';
-import { UserInline } from '../UserInline';
+import MapperConsent, { consentMap } from './MapperConsent';
 import MapperConsentAdder from './MapperConsentAdder';
 import MapperConsentEditor from './MapperConsentEditor';
 
 const messages = defineMessages({
-  noReply: {
-    defaultMessage: 'No reply',
-    description: '[Mapper consents] Mapper consent shown in mapper consents table',
-  },
-  unreachable: {
-    defaultMessage: 'Unreachable',
-    description: '[Mapper consents] Mapper consent shown in mapper consents table',
-  },
-  beatmapset: {
-    defaultMessage: 'Beatmapset',
-    description: '[Mapper consents] Mapper beatmapset consents table header',
-  },
   consent: {
-    defaultMessage: 'Consent',
-    description: '[Mapper consents] Mapper beatmapset consents table header',
+    defaultMessage: 'Consent:',
+    description: '[Mapper consents] Selector to change mapper consent',
   },
-  notes: {
-    defaultMessage: 'Notes',
-    description: '[Mapper consents] Mapper beatmapset consents table header',
-  },
-
-  no: {
-    defaultMessage: 'No',
-    description: '[General] Boolean',
-  },
-  yes: {
-    defaultMessage: 'Yes',
-    description: '[General] Boolean',
+  any: {
+    defaultMessage: 'Any',
+    description: '[General] Selector option indicating that any of the choices are valid',
   },
 });
-export const consentMap = {
-  null: [messages.noReply, 'pending'],
-  [ConsentValue.no]: [messages.no, 'error'],
-  [ConsentValue.yes]: [messages.yes, 'success'],
-  [ConsentValue.unreachable]: [messages.unreachable, 'pending'],
-} as const;
 
-function ConsentCell({ consent }: { consent: ConsentValue | boolean | null }) {
-  const intl = useIntl();
-
-  if (consent === true) {
-    consent = ConsentValue.yes;
-  } else if (consent === false) {
-    consent = ConsentValue.no;
-  }
-
-  const [consentMessage, className] = consentMap[consent ?? 'null'];
-
-  return <td className={className}>{intl.formatMessage(consentMessage)}</td>;
-}
-
-function MapperBeatmapsetConsents({ consent }: { consent: IMapperConsent }) {
-  const intl = useIntl();
-
-  return (
-    <table className='beatmapset-consents'>
-      <thead>
-        <tr>
-          <th>{intl.formatMessage(messages.beatmapset)}</th>
-          <th>{intl.formatMessage(messages.consent)}</th>
-          <th>{intl.formatMessage(messages.notes)}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {consent.beatmapset_consents.map((beatmapsetConsent) => (
-          <tr key={beatmapsetConsent.beatmapset.id}>
-            <td>
-              <BeatmapInline beatmapset={beatmapsetConsent.beatmapset} />
-            </td>
-            <ConsentCell consent={beatmapsetConsent.consent} />
-            <td>{beatmapsetConsent.consent_reason}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
+const pageSize = 50;
 
 export default function MapperConsents() {
   const authUser = useOsuAuth().user;
   const [consents, consentError, setConsents] = useApi(getMapperConsents);
+  const [consentValue, setConsentValue] = useState<ConsentValue | null | 'any'>('any');
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const intl = useIntl();
 
   if (consentError != null) {
     return (
@@ -103,6 +41,11 @@ export default function MapperConsents() {
     return <span>Loading mapper consents...</span>;
   }
 
+  const resetFilters = () => {
+    setConsentValue('any');
+    setSearch('');
+    setPage(1);
+  };
   const onConsentAdd = (user: IUser) => {
     setConsents((prev) => {
       const consents = [...prev!];
@@ -121,6 +64,7 @@ export default function MapperConsents() {
         ...consents.filter((consent) => consent.user_id !== user.id),
       ];
     });
+    resetFilters();
   };
   const onConsentUpdate = (consent: IMapperConsent) => {
     setConsents((prev) => {
@@ -131,11 +75,19 @@ export default function MapperConsents() {
         Object.assign(existingConsent, consent);
       } else {
         consents.unshift(consent);
+        resetFilters();
       }
 
       return consents;
     });
   };
+
+  const filteredConsents = consents.filter(
+    (consent) =>
+      consent.mapper.name.toLowerCase().includes(search.toLowerCase()) &&
+      (consentValue === 'any' || consent.consent === consentValue),
+  );
+  const pageCount = Math.ceil(filteredConsents.length / pageSize);
 
   return (
     <>
@@ -149,51 +101,91 @@ export default function MapperConsents() {
           {hasRole(authUser, Role.captain) && <MapperConsentAdder onConsentAdd={onConsentAdd} />}
         </div>
       )}
-      <table className='main-table'>
-        <thead>
-          <tr className='sticky'>
-            {authUser != null && hasRole(authUser, Role.captain) && <th />}
-            <FormattedMessage
-              defaultMessage='Mapper'
-              description='[Mapper consents] Mapper consents table header'
-              tagName='th'
-            />
-            <FormattedMessage
-              defaultMessage='Consent'
-              description='[Mapper consents] Mapper consents table header'
-              tagName='th'
-            />
-            <FormattedMessage
-              defaultMessage='Notes'
-              description='[Mapper consents] Mapper consents table header'
-              tagName='th'
-            />
-          </tr>
-        </thead>
-        <tbody>
-          {consents.map((consent) => (
-            <Fragment key={consent.user_id}>
-              <tr>
-                {authUser != null && hasRole(authUser, Role.captain) && (
-                  <MapperConsentEditor consent={consent} onConsentUpdate={onConsentUpdate} />
-                )}
-                <td>
-                  <UserInline user={consent.mapper} />
-                </td>
-                <ConsentCell consent={consent.consent} />
-                <td className='normal-wrap fix-column-layout'>{consent.consent_reason}</td>
+      <div className='block-margin'>
+        <div className='flex-left'>
+          <label htmlFor='consentValue'>{intl.formatMessage(messages.consent)}</label>
+          <select
+            name='consentValue'
+            value={consentValue ?? 'null'}
+            onChange={(event) => {
+              setConsentValue(
+                event.currentTarget.value === 'any'
+                  ? 'any'
+                  : event.currentTarget.value === 'null'
+                  ? null
+                  : parseInt(event.currentTarget.value, 10),
+              );
+              setPage(1);
+            }}
+          >
+            <option value='any'>{intl.formatMessage(messages.any)}</option>
+            {[ConsentValue.yes, ConsentValue.no, ConsentValue.unreachable, 'null' as const].map(
+              (consentValue) => (
+                <option
+                  key={consentValue}
+                  className={consentMap[consentValue][1]}
+                  value={consentValue}
+                >
+                  {intl.formatMessage(consentMap[consentValue][0])}
+                </option>
+              ),
+            )}
+          </select>
+          <FormattedMessage
+            defaultMessage='Search:'
+            description='[Submissions] Title for submissions search input'
+            tagName='span'
+          />
+          <input
+            type='search'
+            className='flex-grow'
+            value={search}
+            onChange={(event) => {
+              setSearch(event.currentTarget.value);
+              setPage(1);
+            }}
+          />
+        </div>
+      </div>
+      {filteredConsents.length > 0 ? (
+        <>
+          <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
+          <table className='main-table'>
+            <thead>
+              <tr className='sticky'>
+                {authUser != null && hasRole(authUser, Role.captain) && <th />}
+                <FormattedMessage
+                  defaultMessage='Mapper'
+                  description='[Mapper consents] Mapper consents table header'
+                  tagName='th'
+                />
+                <FormattedMessage
+                  defaultMessage='Consent'
+                  description='[Mapper consents] Mapper consents table header'
+                  tagName='th'
+                />
+                <FormattedMessage
+                  defaultMessage='Notes'
+                  description='[Mapper consents] Mapper consents table header'
+                  tagName='th'
+                />
               </tr>
-              {consent.beatmapset_consents.length > 0 && (
-                <tr>
-                  <td colSpan={4}>
-                    <MapperBeatmapsetConsents consent={consent} />
-                  </td>
-                </tr>
-              )}
-            </Fragment>
-          ))}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {filteredConsents.slice((page - 1) * pageSize, page * pageSize).map((consent) => (
+                <MapperConsent
+                  key={consent.user_id}
+                  consent={consent}
+                  onConsentUpdate={onConsentUpdate}
+                />
+              ))}
+            </tbody>
+          </table>
+          <PageSelector page={page} pageCount={pageCount} setPage={setPage} />
+        </>
+      ) : (
+        <b>No mapper consents to show!</b>
+      )}
     </>
   );
 }

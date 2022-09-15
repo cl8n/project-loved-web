@@ -1,10 +1,12 @@
+import type { Dispatch } from 'react';
+
 const pageOptionsAround = 3;
 const pageOptionsTotal = pageOptionsAround * 2 + 1;
 
 interface PageSelectorProps {
   page: number;
   pageCount: number;
-  setPage: (page: number) => void;
+  setPage: Dispatch<number>;
 }
 
 export default function PageSelector({ page, pageCount, setPage }: PageSelectorProps) {
