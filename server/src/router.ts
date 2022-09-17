@@ -41,6 +41,7 @@ import {
   isGameMode,
   isInteger,
   isIntegerArray,
+  isLogTypeArray,
   isRecord,
   isStringArray,
   isUserRoleWithoutUserIdArray,
@@ -1602,9 +1603,43 @@ router.put(
   }),
 );
 
-router.get(
+// Not semantically POST but I want request body.
+router.post(
   '/logs',
-  asyncHandler(async (_, res) => {
-    res.json(await db.query<Log>('SELECT * FROM logs ORDER BY id DESC'));
+  asyncHandler(async (req, res) => {
+    if (!isInteger(req.body.page) || req.body.page < 1) {
+      return res.status(422).json({ error: 'Invalid page' });
+    }
+
+    if (!isLogTypeArray(req.body.types)) {
+      return res.status(422).json({ error: 'Invalid log types' });
+    }
+
+    const pageSize = 100;
+    const offset = (req.body.page - 1) * pageSize;
+    const skipWhere = req.body.types.length === 0;
+
+    res.json({
+      logs: await db.query<Log>(
+        `
+          SELECT *
+          FROM logs
+          ${skipWhere ? '' : 'WHERE type IN (?)'}
+          ORDER BY id DESC
+          LIMIT ? OFFSET ?
+        `,
+        skipWhere ? [pageSize, offset] : [req.body.types, pageSize, offset],
+      ),
+      pageSize,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      total: (await db.queryOne<{ count: number }>(
+        `
+          SELECT COUNT(*) AS count
+          FROM logs
+          ${skipWhere ? '' : 'WHERE type IN (?)'}
+        `,
+        skipWhere ? undefined : [req.body.types],
+      ))!.count,
+    });
   }),
 );

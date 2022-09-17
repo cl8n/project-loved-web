@@ -46,6 +46,10 @@ export function isLogType(type: unknown): type is LogType {
   return isNumericEnumValue(LogType, type);
 }
 
+export function isLogTypeArray(types: unknown): types is LogType[] {
+  return Array.isArray(types) && types.every(isLogType);
+}
+
 export function isMapperConsent(
   consent: unknown,
 ): consent is Pick<Consent, 'consent' | 'consent_reason' | 'user_id'> {

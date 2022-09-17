@@ -4,12 +4,13 @@ const pageOptionsAround = 3;
 const pageOptionsTotal = pageOptionsAround * 2 + 1;
 
 interface PageSelectorProps {
+  disabled?: boolean;
   page: number;
   pageCount: number;
   setPage: Dispatch<number>;
 }
 
-export default function PageSelector({ page, pageCount, setPage }: PageSelectorProps) {
+export default function PageSelector({ disabled, page, pageCount, setPage }: PageSelectorProps) {
   let startPage;
   let endPage;
 
@@ -35,26 +36,35 @@ export default function PageSelector({ page, pageCount, setPage }: PageSelectorP
 
   return (
     <div className='page-selector'>
-      <button type='button' disabled={page <= 1} onClick={() => setPage(1)}>
+      <button type='button' disabled={disabled || page <= 1} onClick={() => setPage(1)}>
         ◀◀
       </button>
-      <button type='button' disabled={page <= 1} onClick={() => setPage(page - 1)}>
+      <button type='button' disabled={disabled || page <= 1} onClick={() => setPage(page - 1)}>
         ◀
       </button>
       {pageCandidates.map((pageCandidate) => (
         <button
           key={pageCandidate}
           type='button'
+          disabled={disabled}
           className={pageCandidate === page ? 'selected' : undefined}
           onClick={() => setPage(pageCandidate)}
         >
           {pageCandidate}
         </button>
       ))}
-      <button type='button' disabled={page >= pageCount} onClick={() => setPage(page + 1)}>
+      <button
+        type='button'
+        disabled={disabled || page >= pageCount}
+        onClick={() => setPage(page + 1)}
+      >
         ▶
       </button>
-      <button type='button' disabled={page >= pageCount} onClick={() => setPage(pageCount)}>
+      <button
+        type='button'
+        disabled={disabled || page >= pageCount}
+        onClick={() => setPage(pageCount)}
+      >
         ▶▶
       </button>
     </div>

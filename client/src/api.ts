@@ -1,5 +1,12 @@
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
-import type { AssigneeType, Log, MetadataState, ModeratorState, Role } from 'loved-bridge/tables';
+import type {
+  AssigneeType,
+  Log,
+  LogType,
+  MetadataState,
+  ModeratorState,
+  Role,
+} from 'loved-bridge/tables';
 import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import type { ResponseError, Response as SuperAgentResponse } from 'superagent';
@@ -147,8 +154,11 @@ export function getSettings(): Response<ISettings> {
   return superagent.get('/api/settings');
 }
 
-export function getLogs(): Response<Log[]> {
-  return superagent.get('/api/logs');
+export function getLogs(
+  types: LogType[],
+  page: number,
+): Response<{ logs: Log[]; pageSize: number; total: number }> {
+  return superagent.post('/api/logs').send({ page, types });
 }
 
 export interface GetSubmissionsResponseBody {

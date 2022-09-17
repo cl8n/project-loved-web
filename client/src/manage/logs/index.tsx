@@ -21,38 +21,39 @@ const logTypeNames = {
   [LogType.extraTokenCreated]: 'Extra token create',
 };
 
-const logTypes = Object.values(LogType).filter(
+const allLogTypes = Object.values(LogType).filter(
   (logType) => typeof logType === 'number',
 ) as LogType[];
-const initialTypesVisible = logTypes.reduce(
-  (all, logType) => ({ ...all, [logType]: false }),
-  {} as Partial<Record<LogType, boolean>>,
-) as Record<LogType, boolean>;
 
 export default function Logs() {
   useTitle('Logs');
-  const [typesVisible, setTypesVisible] = useState(initialTypesVisible);
-
-  const setTypeVisible = (logType: LogType) => () =>
-    setTypesVisible((prev) => ({ ...prev, [logType]: !prev[logType] }));
+  const [logTypes, setLogTypes] = useState<Partial<Record<LogType, boolean>>>({});
+  const [page, setPage] = useState(1);
 
   return (
     <>
       <h1>Logs</h1>
       <div className='box log-type-list'>
-        {logTypes.map((logType) => (
+        {allLogTypes.map((logType) => (
           <div key={logType}>
             <input
               name={logType.toString()}
               type='checkbox'
-              checked={typesVisible[logType]}
-              onChange={setTypeVisible(logType)}
+              checked={logTypes[logType] ?? false}
+              onChange={() => {
+                setLogTypes((prev) => ({ ...prev, [logType]: !prev[logType] }));
+                setPage(1);
+              }}
             />
             <label htmlFor={logType.toString()}>{logTypeNames[logType]}</label>
           </div>
         ))}
       </div>
-      <LogList typesVisible={typesVisible} />
+      <LogList
+        logTypes={allLogTypes.filter((logType) => logTypes[logType])}
+        page={page}
+        setPage={setPage}
+      />
     </>
   );
 }
