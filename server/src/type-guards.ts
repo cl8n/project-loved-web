@@ -1,26 +1,29 @@
-import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
-import type {
-  AssigneeType,
-  Consent,
-  ConsentBeatmapset,
-  ConsentValue,
-  Role,
-  UserRole,
-} from 'loved-bridge/tables';
+import { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import type { Consent, ConsentBeatmapset, UserRole } from 'loved-bridge/tables';
+import { AssigneeType, ConsentValue, LogType, Role } from 'loved-bridge/tables';
 import type { ResponseError } from 'superagent';
 
+function isNumericEnumValue(
+  enumObject: Record<string, number | string>,
+  enumValue: unknown,
+): boolean {
+  return (
+    typeof enumValue === 'number' && Object.values(enumObject).some((value) => value === enumValue)
+  );
+}
+
 export function isAssigneeType(type: unknown): type is AssigneeType {
-  return isInteger(type) && type >= 0 && type <= 1;
+  return isNumericEnumValue(AssigneeType, type);
 }
 
 export function isConsentValue(consent: unknown): consent is ConsentValue | null {
   // Checking for exactly null to validate input
   // eslint-disable-next-line eqeqeq
-  return consent === null || (isInteger(consent) && consent >= 0 && consent <= 2);
+  return consent === null || isNumericEnumValue(ConsentValue, consent);
 }
 
 export function isGameMode(gameMode: unknown): gameMode is GameMode {
-  return isInteger(gameMode) && gameMode >= 0 && gameMode <= 3;
+  return isNumericEnumValue(GameMode, gameMode);
 }
 
 export function isGameModeArray(gameModes: unknown): gameModes is GameMode[] {
@@ -37,6 +40,10 @@ export function isInteger(integer: unknown): integer is number {
 
 export function isIntegerArray(integers: unknown): integers is number[] {
   return Array.isArray(integers) && integers.every(isInteger);
+}
+
+export function isLogType(type: unknown): type is LogType {
+  return isNumericEnumValue(LogType, type);
 }
 
 export function isMapperConsent(
@@ -111,7 +118,7 @@ export function isResultsRequestBody(body: unknown): body is {
 }
 
 export function isRoleId(roleId: unknown): roleId is Role {
-  return isInteger(roleId) && roleId >= 0 && roleId <= 8;
+  return isNumericEnumValue(Role, roleId);
 }
 
 export function isStringArray(strings: unknown): strings is string[] {
