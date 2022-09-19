@@ -350,6 +350,11 @@ footer {
   @include colors.darkTheme {
     color: var(--background);
   }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
 }
 
 .flex-bar {
