@@ -286,15 +286,6 @@ export default function SubmissionListingContainer() {
         description='[Submissions] Submissions table title'
         tagName='h1'
       />
-      <div className='warning-box'>
-        <FormattedMessage
-          defaultMessage='
-            This listing only includes submissions sent from this website. Entries from the old
-            Google sheets will be moved here soon, and then the Google sheets will be retired.
-          '
-          description='[Submissions] Warning box above submissions table'
-        />
-      </div>
       <div className='block-margin'>
         <div className='flex-left'>
           <label htmlFor='gameMode'>{intl.formatMessage(messages.gameMode)}</label>
