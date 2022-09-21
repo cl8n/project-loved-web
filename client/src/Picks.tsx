@@ -1075,7 +1075,7 @@ function Description({
       <DescriptionHistory
         author={author}
         edits={edits}
-        historyState={[showHistory, setShowHistory]}
+        showHistoryState={[showHistory, setShowHistory]}
       />
       <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
         <div className='textarea-wrapper'>
