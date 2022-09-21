@@ -1493,7 +1493,7 @@ router.post(
     }
 
     if (apiObject == null) {
-      return res.status(422).json({ error: 'Invalid ID' });
+      return res.status(404).json({ error: 'API object not found' });
     }
 
     res.status(204).send();
