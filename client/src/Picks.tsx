@@ -996,13 +996,13 @@ function ForceBeatmapsetUpdate({ nomination }: { nomination: INomination }) {
 interface DescriptionHistoryProps {
   edits: (NominationDescriptionEdit & { editor: IUser })[];
   author?: IUser;
-  historyState: [boolean, Dispatch<SetStateAction<boolean>>];
+  showHistoryState: [boolean, Dispatch<SetStateAction<boolean>>];
 }
 
 function DescriptionHistory({
   edits,
   author,
-  historyState: [showHistory, setShowHistory],
+  showHistoryState: [showHistory, setShowHistory],
 }: DescriptionHistoryProps) {
   return (
     <Modal close={() => setShowHistory(false)} open={showHistory}>
