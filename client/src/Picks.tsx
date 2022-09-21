@@ -24,7 +24,6 @@ import {
   updateApiObject,
   updateExcludedBeatmaps,
   updateNominationAssignees,
-  updateNominationBeatmapset,
   updateNominationDescription,
   updateNominationMetadata,
   updateNominationOrder,
@@ -480,7 +479,6 @@ function Nomination({
     nomination.moderator_state === ModeratorState.notAllowed;
   const moderationStarted = nomination.moderator_state !== ModeratorState.unchecked;
 
-  const canAccessGodMenu = hasRole(authUser, []);
   const canAssignMetadata =
     !round.done &&
     !(failedVoting && !metadataAssigned) &&
@@ -493,6 +491,7 @@ function Nomination({
     hasRole(authUser, [Role.moderator, Role.newsAuthor]);
   const canDelete =
     !round.done &&
+    nomination.poll == null &&
     !locked &&
     canActAs(
       authUser,
@@ -500,10 +499,13 @@ function Nomination({
     );
   const canEditDescription =
     !round.done &&
-    ((!descriptionDone && hasRole(authUser, Role.captain, nomination.game_mode)) ||
-      (descriptionStarted && hasRole(authUser, Role.newsEditor)));
+    (nomination.poll == null
+      ? (!descriptionDone && hasRole(authUser, Role.captain, nomination.game_mode)) ||
+        (descriptionStarted && hasRole(authUser, Role.newsEditor))
+      : hasRole(authUser, Role.newsAuthor));
   const canEditDifficulties =
     !round.done &&
+    nomination.poll == null &&
     !locked &&
     !metadataDone &&
     hasRole(authUser, Role.captain, nomination.game_mode);
@@ -523,7 +525,11 @@ function Nomination({
       nomination.moderator_assignees.map((a) => a.id),
     );
   const canEditNominators =
-    !round.done && !locked && hasRole(authUser, Role.captain, nomination.game_mode);
+    !round.done &&
+    nomination.poll == null &&
+    !locked &&
+    hasRole(authUser, Role.captain, nomination.game_mode);
+  const canForceBeatmapsetUpdate = hasRole(authUser, []);
 
   return (
     <div className={`box nomination${hasProgressWarnings ? ' nomination--warning' : ''}`}>
@@ -658,9 +664,7 @@ function Nomination({
           nomination={nomination}
           votingResult={votingResult}
         />
-        {canAccessGodMenu && (
-          <GodMenu nomination={nomination} onNominationUpdate={onNominationUpdate} />
-        )}
+        {canForceBeatmapsetUpdate && <ForceBeatmapsetUpdate nomination={nomination} />}
       </div>
       <Description
         author={nomination.description_author}
@@ -965,65 +969,27 @@ function EditDifficulties({ nomination, onNominationUpdate }: EditDifficultiesPr
   );
 }
 
-interface GodMenuProps {
-  nomination: INomination;
-  onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
-}
-
-function GodMenu({ nomination, onNominationUpdate }: GodMenuProps) {
+function ForceBeatmapsetUpdate({ nomination }: { nomination: INomination }) {
   const [busy, setBusy] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
 
-  const onChangeBeatmapsetSubmit: FormSubmitHandler = (form, then) => {
-    return updateNominationBeatmapset(nomination.id, form.beatmapsetId)
-      .then((response) => onNominationUpdate(response.body))
-      .then(then)
-      .catch(alertApiErrorMessage)
-      .finally(() => setModalOpen(false));
-  };
   const updateBeatmapset = () => {
     setBusy(true);
 
     updateApiObject('beatmapset', nomination.beatmapset.id)
       .then(() => window.location.reload()) // TODO: update in place...
       .catch(alertApiErrorMessage)
-      .finally(() => {
-        setBusy(false);
-        setModalOpen(false);
-      });
+      .finally(() => setBusy(false));
   };
 
   return (
-    <>
-      <button
-        type='button'
-        onClick={() => setModalOpen(true)}
-        className='flex-no-shrink fake-a important'
-      >
-        God menu
-      </button>
-      <Modal close={() => setModalOpen(false)} open={modalOpen}>
-        <h2>God options</h2>
-        <h3>Update</h3>
-        <button type='button' disabled={busy} onClick={updateBeatmapset}>
-          {busy ? 'Updating...' : 'Update beatmapset'}
-        </button>
-        <h3>
-          Use different beatmapset{' '}
-          <Help>
-            Only do this if an accident caused linking to the wrong mapset or deletion of the
-            mapset. There should be no normal case where it's necessary
-          </Help>
-        </h3>
-        <Form busyState={[busy, setBusy]} onSubmit={onChangeBeatmapsetSubmit}>
-          <p className='flex-left'>
-            <label htmlFor='beatmapsetId'>New beatmapset ID</label>
-            <input type='number' name='beatmapsetId' required data-value-type='int' />
-            <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>
-          </p>
-        </Form>
-      </Modal>
-    </>
+    <button
+      type='button'
+      disabled={busy}
+      onClick={updateBeatmapset}
+      className='flex-no-shrink fake-a'
+    >
+      {busy ? 'Updating...' : 'Force update beatmapset'}
+    </button>
   );
 }
 
