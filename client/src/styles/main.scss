@@ -891,3 +891,43 @@ tr.sticky > th {
     width: 100%;
   }
 }
+
+.description-history {
+  &-title {
+    font-weight: bold;
+  }
+
+  &-items {
+    display: flex;
+    padding-top: 0.5em;
+    flex-direction: column;
+    gap: 0.5em;
+
+    p {
+      margin: 0px;
+      padding-bottom: 0.25em;
+    }
+  }
+
+  &-item {
+    border: 1px solid var(--accent-light);
+    padding: 0.5em;
+  }
+
+  &-buttons {
+    position: fixed;
+    bottom: 0;
+
+    border: 1px solid var(--secondary-accent);
+    background-color: var(--accent-background);
+  }
+   
+  &-background {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+  }
+}

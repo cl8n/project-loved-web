@@ -7,7 +7,7 @@ import {
   ModeratorState,
   Role,
 } from 'loved-bridge/tables';
-import type { FormEvent } from 'react';
+import type { Dispatch, FormEvent, SetStateAction } from 'react';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
@@ -993,6 +993,37 @@ function ForceBeatmapsetUpdate({ nomination }: { nomination: INomination }) {
   );
 }
 
+interface DescriptionHistoryProps {
+  edits: (NominationDescriptionEdit & { editor: IUser })[];
+  author?: IUser;
+  historyState: [boolean, Dispatch<SetStateAction<boolean>>];
+}
+
+function DescriptionHistory({
+  edits,
+  author,
+  historyState: [showHistory, setShowHistory],
+}: DescriptionHistoryProps) {
+  return (
+    <Modal close={() => setShowHistory(false)} open={showHistory}>
+      <span className='description-history-title'>Description History</span>
+      <div className='description-history-items'>
+        {edits.map((edit, index) => {
+          return (
+            <div className='description-history-item' key={edit.id}>
+              <p>
+                {index === 0 ? 'Description by' : 'Edit by'} <UserInline user={edit.editor} />{' '}
+                {edit.editor_id === author?.id ? <strong>(author)</strong> : ''}{' '}
+              </p>
+              <BBCode text={edit.description ?? 'No description'} />
+            </div>
+          );
+        })}
+      </div>
+    </Modal>
+  );
+}
+
 interface DescriptionProps {
   author?: IUser;
   canEdit: boolean;
@@ -1012,6 +1043,7 @@ function Description({
 }: DescriptionProps) {
   const [busy, setBusy] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -1026,26 +1058,45 @@ function Description({
       .then((response) => onNominationUpdate(response.body))
       .then(then)
       .catch(alertApiErrorMessage)
-      .finally(() => setEditing(false));
+      .finally(() => {
+        setEditing(false);
+        setShowHistory(false);
+      });
   };
 
   const editors = edits
     .map((edit) => edit.editor)
     .filter((u1, i, all) => u1.id !== author?.id && all.findIndex((u2) => u1.id === u2.id) === i);
 
+  console.log(edits);
+
   return editing ? (
-    <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
-      <div className='textarea-wrapper'>
-        <textarea name='description' defaultValue={text} ref={descriptionRef} />
-        <div className='description-buttons'>
-          <span>Use BBCode for formatting</span>
-          <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>
-          <button type='button' onClick={() => setEditing(false)}>
-            Cancel
-          </button>
+    <>
+      <DescriptionHistory
+        author={author}
+        edits={edits}
+        historyState={[showHistory, setShowHistory]}
+      />
+      <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
+        <div className='textarea-wrapper'>
+          <textarea name='description' defaultValue={text} ref={descriptionRef} />
+          <div className='description-buttons'>
+            <span>Use BBCode for formatting</span>
+            <button
+              type='button'
+              disabled={edits.length === 0}
+              onClick={() => (showHistory ? setShowHistory(false) : setShowHistory(true))}
+            >
+              History
+            </button>
+            <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>
+            <button type='button' onClick={() => setEditing(false)}>
+              Cancel
+            </button>
+          </div>
         </div>
-      </div>
-    </Form>
+      </Form>
+    </>
   ) : (
     <p>
       {text == null ? (
