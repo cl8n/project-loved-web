@@ -1068,8 +1068,6 @@ function Description({
     .map((edit) => edit.editor)
     .filter((u1, i, all) => u1.id !== author?.id && all.findIndex((u2) => u1.id === u2.id) === i);
 
-  console.log(edits);
-
   return editing ? (
     <>
       <DescriptionHistory
