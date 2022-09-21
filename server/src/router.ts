@@ -701,7 +701,7 @@ router.post(
       return res.status(403).json({ error: "Can't remove description as editor" });
     }
 
-    const description = cleanNominationDescription(req.body.description);
+    const description = await cleanNominationDescription(req.body.description, res.typedLocals.osu);
 
     await db.transact(async (connection) => {
       await connection.query(

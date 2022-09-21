@@ -1,3 +1,5 @@
+import type { Osu } from './osu.js';
+
 export function accessNested<T>(object: unknown, key: string): T {
   const keyParts = key.split('.');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -11,25 +13,59 @@ export function accessNested<T>(object: unknown, key: string): T {
   return value;
 }
 
-export function cleanNominationDescription(description: string | null): string | null {
-  return description == null
-    ? null
-    : description
-        .trim()
-        .replace(/\r\n?/g, '\n')
-        .replace(/^ +| +$/gm, '')
-        .replace(/[‘’]/g, "'")
-        .replace(/[“”]/g, '"')
-        .replace(/…/g, '...')
-        .replace(/½/g, '1/2')
-        .replace(/⅓/g, '1/3')
-        .replace(/¼/g, '1/4')
-        .replace(/⅙/g, '1/6')
-        .replace(/⅛/g, '1/8')
-        .replace(/\b(\d+) ?k\b/gi, '$1K')
-        .replace(/\b(\d+) ?bpm\b/gi, '$1 BPM')
-        .replace(/o2jam/gi, 'O2Jam')
-        .replace(/\[url=https?:\/\/osu\.ppy\.sh(\/wiki\/[^\]]+)\]/g, '[url=$1]');
+export async function cleanNominationDescription(
+  description: string | null,
+  osu: Osu,
+): Promise<string | null> {
+  if (description == null) {
+    return null;
+  }
+
+  description = description
+    .trim()
+    .replace(/\r\n?/g, '\n')
+    .replace(/^ +| +$/gm, '')
+    .replace(/[‘’]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/…/g, '...')
+    .replace(/½/g, '1/2')
+    .replace(/⅓/g, '1/3')
+    .replace(/¼/g, '1/4')
+    .replace(/⅙/g, '1/6')
+    .replace(/⅛/g, '1/8')
+    .replace(/\b(\d+) ?k\b/gi, '$1K')
+    .replace(/\b(\d+) ?bpm\b/gi, '$1 BPM')
+    .replace(/o2jam/gi, 'O2Jam')
+    .replace(/\[url=https?:\/\/osu\.ppy\.sh(\/wiki\/[^\]]+)\]/g, '[url=$1]');
+
+  let profileMatchStart = 0;
+
+  for (;;) {
+    // TODO annotation requirement is a bug..?
+    const profileMatchInput: string = description.slice(profileMatchStart);
+    const profileMatch = profileMatchInput.match(/\[profile(?:=(\d+))?\](.+?)\[\/profile\]/);
+
+    if (profileMatch?.index == null) {
+      break;
+    }
+
+    const userId =
+      profileMatch[1] ??
+      (await osu.createOrRefreshUser(profileMatch[2], { byName: true }).catch(() => null))?.id;
+
+    if (userId == null) {
+      profileMatchStart += profileMatch.index + profileMatch[0].length;
+      continue;
+    }
+
+    description =
+      description.slice(0, profileMatchStart + profileMatch.index) +
+      `[url=https://osu.ppy.sh/users/${userId}]${profileMatch[2]}[/url]` +
+      profileMatchInput.slice(profileMatch.index + profileMatch[0].length);
+    profileMatchStart += profileMatch.index;
+  }
+
+  return description;
 }
 
 export function getParams<K extends string, T extends Partial<Record<K, unknown>>>(
