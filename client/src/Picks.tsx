@@ -9,6 +9,7 @@ import {
 } from 'loved-bridge/tables';
 import type { Dispatch, FormEvent } from 'react';
 import { useEffect, useReducer, useRef, useState } from 'react';
+import { FormattedDate } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
 import {
@@ -230,9 +231,9 @@ export function Picks() {
   const nominationProgressWarningsCache: Record<INomination['id'], NominationProgressWarning[]> =
     {};
   const getNominationProgressWarnings = (nomination: INomination) =>
-    (nominationProgressWarningsCache[nomination.id] ??= round.done
-      ? []
-      : nominationProgressWarnings(nomination, authUser));
+  (nominationProgressWarningsCache[nomination.id] ??= round.done
+    ? []
+    : nominationProgressWarnings(nomination, authUser));
 
   const showNomination = (nomination: INomination) =>
     !showTodo ||
@@ -501,7 +502,7 @@ function Nomination({
     !round.done &&
     (nomination.poll == null
       ? (!descriptionDone && hasRole(authUser, Role.captain, nomination.game_mode)) ||
-        (descriptionStarted && hasRole(authUser, Role.newsEditor))
+      (descriptionStarted && hasRole(authUser, Role.newsEditor))
       : hasRole(authUser, Role.newsAuthor));
   const canEditDifficulties =
     !round.done &&
@@ -1022,13 +1023,18 @@ function DescriptionHistory({
                 }
               >
                 Edit by <UserInline user={edit.editor} />
-                {byAuthor && ' (author)'}
+                {byAuthor && ' (author) '}
               </h3>
-              {edit.description == null ? (
-                <i>No description</i>
-              ) : (
-                <BBCode text={edit.description} />
-              )}
+              <span className='description-history-item__date'>
+                <FormattedDate dateStyle='medium' timeStyle='medium' value={edit.edited_at} />
+              </span>
+              <p>
+                {edit.description == null ? (
+                  <i>No description</i>
+                ) : (
+                  <BBCode text={edit.description} />
+                )}
+              </p>
             </div>
           );
         })}

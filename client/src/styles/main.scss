@@ -461,12 +461,16 @@ footer {
 
     &__title {
       margin-top: 0;
-      margin-bottom: 0.5em;
+      margin-bottom: 0em;
       font-weight: normal;
 
       &--author {
         font-weight: bold;
       }
+    }
+
+    &__date {
+      margin-bottom: 0.25em;
     }
   }
 }
