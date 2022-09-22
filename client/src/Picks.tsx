@@ -7,7 +7,7 @@ import {
   ModeratorState,
   Role,
 } from 'loved-bridge/tables';
-import type { Dispatch, FormEvent, SetStateAction } from 'react';
+import type { Dispatch, FormEvent } from 'react';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
@@ -994,28 +994,41 @@ function ForceBeatmapsetUpdate({ nomination }: { nomination: INomination }) {
 }
 
 interface DescriptionHistoryProps {
-  edits: (NominationDescriptionEdit & { editor: IUser })[];
   author?: IUser;
-  showHistoryState: [boolean, Dispatch<SetStateAction<boolean>>];
+  edits: (NominationDescriptionEdit & { editor: IUser })[];
+  showHistory: boolean;
+  setShowHistory: Dispatch<boolean>;
 }
 
 function DescriptionHistory({
-  edits,
   author,
-  showHistoryState: [showHistory, setShowHistory],
+  edits,
+  showHistory,
+  setShowHistory,
 }: DescriptionHistoryProps) {
   return (
     <Modal close={() => setShowHistory(false)} open={showHistory}>
-      <span className='description-history-title'>Description History</span>
-      <div className='description-history-items'>
+      <h2>Description history</h2>
+      <div className='description-history'>
         {edits.map((edit, index) => {
+          const byAuthor = edit.editor_id === author?.id;
+
           return (
-            <div className='description-history-item' key={edit.id}>
-              <p>
-                {index === 0 ? 'Description by' : 'Edit by'} <UserInline user={edit.editor} />{' '}
-                {edit.editor_id === author?.id ? <strong>(author)</strong> : ''}{' '}
-              </p>
-              <BBCode text={edit.description ?? 'No description'} />
+            <div key={edit.id} className='description-history-item'>
+              <h3
+                className={
+                  'description-history-item__title' +
+                  (byAuthor ? ' description-history-item__title--author' : '')
+                }
+              >
+                {index === 0 ? 'Description by' : 'Edit by'} <UserInline user={edit.editor} />
+                {byAuthor && ' (author)'}
+              </h3>
+              {edit.description == null ? (
+                <i>No description</i>
+              ) : (
+                <BBCode text={edit.description} />
+              )}
             </div>
           );
         })}
@@ -1073,20 +1086,21 @@ function Description({
       <DescriptionHistory
         author={author}
         edits={edits}
-        showHistoryState={[showHistory, setShowHistory]}
+        showHistory={showHistory}
+        setShowHistory={setShowHistory}
       />
       <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
         <div className='textarea-wrapper'>
           <textarea name='description' defaultValue={text} ref={descriptionRef} />
           <div className='description-buttons'>
-            <span>Use BBCode for formatting</span>
             <button
               type='button'
               disabled={edits.length === 0}
-              onClick={() => (showHistory ? setShowHistory(false) : setShowHistory(true))}
+              onClick={() => setShowHistory((prev) => !prev)}
             >
-              History
+              {showHistory ? 'Hide history' : 'Show history'}
             </button>
+            <span>Use BBCode for formatting</span>
             <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>
             <button type='button' onClick={() => setEditing(false)}>
               Cancel
