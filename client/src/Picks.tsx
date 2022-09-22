@@ -1021,7 +1021,7 @@ function DescriptionHistory({
                   (byAuthor ? ' description-history-item__title--author' : '')
                 }
               >
-                {index === 0 ? 'Description by' : 'Edit by'} <UserInline user={edit.editor} />
+                Edit by <UserInline user={edit.editor} />
                 {byAuthor && ' (author)'}
               </h3>
               {edit.description == null ? (
