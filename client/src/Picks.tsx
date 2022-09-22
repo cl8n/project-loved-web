@@ -1101,7 +1101,7 @@ function Description({
           <div className='description-buttons'>
             <button
               type='button'
-              disabled={edits.length === 0}
+              disabled={edits.length <= 1}
               onClick={() => setShowHistory((prev) => !prev)}
             >
               {showHistory ? 'Hide history' : 'Show history'}
