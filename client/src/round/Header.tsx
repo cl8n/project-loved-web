@@ -11,6 +11,7 @@ import RoundEditor from './RoundEditor';
 
 interface HeaderProps {
   canEdit: boolean;
+  nominationsWithWarnings: number;
   onRoundUpdate: (round: Omit<IRound, 'game_modes'> & { news_author: IUser }) => void;
   round: IRound & { news_author: IUser };
   showTodo: boolean;
@@ -19,6 +20,7 @@ interface HeaderProps {
 
 export default function Header({
   canEdit,
+  nominationsWithWarnings,
   onRoundUpdate,
   round,
   showTodo,
@@ -41,7 +43,9 @@ export default function Header({
         )}
         {!round.done && (
           <span className='round-show-todo-menu'>
-            <label htmlFor='showTodo'>Show only what needs my attention</label>
+            <label htmlFor='showTodo'>
+              Show only what needs my attention ({nominationsWithWarnings})
+            </label>
             <input
               name='showTodo'
               type='checkbox'

@@ -8,7 +8,7 @@ import {
   Role,
 } from 'loved-bridge/tables';
 import type { FormEvent } from 'react';
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
 import {
@@ -91,6 +91,19 @@ export function Picks() {
     [GameMode.mania]: false,
   });
   const [showTodo, setShowTodo] = useState(false);
+  const nominationProgressWarningsCache = useMemo(() => {
+    const cache: Record<INomination['id'], NominationProgressWarning[]> = {};
+
+    if (roundInfo != null) {
+      for (const nomination of roundInfo.nominations) {
+        cache[nomination.id] = roundInfo.round.done
+          ? []
+          : nominationProgressWarnings(nomination, authUser);
+      }
+    }
+
+    return cache;
+  }, [authUser, roundInfo]);
 
   if (roundInfoError != null) {
     return (
@@ -227,18 +240,11 @@ export function Picks() {
     parseInt(gameMode, 10),
   );
 
-  const nominationProgressWarningsCache: Record<INomination['id'], NominationProgressWarning[]> =
-    {};
-  const getNominationProgressWarnings = (nomination: INomination) =>
-    (nominationProgressWarningsCache[nomination.id] ??= round.done
-      ? []
-      : nominationProgressWarnings(nomination, authUser));
-
   const showNomination = (nomination: INomination) =>
     !showTodo ||
     (ordering[nomination.game_mode] && canOrder(nomination.game_mode)) ||
     canAdd(nomination.game_mode) ||
-    getNominationProgressWarnings(nomination).length > 0;
+    nominationProgressWarningsCache[nomination.id].length > 0;
   const showNominations = (gameMode: GameMode) =>
     !showTodo ||
     ordering[gameMode] ||
@@ -250,6 +256,10 @@ export function Picks() {
     <>
       <Header
         canEdit={canEditRound}
+        nominationsWithWarnings={
+          Object.values(nominationProgressWarningsCache).filter((warnings) => warnings.length > 0)
+            .length
+        }
         onRoundUpdate={onRoundUpdate}
         round={round}
         showTodo={showTodo}
@@ -311,7 +321,7 @@ export function Picks() {
                   onNominationDelete={onNominationDelete}
                   onNominationUpdate={onNominationUpdate}
                   parentGameMode={parent?.game_mode}
-                  progressWarnings={getNominationProgressWarnings(nomination)}
+                  progressWarnings={nominationProgressWarningsCache[nomination.id]}
                   round={round}
                 />
               );
