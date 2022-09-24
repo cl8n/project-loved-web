@@ -7,8 +7,9 @@ import {
   ModeratorState,
   Role,
 } from 'loved-bridge/tables';
-import type { FormEvent } from 'react';
+import type { Dispatch, FormEvent } from 'react';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { FormattedDate } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
 import {
@@ -1003,6 +1004,55 @@ function ForceBeatmapsetUpdate({ nomination }: { nomination: INomination }) {
   );
 }
 
+interface DescriptionHistoryProps {
+  author?: IUser;
+  edits: (NominationDescriptionEdit & { editor: IUser })[];
+  showHistory: boolean;
+  setShowHistory: Dispatch<boolean>;
+}
+
+function DescriptionHistory({
+  author,
+  edits,
+  showHistory,
+  setShowHistory,
+}: DescriptionHistoryProps) {
+  return (
+    <Modal close={() => setShowHistory(false)} open={showHistory}>
+      <h2>Description history</h2>
+      <div className='description-history'>
+        {edits.map((edit, index) => {
+          const byAuthor = edit.editor_id === author?.id;
+
+          return (
+            <div key={edit.id} className='description-history-item'>
+              <h3
+                className={
+                  'description-history-item__title' +
+                  (byAuthor ? ' description-history-item__title--author' : '')
+                }
+              >
+                Edit by <UserInline user={edit.editor} />
+                {byAuthor && ' (author) '}
+              </h3>
+              <span className='description-history-item__date'>
+                <FormattedDate dateStyle='medium' timeStyle='medium' value={edit.edited_at} />
+              </span>
+              <p>
+                {edit.description == null ? (
+                  <i>No description</i>
+                ) : (
+                  <BBCode text={edit.description} />
+                )}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </Modal>
+  );
+}
+
 interface DescriptionProps {
   author?: IUser;
   canEdit: boolean;
@@ -1022,6 +1072,7 @@ function Description({
 }: DescriptionProps) {
   const [busy, setBusy] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -1036,7 +1087,10 @@ function Description({
       .then((response) => onNominationUpdate(response.body))
       .then(then)
       .catch(alertApiErrorMessage)
-      .finally(() => setEditing(false));
+      .finally(() => {
+        setEditing(false);
+        setShowHistory(false);
+      });
   };
 
   const editors = edits
@@ -1044,18 +1098,39 @@ function Description({
     .filter((u1, i, all) => u1.id !== author?.id && all.findIndex((u2) => u1.id === u2.id) === i);
 
   return editing ? (
-    <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
-      <div className='textarea-wrapper'>
-        <textarea name='description' defaultValue={text} ref={descriptionRef} />
-        <div className='description-buttons'>
-          <span>Use BBCode for formatting</span>
-          <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>
-          <button type='button' onClick={() => setEditing(false)}>
-            Cancel
-          </button>
+    <>
+      <DescriptionHistory
+        author={author}
+        edits={edits}
+        showHistory={showHistory}
+        setShowHistory={setShowHistory}
+      />
+      <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
+        <div className='textarea-wrapper'>
+          <textarea name='description' defaultValue={text} ref={descriptionRef} />
+          <div className='description-buttons'>
+            <button
+              type='button'
+              disabled={edits.length <= 1}
+              onClick={() => setShowHistory((prev) => !prev)}
+            >
+              {showHistory ? 'Hide history' : 'Show history'}
+            </button>
+            <span>Use BBCode for formatting</span>
+            <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>
+            <button
+              type='button'
+              onClick={() => {
+                setEditing(false);
+                setShowHistory(false);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
-      </div>
-    </Form>
+      </Form>
+    </>
   ) : (
     <p>
       {text == null ? (

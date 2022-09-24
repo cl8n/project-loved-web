@@ -438,12 +438,40 @@ footer {
 
 .description-buttons {
   display: flex;
-  justify-content: flex-end;
   align-items: center;
   margin-top: 0.5em;
 
+  > :first-child {
+    margin-right: auto;
+  }
+
   > :not(:first-child) {
     margin-left: 0.5em;
+  }
+}
+
+.description-history {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
+  &-item {
+    border: 1px solid var(--accent-light);
+    padding: 0.5em;
+
+    &__title {
+      margin-top: 0;
+      margin-bottom: 0em;
+      font-weight: normal;
+
+      &--author {
+        font-weight: bold;
+      }
+    }
+
+    &__date {
+      margin-bottom: 0.25em;
+    }
   }
 }
 
