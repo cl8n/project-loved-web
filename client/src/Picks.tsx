@@ -1014,7 +1014,7 @@ function DescriptionHistory({ author, edits }: DescriptionHistoryProps) {
 
   return (
     <>
-      <button type='button' className='fake-a' onClick={() => setModalOpen((prev) => !prev)}>
+      <button type='button' className='fake-a' onClick={() => setModalOpen(true)}>
         Show history
       </button>
       <Modal close={() => setModalOpen(false)} open={modalOpen}>
