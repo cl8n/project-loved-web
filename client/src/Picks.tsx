@@ -92,12 +92,12 @@ export function Picks() {
   });
   const [showTodo, setShowTodo] = useState(false);
   const nominationProgressWarningsCache = useMemo(() => {
-    const cache: Record<INomination['id'], NominationProgressWarning[]> = {};
+    const cache: Record<INomination['id'], Set<NominationProgressWarning>> = {};
 
     if (roundInfo != null) {
       for (const nomination of roundInfo.nominations) {
         cache[nomination.id] = roundInfo.round.done
-          ? []
+          ? new Set()
           : nominationProgressWarnings(nomination, authUser);
       }
     }
@@ -244,7 +244,7 @@ export function Picks() {
     !showTodo ||
     (ordering[nomination.game_mode] && canOrder(nomination.game_mode)) ||
     canAdd(nomination.game_mode) ||
-    nominationProgressWarningsCache[nomination.id].length > 0;
+    nominationProgressWarningsCache[nomination.id].size > 0;
   const showNominations = (gameMode: GameMode) =>
     !showTodo ||
     ordering[gameMode] ||
@@ -257,7 +257,7 @@ export function Picks() {
       <Header
         canEdit={canEditRound}
         nominationsWithWarnings={
-          Object.values(nominationProgressWarningsCache).filter((warnings) => warnings.length > 0)
+          Object.values(nominationProgressWarningsCache).filter((warnings) => warnings.size > 0)
             .length
         }
         onRoundUpdate={onRoundUpdate}
@@ -435,7 +435,7 @@ interface NominationProps {
   onNominationDelete: (nominationId: number) => void;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   parentGameMode?: GameMode;
-  progressWarnings: NominationProgressWarning[];
+  progressWarnings: Set<NominationProgressWarning>;
   round: IRound;
 }
 
@@ -479,7 +479,7 @@ function Nomination({
 
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
   const descriptionStarted = nomination.description != null;
-  const hasProgressWarnings = progressWarnings.length > 0;
+  const hasProgressWarnings = progressWarnings.size > 0;
   const metadataAssigned = nomination.metadata_assignees.length > 0;
   const metadataDone = nomination.metadata_state === MetadataState.good;
   const metadataStarted = nomination.metadata_state !== MetadataState.unchecked;
@@ -686,7 +686,7 @@ function Nomination({
       />
       {hasProgressWarnings && (
         <div className='nomination__warnings'>
-          {progressWarnings.map((warning) => (
+          {[...progressWarnings].map((warning) => (
             <span key={warning}>
               <span className='nomination__warning-icon'>!</span>
               {nominationProgressWarningMessages[warning]}

@@ -27,14 +27,11 @@ export const nominationProgressWarningMessages = {
     'Content needs to be re-checked by a moderator after the map is updated',
   [NominationProgressWarning.moderatorSentToReview]: 'Waiting on result of moderation review',
 } as const;
-const nominationProgressWarningValues = Object.values(NominationProgressWarning).filter(
-  (keyOrValue) => typeof keyOrValue === 'number',
-) as NominationProgressWarning[];
 
 export function nominationProgressWarnings(
   nomination: INomination,
   user: IUserWithRoles,
-): NominationProgressWarning[] {
+): Set<NominationProgressWarning> {
   const warnings = new Set<NominationProgressWarning>();
 
   if (nomination.description == null && hasRole(user, Role.captain, nomination.game_mode, true)) {
@@ -96,7 +93,5 @@ export function nominationProgressWarnings(
     }
   }
 
-  // Same as `[...warnings]` (and could really just return `warnings`), but we aren't using Set
-  // iteration in this project. I didn't yet look into if that would be worth changing.
-  return nominationProgressWarningValues.filter((warning) => warnings.has(warning));
+  return warnings;
 }
