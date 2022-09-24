@@ -105,7 +105,7 @@ export default function MessageFormatEditor({
       editor={editor}
       onChange={(value) => {
         if (!readOnly) {
-          setValue!(((value[0] as Element).children[0] as Text).text);
+          setValue(((value[0] as Element).children[0] as Text).text);
         }
       }}
       value={[{ children: [{ text: value, type: 0 }] }]}

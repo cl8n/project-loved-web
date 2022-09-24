@@ -8,7 +8,7 @@ import {
   Role,
 } from 'loved-bridge/tables';
 import type { Dispatch, FormEvent } from 'react';
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { FormattedDate } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
@@ -92,6 +92,19 @@ export function Picks() {
     [GameMode.mania]: false,
   });
   const [showTodo, setShowTodo] = useState(false);
+  const nominationProgressWarningsCache = useMemo(() => {
+    const cache: Record<INomination['id'], Set<NominationProgressWarning>> = {};
+
+    if (roundInfo != null) {
+      for (const nomination of roundInfo.nominations) {
+        cache[nomination.id] = roundInfo.round.done
+          ? new Set()
+          : nominationProgressWarnings(nomination, authUser);
+      }
+    }
+
+    return cache;
+  }, [authUser, roundInfo]);
 
   if (roundInfoError != null) {
     return (
@@ -228,18 +241,11 @@ export function Picks() {
     parseInt(gameMode, 10),
   );
 
-  const nominationProgressWarningsCache: Record<INomination['id'], NominationProgressWarning[]> =
-    {};
-  const getNominationProgressWarnings = (nomination: INomination) =>
-  (nominationProgressWarningsCache[nomination.id] ??= round.done
-    ? []
-    : nominationProgressWarnings(nomination, authUser));
-
   const showNomination = (nomination: INomination) =>
     !showTodo ||
     (ordering[nomination.game_mode] && canOrder(nomination.game_mode)) ||
     canAdd(nomination.game_mode) ||
-    getNominationProgressWarnings(nomination).length > 0;
+    nominationProgressWarningsCache[nomination.id].size > 0;
   const showNominations = (gameMode: GameMode) =>
     !showTodo ||
     ordering[gameMode] ||
@@ -251,6 +257,10 @@ export function Picks() {
     <>
       <Header
         canEdit={canEditRound}
+        nominationsWithWarnings={
+          Object.values(nominationProgressWarningsCache).filter((warnings) => warnings.size > 0)
+            .length
+        }
         onRoundUpdate={onRoundUpdate}
         round={round}
         showTodo={showTodo}
@@ -312,7 +322,7 @@ export function Picks() {
                   onNominationDelete={onNominationDelete}
                   onNominationUpdate={onNominationUpdate}
                   parentGameMode={parent?.game_mode}
-                  progressWarnings={getNominationProgressWarnings(nomination)}
+                  progressWarnings={nominationProgressWarningsCache[nomination.id]}
                   round={round}
                 />
               );
@@ -426,7 +436,7 @@ interface NominationProps {
   onNominationDelete: (nominationId: number) => void;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   parentGameMode?: GameMode;
-  progressWarnings: NominationProgressWarning[];
+  progressWarnings: Set<NominationProgressWarning>;
   round: IRound;
 }
 
@@ -470,7 +480,7 @@ function Nomination({
 
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
   const descriptionStarted = nomination.description != null;
-  const hasProgressWarnings = progressWarnings.length > 0;
+  const hasProgressWarnings = progressWarnings.size > 0;
   const metadataAssigned = nomination.metadata_assignees.length > 0;
   const metadataDone = nomination.metadata_state === MetadataState.good;
   const metadataStarted = nomination.metadata_state !== MetadataState.unchecked;
@@ -502,7 +512,7 @@ function Nomination({
     !round.done &&
     (nomination.poll == null
       ? (!descriptionDone && hasRole(authUser, Role.captain, nomination.game_mode)) ||
-      (descriptionStarted && hasRole(authUser, Role.newsEditor))
+        (descriptionStarted && hasRole(authUser, Role.newsEditor))
       : hasRole(authUser, Role.newsAuthor));
   const canEditDifficulties =
     !round.done &&
@@ -677,7 +687,7 @@ function Nomination({
       />
       {hasProgressWarnings && (
         <div className='nomination__warnings'>
-          {progressWarnings.map((warning) => (
+          {[...progressWarnings].map((warning) => (
             <span key={warning}>
               <span className='nomination__warning-icon'>!</span>
               {nominationProgressWarningMessages[warning]}
