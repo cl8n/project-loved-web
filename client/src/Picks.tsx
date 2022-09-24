@@ -1118,7 +1118,13 @@ function Description({
             </button>
             <span>Use BBCode for formatting</span>
             <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>
-            <button type='button' onClick={() => setEditing(false)}>
+            <button
+              type='button'
+              onClick={() => {
+                setEditing(false);
+                setShowHistory(false);
+              }}
+            >
               Cancel
             </button>
           </div>
