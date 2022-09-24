@@ -86,8 +86,6 @@ button:not(.fake-a) {
 }
 
 .textarea-wrapper {
-  margin-top: 1em;
-  margin-bottom: 1em;
   padding: 0.5em;
   border: 1px solid var(--content);
 
@@ -436,41 +434,46 @@ footer {
   }
 }
 
-.description-buttons {
-  display: flex;
-  align-items: center;
-  margin-top: 0.5em;
+.description {
+  margin-top: 1em;
 
-  > :first-child {
-    margin-right: auto;
+  &__info:not(:last-child) {
+    margin-bottom: 0.25em;
   }
 
-  > :not(:first-child) {
-    margin-left: 0.5em;
-  }
-}
+  &__editor-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 0.5em;
 
-.description-history {
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
-
-  &-item {
-    border: 1px solid var(--accent-light);
-    padding: 0.5em;
-
-    &__title {
-      margin-top: 0;
-      margin-bottom: 0em;
-      font-weight: normal;
-
-      &--author {
-        font-weight: bold;
-      }
+    > :not(:first-child) {
+      margin-left: 0.5em;
     }
+  }
 
-    &__date {
-      margin-bottom: 0.25em;
+  &-history {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+
+    &-item {
+      border: 1px solid var(--accent-light);
+      padding: 0.5em;
+
+      &__title {
+        margin-top: 0;
+        margin-bottom: 0em;
+        font-weight: normal;
+
+        &--author {
+          font-weight: bold;
+        }
+      }
+
+      &__date {
+        margin-bottom: 0.25em;
+      }
     }
   }
 }
