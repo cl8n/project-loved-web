@@ -1,10 +1,7 @@
 {
   "root": true,
   "extends": [
-    "../.eslintrc.json",
-    "plugin:n/recommended"
-  ],
-  "rules": {
-    "n/no-unsupported-features/es-syntax": "off"
-  }
+    "plugin:n/recommended",
+    "../.eslintrc.json"
+  ]
 }

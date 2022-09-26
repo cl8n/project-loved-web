@@ -19,6 +19,7 @@
         "newlines-between": "never"
       }
     ],
+    "n/no-missing-import": "off",
     "no-empty": ["error", { "allowEmptyCatch": true }],
     "sort-imports": ["error", { "ignoreCase": true, "ignoreDeclarationSort": true }]
   },
