@@ -121,8 +121,16 @@ export class Osu {
     return tokenInfo;
   }
 
-  async tryRefreshToken(): Promise<TokenInfo | void> {
-    if (Date.now() >= this.#tokenExpiresAt - refreshTokenThreshold) {
+  /**
+   * If the access token is close to expiring, refresh the token pair. In practice, access tokens
+   * expire on the scale of days, while refresh tokens expire on the scale of months.
+   *
+   * @param threshold When the token will be considered close to expiring, in milliseconds before
+   *                  the token's expiration time. Defaults to 1 hour.
+   * @returns The new token, if it was refreshed.
+   */
+  async tryRefreshToken(threshold?: number): Promise<TokenInfo | void> {
+    if (Date.now() >= this.#tokenExpiresAt - (threshold ?? refreshTokenThreshold)) {
       const tokenInfo = serializeTokenResponse(
         await superagent
           .post(`${config.osuBaseUrl}/oauth/token`)

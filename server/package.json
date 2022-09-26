@@ -5,7 +5,7 @@
   "scripts": {
     "build": "npm run lint && rm -rf build && tsc --noEmitOnError && npm run permissions",
     "lint": "eslint --max-warnings 0 .",
-    "permissions": "chmod +x ./build/index.js ./build/init-user.js ./build/update-stale-beatmapsets.js",
+    "permissions": "chmod +x ./build/index.js ./build/init-user.js ./build/bin/update-extra-tokens.js ./build/update-stale-beatmapsets.js",
     "start": "rm -rf build && exec tsc-watch --noClear --onSuccess \"sh -c 'npm run permissions && ./build/index.js'\""
   },
   "dependencies": {
