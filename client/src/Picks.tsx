@@ -1,3 +1,4 @@
+import { diff_match_patch } from 'diff-match-patch';
 import { GameMode, gameModeLongName } from 'loved-bridge/beatmaps/gameMode';
 import type { NominationDescriptionEdit } from 'loved-bridge/tables';
 import {
@@ -1004,6 +1005,32 @@ function ForceBeatmapsetUpdate({ nomination }: { nomination: INomination }) {
   );
 }
 
+function visualizeDescriptionDifferences(oldDescription: string, newDescription: string): string {
+  if (oldDescription === newDescription) {
+    return newDescription;
+  }
+
+  let display = '';
+  const diffMatch = new diff_match_patch();
+  const differences = diffMatch.diff_main(oldDescription, newDescription);
+
+  // cleanup
+  diffMatch.diff_cleanupSemantic(differences);
+
+  // compare
+  for (const difference of differences) {
+    if (difference[0] === 0) {
+      display += difference[1];
+    } else if (difference[0] === -1) {
+      display += `<span style="color: #854242; background-color: #AE8686;">${difference[1]}</span>`;
+    } else if (difference[0] === 1) {
+      display += `<span style="color: #698542; background-color: #95AE86;">${difference[1]}</span>`;
+    }
+  }
+
+  return display;
+}
+
 interface DescriptionHistoryProps {
   author?: IUser;
   edits: (NominationDescriptionEdit & { editor: IUser })[];
@@ -1020,20 +1047,30 @@ function DescriptionHistory({ author, edits }: DescriptionHistoryProps) {
       <Modal close={() => setModalOpen(false)} open={modalOpen}>
         <h2>Description history</h2>
         <div className='description-history'>
-          {edits.map((edit) => (
-            <div key={edit.id} className='description-history-item'>
-              <h3 className='description-history-item__title'>
-                Edit by <UserInline user={edit.editor} />
-                {edit.editor_id === author?.id && ' (author)'} on{' '}
-                <FormattedDate dateStyle='long' timeStyle='medium' value={edit.edited_at} />
-              </h3>
-              {edit.description == null ? (
-                <i>No description</i>
-              ) : (
-                <BBCode text={edit.description} />
-              )}
-            </div>
-          ))}
+          {edits.map((edit, index) => {
+            const previousDescription =
+              index === 0 ? edit.description : edits[index - 1].description;
+
+            return (
+              <div key={edit.id} className='description-history-item'>
+                <h3 className='description-history-item__title'>
+                  Edit by <UserInline user={edit.editor} />
+                  {edit.editor_id === author?.id && ' (author)'} on{' '}
+                  <FormattedDate dateStyle='long' timeStyle='medium' value={edit.edited_at} />
+                </h3>
+                {edit.description == null ? (
+                  <i>No description</i>
+                ) : (
+                  <BBCode
+                    text={visualizeDescriptionDifferences(
+                      previousDescription ?? edit.description,
+                      edit.description,
+                    )}
+                  />
+                )}
+              </div>
+            );
+          })}
         </div>
       </Modal>
     </>
