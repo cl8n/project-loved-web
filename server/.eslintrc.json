@@ -1,15 +1,14 @@
 {
   "root": true,
   "extends": [
-    "../.eslintrc.json",
-    "plugin:n/recommended"
+    "plugin:n/recommended",
+    "../.eslintrc.json"
   ],
   "plugins": [
     "regex"
   ],
   "rules": {
     "n/no-process-exit": "off",
-    "n/no-unsupported-features/es-syntax": "off",
     "n/shebang": "off",
     "regex/invalid": [
       "error",

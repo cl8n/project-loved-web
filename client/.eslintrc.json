@@ -1,11 +1,11 @@
 {
   "root": true,
   "extends": [
-    "../.eslintrc.json",
     "plugin:jsx-a11y/recommended",
     "plugin:react/recommended",
     "plugin:react/jsx-runtime",
-    "plugin:react-hooks/recommended"
+    "plugin:react-hooks/recommended",
+    "../.eslintrc.json"
   ],
   "rules": {
     "@typescript-eslint/no-non-null-assertion": "off",

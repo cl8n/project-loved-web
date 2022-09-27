@@ -1381,7 +1381,8 @@ router.post(
       req.body.roles.some((role) => !role.alumni && role.role_id === Role.admin)
     ) {
       return res.status(422).json({
-        error: 'Cannot add admin role. If you are a developer, use the "init-user" script instead',
+        error:
+          'Cannot add admin role. If you are a developer, use the "create-admin" script instead',
       });
     }
 
