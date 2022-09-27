@@ -25,6 +25,8 @@ for (const { token, user_id } of extraTokens) {
       `,
       [JSON.stringify(newToken), user_id],
     );
+
+    systemLog(`Refreshed extra token for user ${user_id}`, SyslogLevel.info);
   }
 }
 
