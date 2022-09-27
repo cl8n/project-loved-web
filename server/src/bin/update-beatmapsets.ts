@@ -2,6 +2,7 @@
 
 import type { Beatmapset } from 'loved-bridge/tables';
 import db from '../db.js';
+import { systemLog } from '../log.js';
 import { Osu } from '../osu.js';
 
 if (process.argv.length !== 3) {
@@ -26,7 +27,10 @@ const beatmapsetIds = await db.query<Pick<Beatmapset, 'id'>>(
 );
 
 for (const { id } of beatmapsetIds) {
-  await osu.createOrRefreshBeatmapset(id, true);
+  await osu.createOrRefreshBeatmapset(id, true).catch((error) => {
+    systemLog(`Error refreshing beatmapset ${id}`, SyslogLevel.err);
+    systemLog(error, SyslogLevel.err);
+  });
 }
 
 await Promise.all([db.close(), osu.revokeToken()]);
