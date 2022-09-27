@@ -71,9 +71,7 @@ The built webpage will be in `/client/build`; it's an SPA.
   npm run build
   ```
 - Copy `.env.example` to `.env` and fill in the options, or export the environment variables separately
-- Run server
-  - Directly: `NODE_ENV=production ./build/index.js`
-  - With systemd: See provided `project-loved-web.example.service`
+- Run the server: `NODE_ENV=production ./build/index.js`
 
 Request paths under `/api` should proxy to the server, paths exactly matching files should serve the files, and everything else should serve the client's `index.html`.
 
