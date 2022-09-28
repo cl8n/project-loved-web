@@ -6,7 +6,7 @@ interface TooltipProps {
 }
 
 export default function Tooltip({ children, content }: PropsWithChildren<TooltipProps>) {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const tooltipRef = createRef<HTMLDivElement>();
   const tooltipContainerRef = createRef<HTMLDivElement>();
 
