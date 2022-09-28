@@ -1,6 +1,13 @@
 .tooltip {
   display: inline-block;
-  position: relative;
+  position: absolute;
+
+  &-container {
+    justify-content: center;
+    display: inline-block;
+    width: max-content;
+    margin: 0;
+  }
 
   &-content {
     background-color: var(--accent-background);
