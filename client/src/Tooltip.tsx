@@ -18,7 +18,7 @@ export default function Tooltip({ children, content }: PropsWithChildren<Tooltip
     if (tooltip && tooltipContainer) {
       tooltip.style.transform = `translateX(-${tooltipContainer.offsetWidth / 2}px)`;
     }
-  }, [visible]);
+  }, [tooltipContainerRef, tooltipRef, visible]);
 
   return (
     <div
