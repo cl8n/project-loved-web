@@ -1,27 +1,24 @@
-.tooltip {
+.has-tooltip {
+  display: inline-block;
+}
+
+.tooltip-container {
   position: absolute;
+}
 
-  &-container {
-    justify-content: center;
-    display: inline-block;
-    width: max-content;
-    margin: 0;
-  }
+.tooltip {
+  background-color: var(--accent-background);
+  border: 1px solid var(--content);
+  color: var(--content);
+  font-weight: normal;
+  margin-bottom: 0.5em;
+  padding: 0.5em;
+  position: absolute;
+  transform: translateX(-50%);
+  width: max-content;
+  z-index: 1;
 
-  &-content {
-    background-color: var(--accent-background);
-    border: 1px solid var(--content);
-    color: var(--content);
-    font-weight: normal;
-    margin-bottom: 0.5em;
-    padding: 0.5em;
-    position: absolute;
-    transform: translateX(-50%);
-    width: max-content;
-    z-index: 1;
-  }
-
-  &-hover-area {
+  &__hover-area {
     bottom: calc(-0.5em - 1px);
     left: -1px;
     position: absolute;
@@ -30,7 +27,7 @@
     z-index: -1;
   }
 
-  &-triangle {
+  &__triangle {
     background-color: var(--accent-background);
     border-bottom: 1px solid var(--content);
     border-right: 1px solid var(--content);
