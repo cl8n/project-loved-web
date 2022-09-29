@@ -1005,30 +1005,46 @@ function ForceBeatmapsetUpdate({ nomination }: { nomination: INomination }) {
   );
 }
 
-function visualizeDescriptionDifferences(oldDescription: string, newDescription: string): string {
-  if (oldDescription === newDescription) {
-    return newDescription;
-  }
+interface DescriptionDifferenceProps {
+  oldDescription: string;
+  newDescription: string;
+}
 
-  let display = '';
+function DescriptionDifference({
+  oldDescription,
+  newDescription,
+}: DescriptionDifferenceProps): JSX.Element {
+  if (oldDescription === newDescription) {
+    return <span>{newDescription}</span>;
+  }
   const diffMatch = new diff_match_patch();
-  const differences = diffMatch.diff_main(oldDescription, newDescription);
+  const differences = diffMatch.diff_main(oldDescription, newDescription, false);
 
   // cleanup
   diffMatch.diff_cleanupSemantic(differences);
-
-  // compare
-  for (const difference of differences) {
-    if (difference[0] === 0) {
-      display += difference[1];
-    } else if (difference[0] === -1) {
-      display += `<span style="color: #854242; background-color: #AE8686;">${difference[1]}</span>`;
-    } else if (difference[0] === 1) {
-      display += `<span style="color: #698542; background-color: #95AE86;">${difference[1]}</span>`;
-    }
-  }
-
-  return display;
+  //"color: #698542; background-color: #95AE86;"
+  // "color: #854242; background-color: #AE8686;"
+  return (
+    <>
+      {differences.map((difference, i) => {
+        if (difference[0] === 0) {
+          return <>{difference[1]}</>;
+        } else if (difference[0] === -1) {
+          return (
+            <del key={i} className='description-history-item__deleted'>
+              {difference[1]}
+            </del>
+          );
+        } else if (difference[0] === 1) {
+          return (
+            <ins key={i} className='description-history-item__inserted'>
+              {difference[1]}
+            </ins>
+          );
+        }
+      })}
+    </>
+  );
 }
 
 interface DescriptionHistoryProps {
@@ -1061,12 +1077,12 @@ function DescriptionHistory({ author, edits }: DescriptionHistoryProps) {
                 {edit.description == null ? (
                   <i>No description</i>
                 ) : (
-                  <BBCode
-                    text={visualizeDescriptionDifferences(
-                      previousDescription ?? edit.description,
-                      edit.description,
-                    )}
-                  />
+                  <p>
+                    <DescriptionDifference
+                      oldDescription={previousDescription ?? edit.description}
+                      newDescription={edit.description}
+                    />
+                  </p>
                 )}
               </div>
             );

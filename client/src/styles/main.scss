@@ -465,6 +465,16 @@ footer {
         margin-top: 0;
         margin-bottom: 0.25em;
       }
+
+      &__inserted {
+        color: #698542;
+        background-color: #95AE86;
+      }
+
+      &__deleted {
+        color: #854242;
+        background-color: #AE8686;
+      }
     }
   }
 }
