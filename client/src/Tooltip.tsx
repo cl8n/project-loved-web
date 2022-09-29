@@ -16,7 +16,10 @@ export default function Tooltip({ children, content }: PropsWithChildren<Tooltip
     const tooltipContainer = tooltipContainerRef.current;
 
     if (tooltip && tooltipContainer) {
-      tooltip.style.transform = `translateX(-${tooltipContainer.offsetWidth / 2}px)`;
+      const rect = tooltipContainer.getBoundingClientRect();
+
+      tooltip.style.bottom = `${rect.height}px`;
+      tooltip.style.left = `${rect.width / 2}px`;
     }
   }, [tooltipContainerRef, tooltipRef, visible]);
 
@@ -29,9 +32,9 @@ export default function Tooltip({ children, content }: PropsWithChildren<Tooltip
       ref={tooltipContainerRef}
     >
       {children}
-      <div className='tooltip' ref={tooltipRef}>
+      <div className='tooltip'>
         {visible && (
-          <div className='tooltip-content'>
+          <div className='tooltip-content' ref={tooltipRef}>
             {content}
             <div className='tooltip-hover-area' />
             <div className='tooltip-triangle' />
