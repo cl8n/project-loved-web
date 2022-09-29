@@ -19,6 +19,7 @@ const logTypeNames = {
   [LogType.mapperConsentBeatmapsetUpdated]: 'Mapper consent beatmapset update',
   [LogType.settingUpdated]: 'Setting update',
   [LogType.extraTokenCreated]: 'Extra token create',
+  [LogType.extraTokenDeleted]: 'Extra token delete',
 };
 
 const allLogTypes = Object.values(LogType).filter(

@@ -26,6 +26,7 @@ const logTemplates = {
     '{actor} updated mapper consent for {user} on {beatmapset}',
   [LogType.settingUpdated]: '{actor} updated setting {setting}',
   [LogType.extraTokenCreated]: '{user} created extra token with scopes {scopes}',
+  [LogType.extraTokenDeleted]: 'Deleted extra token for {user}',
 };
 
 function logElementForTemplate(
