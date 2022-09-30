@@ -3,10 +3,9 @@ import escapeHtml from 'escape-html';
 interface BBCodeProps {
   text: string;
 }
-
 // TODO: super naive approach and nested tags of same type do not work
 export function BBCode({ text }: BBCodeProps) {
-  const html = text
+  const html = escapeHTML(text)
     .replace(/\[b\]((?:[^[]|(?!\[\/b\])\[)*)\[\/b\]/g, '<b>$1</b>')
     .replace(/\[i\]((?:[^[]|(?!\[\/i\])\[)*)\[\/i\]/g, '<i>$1</i>')
     .replace(/\[s\]((?:[^[]|(?!\[\/s\])\[)*)\[\/s\]/g, '<s>$1</s>')
