@@ -12,11 +12,12 @@ import type {
   RoundGameMode,
   User,
 } from 'loved-bridge/tables';
-import { AssigneeType } from 'loved-bridge/tables';
+import { AssigneeType, LogType } from 'loved-bridge/tables';
 import config from '../config.js';
 import db from '../db.js';
 import { asyncHandler } from '../express-helpers.js';
-import { groupBy } from '../helpers.js';
+import { groupBy, pick } from '../helpers.js';
+import { dbLog } from '../log.js';
 import {
   mainClosingReply,
   mainPostTitle,
@@ -423,16 +424,34 @@ interopRouter.post(
             throw `Unexpected nomination topic response from osu! API for nomination #${nomination.id}`;
           }
 
-          await db.query('INSERT INTO polls SET ?', [
-            {
-              beatmapset_id: nomination.beatmapset_id,
-              ended_at: new Date(topic.topic.poll.ended_at),
-              game_mode: gameMode,
-              round_id: roundId,
-              started_at: new Date(topic.topic.poll.started_at),
-              topic_id: topic.topic.id,
-            },
-          ]);
+          await db.transact(async (connection) => {
+            const { insertId: pollId } = await connection.query('INSERT INTO polls SET ?', [
+              {
+                beatmapset_id: nomination.beatmapset_id,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                ended_at: new Date(topic.topic.poll!.ended_at!),
+                game_mode: gameMode,
+                round_id: roundId,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                started_at: new Date(topic.topic.poll!.started_at),
+                topic_id: topic.topic.id,
+              },
+            ]);
+            await dbLog(
+              LogType.pollCreated,
+              {
+                actor: pick(res.typedLocals.user, ['banned', 'country', 'id', 'name']),
+                beatmapset: pick(nomination.beatmapset, ['artist', 'id', 'title']),
+                gameMode,
+                poll: {
+                  id: pollId,
+                  topic_id: topic.topic.id,
+                },
+                round: pick(round, ['id', 'name']),
+              },
+              connection,
+            );
+          });
 
           firstPostsByNominationId[nomination.id] = {
             body: topic.post.body.raw,
@@ -817,20 +836,25 @@ interopRouter.post(
       );
     }
 
-    await db.transact((connection) =>
-      Promise.all(
-        nominationsChecked.map((nomination) =>
-          connection.query(
-            `
-              UPDATE polls
-              SET result_no = ?, result_yes = ?
-              WHERE id = ?
-            `,
-            [nomination.poll.result_no, nomination.poll.result_yes, nomination.poll.id],
-          ),
-        ),
-      ),
-    );
+    await db.transact(async (connection) => {
+      for (const nomination of nominationsChecked) {
+        await connection.query('UPDATE polls SET ? WHERE id = ?', [
+          pick(nomination.poll, ['result_no', 'result_yes']),
+          nomination.poll.id,
+        ]);
+        await dbLog(
+          LogType.pollUpdated,
+          {
+            actor: pick(res.typedLocals.user, ['banned', 'country', 'id', 'name']),
+            beatmapset: pick(nomination.beatmapset, ['artist', 'id', 'title']),
+            gameMode: nomination.game_mode,
+            poll: pick(nomination.poll, ['id', 'topic_id']),
+            round: pick(round, ['id', 'name']),
+          },
+          connection,
+        );
+      }
+    });
 
     res.status(204).send();
   }),

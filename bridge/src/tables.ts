@@ -38,6 +38,8 @@ export enum LogType {
   settingUpdated,
   extraTokenCreated,
   extraTokenDeleted,
+  pollCreated,
+  pollUpdated,
   // submissionCreated,
   // reviewCreated,
   // reviewDeleted,

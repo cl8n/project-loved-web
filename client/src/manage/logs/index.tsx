@@ -20,6 +20,8 @@ const logTypeNames = {
   [LogType.settingUpdated]: 'Setting update',
   [LogType.extraTokenCreated]: 'Extra token create',
   [LogType.extraTokenDeleted]: 'Extra token delete',
+  [LogType.pollCreated]: 'Poll create',
+  [LogType.pollUpdated]: 'Poll update',
 };
 
 const allLogTypes = Object.values(LogType).filter(
