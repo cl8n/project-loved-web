@@ -1,9 +1,10 @@
-import { createHash, timingSafeEqual } from 'crypto';
 import type { Request, RequestHandler, Response } from 'express';
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import type { UserRole } from 'loved-bridge/tables';
 import { Role } from 'loved-bridge/tables';
 import config from './config.js';
-import { accessSetting } from './settings.js';
+import db from './db.js';
+import { asyncHandler } from './express-helpers.js';
 
 const normalRoles = [
   Role.captain,
@@ -51,14 +52,7 @@ function hasRoleMiddleware(roleIds: readonly Role[], errorMessage: string): Requ
   };
 }
 
-function timingSafeStringEqual(a: string, b: string): boolean {
-  const aHash = createHash('sha256').update(a).digest();
-  const bHash = createHash('sha256').update(b).digest();
-
-  return timingSafeEqual(aHash, bHash);
-}
-
-export const hasLocalInteropKeyMiddleware: RequestHandler = (request, response, next) => {
+export const hasLocalInteropKeyMiddleware = asyncHandler(async (request, response, next) => {
   if (
     config.interopVersion == null ||
     request.get('X-Loved-InteropVersion') !== config.interopVersion.toString()
@@ -72,12 +66,28 @@ export const hasLocalInteropKeyMiddleware: RequestHandler = (request, response, 
     return response.status(422).json({ error: 'Missing key' });
   }
 
-  if (!timingSafeStringEqual(accessSetting('localInteropSecret'), key)) {
+  const interopUser = await db.queryOne<UserWithRoles>(
+    `
+      SELECT users.*
+      FROM interop_keys
+      INNER JOIN users
+        ON interop_keys.user_id = users.id
+      WHERE interop_keys.key = ?
+    `,
+    [key],
+  );
+
+  if (interopUser == null) {
     return response.status(401).json({ error: 'Invalid key' });
   }
 
+  interopUser.roles = await db.query<UserRole>('SELECT * FROM user_roles WHERE user_id = ?', [
+    interopUser.id,
+  ]);
+  response.typedLocals.user = interopUser;
+
   next();
-};
+});
 
 export function currentUserRoles(
   request: Request,

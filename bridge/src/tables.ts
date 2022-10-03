@@ -131,6 +131,11 @@ export interface ExtraToken {
   token: TokenInfo;
 }
 
+export interface InteropKey {
+  key: string;
+  user_id: number;
+}
+
 export interface Log {
   id: number;
   created_at: TableDateType;
