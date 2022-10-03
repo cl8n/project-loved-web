@@ -1,3 +1,4 @@
+import { randomBytes } from 'crypto';
 import { Router } from 'express';
 import { GameMode, gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import type {
@@ -5,6 +6,7 @@ import type {
   Beatmapset,
   Consent,
   ConsentBeatmapset,
+  InteropKey,
   Log,
   Nomination,
   NominationAssignee,
@@ -1628,5 +1630,48 @@ router.post(
         skipWhere ? undefined : [req.body.types],
       ))!.count,
     });
+  }),
+);
+
+router.get(
+  '/interop-key',
+  isNewsAuthorMiddleware,
+  asyncHandler(async (_, res) => {
+    const interopKey = await db.queryOne<Pick<InteropKey, 'key'>>(
+      'SELECT `key` FROM interop_keys WHERE user_id = ?',
+      [res.typedLocals.user.id],
+    );
+
+    res.json(interopKey?.key ?? null);
+  }),
+);
+
+router.post(
+  '/interop-key',
+  isNewsAuthorMiddleware,
+  asyncHandler(async (_, res) => {
+    let key: string;
+
+    for (;;) {
+      key = randomBytes(48).toString('base64');
+
+      const existingInteropKey = await db.queryOne('SELECT 1 FROM interop_keys WHERE `key` = ?', [
+        key,
+      ]);
+
+      if (existingInteropKey == null) {
+        break;
+      }
+    }
+
+    await db.query(
+      `
+        INSERT INTO interop_keys SET ?
+        ON DUPLICATE KEY UPDATE ?
+      `,
+      [{ key, user_id: res.typedLocals.user.id }, { key }],
+    );
+
+    res.json(key);
   }),
 );

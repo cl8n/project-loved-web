@@ -1,6 +1,7 @@
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import type {
   AssigneeType,
+  InteropKey,
   Log,
   LogType,
   MetadataState,
@@ -56,6 +57,10 @@ export function addNomination(
     parentId,
     roundId,
   });
+}
+
+export function addOrUpdateInteropKey(): Response<InteropKey['key']> {
+  return superagent.post('/api/interop-key');
 }
 
 export function addOrUpdateMapperConsent(
@@ -124,6 +129,10 @@ export function getCurrentNewsPost(): Response<{ roundName: string; url: string 
 
 export function getHasExtraToken(): Response<boolean> {
   return superagent.get('/api/has-extra-token');
+}
+
+export function getInteropKey(): Response<InteropKey['key'] | null> {
+  return superagent.get('/api/interop-key');
 }
 
 export function getNewsAuthors(): Response<IUser[]> {
