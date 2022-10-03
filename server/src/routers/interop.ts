@@ -268,6 +268,10 @@ interopRouter.post(
       return res.status(404).json({ error: 'Round not found' });
     }
 
+    if (res.typedLocals.user.id !== round.news_author_id) {
+      return res.status(403).json({ error: 'Must be the news author of the round to post news' });
+    }
+
     const nominations = await db.queryWithGroups<Nomination & { beatmapset: Beatmapset }>(
       `
         SELECT nominations.*, beatmapsets:beatmapset
@@ -545,6 +549,12 @@ interopRouter.post(
 
     if (round == null) {
       return res.status(404).json({ error: 'Round not found' });
+    }
+
+    if (res.typedLocals.user.id !== round.news_author_id) {
+      return res
+        .status(403)
+        .json({ error: 'Must be the news author of the round to post results' });
     }
 
     const roundGameModes = groupBy<RoundGameMode['game_mode'], RoundGameMode>(
