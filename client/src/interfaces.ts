@@ -123,7 +123,6 @@ export interface ISettings {
   defaultVotingThreshold?: Record<GameMode, ISetting<number>>;
   discordWebhook?: Record<GameMode, ISetting<string>>;
   hideNominationStatus?: Record<GameMode, ISetting<boolean>>;
-  localInteropSecret?: ISetting<string>;
 }
 
 export interface ISubmission {
