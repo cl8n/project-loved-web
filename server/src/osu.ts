@@ -18,6 +18,7 @@ import type { Request, Response, SuperAgentStatic } from 'superagent';
 import superagent from 'superagent';
 import config from './config.js';
 import db from './db.js';
+import { pick } from './helpers.js';
 import Limiter from './Limiter.js';
 import { dbLog, systemLog } from './log.js';
 import { isResponseError } from './type-guards.js';
@@ -626,12 +627,7 @@ export class Osu {
         [dbFieldsWithPK, dbFields],
       );
 
-      const logUser = {
-        banned: dbFieldsWithPK.banned,
-        country: dbFieldsWithPK.country,
-        id: dbFieldsWithPK.id,
-        name: dbFieldsWithPK.name,
-      };
+      const logUser = pick(dbFieldsWithPK, ['banned', 'country', 'id', 'name']);
 
       if (currentInDb == null) {
         await dbLog(LogType.userCreated, { user: logUser }, connection);

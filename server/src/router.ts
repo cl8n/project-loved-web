@@ -32,7 +32,7 @@ import {
   isModeratorMiddleware,
   isNewsAuthorMiddleware,
 } from './guards.js';
-import { cleanNominationDescription, getParams, groupBy } from './helpers.js';
+import { cleanNominationDescription, groupBy, pick } from './helpers.js';
 import { dbLog, systemLog } from './log.js';
 import { Osu, redirectToAuth } from './osu.js';
 import { accessSetting, settings, updateSettings } from './settings.js';
@@ -1136,7 +1136,7 @@ router.post(
     }
 
     await db.query('UPDATE rounds SET ? WHERE id = ?', [
-      getParams(req.body.round, [
+      pick(req.body.round, [
         'name',
         'news_author_id',
         'news_intro',
@@ -1382,18 +1382,8 @@ router.post(
       });
     }
 
-    const logActor = {
-      banned: res.typedLocals.user.banned,
-      country: res.typedLocals.user.country,
-      id: res.typedLocals.user.id,
-      name: res.typedLocals.user.name,
-    };
-    const logUser = {
-      banned: user.banned,
-      country: user.country,
-      id: user.id,
-      name: user.name,
-    };
+    const logActor = pick(res.typedLocals.user, ['banned', 'country', 'id', 'name']);
+    const logUser = pick(user, ['banned', 'country', 'id', 'name']);
 
     await db.transact(async (connection) => {
       for (const newRole of req.body.roles as Omit<UserRole, 'user_id'>[]) {
