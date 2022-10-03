@@ -441,7 +441,11 @@ interopRouter.post(
               LogType.pollCreated,
               {
                 actor: pick(res.typedLocals.user, ['banned', 'country', 'id', 'name']),
-                beatmapset: pick(nomination.beatmapset, ['artist', 'id', 'title']),
+                beatmapset: {
+                  artist: nomination.overwrite_artist ?? nomination.beatmapset.artist,
+                  id: nomination.beatmapset_id,
+                  title: nomination.overwrite_title ?? nomination.beatmapset.title,
+                },
                 gameMode,
                 poll: {
                   id: pollId,
@@ -846,7 +850,11 @@ interopRouter.post(
           LogType.pollUpdated,
           {
             actor: pick(res.typedLocals.user, ['banned', 'country', 'id', 'name']),
-            beatmapset: pick(nomination.beatmapset, ['artist', 'id', 'title']),
+            beatmapset: {
+              artist: nomination.overwrite_artist ?? nomination.beatmapset.artist,
+              id: nomination.beatmapset_id,
+              title: nomination.overwrite_title ?? nomination.beatmapset.title,
+            },
             gameMode: nomination.game_mode,
             poll: pick(nomination.poll, ['id', 'topic_id']),
             round: pick(round, ['id', 'name']),
