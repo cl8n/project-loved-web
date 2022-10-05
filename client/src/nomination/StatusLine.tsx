@@ -1,3 +1,4 @@
+import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import { DescriptionState, MetadataState, ModeratorState } from 'loved-bridge/tables';
 import type { INominationWithPoll } from '../interfaces';
 import ListInline from '../ListInline';
@@ -73,7 +74,11 @@ export default function StatusLine({
       {' → '}
       <span className={votingClass(nomination.poll != null, votingResult)}>Voting</span>
       {' → '}
-      <span className={nomination.beatmapset.ranked_status === 4 ? 'success' : 'error'}>Loved</span>
+      <span
+        className={nomination.beatmapset.ranked_status === RankedStatus.loved ? 'success' : 'error'}
+      >
+        Loved
+      </span>
     </div>
   );
 }

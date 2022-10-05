@@ -1,4 +1,5 @@
 import { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import { Role } from 'loved-bridge/tables';
 import type { MouseEvent, ReactNode } from 'react';
 import { useMemo, useState } from 'react';
@@ -530,7 +531,7 @@ function StatusCell({ beatmapset }: StatusCellProps) {
   const intl = useIntl();
 
   // TODO: Support per-mode status for maps loved in only one mode or etc
-  if (beatmapset.ranked_status === 4) {
+  if (beatmapset.ranked_status === RankedStatus.loved) {
     if (beatmapset.poll?.passed) {
       return (
         <td className='priority'>
@@ -544,15 +545,15 @@ function StatusCell({ beatmapset }: StatusCellProps) {
     return <td className='priority high'>{intl.formatMessage(messages.loved)}</td>;
   }
 
-  if (beatmapset.ranked_status === 3) {
+  if (beatmapset.ranked_status === RankedStatus.qualified) {
     return <td className='priority low'>{intl.formatMessage(messages.qualified)}</td>;
   }
 
-  if (beatmapset.ranked_status === 2) {
+  if (beatmapset.ranked_status === RankedStatus.approved) {
     return <td className='priority medium'>{intl.formatMessage(messages.approved)}</td>;
   }
 
-  if (beatmapset.ranked_status === 1) {
+  if (beatmapset.ranked_status === RankedStatus.ranked) {
     return <td className='priority medium'>{intl.formatMessage(messages.ranked)}</td>;
   }
 

@@ -1,4 +1,5 @@
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import type { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import type {
   ConsentValue,
   DescriptionState,
@@ -14,7 +15,7 @@ interface IGenericBeatmap {
   bpm: number;
   deleted_at: string | null;
   play_count: number;
-  ranked_status: number;
+  ranked_status: RankedStatus;
   star_rating: number;
   version: string;
 }
@@ -42,7 +43,7 @@ export interface IBeatmapset {
   deleted_at: string | null;
   favorite_count: number;
   play_count: number;
-  ranked_status: number;
+  ranked_status: RankedStatus;
   submitted_at: string;
   title: string;
   updated_at: string;

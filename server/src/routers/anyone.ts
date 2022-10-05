@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import type { Beatmapset, Consent, ConsentBeatmapset, Review, User } from 'loved-bridge/tables';
 import { LogType, Role } from 'loved-bridge/tables';
 import type { MysqlConnectionType } from '../db.js';
@@ -443,7 +444,7 @@ anyoneRouter.post(
 
     // TODO: This should allow cases where the set is Loved but at least one
     //       difficulty in each requested mode is Pending/WIP/Graveyard
-    if (beatmapset.ranked_status > 0) {
+    if (beatmapset.ranked_status > RankedStatus.pending) {
       return res.status(422).json({ error: 'Beatmapset is already Ranked/Loved/Qualified' });
     }
 
