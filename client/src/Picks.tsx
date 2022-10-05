@@ -629,7 +629,11 @@ function Nomination({
           {canEditDifficulties && (
             <>
               {' — '}
-              <EditDifficulties nomination={nomination} onNominationUpdate={onNominationUpdate} />
+              <EditDifficulties
+                nomination={nomination}
+                onNominationUpdate={onNominationUpdate}
+                round={round}
+              />
             </>
           )}
         </span>
@@ -920,9 +924,10 @@ function EditAssignees({
 interface EditDifficultiesProps {
   nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
+  round: IRound;
 }
 
-function EditDifficulties({ nomination, onNominationUpdate }: EditDifficultiesProps) {
+function EditDifficulties({ nomination, onNominationUpdate, round }: EditDifficultiesProps) {
   const [busy, setBusy] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -944,7 +949,15 @@ function EditDifficulties({ nomination, onNominationUpdate }: EditDifficultiesPr
 
   return (
     <>
-      <button type='button' onClick={() => setModalOpen(true)} className='fake-a'>
+      <button
+        type='button'
+        onClick={() => setModalOpen(true)}
+        className={`fake-a${
+          !round.ignore_creator_and_difficulty_checks && !nomination.difficulties_set
+            ? ' important-bad'
+            : ''
+        }`}
+      >
         Edit
       </button>
       <Modal close={() => setModalOpen(false)} open={modalOpen}>
