@@ -99,7 +99,7 @@ export function Picks() {
       for (const nomination of roundInfo.nominations) {
         cache[nomination.id] = roundInfo.round.done
           ? new Set()
-          : nominationProgressWarnings(nomination, authUser);
+          : nominationProgressWarnings(nomination, roundInfo.round, authUser);
       }
     }
 
