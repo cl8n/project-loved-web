@@ -2,6 +2,7 @@ import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import type { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import type {
   ConsentValue,
+  CreatorsState,
   DescriptionState,
   MetadataState,
   ModeratorState,
@@ -54,10 +55,12 @@ export interface INomination {
   beatmaps: IBeatmapWithExcluded[];
   beatmapset: IBeatmapset;
   beatmapset_creators: IUser[];
+  creators_state: CreatorsState;
   description?: string;
   description_author?: IUser;
   description_edits: (NominationDescriptionEdit & { editor: IUser })[];
   description_state: DescriptionState;
+  difficulties_set: boolean;
   game_mode: GameMode;
   metadata_assignees: IUser[];
   metadata_state: MetadataState;
@@ -109,6 +112,7 @@ export interface IRound {
       voting_threshold: number;
     }
   >;
+  ignore_creator_and_difficulty_checks: boolean;
   ignore_moderator_checks: boolean;
   name: string;
   news_author_id: number;

@@ -21,6 +21,7 @@ import type {
 import {
   AssigneeType,
   ConsentValue,
+  CreatorsState,
   DescriptionState,
   LogType,
   MetadataState,
@@ -783,10 +784,11 @@ router.post(
     }
 
     const nomination:
-      | (Pick<Nomination, 'beatmapset_id' | 'game_mode' | 'metadata_state'> & {
-          beatmapset?: Beatmapset;
-          beatmapset_creators?: User[];
-        })
+      | (Pick<Nomination, 'beatmapset_id' | 'game_mode' | 'metadata_state'> &
+          Partial<Nomination> & {
+            beatmapset?: Beatmapset;
+            beatmapset_creators?: User[];
+          })
       | null = await db.queryOne<
       Pick<Nomination, 'beatmapset_id' | 'game_mode' | 'metadata_state'>
     >(
@@ -862,6 +864,14 @@ router.post(
           [creators.map((user) => [nomination.beatmapset_id, user.id, nomination.game_mode])],
         );
       }
+
+      nomination.creators_state =
+        creators.length > 0 ? CreatorsState.good : CreatorsState.unchecked;
+
+      await connection.query('UPDATE nominations SET creators_state = ? WHERE id = ?', [
+        nomination.creators_state,
+        req.body.nominationId,
+      ]);
 
       nomination.beatmapset_creators = creators.sort((a, b) => {
         if (a.id === nomination.beatmapset?.creator_id) {
@@ -1232,6 +1242,9 @@ router.post(
       await connection.query('DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?', [
         req.body.nominationId,
       ]);
+      await connection.query('UPDATE nominations SET difficulties_set = 1 WHERE id = ?', [
+        req.body.nominationId,
+      ]);
 
       if (isIntegerArray(req.body.excludedBeatmapIds) && req.body.excludedBeatmapIds.length > 0) {
         await connection.query(
@@ -1241,7 +1254,7 @@ router.post(
       }
     });
 
-    res.status(204).send();
+    res.json({ id: req.body.nominationId, difficulties_set: true });
   }),
 );
 

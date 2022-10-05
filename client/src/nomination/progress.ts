@@ -1,10 +1,18 @@
-import { DescriptionState, MetadataState, ModeratorState, Role } from 'loved-bridge/tables';
+import {
+  CreatorsState,
+  DescriptionState,
+  MetadataState,
+  ModeratorState,
+  Role,
+} from 'loved-bridge/tables';
 import type { INomination, IUserWithRoles } from '../interfaces';
 import { hasRole } from '../permissions';
 
 export enum NominationProgressWarning {
+  creatorsUnchecked,
   descriptionMissing,
   descriptionNeedsReview,
+  difficultiesUnset,
   metadataAssigneesMissing,
   metadataUnchecked,
   metadataNeedsChange,
@@ -14,9 +22,11 @@ export enum NominationProgressWarning {
   moderatorSentToReview,
 }
 
-export const nominationProgressWarningMessages = {
+export const nominationProgressWarningMessages: Record<NominationProgressWarning, string> = {
+  [NominationProgressWarning.creatorsUnchecked]: 'Creators need to be checked',
   [NominationProgressWarning.descriptionMissing]: 'Missing description',
   [NominationProgressWarning.descriptionNeedsReview]: 'Description needs to be reviewed',
+  [NominationProgressWarning.difficultiesUnset]: 'Excluded difficulties need to be set',
   [NominationProgressWarning.metadataAssigneesMissing]: 'Metadata reviewers need to be assigned',
   [NominationProgressWarning.metadataUnchecked]: 'Metadata needs to be checked',
   [NominationProgressWarning.metadataNeedsChange]:
@@ -26,7 +36,7 @@ export const nominationProgressWarningMessages = {
   [NominationProgressWarning.moderatorNeedsChange]:
     'Content needs to be re-checked by a moderator after the map is updated',
   [NominationProgressWarning.moderatorSentToReview]: 'Waiting on result of moderation review',
-} as const;
+};
 
 export function nominationProgressWarnings(
   nomination: INomination,
@@ -34,8 +44,19 @@ export function nominationProgressWarnings(
 ): Set<NominationProgressWarning> {
   const warnings = new Set<NominationProgressWarning>();
 
-  if (nomination.description == null && hasRole(user, Role.captain, nomination.game_mode, true)) {
-    warnings.add(NominationProgressWarning.descriptionMissing);
+  if (hasRole(user, Role.captain, nomination.game_mode, true)) {
+    if (!nomination.difficulties_set) {
+      warnings.add(NominationProgressWarning.difficultiesUnset);
+    }
+
+    // TODO: Uncomment when captains can change beatmapset creators
+    // if (nomination.creators_state === CreatorsState.unchecked) {
+    //   warnings.add(NominationProgressWarning.creatorsUnchecked);
+    // }
+
+    if (nomination.description == null) {
+      warnings.add(NominationProgressWarning.descriptionMissing);
+    }
   }
 
   if (hasRole(user, Role.metadata, undefined, true)) {
@@ -44,6 +65,10 @@ export function nominationProgressWarnings(
     }
 
     if (nomination.metadata_assignees.some((assignee) => assignee.id === user.id)) {
+      if (nomination.creators_state !== CreatorsState.good) {
+        warnings.add(NominationProgressWarning.creatorsUnchecked);
+      }
+
       switch (nomination.metadata_state) {
         case MetadataState.unchecked:
           warnings.add(NominationProgressWarning.metadataUnchecked);
@@ -84,6 +109,10 @@ export function nominationProgressWarnings(
   }
 
   if (hasRole(user, Role.newsAuthor, undefined, true)) {
+    if (nomination.creators_state !== CreatorsState.good) {
+      warnings.add(NominationProgressWarning.creatorsUnchecked);
+    }
+
     if (nomination.metadata_assignees.length === 0) {
       warnings.add(NominationProgressWarning.metadataAssigneesMissing);
     }

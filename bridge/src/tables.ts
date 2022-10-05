@@ -16,6 +16,12 @@ export enum ConsentValue {
   unreachable,
 }
 
+export enum CreatorsState {
+  unchecked,
+  checkedOnlyByCaptain,
+  good,
+}
+
 export enum DescriptionState {
   notReviewed,
   reviewed,
@@ -148,9 +154,11 @@ export interface Log {
 export interface Nomination {
   id: number;
   beatmapset_id: number;
+  creators_state: CreatorsState;
   description: string | null;
   description_author_id: number | null;
   description_state: DescriptionState;
+  difficulties_set: boolean;
   game_mode: GameMode;
   metadata_state: MetadataState;
   moderator_state: ModeratorState;
@@ -210,6 +218,7 @@ export interface Review {
 export interface Round {
   id: number;
   done: boolean;
+  ignore_creator_and_difficulty_checks: boolean;
   ignore_moderator_checks: boolean;
   name: string;
   news_author_id: number;

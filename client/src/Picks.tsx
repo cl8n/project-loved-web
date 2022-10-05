@@ -670,11 +670,7 @@ function Nomination({
         </div>
       )}
       <div className='flex-bar'>
-        <StatusLine
-          ignoreModeratorChecks={round.ignore_moderator_checks}
-          nomination={nomination}
-          votingResult={votingResult}
-        />
+        <StatusLine nomination={nomination} round={round} votingResult={votingResult} />
         {canForceBeatmapsetUpdate && <ForceBeatmapsetUpdate nomination={nomination} />}
       </div>
       <Description
@@ -932,14 +928,15 @@ function EditDifficulties({ nomination, onNominationUpdate }: EditDifficultiesPr
 
   const onSubmit: FormSubmitHandler = (form, then) => {
     return updateExcludedBeatmaps(nomination.id, form.excluded)
-      .then(() => {
+      .then((response) =>
         onNominationUpdate({
-          id: nomination.id,
-          beatmaps: nomination.beatmaps.map((beatmap) => {
-            return { ...beatmap, excluded: form.excluded.includes(beatmap.id) };
-          }),
-        });
-      })
+          ...response.body,
+          beatmaps: nomination.beatmaps.map((beatmap) => ({
+            ...beatmap,
+            excluded: form.excluded.includes(beatmap.id),
+          })),
+        }),
+      )
       .then(then)
       .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));

@@ -234,7 +234,7 @@ export function updateApiObjectBulk<T extends ApiObjectType>(type: T, ids: numbe
 export function updateExcludedBeatmaps(
   nominationId: number,
   excludedBeatmapIds: number[],
-): Response {
+): Response<PartialWithId<INomination>> {
   return superagent
     .post('/api/update-excluded-beatmaps')
     .send({ nominationId, excludedBeatmapIds });
