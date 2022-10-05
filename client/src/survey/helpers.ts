@@ -1,4 +1,4 @@
-import type { GameMode } from 'loved-bridge/build/beatmaps/gameMode';
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 
 export const comparingStatistics = ['rank', 'joinYear'] as const;
 export const userIdentities = ['player', 'mapper'] as const;
