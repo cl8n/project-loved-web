@@ -394,7 +394,13 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
         </span>
         <div className='beatmapset-search'>
           {selectedBeatmapset == null ? (
-            <input ref={searchInputRef} type='text' name='beatmapset' onInput={onSearchInput} />
+            <input
+              ref={searchInputRef}
+              type='text'
+              name='beatmapset'
+              onInput={onSearchInput}
+              placeholder='Enter a beatmapset ID or search by artist, title, and creator'
+            />
           ) : (
             <div
               className='beatmapset-search-selection'
