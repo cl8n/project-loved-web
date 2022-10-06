@@ -1,4 +1,4 @@
-import { GameMode, gameModeLongName } from 'loved-bridge/beatmaps/gameMode';
+import { GameMode, gameModeLongName, gameModeShortName } from 'loved-bridge/beatmaps/gameMode';
 import type { NominationDescriptionEdit } from 'loved-bridge/tables';
 import {
   AssigneeType,
@@ -10,7 +10,7 @@ import {
 import type { FormEvent } from 'react';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { FormattedDate } from 'react-intl';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
 import {
   addNomination,
@@ -385,7 +385,13 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
   return (
     <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
       <p className='flex-left'>
-        <label htmlFor='beatmapset'>Beatmapset</label>
+        <span>
+          <label htmlFor='beatmapset'>Beatmapset</label>{' '}
+          <Help>
+            If you can't find the beatmapset here, make sure it's been{' '}
+            <Link to={`/submissions/${gameModeShortName(gameMode)}`}>submitted</Link> first!
+          </Help>
+        </span>
         <div className='beatmapset-search'>
           {selectedBeatmapset == null ? (
             <input ref={searchInputRef} type='text' name='beatmapset' onInput={onSearchInput} />
@@ -415,7 +421,7 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
           )}
         </div>
         <span>
-          <label htmlFor='parentId'>Parent nomination ID </label>
+          <label htmlFor='parentId'>Parent nomination ID</label>{' '}
           <Help>
             If this map is being nominated because another mode's captains picked it first, set this
             field to the original mode's nomination ID
