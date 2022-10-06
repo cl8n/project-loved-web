@@ -10,7 +10,7 @@ import type {
 } from 'loved-bridge/tables';
 import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
-import type { ResponseError, Response as SuperAgentResponse } from 'superagent';
+import type { ResponseError, SuperAgentRequest, Response as SuperAgentResponse } from 'superagent';
 import superagent from 'superagent';
 import type {
   IBeatmapset,
@@ -33,7 +33,8 @@ import type {
 interface SuperAgentResponseWithBody<BodyType> extends SuperAgentResponse {
   body: BodyType;
 }
-type Response<BodyType = undefined> = Promise<SuperAgentResponseWithBody<BodyType>>;
+type Response<BodyType = undefined> = Promise<SuperAgentResponseWithBody<BodyType>> &
+  SuperAgentRequest;
 
 interface ApiObjectTypes {
   beatmapset: IBeatmapset;
