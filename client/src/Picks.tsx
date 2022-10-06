@@ -343,6 +343,7 @@ interface AddNominationProps {
 function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProps) {
   const [busy, setBusy] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [searchRequest, setSearchRequest] = useState<ReturnType<typeof searchBeatmapsets>>();
   const [searchResults, setSearchResults] = useState<IBeatmapset[]>();
   const [selectedBeatmapset, setSelectedBeatmapset] = useState<IBeatmapset>();
 
@@ -353,16 +354,25 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
   }, [selectedBeatmapset]);
 
   const onSearchInput = (event: FormEvent<HTMLInputElement>) => {
+    if (searchRequest != null) {
+      searchRequest.abort();
+    }
+
     const query = event.currentTarget.value;
 
-    if (query.length < 2) {
+    if (query.length === 0) {
+      setSearchRequest(undefined);
       setSearchResults(undefined);
       return;
     }
 
-    searchBeatmapsets(query)
+    const request = searchBeatmapsets(query);
+
+    request
       .then((response) => setSearchResults(response.body))
-      .catch(alertApiErrorMessage);
+      .catch((error) => error.code !== 'ABORTED' && alertApiErrorMessage(error));
+
+    setSearchRequest(request);
   };
   const onSubmit: FormSubmitHandler = (form, then) => {
     if (selectedBeatmapset == null) {
