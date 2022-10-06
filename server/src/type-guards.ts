@@ -30,6 +30,10 @@ export function isGameModeArray(gameModes: unknown): gameModes is GameMode[] {
   return Array.isArray(gameModes) && gameModes.every(isGameMode);
 }
 
+export function isIdString(id: string): boolean {
+  return /^\d+$/.test(id);
+}
+
 /**
  * The type guard on this is intentionally not correct when `integer` is of type number but not an
  * integer. Only use it when such inputs would not be referred to later.

@@ -43,6 +43,7 @@ import { accessSetting, settings, updateSettings } from './settings.js';
 import {
   isAssigneeType,
   isGameMode,
+  isIdString,
   isInteger,
   isIntegerArray,
   isLogTypeArray,
@@ -122,7 +123,7 @@ router.get(
       [query],
     );
 
-    if (!isNaN(parseInt(query, 10))) {
+    if (isIdString(query)) {
       const beatmapset = await db.queryOne<
         Pick<Beatmapset, 'artist' | 'creator_name' | 'id' | 'title'>
       >(
