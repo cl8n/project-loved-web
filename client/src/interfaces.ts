@@ -10,6 +10,8 @@ import type {
   Role,
 } from 'loved-bridge/tables';
 
+// TODO: Replace most of this with bridge types
+
 interface IGenericBeatmap {
   id: number;
   beatmapset_id: number;
@@ -55,6 +57,7 @@ export interface INomination {
   beatmaps: IBeatmapWithExcluded[];
   beatmapset: IBeatmapset;
   beatmapset_creators: IUser[];
+  beatmapset_id: number;
   creators_state: CreatorsState;
   description?: string;
   description_author?: IUser;
