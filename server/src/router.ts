@@ -1220,6 +1220,34 @@ router.post(
   '/update-excluded-beatmaps',
   isCaptainMiddleware,
   asyncHandler(async (req, res) => {
+    if (!isIntegerArray(req.body.excludedBeatmapIds)) {
+      return res.status(422).json({ error: 'Invalid beatmap IDs' });
+    }
+
+    const excludedBeatmapIds = req.body.excludedBeatmapIds;
+
+    if (!isInteger(req.body.nominationId)) {
+      return res.status(422).json({ error: 'Invalid nomination ID' });
+    }
+
+    const beatmaps = await db.query<Pick<Beatmap, 'id'>>(
+      `
+        SELECT beatmaps.id
+        FROM beatmaps
+        INNER JOIN nominations
+          ON beatmaps.beatmapset_id = nominations.beatmapset_id
+            AND beatmaps.game_mode = nominations.game_mode
+        WHERE nominations.id = ?
+      `,
+      [req.body.nominationId],
+    );
+
+    for (const excludedBeatmapId of excludedBeatmapIds) {
+      if (!beatmaps.some((beatmap) => beatmap.id === excludedBeatmapId)) {
+        return res.status(404).json({ error: `Beatmap #${excludedBeatmapId} not found` });
+      }
+    }
+
     await db.transact(async (connection) => {
       await connection.query('DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?', [
         req.body.nominationId,
@@ -1228,10 +1256,10 @@ router.post(
         req.body.nominationId,
       ]);
 
-      if (isIntegerArray(req.body.excludedBeatmapIds) && req.body.excludedBeatmapIds.length > 0) {
+      if (excludedBeatmapIds.length > 0) {
         await connection.query(
           'INSERT INTO nomination_excluded_beatmaps (beatmap_id, nomination_id) VALUES ?',
-          [req.body.excludedBeatmapIds.map((id) => [id, req.body.nominationId])],
+          [excludedBeatmapIds.map((id) => [id, req.body.nominationId])],
         );
       }
     });
