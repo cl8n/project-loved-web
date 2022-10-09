@@ -177,8 +177,5 @@ export interface IMapperBeatmapsetConsent {
   consent_reason: string | null;
 }
 
-export type PartialWithoutId<T extends { id: unknown }> = {
-  [P in keyof T as Exclude<P, 'id'>]?: T[P];
-};
-
+export type PartialWithoutId<T extends { id: unknown }> = Partial<Omit<T, 'id'>>;
 export type PartialWithId<T extends { id: unknown }> = { id: T['id'] } & PartialWithoutId<T>;
