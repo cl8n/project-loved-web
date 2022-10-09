@@ -55,6 +55,7 @@ interface OsuApiBeatmap {
   playcount: number;
   ranked: import('loved-bridge/beatmaps/rankedStatus').RankedStatus;
   total_length: number;
+  user_id: number;
   version: string;
 }
 

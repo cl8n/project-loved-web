@@ -221,8 +221,7 @@ router.get(
           SELECT nominations.id AS nomination_id, creators:creator
           FROM nominations
           INNER JOIN beatmapset_creators
-            ON nominations.beatmapset_id = beatmapset_creators.beatmapset_id
-              AND nominations.game_mode = beatmapset_creators.game_mode
+            ON nominations.id = beatmapset_creators.nomination_id
           INNER JOIN users AS creators
             ON beatmapset_creators.creator_id = creators.id
           WHERE nominations.round_id = ?
@@ -568,21 +567,22 @@ router.post(
           nominator_id: res.typedLocals.user.id,
         },
       ]);
+      await connection.query(
+        `
+          INSERT INTO beatmapset_creators (creator_id, nomination_id)
+            SELECT creator_id, ?
+            FROM beatmapsets
+            WHERE id = ?
+            UNION DISTINCT
+            SELECT DISTINCT creator_id, ?
+            FROM beatmaps
+            WHERE beatmapset_id = ?
+              AND game_mode = ?
+        `,
+        [nominationId, beatmapset.id, nominationId, beatmapset.id, req.body.gameMode],
+      );
     });
 
-    const creators = await db.query<User>(
-      `
-        SELECT users.*
-        FROM beatmapset_creators
-        INNER JOIN nominations
-          ON beatmapset_creators.beatmapset_id = nominations.beatmapset_id
-            AND beatmapset_creators.game_mode = nominations.game_mode
-        INNER JOIN users
-          ON beatmapset_creators.creator_id = users.id
-        WHERE nominations.id = ?
-      `,
-      [nominationId],
-    );
     const nomination: Nomination & {
       beatmaps?: (Beatmap & { excluded: false })[];
       beatmapset?: Beatmapset;
@@ -610,6 +610,16 @@ router.post(
         ORDER BY key_count ASC, star_rating ASC
       `,
       [nomination.beatmapset_id, req.body.gameMode],
+    );
+    const creators = await db.query<User>(
+      `
+        SELECT users.*
+        FROM beatmapset_creators
+        INNER JOIN users
+          ON beatmapset_creators.creator_id = users.id
+        WHERE beatmapset_creators.nomination_id = ?
+      `,
+      [nominationId],
     );
     const nominators = await db.query<User>(
       `
@@ -824,10 +834,9 @@ router.post(
         ),
       );
 
-      await connection.query(
-        'DELETE FROM beatmapset_creators WHERE beatmapset_id = ? AND game_mode = ?',
-        [nomination.beatmapset_id, nomination.game_mode],
-      );
+      await connection.query('DELETE FROM beatmapset_creators WHERE nomination_id = ?', [
+        req.body.nominationId,
+      ]);
 
       const creators: User[] = [];
 
@@ -842,8 +851,8 @@ router.post(
         }
 
         await connection.query(
-          'INSERT INTO beatmapset_creators (beatmapset_id, creator_id, game_mode) VALUES ?',
-          [creators.map((user) => [nomination.beatmapset_id, user.id, nomination.game_mode])],
+          'INSERT INTO beatmapset_creators (creator_id, nomination_id) VALUES ?',
+          [creators.map((user) => [user.id, req.body.nominationId])],
         );
       }
 
@@ -918,6 +927,9 @@ router.delete(
     }
 
     await db.transact(async (connection) => {
+      await connection.query('DELETE FROM beatmapset_creators WHERE nomination_id = ?', [
+        req.query.nominationId,
+      ]);
       await connection.query('DELETE FROM nomination_assignees WHERE nomination_id = ?', [
         req.query.nominationId,
       ]);
@@ -1531,7 +1543,6 @@ router.delete(
 
     await db.transact(async (connection) => {
       await connection.query('DELETE FROM beatmaps WHERE beatmapset_id = ?', [id]);
-      await connection.query('DELETE FROM beatmapset_creators WHERE beatmapset_id = ?', [id]);
       await connection.query('DELETE FROM mapper_consent_beatmapsets WHERE beatmapset_id = ?', [
         id,
       ]);

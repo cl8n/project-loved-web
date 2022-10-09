@@ -113,8 +113,7 @@ interopRouter.get(
           SELECT nominations.id AS nomination_id, creators:creator
           FROM nominations
           INNER JOIN beatmapset_creators
-            ON nominations.beatmapset_id = beatmapset_creators.beatmapset_id
-              AND nominations.game_mode = beatmapset_creators.game_mode
+            ON nominations.id = beatmapset_creators.nomination_id
           INNER JOIN users AS creators
             ON beatmapset_creators.creator_id = creators.id
           WHERE nominations.round_id = ?
@@ -662,8 +661,7 @@ interopRouter.post(
           SELECT nominations.id, creators:creator
           FROM nominations
           INNER JOIN beatmapset_creators
-            ON nominations.beatmapset_id = beatmapset_creators.beatmapset_id
-            AND nominations.game_mode = beatmapset_creators.game_mode
+            ON nominations.id = beatmapset_creators.nomination_id
           INNER JOIN users AS creators
             ON beatmapset_creators.creator_id = creators.id
           WHERE nominations.round_id = ?

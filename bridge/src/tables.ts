@@ -114,9 +114,8 @@ export interface Beatmapset {
 }
 
 export interface BeatmapsetCreator {
-  beatmapset_id: number;
   creator_id: number;
-  game_mode: GameMode;
+  nomination_id: number;
 }
 
 export interface Consent {
