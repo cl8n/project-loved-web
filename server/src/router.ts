@@ -201,7 +201,6 @@ router.get(
           FROM nominations
           INNER JOIN beatmaps
             ON nominations.beatmapset_id = beatmaps.beatmapset_id
-              AND nominations.game_mode = beatmaps.game_mode
           LEFT JOIN nomination_excluded_beatmaps
             ON nominations.id = nomination_excluded_beatmaps.nomination_id
               AND beatmaps.id = nomination_excluded_beatmaps.beatmap_id

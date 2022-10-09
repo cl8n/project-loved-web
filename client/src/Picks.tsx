@@ -1,4 +1,9 @@
-import { GameMode, gameModeLongName, gameModeShortName } from 'loved-bridge/beatmaps/gameMode';
+import {
+  GameMode,
+  gameModeLongName,
+  gameModes,
+  gameModeShortName,
+} from 'loved-bridge/beatmaps/gameMode';
 import type { NominationDescriptionEdit } from 'loved-bridge/tables';
 import {
   AssigneeType,
@@ -92,6 +97,68 @@ export function Picks() {
     [GameMode.mania]: false,
   });
   const [showTodo, setShowTodo] = useState(false);
+  const nominationOtherGameModesMissingParentCache = useMemo(() => {
+    const cache: Record<INomination['id'], GameMode[]> = {};
+
+    if (roundInfo != null) {
+      for (const nomination of roundInfo.nominations) {
+        const gameModesMissingParent: GameMode[] = [];
+
+        if (nomination.parent_id == null) {
+          for (const gameMode of gameModes) {
+            if (gameMode === nomination.game_mode) {
+              continue;
+            }
+
+            if (
+              roundInfo.nominations.some(
+                (nomination2) =>
+                  nomination2.game_mode === gameMode &&
+                  nomination2.beatmapset_id === nomination.beatmapset_id &&
+                  nomination2.parent_id == null,
+              )
+            ) {
+              gameModesMissingParent.push(gameMode);
+            }
+          }
+        }
+
+        cache[nomination.id] = gameModesMissingParent;
+      }
+    }
+
+    return cache;
+  }, [roundInfo]);
+  const nominationOtherGameModesWithBeatmapsCache = useMemo(() => {
+    const cache: Record<INomination['id'], GameMode[]> = {};
+
+    if (roundInfo != null) {
+      for (const nomination of roundInfo.nominations) {
+        const gameModesWithBeatmaps: GameMode[] = [];
+
+        for (const gameMode of gameModes) {
+          if (gameMode === nomination.game_mode) {
+            continue;
+          }
+
+          if (
+            nomination.beatmaps.some((beatmap) => beatmap.game_mode === gameMode) &&
+            !roundInfo.nominations.some(
+              (nomination2) =>
+                nomination2.beatmapset_id === nomination.beatmapset_id &&
+                nomination2.game_mode === gameMode,
+            )
+          ) {
+            gameModesWithBeatmaps.push(gameMode);
+          }
+        }
+
+        cache[nomination.id] = gameModesWithBeatmaps;
+      }
+    }
+
+    return cache;
+  }, [roundInfo]);
   const nominationProgressWarningsCache = useMemo(() => {
     const cache: Record<INomination['id'], Set<NominationProgressWarning>> = {};
 
@@ -317,6 +384,8 @@ export function Picks() {
                     assigneesApi[1],
                   ]}
                   captainsApi={[captainsApi[0], captainsApi[1]]}
+                  gameModesMissingParent={nominationOtherGameModesMissingParentCache[nomination.id]}
+                  gameModesWithBeatmaps={nominationOtherGameModesWithBeatmapsCache[nomination.id]}
                   locked={nominationsLocked(gameMode)}
                   nomination={nomination}
                   onNominationDelete={onNominationDelete}
@@ -453,6 +522,8 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
 interface NominationProps {
   assigneesApi: readonly [IUser[] | undefined, IUser[] | undefined, ResponseError | undefined];
   captainsApi: readonly [{ [P in GameMode]?: IUser[] } | undefined, ResponseError | undefined];
+  gameModesMissingParent: GameMode[];
+  gameModesWithBeatmaps: GameMode[];
   locked: boolean;
   nomination: INominationWithPoll;
   onNominationDelete: (nominationId: number) => void;
@@ -465,6 +536,8 @@ interface NominationProps {
 function Nomination({
   assigneesApi,
   captainsApi,
+  gameModesMissingParent,
+  gameModesWithBeatmaps,
   locked,
   nomination,
   onNominationDelete,
@@ -709,6 +782,26 @@ function Nomination({
       />
       {hasProgressWarnings && (
         <div className='nomination__warnings'>
+          {hasRole(authUser, Role.captain, nomination.game_mode, true) && (
+            <>
+              {gameModesWithBeatmaps.length > 0 && (
+                <span>
+                  <span className='nomination__warning-icon'>!</span>
+                  There are beatmaps in{' '}
+                  <ListInline array={gameModesWithBeatmaps.map(gameModeLongName)} /> with no
+                  nomination
+                </span>
+              )}
+              {gameModesMissingParent.length > 0 && (
+                <span>
+                  <span className='nomination__warning-icon'>!</span>
+                  Nominations for the same map in{' '}
+                  <ListInline array={gameModesMissingParent.map(gameModeLongName)} /> need to be
+                  linked via parent ID
+                </span>
+              )}
+            </>
+          )}
           {[...progressWarnings].map((warning) => (
             <span key={warning}>
               <span className='nomination__warning-icon'>!</span>
@@ -986,22 +1079,24 @@ function EditDifficulties({ nomination, onNominationUpdate, round }: EditDifficu
         <h2>Excluded difficulties</h2>
         <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
           <table>
-            {nomination.beatmaps.map((beatmap) => (
-              <tr key={beatmap.id}>
-                <td>
-                  <input
-                    type='checkbox'
-                    name='excluded'
-                    value={beatmap.id}
-                    data-value-type='int'
-                    defaultChecked={beatmap.excluded}
-                  />
-                </td>
-                <td>
-                  {beatmap.version} — {beatmap.star_rating.toFixed(2)}★
-                </td>
-              </tr>
-            ))}
+            {nomination.beatmaps
+              .filter((beatmap) => beatmap.game_mode === nomination.game_mode)
+              .map((beatmap) => (
+                <tr key={beatmap.id}>
+                  <td>
+                    <input
+                      type='checkbox'
+                      name='excluded'
+                      value={beatmap.id}
+                      data-value-type='int'
+                      defaultChecked={beatmap.excluded}
+                    />
+                  </td>
+                  <td>
+                    {beatmap.version} — {beatmap.star_rating.toFixed(2)}★
+                  </td>
+                </tr>
+              ))}
           </table>
           <button type='submit' className='modal-submit-button'>
             {busy ? 'Updating...' : 'Update'}
