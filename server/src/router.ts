@@ -561,7 +561,7 @@ router.post(
         ])
       ).insertId;
 
-      await connection.query(`INSERT INTO nomination_nominators SET ?`, [
+      await connection.query('INSERT INTO nomination_nominators SET ?', [
         {
           nomination_id: nominationId,
           nominator_id: res.typedLocals.user.id,
