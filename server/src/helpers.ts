@@ -1,3 +1,4 @@
+import type { User } from 'loved-bridge/tables';
 import type { Osu } from './osu.js';
 
 export function accessNested<T>(object: unknown, key: string): T {
@@ -139,4 +140,18 @@ export function pick<T, K extends keyof T>(object: T, keys: K[]): Pick<T, K> {
   }
 
   return pickObject as Pick<T, K>;
+}
+
+export function sortCreators(creators: User[], hostId: User['id'] | undefined): User[] {
+  return [...creators].sort((a, b) => {
+    if (a.id === hostId) {
+      return -1;
+    }
+
+    if (b.id === hostId) {
+      return 1;
+    }
+
+    return a.name.localeCompare(b.name);
+  });
 }

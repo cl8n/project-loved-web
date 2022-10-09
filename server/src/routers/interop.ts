@@ -16,7 +16,7 @@ import { AssigneeType, LogType } from 'loved-bridge/tables';
 import config from '../config.js';
 import db from '../db.js';
 import { asyncHandler } from '../express-helpers.js';
-import { groupBy, pick } from '../helpers.js';
+import { groupBy, pick, sortCreators } from '../helpers.js';
 import { dbLog } from '../log.js';
 import {
   mainClosingReply,
@@ -193,18 +193,9 @@ interopRouter.get(
         .sort((a, b) => a.star_rating - b.star_rating)
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         .sort((a, b) => a.key_count! - b.key_count!);
-      nomination.beatmapset_creators = (beatmapsetCreatorsByNominationId[nomination.id] || []).sort(
-        (a, b) => {
-          if (a.id === nomination.beatmapset.creator_id) {
-            return -1;
-          }
-
-          if (b.id === nomination.beatmapset.creator_id) {
-            return 1;
-          }
-
-          return a.name.localeCompare(b.name);
-        },
+      nomination.beatmapset_creators = sortCreators(
+        beatmapsetCreatorsByNominationId[nomination.id] || [],
+        nomination.beatmapset.creator_id,
       );
       nomination.nominators = nominatorsByNominationId[nomination.id] || [];
 
@@ -707,7 +698,10 @@ interopRouter.post(
       poll.yesRatio = poll.result_yes / (poll.result_no + poll.result_yes);
       poll.passed = poll.yesRatio >= roundGameModes[nomination.game_mode].voting_threshold;
 
-      nomination.beatmapset_creators = beatmapsetCreatorsByNominationId[nomination.id];
+      nomination.beatmapset_creators = sortCreators(
+        beatmapsetCreatorsByNominationId[nomination.id] || [],
+        nomination.beatmapset.creator_id,
+      );
     }
 
     const nominationsChecked = nominations as (Nomination & {
