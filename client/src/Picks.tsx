@@ -1179,27 +1179,23 @@ function DescriptionHistory({ author, edits }: DescriptionHistoryProps) {
       <Modal close={() => setModalOpen(false)} open={modalOpen}>
         <h2>Description history</h2>
         <div className='description-history'>
-          {edits.map((edit, index) => {
-            const previousDescription = index === 0 ? null : edits[index - 1].description;
-
-            return (
-              <div key={edit.id} className='description-history-item'>
-                <h3 className='description-history-item__title'>
-                  Edit by <UserInline user={edit.editor} />
-                  {edit.editor_id === author?.id && ' (author)'} on{' '}
-                  <FormattedDate dateStyle='long' timeStyle='medium' value={edit.edited_at} />
-                </h3>
-                {edit.description == null ? (
-                  <i>No description</i>
-                ) : (
-                  <DescriptionDifference
-                    oldDescription={previousDescription}
-                    newDescription={edit.description}
-                  />
-                )}
-              </div>
-            );
-          })}
+          {edits.map((edit, index) => (
+            <div key={edit.id} className='description-history-item'>
+              <h3 className='description-history-item__title'>
+                Edit by <UserInline user={edit.editor} />
+                {edit.editor_id === author?.id && ' (author)'} on{' '}
+                <FormattedDate dateStyle='long' timeStyle='medium' value={edit.edited_at} />
+              </h3>
+              {edit.description == null ? (
+                <i>No description</i>
+              ) : (
+                <DescriptionDifference
+                  oldDescription={index === 0 ? null : edits[index - 1].description}
+                  newDescription={edit.description}
+                />
+              )}
+            </div>
+          ))}
         </div>
       </Modal>
     </>
