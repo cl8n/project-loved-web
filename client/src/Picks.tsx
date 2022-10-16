@@ -1,3 +1,4 @@
+import { DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, diff_match_patch } from 'diff-match-patch';
 import {
   GameMode,
   gameModeLongName,
@@ -13,7 +14,7 @@ import {
   Role,
 } from 'loved-bridge/tables';
 import type { FormEvent } from 'react';
-import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { FormattedDate } from 'react-intl';
 import { Link, useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
@@ -1131,6 +1132,37 @@ function ForceBeatmapsetUpdate({ nomination }: { nomination: INomination }) {
   );
 }
 
+interface DescriptionDifferenceProps {
+  oldDescription: string | null;
+  newDescription: string;
+}
+
+function DescriptionDifference({ oldDescription, newDescription }: DescriptionDifferenceProps) {
+  if (oldDescription === newDescription) {
+    return <>{newDescription}</>;
+  }
+
+  const diffMatch = new diff_match_patch();
+  const differences = diffMatch.diff_main(oldDescription ?? '', newDescription, false);
+
+  diffMatch.diff_cleanupSemantic(differences);
+
+  return (
+    <>
+      {differences.map((difference, i) => {
+        switch (difference[0]) {
+          case DIFF_EQUAL:
+            return <Fragment key={i}>{difference[1]}</Fragment>;
+          case DIFF_DELETE:
+            return <del key={i}>{difference[1]}</del>;
+          case DIFF_INSERT:
+            return <ins key={i}>{difference[1]}</ins>;
+        }
+      })}
+    </>
+  );
+}
+
 interface DescriptionHistoryProps {
   author?: IUser;
   edits: (NominationDescriptionEdit & { editor: IUser })[];
@@ -1147,7 +1179,7 @@ function DescriptionHistory({ author, edits }: DescriptionHistoryProps) {
       <Modal close={() => setModalOpen(false)} open={modalOpen}>
         <h2>Description history</h2>
         <div className='description-history'>
-          {edits.map((edit) => (
+          {edits.map((edit, index) => (
             <div key={edit.id} className='description-history-item'>
               <h3 className='description-history-item__title'>
                 Edit by <UserInline user={edit.editor} />
@@ -1157,7 +1189,10 @@ function DescriptionHistory({ author, edits }: DescriptionHistoryProps) {
               {edit.description == null ? (
                 <i>No description</i>
               ) : (
-                <BBCode text={edit.description} />
+                <DescriptionDifference
+                  oldDescription={index === 0 ? null : edits[index - 1].description}
+                  newDescription={edit.description}
+                />
               )}
             </div>
           ))}

@@ -434,6 +434,18 @@ footer {
   }
 }
 
+ins {
+  color: var(--rating-2);
+  background-color: var(--rating-3-background);
+  text-decoration: none;
+}
+
+del {
+  color: var(--rating--2);
+  background-color: var(--rating--3-background);
+  text-decoration: line-through;
+}
+
 .description {
   margin-top: 1em;
 
