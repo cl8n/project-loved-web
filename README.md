@@ -18,7 +18,7 @@ The package will also need to be reinstalled in `client` and `server` if any of 
 
 ### Database migrations
 
-`/server/migrations` contains SQL to create the `project_loved` database schema. There are no backward migrations.
+`server/migrations` contains SQL to create the `project_loved` database schema. There are no backward migrations.
 
 On the first run of the database container, the `project_loved` user will be created with an empty password. MySQL is exposed to the host machine on port 3306. The `project_loved` database will be created and existing migrations will be applied, but future ones need to be run manually.
 
@@ -33,10 +33,12 @@ docker-compose exec database /import-live-data.sh [export URL]
 ### Creating an admin user
 
 ```
-docker-compose run --rm api ./build/bin/create-admin.js <osu! username>
+docker-compose run --rm api build/bin/create-admin.js <osu! username>
 ```
 
 ## Deployment
+
+The `build.sh` script's `publish` target can be used to help automate deployments. Please read the script for more details.
 
 ### Dependencies
 
@@ -45,33 +47,15 @@ docker-compose run --rm api ./build/bin/create-admin.js <osu! username>
 
 ### Client
 
-- ```
-  cd bridge
-  npm install
-  npm run build
-  ```
-- ```
-  cd client
-  npm install
-  npm run build
-  ```
+- `./build.sh client`
 
-The built webpage will be in `/client/build`; it's an SPA.
+The built webpage will be in `client/build`; it's an SPA.
 
 ### Server
 
-- ```
-  cd bridge
-  npm install
-  npm run build
-  ```
-- ```
-  cd server
-  npm install
-  npm run build
-  ```
+- `./build.sh server`
 - Copy `.env.example` to `.env` and fill in the options, or export the environment variables separately
-- Run the server: `NODE_ENV=production ./build/bin/server.js`
+- Run the server: `NODE_ENV=production server/build/bin/server.js`
 
 Request paths under `/api` should proxy to the server, paths exactly matching files should serve the files, and everything else should serve the client's `index.html`.
 
