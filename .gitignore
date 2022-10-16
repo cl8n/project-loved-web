@@ -1,5 +1,5 @@
 /.idea
-/build.sh
+/build-env
 build/
 node_modules/
 .env

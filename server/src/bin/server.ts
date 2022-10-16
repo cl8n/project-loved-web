@@ -12,6 +12,7 @@ import config from '../config.js';
 import db from '../db.js';
 import { asyncHandler } from '../express-helpers.js';
 import { hasLocalInteropKeyMiddleware, isAnyRoleMiddleware } from '../guards.js';
+import { pick } from '../helpers.js';
 import { dbLog, systemLog } from '../log.js';
 import { Osu, redirectToAuth } from '../osu.js';
 import router from '../router.js';
@@ -144,7 +145,7 @@ app.get(
       throw 'User not found using /me osu! API';
     }
 
-    const logUser = { banned: user.banned, country: user.country, id: user.id, name: user.name };
+    const logUser = pick(user, ['banned', 'country', 'id', 'name']);
     const scopesWithoutDefault = scopes.filter(
       (scope) => scope !== 'identify' && scope !== 'public',
     );

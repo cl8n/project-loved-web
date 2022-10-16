@@ -16,6 +16,12 @@ export enum ConsentValue {
   unreachable,
 }
 
+export enum CreatorsState {
+  unchecked,
+  checkedOnlyByCaptain,
+  good,
+}
+
 export enum DescriptionState {
   notReviewed,
   reviewed,
@@ -37,6 +43,9 @@ export enum LogType {
   mapperConsentBeatmapsetUpdated,
   settingUpdated,
   extraTokenCreated,
+  extraTokenDeleted,
+  pollCreated,
+  pollUpdated,
   // submissionCreated,
   // reviewCreated,
   // reviewDeleted,
@@ -105,9 +114,8 @@ export interface Beatmapset {
 }
 
 export interface BeatmapsetCreator {
-  beatmapset_id: number;
   creator_id: number;
-  game_mode: GameMode;
+  nomination_id: number;
 }
 
 export interface Consent {
@@ -130,6 +138,11 @@ export interface ExtraToken {
   token: TokenInfo;
 }
 
+export interface InteropKey {
+  key: string;
+  user_id: number;
+}
+
 export interface Log {
   id: number;
   created_at: TableDateType;
@@ -140,9 +153,11 @@ export interface Log {
 export interface Nomination {
   id: number;
   beatmapset_id: number;
+  creators_state: CreatorsState;
   description: string | null;
   description_author_id: number | null;
   description_state: DescriptionState;
+  difficulties_set: boolean;
   game_mode: GameMode;
   metadata_state: MetadataState;
   moderator_state: ModeratorState;
@@ -202,6 +217,7 @@ export interface Review {
 export interface Round {
   id: number;
   done: boolean;
+  ignore_creator_and_difficulty_checks: boolean;
   ignore_moderator_checks: boolean;
   name: string;
   news_author_id: number;

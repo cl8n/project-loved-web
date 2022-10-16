@@ -3,6 +3,7 @@ import { NavLink, Route, Switch } from 'react-router-dom';
 import { ProtectedRoute } from '../ProtectedRoute';
 import useTitle from '../useTitle';
 import ApiObjects from './api-objects';
+import ClientKeyPage from './client-key/ClientKeyPage';
 import ForumOptIn from './forum-opt-in';
 import Logs from './logs';
 import Roles from './roles';
@@ -19,6 +20,7 @@ export default function Manage() {
         <NavLink to='/admin/manage/logs'>Logs</NavLink>
         <NavLink to='/admin/manage/forum-opt-in'>Forum opt-in</NavLink>
         <NavLink to='/admin/manage/settings'>Site settings</NavLink>
+        <NavLink to='/admin/manage/client-key'>Client key</NavLink>
       </nav>
       <Switch>
         <Route exact path='/admin/manage/roles'>
@@ -39,6 +41,9 @@ export default function Manage() {
         </ProtectedRoute>
         <ProtectedRoute exact path='/admin/manage/settings' role={Role.captain}>
           <Settings />
+        </ProtectedRoute>
+        <ProtectedRoute exact path='/admin/manage/client-key' role={Role.newsAuthor}>
+          <ClientKeyPage />
         </ProtectedRoute>
       </Switch>
     </>

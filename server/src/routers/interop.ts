@@ -12,10 +12,12 @@ import type {
   RoundGameMode,
   User,
 } from 'loved-bridge/tables';
+import { AssigneeType, LogType } from 'loved-bridge/tables';
 import config from '../config.js';
 import db from '../db.js';
 import { asyncHandler } from '../express-helpers.js';
-import { groupBy } from '../helpers.js';
+import { groupBy, pick, sortCreators } from '../helpers.js';
+import { dbLog } from '../log.js';
 import {
   mainClosingReply,
   mainPostTitle,
@@ -80,29 +82,16 @@ interopRouter.get(
       ),
       'nomination_id',
     );
-    const includesByNominationId = groupBy<
-      Nomination['id'],
-      {
-        beatmap: (Beatmap & { excluded: boolean }) | null;
-        creator: User | null;
-        nomination_id: Nomination['id'];
-      }
-    >(
+    const beatmapsByNominationId = groupBy<Nomination['id'], Beatmap & { excluded: boolean }>(
       await db.queryWithGroups<{
-        beatmap: (Beatmap & { excluded: boolean }) | null;
-        creator: User | null;
+        beatmap: Beatmap & { excluded: boolean };
         nomination_id: Nomination['id'];
       }>(
         `
-          SELECT nominations.id AS nomination_id, creators:creator, beatmaps:beatmap,
+          SELECT nominations.id AS nomination_id, beatmaps:beatmap,
             nomination_excluded_beatmaps.beatmap_id IS NOT NULL AS 'beatmap:excluded'
           FROM nominations
-          LEFT JOIN beatmapset_creators
-            ON nominations.beatmapset_id = beatmapset_creators.beatmapset_id
-              AND nominations.game_mode = beatmapset_creators.game_mode
-          LEFT JOIN users AS creators
-            ON beatmapset_creators.creator_id = creators.id
-          LEFT JOIN beatmaps
+          INNER JOIN beatmaps
             ON nominations.beatmapset_id = beatmaps.beatmapset_id
               AND nominations.game_mode = beatmaps.game_mode
           LEFT JOIN nomination_excluded_beatmaps
@@ -113,6 +102,26 @@ interopRouter.get(
         [req.query.roundId],
       ),
       'nomination_id',
+      'beatmap',
+    );
+    const beatmapsetCreatorsByNominationId = groupBy<Nomination['id'], User>(
+      await db.queryWithGroups<{
+        creator: User;
+        nomination_id: Nomination['id'];
+      }>(
+        `
+          SELECT nominations.id AS nomination_id, creators:creator
+          FROM nominations
+          INNER JOIN beatmapset_creators
+            ON nominations.id = beatmapset_creators.nomination_id
+          INNER JOIN users AS creators
+            ON beatmapset_creators.creator_id = creators.id
+          WHERE nominations.round_id = ?
+        `,
+        [req.query.roundId],
+      ),
+      'nomination_id',
+      'creator',
     );
     const nominatorsByNominationId = groupBy<Nomination['id'], User>(
       await db.queryWithGroups<{ nomination_id: Nomination['id']; nominator: User }>(
@@ -179,42 +188,23 @@ interopRouter.get(
     );
 
     nominations.forEach((nomination) => {
-      nomination.beatmaps = (
-        includesByNominationId[nomination.id]
-          .map((include) => include.beatmap)
-          .filter(
-            (b1, i, all) => b1 != null && all.findIndex((b2) => b1.id === b2?.id) === i,
-          ) as (Beatmap & { excluded: boolean })[]
-      )
+      nomination.beatmaps = (beatmapsByNominationId[nomination.id] || [])
         .sort((a, b) => a.star_rating - b.star_rating)
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         .sort((a, b) => a.key_count! - b.key_count!);
-      nomination.beatmapset_creators = (
-        includesByNominationId[nomination.id]
-          .map((include) => include.creator)
-          .filter(
-            (c1, i, all) => c1 != null && all.findIndex((c2) => c1.id === c2?.id) === i,
-          ) as User[]
-      ).sort((a, b) => {
-        if (a.id === nomination.beatmapset.creator_id) {
-          return -1;
-        }
-
-        if (b.id === nomination.beatmapset.creator_id) {
-          return 1;
-        }
-
-        return a.name.localeCompare(b.name);
-      });
+      nomination.beatmapset_creators = sortCreators(
+        beatmapsetCreatorsByNominationId[nomination.id] || [],
+        nomination.beatmapset.creator_id,
+      );
       nomination.nominators = nominatorsByNominationId[nomination.id] || [];
 
       const assignees = assigneesByNominationId[nomination.id] || [];
 
       nomination.metadata_assignees = assignees
-        .filter((a) => a.assignee_type === 0)
+        .filter((a) => a.assignee_type === AssigneeType.metadata)
         .map((a) => a.assignee);
       nomination.moderator_assignees = assignees
-        .filter((a) => a.assignee_type === 1)
+        .filter((a) => a.assignee_type === AssigneeType.moderator)
         .map((a) => a.assignee);
     });
 
@@ -267,6 +257,10 @@ interopRouter.post(
 
     if (round == null) {
       return res.status(404).json({ error: 'Round not found' });
+    }
+
+    if (res.typedLocals.user.id !== round.news_author_id) {
+      return res.status(403).json({ error: 'Must be the news author of the round to post news' });
     }
 
     const nominations = await db.queryWithGroups<Nomination & { beatmapset: Beatmapset }>(
@@ -420,16 +414,38 @@ interopRouter.post(
             throw `Unexpected nomination topic response from osu! API for nomination #${nomination.id}`;
           }
 
-          await db.query('INSERT INTO polls SET ?', [
-            {
-              beatmapset_id: nomination.beatmapset_id,
-              ended_at: new Date(topic.topic.poll.ended_at),
-              game_mode: gameMode,
-              round_id: roundId,
-              started_at: new Date(topic.topic.poll.started_at),
-              topic_id: topic.topic.id,
-            },
-          ]);
+          await db.transact(async (connection) => {
+            const { insertId: pollId } = await connection.query('INSERT INTO polls SET ?', [
+              {
+                beatmapset_id: nomination.beatmapset_id,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                ended_at: new Date(topic.topic.poll!.ended_at!),
+                game_mode: gameMode,
+                round_id: roundId,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                started_at: new Date(topic.topic.poll!.started_at),
+                topic_id: topic.topic.id,
+              },
+            ]);
+            await dbLog(
+              LogType.pollCreated,
+              {
+                actor: pick(res.typedLocals.user, ['banned', 'country', 'id', 'name']),
+                beatmapset: {
+                  artist: nomination.overwrite_artist ?? nomination.beatmapset.artist,
+                  id: nomination.beatmapset_id,
+                  title: nomination.overwrite_title ?? nomination.beatmapset.title,
+                },
+                gameMode,
+                poll: {
+                  id: pollId,
+                  topic_id: topic.topic.id,
+                },
+                round: pick(round, ['id', 'name']),
+              },
+              connection,
+            );
+          });
 
           firstPostsByNominationId[nomination.id] = {
             body: topic.post.body.raw,
@@ -548,6 +564,12 @@ interopRouter.post(
       return res.status(404).json({ error: 'Round not found' });
     }
 
+    if (res.typedLocals.user.id !== round.news_author_id) {
+      return res
+        .status(403)
+        .json({ error: 'Must be the news author of the round to post results' });
+    }
+
     const roundGameModes = groupBy<RoundGameMode['game_mode'], RoundGameMode>(
       await db.query<RoundGameMode>(
         `
@@ -639,8 +661,7 @@ interopRouter.post(
           SELECT nominations.id, creators:creator
           FROM nominations
           INNER JOIN beatmapset_creators
-            ON nominations.beatmapset_id = beatmapset_creators.beatmapset_id
-            AND nominations.game_mode = beatmapset_creators.game_mode
+            ON nominations.id = beatmapset_creators.nomination_id
           INNER JOIN users AS creators
             ON beatmapset_creators.creator_id = creators.id
           WHERE nominations.round_id = ?
@@ -675,7 +696,10 @@ interopRouter.post(
       poll.yesRatio = poll.result_yes / (poll.result_no + poll.result_yes);
       poll.passed = poll.yesRatio >= roundGameModes[nomination.game_mode].voting_threshold;
 
-      nomination.beatmapset_creators = beatmapsetCreatorsByNominationId[nomination.id];
+      nomination.beatmapset_creators = sortCreators(
+        beatmapsetCreatorsByNominationId[nomination.id] || [],
+        nomination.beatmapset.creator_id,
+      );
     }
 
     const nominationsChecked = nominations as (Nomination & {
@@ -808,20 +832,29 @@ interopRouter.post(
       );
     }
 
-    await db.transact((connection) =>
-      Promise.all(
-        nominationsChecked.map((nomination) =>
-          connection.query(
-            `
-              UPDATE polls
-              SET result_no = ?, result_yes = ?
-              WHERE id = ?
-            `,
-            [nomination.poll.result_no, nomination.poll.result_yes, nomination.poll.id],
-          ),
-        ),
-      ),
-    );
+    await db.transact(async (connection) => {
+      for (const nomination of nominationsChecked) {
+        await connection.query('UPDATE polls SET ? WHERE id = ?', [
+          pick(nomination.poll, ['result_no', 'result_yes']),
+          nomination.poll.id,
+        ]);
+        await dbLog(
+          LogType.pollUpdated,
+          {
+            actor: pick(res.typedLocals.user, ['banned', 'country', 'id', 'name']),
+            beatmapset: {
+              artist: nomination.overwrite_artist ?? nomination.beatmapset.artist,
+              id: nomination.beatmapset_id,
+              title: nomination.overwrite_title ?? nomination.beatmapset.title,
+            },
+            gameMode: nomination.game_mode,
+            poll: pick(nomination.poll, ['id', 'topic_id']),
+            round: pick(round, ['id', 'name']),
+          },
+          connection,
+        );
+      }
+    });
 
     res.status(204).send();
   }),

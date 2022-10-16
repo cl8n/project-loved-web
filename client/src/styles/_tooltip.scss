@@ -1,24 +1,25 @@
-.tooltip {
+.has-tooltip {
   display: inline-block;
-  position: relative;
+}
 
-  &-content {
-    background-color: var(--accent-background);
-    border: 1px solid var(--content);
-    bottom: 100%;
-    color: var(--content);
-    font-weight: normal;
-    left: 50%;
-    margin-bottom: 0.5em;
-    padding: 0.5em;
-    position: absolute;
-    transform: translateX(-50%);
-    width: max-content;
-    z-index: 1;
-  }
+.tooltip-container {
+  position: absolute;
+}
 
-  &-hover-area {
-    bottom: calc(-0.5em - 1px);
+.tooltip {
+  background-color: var(--accent-background);
+  border: 1px solid var(--content);
+  color: var(--content);
+  font-weight: normal;
+  margin-bottom: 0.5em;
+  padding: 0.5em;
+  position: absolute;
+  transform: translateX(-50%);
+  width: max-content;
+  z-index: 1;
+
+  &__hover-area {
+    bottom: calc(-0.5em - 2px);
     left: -1px;
     position: absolute;
     right: -1px;
@@ -26,7 +27,7 @@
     z-index: -1;
   }
 
-  &-triangle {
+  &__triangle {
     background-color: var(--accent-background);
     border-bottom: 1px solid var(--content);
     border-right: 1px solid var(--content);

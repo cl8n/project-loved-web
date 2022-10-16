@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import type { Beatmapset, Consent, ConsentBeatmapset, Review, User } from 'loved-bridge/tables';
 import { LogType, Role } from 'loved-bridge/tables';
 import type { MysqlConnectionType } from '../db.js';
 import db from '../db.js';
 import { asyncHandler } from '../express-helpers.js';
 import { currentUserRoles } from '../guards.js';
+import { pick } from '../helpers.js';
 import { dbLog } from '../log.js';
 import {
   isGameMode,
@@ -69,18 +71,8 @@ anyoneRouter.post(
       }
     }
 
-    const logActor = {
-      banned: res.typedLocals.user.banned,
-      country: res.typedLocals.user.country,
-      id: res.typedLocals.user.id,
-      name: res.typedLocals.user.name,
-    };
-    const logUser = {
-      banned: user.banned,
-      country: user.country,
-      id: user.id,
-      name: user.name,
-    };
+    const logActor = pick(res.typedLocals.user, ['banned', 'country', 'id', 'name']);
+    const logUser = pick(user, ['banned', 'country', 'id', 'name']);
 
     // For easier typing in transaction
     const newConsent = req.body.consent;
@@ -184,20 +176,13 @@ anyoneRouter.post(
         const currentConsentBeatmapset = currentConsentBeatmapsets.find(
           (c) => c.beatmapset_id === consentBeatmapset.beatmapset_id,
         );
-        const dbFields = {
-          consent: consentBeatmapset.consent,
-          consent_reason: consentBeatmapset.consent_reason,
-        };
+        const dbFields = pick(consentBeatmapset, ['consent', 'consent_reason']);
         const dbFieldsWithPK = {
           ...dbFields,
           beatmapset_id: consentBeatmapset.beatmapset_id,
           user_id: newConsent.user_id,
         };
-        const logBeatmapset = {
-          artist: beatmapset.artist,
-          id: beatmapset.id,
-          title: beatmapset.title,
-        };
+        const logBeatmapset = pick(beatmapset, ['artist', 'id', 'title']);
 
         if (currentConsentBeatmapset == null) {
           await connection.query('INSERT INTO mapper_consent_beatmapsets SET ?', [dbFieldsWithPK]);
@@ -459,7 +444,7 @@ anyoneRouter.post(
 
     // TODO: This should allow cases where the set is Loved but at least one
     //       difficulty in each requested mode is Pending/WIP/Graveyard
-    if (beatmapset.ranked_status > 0) {
+    if (beatmapset.ranked_status > RankedStatus.pending) {
       return res.status(422).json({ error: 'Beatmapset is already Ranked/Loved/Qualified' });
     }
 

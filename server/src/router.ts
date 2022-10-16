@@ -1,10 +1,13 @@
+import { randomBytes } from 'crypto';
 import { Router } from 'express';
 import { GameMode, gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
+import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import type {
   Beatmap,
   Beatmapset,
   Consent,
   ConsentBeatmapset,
+  InteropKey,
   Log,
   Nomination,
   NominationAssignee,
@@ -18,6 +21,7 @@ import type {
 import {
   AssigneeType,
   ConsentValue,
+  CreatorsState,
   DescriptionState,
   LogType,
   MetadataState,
@@ -32,13 +36,14 @@ import {
   isModeratorMiddleware,
   isNewsAuthorMiddleware,
 } from './guards.js';
-import { cleanNominationDescription, getParams, groupBy } from './helpers.js';
+import { cleanNominationDescription, groupBy, pick, sortCreators } from './helpers.js';
 import { dbLog, systemLog } from './log.js';
 import { Osu, redirectToAuth } from './osu.js';
 import { accessSetting, settings, updateSettings } from './settings.js';
 import {
   isAssigneeType,
   isGameMode,
+  isIdString,
   isInteger,
   isIntegerArray,
   isLogTypeArray,
@@ -118,7 +123,7 @@ router.get(
       [query],
     );
 
-    if (!isNaN(parseInt(query, 10))) {
+    if (isIdString(query)) {
       const beatmapset = await db.queryOne<
         Pick<Beatmapset, 'artist' | 'creator_name' | 'id' | 'title'>
       >(
@@ -185,6 +190,46 @@ router.get(
       ),
       'nomination_id',
     );
+    const beatmapsByNominationId = groupBy<Nomination['id'], Beatmap & { excluded: boolean }>(
+      await db.queryWithGroups<{
+        beatmap: Beatmap & { excluded: boolean };
+        nomination_id: Nomination['id'];
+      }>(
+        `
+          SELECT nominations.id AS nomination_id, beatmaps:beatmap,
+            nomination_excluded_beatmaps.beatmap_id IS NOT NULL AS 'beatmap:excluded'
+          FROM nominations
+          INNER JOIN beatmaps
+            ON nominations.beatmapset_id = beatmaps.beatmapset_id
+          LEFT JOIN nomination_excluded_beatmaps
+            ON nominations.id = nomination_excluded_beatmaps.nomination_id
+              AND beatmaps.id = nomination_excluded_beatmaps.beatmap_id
+          WHERE nominations.round_id = ?
+        `,
+        [req.query.roundId],
+      ),
+      'nomination_id',
+      'beatmap',
+    );
+    const beatmapsetCreatorsByNominationId = groupBy<Nomination['id'], User>(
+      await db.queryWithGroups<{
+        creator: User;
+        nomination_id: Nomination['id'];
+      }>(
+        `
+          SELECT nominations.id AS nomination_id, creators:creator
+          FROM nominations
+          INNER JOIN beatmapset_creators
+            ON nominations.id = beatmapset_creators.nomination_id
+          INNER JOIN users AS creators
+            ON beatmapset_creators.creator_id = creators.id
+          WHERE nominations.round_id = ?
+        `,
+        [req.query.roundId],
+      ),
+      'nomination_id',
+      'creator',
+    );
     const descriptionEditsByNominationId = groupBy<
       Nomination['id'],
       NominationDescriptionEdit & { editor: User }
@@ -200,40 +245,6 @@ router.get(
         WHERE nominations.round_id = ?
         ORDER BY nomination_description_edits.edited_at ASC
       `,
-        [req.query.roundId],
-      ),
-      'nomination_id',
-    );
-    const includesByNominationId = groupBy<
-      Nomination['id'],
-      {
-        beatmap: (Beatmap & { excluded: boolean }) | null;
-        creator: User | null;
-        nomination_id: Nomination['id'];
-      }
-    >(
-      await db.queryWithGroups<{
-        beatmap: (Beatmap & { excluded: boolean }) | null;
-        creator: User | null;
-        nomination_id: Nomination['id'];
-      }>(
-        `
-          SELECT nominations.id AS nomination_id, creators:creator, beatmaps:beatmap,
-            nomination_excluded_beatmaps.beatmap_id IS NOT NULL AS 'beatmap:excluded'
-          FROM nominations
-          LEFT JOIN beatmapset_creators
-            ON nominations.beatmapset_id = beatmapset_creators.beatmapset_id
-              AND nominations.game_mode = beatmapset_creators.game_mode
-          LEFT JOIN users AS creators
-            ON beatmapset_creators.creator_id = creators.id
-          LEFT JOIN beatmaps
-            ON nominations.beatmapset_id = beatmaps.beatmapset_id
-              AND nominations.game_mode = beatmaps.game_mode
-          LEFT JOIN nomination_excluded_beatmaps
-            ON nominations.id = nomination_excluded_beatmaps.nomination_id
-              AND beatmaps.id = nomination_excluded_beatmaps.beatmap_id
-          WHERE nominations.round_id = ?
-        `,
         [req.query.roundId],
       ),
       'nomination_id',
@@ -303,46 +314,25 @@ router.get(
       true,
     );
 
-    // TODO: Should not be necessary to check for uniques like this. Just fix query.
-    //       See interop query as well
     nominations.forEach((nomination) => {
-      nomination.beatmaps = (
-        includesByNominationId[nomination.id]
-          .map((include) => include.beatmap)
-          .filter(
-            (b1, i, all) => b1 != null && all.findIndex((b2) => b1.id === b2?.id) === i,
-          ) as (Beatmap & { excluded: boolean })[]
-      )
+      nomination.beatmaps = (beatmapsByNominationId[nomination.id] || [])
         .sort((a, b) => a.star_rating - b.star_rating)
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         .sort((a, b) => a.key_count! - b.key_count!);
-      nomination.beatmapset_creators = (
-        includesByNominationId[nomination.id]
-          .map((include) => include.creator)
-          .filter(
-            (c1, i, all) => c1 != null && all.findIndex((c2) => c1.id === c2?.id) === i,
-          ) as User[]
-      ).sort((a, b) => {
-        if (a.id === nomination.beatmapset.creator_id) {
-          return -1;
-        }
-
-        if (b.id === nomination.beatmapset.creator_id) {
-          return 1;
-        }
-
-        return a.name.localeCompare(b.name);
-      });
+      nomination.beatmapset_creators = sortCreators(
+        beatmapsetCreatorsByNominationId[nomination.id] || [],
+        nomination.beatmapset.creator_id,
+      );
       nomination.description_edits = descriptionEditsByNominationId[nomination.id] || [];
       nomination.nominators = nominatorsByNominationId[nomination.id] || [];
 
       const assignees = assigneesByNominationId[nomination.id] || [];
 
       nomination.metadata_assignees = assignees
-        .filter((a) => a.assignee_type === 0)
+        .filter((a) => a.assignee_type === AssigneeType.metadata)
         .map((a) => a.assignee);
       nomination.moderator_assignees = assignees
-        .filter((a) => a.assignee_type === 1)
+        .filter((a) => a.assignee_type === AssigneeType.moderator)
         .map((a) => a.assignee);
     });
 
@@ -416,7 +406,7 @@ router.post(
     // Make sure the beatmapset is not approved
     // TODO: This should allow cases where the set is Loved but at least one difficulty in the
     //       requested game mode is Pending/WIP/Graveyard
-    if (beatmapset.ranked_status > 0) {
+    if (beatmapset.ranked_status > RankedStatus.pending) {
       return res.status(422).json({ error: 'Beatmapset is already Ranked/Loved/Qualified' });
     }
 
@@ -570,27 +560,28 @@ router.post(
         ])
       ).insertId;
 
-      await connection.query(`INSERT INTO nomination_nominators SET ?`, [
+      await connection.query('INSERT INTO nomination_nominators SET ?', [
         {
           nomination_id: nominationId,
           nominator_id: res.typedLocals.user.id,
         },
       ]);
+      await connection.query(
+        `
+          INSERT INTO beatmapset_creators (creator_id, nomination_id)
+            SELECT creator_id, ?
+            FROM beatmapsets
+            WHERE id = ?
+            UNION DISTINCT
+            SELECT DISTINCT creator_id, ?
+            FROM beatmaps
+            WHERE beatmapset_id = ?
+              AND game_mode = ?
+        `,
+        [nominationId, beatmapset.id, nominationId, beatmapset.id, req.body.gameMode],
+      );
     });
 
-    const creators = await db.query<User>(
-      `
-        SELECT users.*
-        FROM beatmapset_creators
-        INNER JOIN nominations
-          ON beatmapset_creators.beatmapset_id = nominations.beatmapset_id
-            AND beatmapset_creators.game_mode = nominations.game_mode
-        INNER JOIN users
-          ON beatmapset_creators.creator_id = users.id
-        WHERE nominations.id = ?
-      `,
-      [nominationId],
-    );
     const nomination: Nomination & {
       beatmaps?: (Beatmap & { excluded: false })[];
       beatmapset?: Beatmapset;
@@ -619,6 +610,16 @@ router.post(
       `,
       [nomination.beatmapset_id, req.body.gameMode],
     );
+    const creators = await db.query<User>(
+      `
+        SELECT users.*
+        FROM beatmapset_creators
+        INNER JOIN users
+          ON beatmapset_creators.creator_id = users.id
+        WHERE beatmapset_creators.nomination_id = ?
+      `,
+      [nominationId],
+    );
     const nominators = await db.query<User>(
       `
         SELECT users.*
@@ -632,17 +633,7 @@ router.post(
 
     nomination.beatmaps = beatmaps;
     nomination.beatmapset = beatmapset;
-    nomination.beatmapset_creators = creators.sort((a, b) => {
-      if (a.id === beatmapset.creator_id) {
-        return -1;
-      }
-
-      if (b.id === beatmapset.creator_id) {
-        return 1;
-      }
-
-      return a.name.localeCompare(b.name);
-    });
+    nomination.beatmapset_creators = sortCreators(creators, beatmapset.creator_id);
     nomination.description_edits = [];
     nomination.nominators = nominators;
     nomination.metadata_assignees = [];
@@ -784,10 +775,11 @@ router.post(
     }
 
     const nomination:
-      | (Pick<Nomination, 'beatmapset_id' | 'game_mode' | 'metadata_state'> & {
-          beatmapset?: Beatmapset;
-          beatmapset_creators?: User[];
-        })
+      | (Pick<Nomination, 'beatmapset_id' | 'game_mode' | 'metadata_state'> &
+          Partial<Nomination> & {
+            beatmapset?: Beatmapset;
+            beatmapset_creators?: User[];
+          })
       | null = await db.queryOne<
       Pick<Nomination, 'beatmapset_id' | 'game_mode' | 'metadata_state'>
     >(
@@ -841,10 +833,9 @@ router.post(
         ),
       );
 
-      await connection.query(
-        'DELETE FROM beatmapset_creators WHERE beatmapset_id = ? AND game_mode = ?',
-        [nomination.beatmapset_id, nomination.game_mode],
-      );
+      await connection.query('DELETE FROM beatmapset_creators WHERE nomination_id = ?', [
+        req.body.nominationId,
+      ]);
 
       const creators: User[] = [];
 
@@ -859,22 +850,19 @@ router.post(
         }
 
         await connection.query(
-          'INSERT INTO beatmapset_creators (beatmapset_id, creator_id, game_mode) VALUES ?',
-          [creators.map((user) => [nomination.beatmapset_id, user.id, nomination.game_mode])],
+          'INSERT INTO beatmapset_creators (creator_id, nomination_id) VALUES ?',
+          [creators.map((user) => [user.id, req.body.nominationId])],
         );
       }
 
-      nomination.beatmapset_creators = creators.sort((a, b) => {
-        if (a.id === nomination.beatmapset?.creator_id) {
-          return -1;
-        }
+      nomination.beatmapset_creators = sortCreators(creators, nomination.beatmapset?.creator_id);
+      nomination.creators_state =
+        creators.length > 0 ? CreatorsState.good : CreatorsState.unchecked;
 
-        if (b.id === nomination.beatmapset?.creator_id) {
-          return 1;
-        }
-
-        return a.name.localeCompare(b.name);
-      });
+      await connection.query('UPDATE nominations SET creators_state = ? WHERE id = ?', [
+        nomination.creators_state,
+        req.body.nominationId,
+      ]);
     });
 
     res.json(nomination);
@@ -938,6 +926,9 @@ router.delete(
     }
 
     await db.transact(async (connection) => {
+      await connection.query('DELETE FROM beatmapset_creators WHERE nomination_id = ?', [
+        req.query.nominationId,
+      ]);
       await connection.query('DELETE FROM nomination_assignees WHERE nomination_id = ?', [
         req.query.nominationId,
       ]);
@@ -1140,7 +1131,7 @@ router.post(
     }
 
     await db.query('UPDATE rounds SET ? WHERE id = ?', [
-      getParams(req.body.round, [
+      pick(req.body.round, [
         'name',
         'news_author_id',
         'news_intro',
@@ -1229,20 +1220,51 @@ router.post(
   '/update-excluded-beatmaps',
   isCaptainMiddleware,
   asyncHandler(async (req, res) => {
+    if (!isIntegerArray(req.body.excludedBeatmapIds)) {
+      return res.status(422).json({ error: 'Invalid beatmap IDs' });
+    }
+
+    const excludedBeatmapIds = req.body.excludedBeatmapIds;
+
+    if (!isInteger(req.body.nominationId)) {
+      return res.status(422).json({ error: 'Invalid nomination ID' });
+    }
+
+    const beatmaps = await db.query<Pick<Beatmap, 'id'>>(
+      `
+        SELECT beatmaps.id
+        FROM beatmaps
+        INNER JOIN nominations
+          ON beatmaps.beatmapset_id = nominations.beatmapset_id
+            AND beatmaps.game_mode = nominations.game_mode
+        WHERE nominations.id = ?
+      `,
+      [req.body.nominationId],
+    );
+
+    for (const excludedBeatmapId of excludedBeatmapIds) {
+      if (!beatmaps.some((beatmap) => beatmap.id === excludedBeatmapId)) {
+        return res.status(404).json({ error: `Beatmap #${excludedBeatmapId} not found` });
+      }
+    }
+
     await db.transact(async (connection) => {
       await connection.query('DELETE FROM nomination_excluded_beatmaps WHERE nomination_id = ?', [
         req.body.nominationId,
       ]);
+      await connection.query('UPDATE nominations SET difficulties_set = 1 WHERE id = ?', [
+        req.body.nominationId,
+      ]);
 
-      if (isIntegerArray(req.body.excludedBeatmapIds) && req.body.excludedBeatmapIds.length > 0) {
+      if (excludedBeatmapIds.length > 0) {
         await connection.query(
           'INSERT INTO nomination_excluded_beatmaps (beatmap_id, nomination_id) VALUES ?',
-          [req.body.excludedBeatmapIds.map((id) => [id, req.body.nominationId])],
+          [excludedBeatmapIds.map((id) => [id, req.body.nominationId])],
         );
       }
     });
 
-    res.status(204).send();
+    res.json({ id: req.body.nominationId, difficulties_set: true });
   }),
 );
 
@@ -1386,18 +1408,8 @@ router.post(
       });
     }
 
-    const logActor = {
-      banned: res.typedLocals.user.banned,
-      country: res.typedLocals.user.country,
-      id: res.typedLocals.user.id,
-      name: res.typedLocals.user.name,
-    };
-    const logUser = {
-      banned: user.banned,
-      country: user.country,
-      id: user.id,
-      name: user.name,
-    };
+    const logActor = pick(res.typedLocals.user, ['banned', 'country', 'id', 'name']);
+    const logUser = pick(user, ['banned', 'country', 'id', 'name']);
 
     await db.transact(async (connection) => {
       for (const newRole of req.body.roles as Omit<UserRole, 'user_id'>[]) {
@@ -1558,7 +1570,6 @@ router.delete(
 
     await db.transact(async (connection) => {
       await connection.query('DELETE FROM beatmaps WHERE beatmapset_id = ?', [id]);
-      await connection.query('DELETE FROM beatmapset_creators WHERE beatmapset_id = ?', [id]);
       await connection.query('DELETE FROM mapper_consent_beatmapsets WHERE beatmapset_id = ?', [
         id,
       ]);
@@ -1642,5 +1653,48 @@ router.post(
         skipWhere ? undefined : [req.body.types],
       ))!.count,
     });
+  }),
+);
+
+router.get(
+  '/interop-key',
+  isNewsAuthorMiddleware,
+  asyncHandler(async (_, res) => {
+    const interopKey = await db.queryOne<Pick<InteropKey, 'key'>>(
+      'SELECT `key` FROM interop_keys WHERE user_id = ?',
+      [res.typedLocals.user.id],
+    );
+
+    res.json(interopKey?.key ?? null);
+  }),
+);
+
+router.post(
+  '/interop-key',
+  isNewsAuthorMiddleware,
+  asyncHandler(async (_, res) => {
+    let key: string;
+
+    for (;;) {
+      key = randomBytes(48).toString('base64');
+
+      const existingInteropKey = await db.queryOne('SELECT 1 FROM interop_keys WHERE `key` = ?', [
+        key,
+      ]);
+
+      if (existingInteropKey == null) {
+        break;
+      }
+    }
+
+    await db.query(
+      `
+        INSERT INTO interop_keys SET ?
+        ON DUPLICATE KEY UPDATE ?
+      `,
+      [{ key, user_id: res.typedLocals.user.id }, { key }],
+    );
+
+    res.json(key);
   }),
 );

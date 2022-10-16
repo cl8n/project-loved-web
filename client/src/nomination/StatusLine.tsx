@@ -1,6 +1,23 @@
-import { DescriptionState, MetadataState, ModeratorState } from 'loved-bridge/tables';
-import type { INominationWithPoll } from '../interfaces';
+import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
+import {
+  CreatorsState,
+  DescriptionState,
+  MetadataState,
+  ModeratorState,
+} from 'loved-bridge/tables';
+import type { INominationWithPoll, IRound } from '../interfaces';
 import ListInline from '../ListInline';
+
+function creatorsClass(state: CreatorsState) {
+  switch (state) {
+    case CreatorsState.unchecked:
+      return 'error';
+    case CreatorsState.checkedOnlyByCaptain:
+      return 'pending';
+    case CreatorsState.good:
+      return 'success';
+  }
+}
 
 function descriptionClass(description: string | undefined, state: DescriptionState) {
   if (state === DescriptionState.reviewed) {
@@ -44,16 +61,12 @@ function votingClass(opened: boolean, result: boolean | undefined) {
 }
 
 interface StatusLineProps {
-  ignoreModeratorChecks: boolean;
   nomination: INominationWithPoll;
+  round: IRound;
   votingResult: boolean | undefined;
 }
 
-export default function StatusLine({
-  ignoreModeratorChecks,
-  nomination,
-  votingResult,
-}: StatusLineProps) {
+export default function StatusLine({ nomination, round, votingResult }: StatusLineProps) {
   const infoArray = [
     // eslint-disable-next-line react/jsx-key
     <span className={descriptionClass(nomination.description, nomination.description_state)}>
@@ -63,17 +76,29 @@ export default function StatusLine({
     <span className={metadataClass(nomination.metadata_state)}>Metadata</span>,
   ];
 
-  if (!ignoreModeratorChecks) {
+  if (!round.ignore_moderator_checks) {
     infoArray.push(<span className={moderationClass(nomination.moderator_state)}>Moderation</span>);
   }
 
   return (
     <div>
+      {!round.ignore_creator_and_difficulty_checks && (
+        <>
+          <span className={nomination.difficulties_set ? 'success' : 'error'}>Difficulties</span>
+          {' → '}
+          <span className={creatorsClass(nomination.creators_state)}>Creators</span>
+          {' → '}
+        </>
+      )}
       <ListInline array={infoArray} onlyCommas />
       {' → '}
       <span className={votingClass(nomination.poll != null, votingResult)}>Voting</span>
       {' → '}
-      <span className={nomination.beatmapset.ranked_status === 4 ? 'success' : 'error'}>Loved</span>
+      <span
+        className={nomination.beatmapset.ranked_status === RankedStatus.loved ? 'success' : 'error'}
+      >
+        Loved
+      </span>
     </div>
   );
 }

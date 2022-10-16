@@ -1,6 +1,7 @@
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import type {
   AssigneeType,
+  InteropKey,
   Log,
   LogType,
   MetadataState,
@@ -9,7 +10,7 @@ import type {
 } from 'loved-bridge/tables';
 import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
-import type { ResponseError, Response as SuperAgentResponse } from 'superagent';
+import type { ResponseError, SuperAgentRequest, Response as SuperAgentResponse } from 'superagent';
 import superagent from 'superagent';
 import type {
   IBeatmapset,
@@ -32,7 +33,8 @@ import type {
 interface SuperAgentResponseWithBody<BodyType> extends SuperAgentResponse {
   body: BodyType;
 }
-type Response<BodyType = undefined> = Promise<SuperAgentResponseWithBody<BodyType>>;
+type Response<BodyType = undefined> = Promise<SuperAgentResponseWithBody<BodyType>> &
+  SuperAgentRequest;
 
 interface ApiObjectTypes {
   beatmapset: IBeatmapset;
@@ -56,6 +58,10 @@ export function addNomination(
     parentId,
     roundId,
   });
+}
+
+export function addOrUpdateInteropKey(): Response<InteropKey['key']> {
+  return superagent.post('/api/interop-key');
 }
 
 export function addOrUpdateMapperConsent(
@@ -124,6 +130,10 @@ export function getCurrentNewsPost(): Response<{ roundName: string; url: string 
 
 export function getHasExtraToken(): Response<boolean> {
   return superagent.get('/api/has-extra-token');
+}
+
+export function getInteropKey(): Response<InteropKey['key'] | null> {
+  return superagent.get('/api/interop-key');
 }
 
 export function getNewsAuthors(): Response<IUser[]> {
@@ -225,7 +235,7 @@ export function updateApiObjectBulk<T extends ApiObjectType>(type: T, ids: numbe
 export function updateExcludedBeatmaps(
   nominationId: number,
   excludedBeatmapIds: number[],
-): Response {
+): Response<PartialWithId<INomination>> {
   return superagent
     .post('/api/update-excluded-beatmaps')
     .send({ nominationId, excludedBeatmapIds });

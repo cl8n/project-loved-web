@@ -1,5 +1,9 @@
-import { diff_match_patch } from 'diff-match-patch';
-import { GameMode, gameModeLongName } from 'loved-bridge/beatmaps/gameMode';
+import {
+  GameMode,
+  gameModeLongName,
+  gameModes,
+  gameModeShortName,
+} from 'loved-bridge/beatmaps/gameMode';
 import type { NominationDescriptionEdit } from 'loved-bridge/tables';
 import {
   AssigneeType,
@@ -11,7 +15,7 @@ import {
 import type { FormEvent } from 'react';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { FormattedDate } from 'react-intl';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
 import {
   addNomination,
@@ -93,6 +97,68 @@ export function Picks() {
     [GameMode.mania]: false,
   });
   const [showTodo, setShowTodo] = useState(false);
+  const nominationOtherGameModesMissingParentCache = useMemo(() => {
+    const cache: Record<INomination['id'], GameMode[]> = {};
+
+    if (roundInfo != null) {
+      for (const nomination of roundInfo.nominations) {
+        const gameModesMissingParent: GameMode[] = [];
+
+        if (nomination.parent_id == null) {
+          for (const gameMode of gameModes) {
+            if (gameMode === nomination.game_mode) {
+              continue;
+            }
+
+            if (
+              roundInfo.nominations.some(
+                (nomination2) =>
+                  nomination2.game_mode === gameMode &&
+                  nomination2.beatmapset_id === nomination.beatmapset_id &&
+                  nomination2.parent_id == null,
+              )
+            ) {
+              gameModesMissingParent.push(gameMode);
+            }
+          }
+        }
+
+        cache[nomination.id] = gameModesMissingParent;
+      }
+    }
+
+    return cache;
+  }, [roundInfo]);
+  const nominationOtherGameModesWithBeatmapsCache = useMemo(() => {
+    const cache: Record<INomination['id'], GameMode[]> = {};
+
+    if (roundInfo != null) {
+      for (const nomination of roundInfo.nominations) {
+        const gameModesWithBeatmaps: GameMode[] = [];
+
+        for (const gameMode of gameModes) {
+          if (gameMode === nomination.game_mode) {
+            continue;
+          }
+
+          if (
+            nomination.beatmaps.some((beatmap) => beatmap.game_mode === gameMode) &&
+            !roundInfo.nominations.some(
+              (nomination2) =>
+                nomination2.beatmapset_id === nomination.beatmapset_id &&
+                nomination2.game_mode === gameMode,
+            )
+          ) {
+            gameModesWithBeatmaps.push(gameMode);
+          }
+        }
+
+        cache[nomination.id] = gameModesWithBeatmaps;
+      }
+    }
+
+    return cache;
+  }, [roundInfo]);
   const nominationProgressWarningsCache = useMemo(() => {
     const cache: Record<INomination['id'], Set<NominationProgressWarning>> = {};
 
@@ -100,7 +166,7 @@ export function Picks() {
       for (const nomination of roundInfo.nominations) {
         cache[nomination.id] = roundInfo.round.done
           ? new Set()
-          : nominationProgressWarnings(nomination, authUser);
+          : nominationProgressWarnings(nomination, roundInfo.round, authUser);
       }
     }
 
@@ -318,6 +384,8 @@ export function Picks() {
                     assigneesApi[1],
                   ]}
                   captainsApi={[captainsApi[0], captainsApi[1]]}
+                  gameModesMissingParent={nominationOtherGameModesMissingParentCache[nomination.id]}
+                  gameModesWithBeatmaps={nominationOtherGameModesWithBeatmapsCache[nomination.id]}
                   locked={nominationsLocked(gameMode)}
                   nomination={nomination}
                   onNominationDelete={onNominationDelete}
@@ -344,6 +412,7 @@ interface AddNominationProps {
 function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProps) {
   const [busy, setBusy] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [searchRequest, setSearchRequest] = useState<ReturnType<typeof searchBeatmapsets>>();
   const [searchResults, setSearchResults] = useState<IBeatmapset[]>();
   const [selectedBeatmapset, setSelectedBeatmapset] = useState<IBeatmapset>();
 
@@ -354,16 +423,25 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
   }, [selectedBeatmapset]);
 
   const onSearchInput = (event: FormEvent<HTMLInputElement>) => {
+    if (searchRequest != null) {
+      searchRequest.abort();
+    }
+
     const query = event.currentTarget.value;
 
-    if (query.length < 2) {
+    if (query.length === 0) {
+      setSearchRequest(undefined);
       setSearchResults(undefined);
       return;
     }
 
-    searchBeatmapsets(query)
+    const request = searchBeatmapsets(query);
+
+    request
       .then((response) => setSearchResults(response.body))
-      .catch(alertApiErrorMessage);
+      .catch((error) => error.code !== 'ABORTED' && alertApiErrorMessage(error));
+
+    setSearchRequest(request);
   };
   const onSubmit: FormSubmitHandler = (form, then) => {
     if (selectedBeatmapset == null) {
@@ -386,10 +464,22 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
   return (
     <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
       <p className='flex-left'>
-        <label htmlFor='beatmapset'>Beatmapset</label>
+        <span>
+          <label htmlFor='beatmapset'>Beatmapset</label>{' '}
+          <Help>
+            If you can't find the beatmapset here, make sure it's been{' '}
+            <Link to={`/submissions/${gameModeShortName(gameMode)}`}>submitted</Link> first!
+          </Help>
+        </span>
         <div className='beatmapset-search'>
           {selectedBeatmapset == null ? (
-            <input ref={searchInputRef} type='text' name='beatmapset' onInput={onSearchInput} />
+            <input
+              ref={searchInputRef}
+              type='text'
+              name='beatmapset'
+              onInput={onSearchInput}
+              placeholder='Enter a beatmapset ID or search by artist, title, and creator'
+            />
           ) : (
             <div
               className='beatmapset-search-selection'
@@ -416,7 +506,7 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
           )}
         </div>
         <span>
-          <label htmlFor='parentId'>Parent nomination ID </label>
+          <label htmlFor='parentId'>Parent nomination ID</label>{' '}
           <Help>
             If this map is being nominated because another mode's captains picked it first, set this
             field to the original mode's nomination ID
@@ -432,6 +522,8 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
 interface NominationProps {
   assigneesApi: readonly [IUser[] | undefined, IUser[] | undefined, ResponseError | undefined];
   captainsApi: readonly [{ [P in GameMode]?: IUser[] } | undefined, ResponseError | undefined];
+  gameModesMissingParent: GameMode[];
+  gameModesWithBeatmaps: GameMode[];
   locked: boolean;
   nomination: INominationWithPoll;
   onNominationDelete: (nominationId: number) => void;
@@ -444,6 +536,8 @@ interface NominationProps {
 function Nomination({
   assigneesApi,
   captainsApi,
+  gameModesMissingParent,
+  gameModesWithBeatmaps,
   locked,
   nomination,
   onNominationDelete,
@@ -630,7 +724,11 @@ function Nomination({
           {canEditDifficulties && (
             <>
               {' — '}
-              <EditDifficulties nomination={nomination} onNominationUpdate={onNominationUpdate} />
+              <EditDifficulties
+                nomination={nomination}
+                onNominationUpdate={onNominationUpdate}
+                round={round}
+              />
             </>
           )}
         </span>
@@ -671,11 +769,7 @@ function Nomination({
         </div>
       )}
       <div className='flex-bar'>
-        <StatusLine
-          ignoreModeratorChecks={round.ignore_moderator_checks}
-          nomination={nomination}
-          votingResult={votingResult}
-        />
+        <StatusLine nomination={nomination} round={round} votingResult={votingResult} />
         {canForceBeatmapsetUpdate && <ForceBeatmapsetUpdate nomination={nomination} />}
       </div>
       <Description
@@ -688,6 +782,26 @@ function Nomination({
       />
       {hasProgressWarnings && (
         <div className='nomination__warnings'>
+          {hasRole(authUser, Role.captain, nomination.game_mode, true) && (
+            <>
+              {gameModesWithBeatmaps.length > 0 && (
+                <span>
+                  <span className='nomination__warning-icon'>!</span>
+                  There are beatmaps in{' '}
+                  <ListInline array={gameModesWithBeatmaps.map(gameModeLongName)} /> with no
+                  nomination
+                </span>
+              )}
+              {gameModesMissingParent.length > 0 && (
+                <span>
+                  <span className='nomination__warning-icon'>!</span>
+                  Nominations for the same map in{' '}
+                  <ListInline array={gameModesMissingParent.map(gameModeLongName)} /> need to be
+                  linked via parent ID
+                </span>
+              )}
+            </>
+          )}
           {[...progressWarnings].map((warning) => (
             <span key={warning}>
               <span className='nomination__warning-icon'>!</span>
@@ -925,22 +1039,24 @@ function EditAssignees({
 interface EditDifficultiesProps {
   nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
+  round: IRound;
 }
 
-function EditDifficulties({ nomination, onNominationUpdate }: EditDifficultiesProps) {
+function EditDifficulties({ nomination, onNominationUpdate, round }: EditDifficultiesProps) {
   const [busy, setBusy] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
   const onSubmit: FormSubmitHandler = (form, then) => {
     return updateExcludedBeatmaps(nomination.id, form.excluded)
-      .then(() => {
+      .then((response) =>
         onNominationUpdate({
-          id: nomination.id,
-          beatmaps: nomination.beatmaps.map((beatmap) => {
-            return { ...beatmap, excluded: form.excluded.includes(beatmap.id) };
-          }),
-        });
-      })
+          ...response.body,
+          beatmaps: nomination.beatmaps.map((beatmap) => ({
+            ...beatmap,
+            excluded: form.excluded.includes(beatmap.id),
+          })),
+        }),
+      )
       .then(then)
       .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));
@@ -948,29 +1064,39 @@ function EditDifficulties({ nomination, onNominationUpdate }: EditDifficultiesPr
 
   return (
     <>
-      <button type='button' onClick={() => setModalOpen(true)} className='fake-a'>
+      <button
+        type='button'
+        onClick={() => setModalOpen(true)}
+        className={`fake-a${
+          !round.ignore_creator_and_difficulty_checks && !nomination.difficulties_set
+            ? ' important-bad'
+            : ''
+        }`}
+      >
         Edit
       </button>
       <Modal close={() => setModalOpen(false)} open={modalOpen}>
         <h2>Excluded difficulties</h2>
         <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
           <table>
-            {nomination.beatmaps.map((beatmap) => (
-              <tr key={beatmap.id}>
-                <td>
-                  <input
-                    type='checkbox'
-                    name='excluded'
-                    value={beatmap.id}
-                    data-value-type='int'
-                    defaultChecked={beatmap.excluded}
-                  />
-                </td>
-                <td>
-                  {beatmap.version} — {beatmap.star_rating.toFixed(2)}★
-                </td>
-              </tr>
-            ))}
+            {nomination.beatmaps
+              .filter((beatmap) => beatmap.game_mode === nomination.game_mode)
+              .map((beatmap) => (
+                <tr key={beatmap.id}>
+                  <td>
+                    <input
+                      type='checkbox'
+                      name='excluded'
+                      value={beatmap.id}
+                      data-value-type='int'
+                      defaultChecked={beatmap.excluded}
+                    />
+                  </td>
+                  <td>
+                    {beatmap.version} — {beatmap.star_rating.toFixed(2)}★
+                  </td>
+                </tr>
+              ))}
           </table>
           <button type='submit' className='modal-submit-button'>
             {busy ? 'Updating...' : 'Update'}

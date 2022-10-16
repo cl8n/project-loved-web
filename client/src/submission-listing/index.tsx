@@ -5,6 +5,7 @@ import {
   gameModes,
   gameModeShortName,
 } from 'loved-bridge/beatmaps/gameMode';
+import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import type { ChangeEvent, Dispatch } from 'react';
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
@@ -474,7 +475,8 @@ const beatmapsetSortFns: Record<
     a.review_score - b.review_score,
   rating: (a, b) => a.review_score_all - b.review_score_all,
   score: (a, b) => a.score - b.score,
-  status: (a, b) => +(a.ranked_status === 4) - +(b.ranked_status === 4),
+  status: (a, b) =>
+    +(a.ranked_status === RankedStatus.loved) - +(b.ranked_status === RankedStatus.loved),
   title: (a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()),
   year: (a, b) =>
     dateFromString(a.submitted_at).getFullYear() - dateFromString(b.submitted_at).getFullYear(),
@@ -581,8 +583,8 @@ function SubmissionListing({
         (beatmapset) =>
           (keyMode == null || beatmapset.key_modes.includes(keyMode)) &&
           (beatmapStatus === 'lovedAndRanked'
-            ? beatmapset.ranked_status > 0
-            : beatmapset.ranked_status <= 0) &&
+            ? beatmapset.ranked_status > RankedStatus.pending
+            : beatmapset.ranked_status <= RankedStatus.pending) &&
           (searchLowerCase.length === 0 ||
             beatmapset.artist.toLowerCase().includes(searchLowerCase) ||
             beatmapset.creator_name.toLowerCase().includes(searchLowerCase) ||

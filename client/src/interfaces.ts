@@ -1,6 +1,8 @@
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import type { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import type {
   ConsentValue,
+  CreatorsState,
   DescriptionState,
   MetadataState,
   ModeratorState,
@@ -8,13 +10,15 @@ import type {
   Role,
 } from 'loved-bridge/tables';
 
+// TODO: Replace most of this with bridge types
+
 interface IGenericBeatmap {
   id: number;
   beatmapset_id: number;
   bpm: number;
   deleted_at: string | null;
   play_count: number;
-  ranked_status: number;
+  ranked_status: RankedStatus;
   star_rating: number;
   version: string;
 }
@@ -42,7 +46,7 @@ export interface IBeatmapset {
   deleted_at: string | null;
   favorite_count: number;
   play_count: number;
-  ranked_status: number;
+  ranked_status: RankedStatus;
   submitted_at: string;
   title: string;
   updated_at: string;
@@ -53,10 +57,13 @@ export interface INomination {
   beatmaps: IBeatmapWithExcluded[];
   beatmapset: IBeatmapset;
   beatmapset_creators: IUser[];
+  beatmapset_id: number;
+  creators_state: CreatorsState;
   description?: string;
   description_author?: IUser;
   description_edits: (NominationDescriptionEdit & { editor: IUser })[];
   description_state: DescriptionState;
+  difficulties_set: boolean;
   game_mode: GameMode;
   metadata_assignees: IUser[];
   metadata_state: MetadataState;
@@ -108,6 +115,7 @@ export interface IRound {
       voting_threshold: number;
     }
   >;
+  ignore_creator_and_difficulty_checks: boolean;
   ignore_moderator_checks: boolean;
   name: string;
   news_author_id: number;
@@ -123,7 +131,6 @@ export interface ISettings {
   defaultVotingThreshold?: Record<GameMode, ISetting<number>>;
   discordWebhook?: Record<GameMode, ISetting<string>>;
   hideNominationStatus?: Record<GameMode, ISetting<boolean>>;
-  localInteropSecret?: ISetting<string>;
 }
 
 export interface ISubmission {
@@ -173,8 +180,5 @@ export interface IMapperBeatmapsetConsent {
   consent_reason: string | null;
 }
 
-export type PartialWithoutId<T extends { id: unknown }> = {
-  [P in keyof T as Exclude<P, 'id'>]?: T[P];
-};
-
+export type PartialWithoutId<T extends { id: unknown }> = Partial<Omit<T, 'id'>>;
 export type PartialWithId<T extends { id: unknown }> = { id: T['id'] } & PartialWithoutId<T>;

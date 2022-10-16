@@ -1,3 +1,4 @@
+import type { User } from 'loved-bridge/tables';
 import type { Osu } from './osu.js';
 
 export function accessNested<T>(object: unknown, key: string): T {
@@ -68,21 +69,6 @@ export async function cleanNominationDescription(
   return description;
 }
 
-export function getParams<K extends string, T extends Partial<Record<K, unknown>>>(
-  object: T,
-  keys: K[],
-): Partial<{ [P in K]: T[K] }> {
-  const params: Partial<{ [P in K]: T[K] }> = {};
-
-  for (const key of keys) {
-    if (object[key] !== undefined) {
-      params[key] = object[key];
-    }
-  }
-
-  return params;
-}
-
 export function groupBy<K extends number | string | null, T>(
   array: unknown[],
   key: string,
@@ -144,4 +130,28 @@ export function modeBy<K extends string>(array: { [P in K]: number }[], key: K):
   }
 
   return mode;
+}
+
+export function pick<T, K extends keyof T>(object: T, keys: K[]): Pick<T, K> {
+  const pickObject: Partial<Pick<T, K>> = {};
+
+  for (const key of keys) {
+    pickObject[key] = object[key];
+  }
+
+  return pickObject as Pick<T, K>;
+}
+
+export function sortCreators(creators: User[], hostId: User['id'] | undefined): User[] {
+  return [...creators].sort((a, b) => {
+    if (a.id === hostId) {
+      return -1;
+    }
+
+    if (b.id === hostId) {
+      return 1;
+    }
+
+    return a.name.localeCompare(b.name);
+  });
 }

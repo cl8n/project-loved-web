@@ -87,14 +87,6 @@ export default function SettingsForm() {
             </Fragment>
           );
         })}
-        <label htmlFor='localInteropSecret'>Local interop secret</label>
-        <input
-          type='text'
-          required
-          name='localInteropSecret'
-          defaultValue={settings.localInteropSecret ?? undefined}
-          size={30}
-        />
       </div>
       <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>
     </Form>

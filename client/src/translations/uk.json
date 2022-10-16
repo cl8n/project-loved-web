@@ -1,0 +1,407 @@
+{
+  "+3rK3I": {
+    "defaultMessage": "Немає відповіді"
+  },
+  "+d4ZcX": {
+    "defaultMessage": "Модератори"
+  },
+  "+u3TIj": {
+    "defaultMessage": "Рейтинг"
+  },
+  "/5qic6": {
+    "defaultMessage": "Причина"
+  },
+  "/CNHO3": {
+    "defaultMessage": "Увійти через osu!"
+  },
+  "/JQDIJ": {
+    "defaultMessage": "Статус бітмапи:"
+  },
+  "/SSCZX": {
+    "defaultMessage": "Так"
+  },
+  "06WpMi": {
+    "defaultMessage": "Рейтингова"
+  },
+  "0Vz3c/": {
+    "defaultMessage": "Відсоток та усього"
+  },
+  "2SX61V": {
+    "defaultMessage": "Нотатки"
+  },
+  "2YTMfX": {
+    "defaultMessage": "Відправити та залишитися на сторінці"
+  },
+  "34q5Z7": {
+    "defaultMessage": "Оновити"
+  },
+  "38JPtF": {
+    "defaultMessage": "Голосування в процессі"
+  },
+  "3E4vRf": {
+    "defaultMessage": "Маленький"
+  },
+  "3FN4wO": {
+    "defaultMessage": "Це опитування закрито. Дякуємо за участь!"
+  },
+  "3RCzxp": {
+    "defaultMessage": "вебсайт osu!"
+  },
+  "3RdYB+": {
+    "defaultMessage": "Режим гри:"
+  },
+  "54toJS": {
+    "defaultMessage": "Темна"
+  },
+  "5NZbY5": {
+    "defaultMessage": "Відображення результату:"
+  },
+  "5oqovx": {
+    "defaultMessage": "Відправити бітмапу"
+  },
+  "6RxUSQ": {
+    "defaultMessage": "Більше сторінок"
+  },
+  "7CJMwD": {
+    "defaultMessage": "Пріорітет"
+  },
+  "8bAHuK": {
+    "defaultMessage": "Закрити"
+  },
+  "8l6BC0": {
+    "defaultMessage": "Згода мапперу"
+  },
+  "8x1LMQ": {
+    "defaultMessage": "Додати"
+  },
+  "9cv8r4": {
+    "defaultMessage": "Мапсет"
+  },
+  "A1mh2c": {
+    "defaultMessage": "Рахунок"
+  },
+  "AGzOYr": {
+    "defaultMessage": "Відправити бітмапу до Улюблених!"
+  },
+  "BGA5hC": {
+    "defaultMessage": "Розробники"
+  },
+  "Bc30qK": {
+    "defaultMessage": "Ранк"
+  },
+  "Bppfuf": {
+    "defaultMessage": "(alumni)"
+  },
+  "Bsld0J": {
+    "defaultMessage": "Пошук:"
+  },
+  "CIAu6S": {
+    "defaultMessage": "Вікі"
+  },
+  "CxsxoI": {
+    "defaultMessage": "Відправляємо..."
+  },
+  "E7ffvt": {
+    "defaultMessage": "велика підтримка"
+  },
+  "F1tQfW": {
+    "defaultMessage": "Назва"
+  },
+  "FALILK": {
+    "defaultMessage": "Теперішня"
+  },
+  "FVFRKC": {
+    "defaultMessage": "Сторінка вікі"
+  },
+  "HVzPRU": {
+    "defaultMessage": "Ні"
+  },
+  "HvpI7B": {
+    "defaultMessage": "Видаленний мапсет"
+  },
+  "IO8Ye2": {
+    "defaultMessage": "Рахунок"
+  },
+  "IWPQ9l": {
+    "defaultMessage": "Вибрати варіант згоди"
+  },
+  "J0oKMn": {
+    "defaultMessage": "Гравець"
+  },
+  "JHNIy2": {
+    "defaultMessage": "Порядок раундів:"
+  },
+  "JPKVz4": {
+    "defaultMessage": "Мапсет"
+  },
+  "K4bZ6F": {
+    "defaultMessage": "Діскорд сервери"
+  },
+  "LBBZpt": {
+    "defaultMessage": "Режим гри"
+  },
+  "Lm++cZ": {
+    "defaultMessage": "Project Loved"
+  },
+  "MUDTXQ": {
+    "defaultMessage": "Посилання або ID мапсету"
+  },
+  "Mo+8Ww": {
+    "defaultMessage": "Вік аккаунту"
+  },
+  "N72lge": {
+    "defaultMessage": "Експорт інформації"
+  },
+  "Nee/tG": {
+    "defaultMessage": "підтримка"
+  },
+  "OZm2HC": {
+    "defaultMessage": "Як сильно ви підтримуєте додання цієї бітмапи до Улюблених?"
+  },
+  "Oep6va": {
+    "defaultMessage": "Відправити"
+  },
+  "R0gvL0": {
+    "defaultMessage": "Автор"
+  },
+  "RHg+09": {
+    "defaultMessage": "Для яких режимів гри ви хочете зробити цю бітмапу Улюбленою?"
+  },
+  "RL5Qu1": {
+    "defaultMessage": "Схвалена"
+  },
+  "SKAH57": {
+    "defaultMessage": "Причина"
+  },
+  "SNqK4E": {
+    "defaultMessage": "Мапсети"
+  },
+  "Tf7XH9": {
+    "defaultMessage": "Нотатки"
+  },
+  "TqI9fE": {
+    "defaultMessage": "Адмін:"
+  },
+  "TrDD+Y": {
+    "defaultMessage": "Ви повинні <a>увійти</a>, щоб заповнити форму."
+  },
+  "UjLvid": {
+    "defaultMessage": "Збільшити"
+  },
+  "UxNmCh": {
+    "defaultMessage": "Середній"
+  },
+  "UzL89/": {
+    "defaultMessage": "(капітан)"
+  },
+  "V11p0B": {
+    "defaultMessage": "Очікуючі та закинуті"
+  },
+  "V5W+3b": {
+    "defaultMessage": "Згода"
+  },
+  "VYIbMd": {
+    "defaultMessage": "Улюблена за голосами"
+  },
+  "WEpxnj": {
+    "defaultMessage": "Плеїв"
+  },
+  "WLJwOC": {
+    "defaultMessage": "Сторінка команди на вікі"
+  },
+  "WjsRpS": {
+    "defaultMessage": "Кожна бітмана у цьому сеті занадто коротка (менше ніж 30 секунд)."
+  },
+  "WlIgyS": {
+    "defaultMessage": "Чому ви хочете щоб ця бітмапа стала Улюбленою?"
+  },
+  "XiH1Li": {
+    "defaultMessage": "(в каналі {channel})"
+  },
+  "YzUPhx": {
+    "defaultMessage": "Загальний сервер для {gameMode} Project Loved"
+  },
+  "ZEsdcm": {
+    "defaultMessage": "Тема голосування"
+  },
+  "ZWbq0S": {
+    "defaultMessage": "Рік"
+  },
+  "ZZqLxU": {
+    "defaultMessage": "Складності"
+  },
+  "Ze8fJ0": {
+    "defaultMessage": "Виберіть рахунок"
+  },
+  "a/VT/Q": {
+    "defaultMessage": "Загальна інформація про Project Loved"
+  },
+  "aHJR9F": {
+    "defaultMessage": "Згода"
+  },
+  "aJnlND": {
+    "defaultMessage": "Згода:"
+  },
+  "bcLpeC": {
+    "defaultMessage": "Незвичайний"
+  },
+  "c2UCNp": {
+    "defaultMessage": "Відсоток"
+  },
+  "cDLqbq": {
+    "defaultMessage": "Улюблені та рейтингові"
+  },
+  "ccf+6T": {
+    "defaultMessage": "капітани {gameMode}"
+  },
+  "cwgho6": {
+    "defaultMessage": "Очікуюча"
+  },
+  "dG9/uH": {
+    "defaultMessage": "Кваліфікована"
+  },
+  "eJYnVj": {
+    "defaultMessage": "Більше"
+  },
+  "g+oXPh": {
+    "defaultMessage": "Оновлюємо..."
+  },
+  "gLG6dL": {
+    "defaultMessage": "Відправлені бітмапи"
+  },
+  "gWofsq": {
+    "defaultMessage": "Ніякий"
+  },
+  "gvLZL5": {
+    "defaultMessage": "Вийти"
+  },
+  "ht0/kF": {
+    "defaultMessage": "Звичайний"
+  },
+  "iCkWun": {
+    "defaultMessage": "Раунд"
+  },
+  "jVP2nx": {
+    "defaultMessage": "Хост мапсету заблокований."
+  },
+  "jlqkv1": {
+    "defaultMessage": "Номінована"
+  },
+  "ks9SWH": {
+    "defaultMessage": "Редактори новин"
+  },
+  "l39agD": {
+    "defaultMessage": "Статус"
+  },
+  "lbC8H+": {
+    "defaultMessage": "Маппер"
+  },
+  "lz1fkx": {
+    "defaultMessage": "Так"
+  },
+  "me3BjX": {
+    "defaultMessage": "Статистика"
+  },
+  "mhBW5h": {
+    "defaultMessage": "Маппер"
+  },
+  "nAQn+f": {
+    "defaultMessage": "Натисніть тут, щоб проголосувати у {roundName} раунді!"
+  },
+  "nkWBfH": {
+    "defaultMessage": "Основний канал для дискуссій обслуговування та керівництва Project Loved"
+  },
+  "nn9fFb": {
+    "defaultMessage": "BPM"
+  },
+  "nvvuiw": {
+    "defaultMessage": "Редактори відео"
+  },
+  "p9Evn8": {
+    "defaultMessage": "Локалізація"
+  },
+  "pLUxkj": {
+    "defaultMessage": "Ні"
+  },
+  "pNwB5k": {
+    "defaultMessage": "Новий!"
+  },
+  "pXOU6C": {
+    "defaultMessage": "Тут нічого немає =("
+  },
+  "pvfxi+": {
+    "defaultMessage": "Відправлення"
+  },
+  "qYCjeT": {
+    "defaultMessage": "Улюблена"
+  },
+  "qfEiSZ": {
+    "defaultMessage": "Усього"
+  },
+  "rFOang": {
+    "defaultMessage": "ID мапсету"
+  },
+  "sG6ons": {
+    "defaultMessage": "Список Улюблених"
+  },
+  "tCV6dl": {
+    "defaultMessage": "Мова: {selector}"
+  },
+  "toLR7w": {
+    "defaultMessage": "Результати опитування"
+  },
+  "u/O22d": {
+    "defaultMessage": "Редагування {user}"
+  },
+  "uNpYlX": {
+    "defaultMessage": "Відхилена"
+  },
+  "uizAlD": {
+    "defaultMessage": "Форум"
+  },
+  "urIF1D": {
+    "defaultMessage": "Мапсет"
+  },
+  "utiTez": {
+    "defaultMessage": "Згода"
+  },
+  "v96otU": {
+    "defaultMessage": "Світла"
+  },
+  "vDQerf": {
+    "defaultMessage": "Результати голосування"
+  },
+  "vLehYo": {
+    "defaultMessage": "Опитування закрито"
+  },
+  "wGcwBN": {
+    "defaultMessage": "Великий"
+  },
+  "wOZypU": {
+    "defaultMessage": "Alumni"
+  },
+  "xJhR0t": {
+    "defaultMessage": "Будь-який"
+  },
+  "xR9DcO": {
+    "defaultMessage": "Додаємо..."
+  },
+  "xcT7oB": {
+    "defaultMessage": "Регулярнірезервні копії (майже) усієї інформації на сайті"
+  },
+  "xv9aUB": {
+    "defaultMessage": "Так та ні"
+  },
+  "yQeX5q": {
+    "defaultMessage": "Тема: {selector}"
+  },
+  "zSxa2k": {
+    "defaultMessage": "Ця бітмапа була номінована для {roundName}."
+  },
+  "zgiklH": {
+    "defaultMessage": "Маппер"
+  },
+  "zn6DBN": {
+    "defaultMessage": "Сортувати за:"
+  }
+}

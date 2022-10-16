@@ -1,3 +1,4 @@
+import { gameModeLongName } from 'loved-bridge/beatmaps/gameMode';
 import type { Log } from 'loved-bridge/tables';
 import { LogType } from 'loved-bridge/tables';
 import type { ReactNode } from 'react';
@@ -26,6 +27,11 @@ const logTemplates = {
     '{actor} updated mapper consent for {user} on {beatmapset}',
   [LogType.settingUpdated]: '{actor} updated setting {setting}',
   [LogType.extraTokenCreated]: '{user} created extra token with scopes {scopes}',
+  [LogType.extraTokenDeleted]: 'Deleted extra token for {user}',
+  [LogType.pollCreated]:
+    '{actor} created {gameMode} {poll} on {beatmapset} for the round of {round}',
+  [LogType.pollUpdated]:
+    '{actor} updated results for {gameMode} {poll} on {beatmapset} for the round of {round}',
 };
 
 function logElementForTemplate(
@@ -39,11 +45,21 @@ function logElementForTemplate(
     case 'actor':
       return <UserInline user={values.actor} />;
     case 'beatmapset':
-      return <BeatmapInline beatmapset={values.beatmapset} />;
+      return <BeatmapInline beatmapset={values.beatmapset} gameMode={values.gameMode} />;
+    case 'gameMode':
+      return gameModeLongName(values.gameMode);
     case 'invalid':
       return <i>Unsupported log type</i>;
+    case 'poll':
+      return (
+        <a href={`https://osu.ppy.sh/community/forums/topics/${values.poll.topic_id}`}>
+          poll #{values.poll.id}
+        </a>
+      );
     case 'role':
       return renderRole(values.role);
+    case 'round':
+      return `${values.round.name} [#${values.round.id}]`;
     case 'user':
       return <UserInline user={values.user} />;
   }

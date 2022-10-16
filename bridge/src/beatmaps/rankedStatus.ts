@@ -1,6 +1,6 @@
 import type { Beatmapset } from '../tables.js';
 
-export const enum RankedStatus {
+export enum RankedStatus {
   graveyard = -2,
   workInProgress = -1,
   pending = 0,

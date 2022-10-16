@@ -5,7 +5,6 @@ import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import type {
   Beatmap,
   Beatmapset,
-  BeatmapsetCreator,
   Poll,
   Round,
   RoundGameMode,
@@ -18,6 +17,7 @@ import type { Request, Response, SuperAgentStatic } from 'superagent';
 import superagent from 'superagent';
 import config from './config.js';
 import db from './db.js';
+import { pick } from './helpers.js';
 import Limiter from './Limiter.js';
 import { dbLog, systemLog } from './log.js';
 import { isResponseError } from './type-guards.js';
@@ -335,10 +335,11 @@ export class Osu {
       return null;
     }
 
-    await this.createOrRefreshUser(beatmapset.user_id, {
-      forceUpdate,
-      storeBanned: true,
-    });
+    await Promise.all(
+      [
+        ...new Set([beatmapset.user_id, ...beatmapset.beatmaps.map((beatmap) => beatmap.user_id)]),
+      ].map((creatorId) => this.createOrRefreshUser(creatorId, { forceUpdate, storeBanned: true })),
+    );
 
     const dbFields = {
       api_fetched_at: new Date(),
@@ -379,6 +380,7 @@ export class Osu {
         const dbFields = {
           beatmapset_id: beatmap.beatmapset_id,
           bpm: beatmap.bpm >= 9999 ? '9999.99' : beatmap.bpm.toFixed(2),
+          creator_id: beatmap.user_id,
           deleted_at: beatmap.deleted_at == null ? null : new Date(beatmap.deleted_at),
           game_mode: beatmap.mode_int,
           key_count: beatmap.mode_int === GameMode.mania ? Math.round(beatmap.cs) : null,
@@ -398,34 +400,6 @@ export class Osu {
             ON DUPLICATE KEY UPDATE ?
           `,
           [dbFieldsWithPK, dbFields],
-        );
-      }
-
-      const creatorGameModes = (
-        await connection.query<Pick<BeatmapsetCreator, 'game_mode'>>(
-          `
-            SELECT game_mode
-            FROM beatmapset_creators
-            WHERE beatmapset_id = ?
-            GROUP BY game_mode
-          `,
-          [beatmapset.id],
-        )
-      ).map((row) => row.game_mode);
-      const creatorsToInsert: [number, number, GameMode][] = [];
-
-      for (const gameMode of gameModes) {
-        if (creatorGameModes.includes(gameMode)) {
-          continue;
-        }
-
-        creatorsToInsert.push([beatmapset.id, beatmapset.user_id, gameMode]);
-      }
-
-      if (creatorsToInsert.length > 0) {
-        await connection.query(
-          'INSERT INTO beatmapset_creators (beatmapset_id, creator_id, game_mode) VALUES ?',
-          [creatorsToInsert],
         );
       }
 
@@ -626,12 +600,7 @@ export class Osu {
         [dbFieldsWithPK, dbFields],
       );
 
-      const logUser = {
-        banned: dbFieldsWithPK.banned,
-        country: dbFieldsWithPK.country,
-        id: dbFieldsWithPK.id,
-        name: dbFieldsWithPK.name,
-      };
+      const logUser = pick(dbFieldsWithPK, ['banned', 'country', 'id', 'name']);
 
       if (currentInDb == null) {
         await dbLog(LogType.userCreated, { user: logUser }, connection);
