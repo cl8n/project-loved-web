@@ -414,10 +414,12 @@ export class Osu {
         );
       }
 
-      await connection.query('UPDATE beatmaps SET deleted_at = ? WHERE id IN (?)', [
-        now,
-        [...beatmapIdsToDelete],
-      ]);
+      if (beatmapIdsToDelete.size > 0) {
+        await connection.query('UPDATE beatmaps SET deleted_at = ? WHERE id IN (?)', [
+          now,
+          [...beatmapIdsToDelete],
+        ]);
+      }
 
       // TODO: If force updating beatmapset, also force update all exisitng beatmapset_creators
       //       who aren't the mapset host
