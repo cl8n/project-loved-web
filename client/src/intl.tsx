@@ -29,6 +29,7 @@ export const locales = [
   { code: 'ru', name: 'Русский' },
   { code: 'sv', name: 'Svenska' },
   { code: 'tr', name: 'Türkçe' },
+  { code: 'uk', name: 'Українська мова' },
   { code: 'vi', name: 'Tiếng Việt' },
   { code: 'zh', name: '简体中文' },
 ] as const;
