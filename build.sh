@@ -87,7 +87,7 @@ case "$mode" in
 
     if test "$keep_maintenance"; then
       ssh "$REMOTE_HOSTNAME" "$REMOTE_API_STOP"
-    elif
+    else
       ssh "$REMOTE_HOSTNAME" "$REMOTE_API_RESTART && $REMOTE_SET_MAINTENANCE off"
     fi
     ;;
