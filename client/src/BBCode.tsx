@@ -3,6 +3,7 @@ import escapeHtml from 'escape-html';
 interface BBCodeProps {
   text: string;
 }
+
 // TODO: super naive approach and nested tags of same type do not work
 export function BBCode({ text }: BBCodeProps) {
   const html = escapeHtml(text)
