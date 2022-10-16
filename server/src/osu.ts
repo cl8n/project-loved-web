@@ -284,6 +284,7 @@ export class Osu {
     forceUpdate = false,
   ): Promise<(Beatmapset & { game_modes: Set<GameMode> }) | null> {
     let currentInDb: Beatmapset | null | undefined;
+    const now = new Date();
 
     if (!forceUpdate) {
       currentInDb = await db.queryOne<Beatmapset>('SELECT * FROM beatmapsets WHERE id = ?', [
@@ -296,7 +297,7 @@ export class Osu {
           Date.now() <= currentInDb.api_fetched_at.getTime() + retainApiObjectsFor)
       ) {
         const beatmaps = await db.query<Pick<Beatmap, 'game_mode'>>(
-          'SELECT game_mode FROM beatmaps WHERE beatmapset_id = ?',
+          'SELECT game_mode FROM beatmaps WHERE beatmapset_id = ? AND deleted_at IS NULL',
           [beatmapsetId],
         );
 
@@ -320,7 +321,6 @@ export class Osu {
         return null;
       }
 
-      const now = new Date();
       await db.transact(async (connection) => {
         await connection.query(
           'UPDATE beatmaps SET ? WHERE beatmapset_id = ? AND deleted_at IS NULL',
@@ -342,7 +342,7 @@ export class Osu {
     );
 
     const dbFields = {
-      api_fetched_at: new Date(),
+      api_fetched_at: now,
       artist: beatmapset.artist,
       creator_id: beatmapset.user_id,
       creator_name: beatmapset.creator,
@@ -366,7 +366,18 @@ export class Osu {
         [dbFieldsWithPK, dbFields],
       );
 
+      const beatmapIdsToDelete = new Set(
+        (
+          await connection.query<Pick<Beatmap, 'id'>>(
+            'SELECT id FROM beatmaps WHERE beatmapset_id = ? AND deleted_at IS NULL',
+            [beatmapset.id],
+          )
+        ).map((beatmap) => beatmap.id),
+      );
+
       for (const beatmap of beatmapset.beatmaps) {
+        beatmapIdsToDelete.delete(beatmap.id);
+
         if (beatmap.bpm == null) {
           systemLog(
             `Beatmap #${beatmap.id} has ${beatmap.bpm} BPM, setting to 0`,
@@ -401,6 +412,13 @@ export class Osu {
           `,
           [dbFieldsWithPK, dbFields],
         );
+      }
+
+      if (beatmapIdsToDelete.size > 0) {
+        await connection.query('UPDATE beatmaps SET deleted_at = ? WHERE id IN (?)', [
+          now,
+          [...beatmapIdsToDelete],
+        ]);
       }
 
       // TODO: If force updating beatmapset, also force update all exisitng beatmapset_creators

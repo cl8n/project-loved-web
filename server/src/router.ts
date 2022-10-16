@@ -577,6 +577,7 @@ router.post(
             FROM beatmaps
             WHERE beatmapset_id = ?
               AND game_mode = ?
+              AND deleted_at IS NULL
         `,
         [nominationId, beatmapset.id, nominationId, beatmapset.id, req.body.gameMode],
       );
@@ -606,6 +607,7 @@ router.post(
         FROM beatmaps
         WHERE beatmapset_id = ?
           AND game_mode = ?
+          AND deleted_at IS NULL
         ORDER BY key_count ASC, star_rating ASC
       `,
       [nomination.beatmapset_id, req.body.gameMode],
@@ -1238,6 +1240,7 @@ router.post(
           ON beatmaps.beatmapset_id = nominations.beatmapset_id
             AND beatmaps.game_mode = nominations.game_mode
         WHERE nominations.id = ?
+          AND beatmaps.deleted_at IS NULL
       `,
       [req.body.nominationId],
     );
