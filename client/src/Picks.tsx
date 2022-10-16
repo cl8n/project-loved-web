@@ -1,3 +1,4 @@
+import { diff_match_patch } from 'diff-match-patch';
 import {
   GameMode,
   gameModeLongName,
@@ -1136,37 +1137,26 @@ interface DescriptionDifferenceProps {
   newDescription: string;
 }
 
-function DescriptionDifference({
-  oldDescription,
-  newDescription,
-}: DescriptionDifferenceProps): JSX.Element {
+function DescriptionDifference({ oldDescription, newDescription }: DescriptionDifferenceProps) {
   if (oldDescription === newDescription) {
-    return <span>{newDescription}</span>;
+    return <>{newDescription}</>;
   }
   const diffMatch = new diff_match_patch();
   const differences = diffMatch.diff_main(oldDescription, newDescription, false);
 
   // cleanup
   diffMatch.diff_cleanupSemantic(differences);
-  //"color: #698542; background-color: #95AE86;"
-  // "color: #854242; background-color: #AE8686;"
+
+  // todo: get a better key
   return (
     <>
       {differences.map((difference, i) => {
         if (difference[0] === 0) {
           return <>{difference[1]}</>;
         } else if (difference[0] === -1) {
-          return (
-            <del key={i} className='description-history-item__deleted'>
-              {difference[1]}
-            </del>
-          );
+          return <del key={i}>{difference[1]}</del>;
         } else if (difference[0] === 1) {
-          return (
-            <ins key={i} className='description-history-item__inserted'>
-              {difference[1]}
-            </ins>
-          );
+          return <ins key={i}>{difference[1]}</ins>;
         }
       })}
     </>
@@ -1203,12 +1193,10 @@ function DescriptionHistory({ author, edits }: DescriptionHistoryProps) {
                 {edit.description == null ? (
                   <i>No description</i>
                 ) : (
-                  <p>
-                    <DescriptionDifference
-                      oldDescription={previousDescription ?? edit.description}
-                      newDescription={edit.description}
-                    />
-                  </p>
+                  <DescriptionDifference
+                    oldDescription={previousDescription ?? edit.description}
+                    newDescription={edit.description}
+                  />
                 )}
               </div>
             );
