@@ -1,4 +1,4 @@
-import { diff_match_patch } from 'diff-match-patch';
+import { DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, diff_match_patch } from 'diff-match-patch';
 import {
   GameMode,
   gameModeLongName,
@@ -1133,7 +1133,7 @@ function ForceBeatmapsetUpdate({ nomination }: { nomination: INomination }) {
 }
 
 interface DescriptionDifferenceProps {
-  oldDescription: string;
+  oldDescription: string | null;
   newDescription: string;
 }
 
@@ -1141,22 +1141,22 @@ function DescriptionDifference({ oldDescription, newDescription }: DescriptionDi
   if (oldDescription === newDescription) {
     return <>{newDescription}</>;
   }
-  const diffMatch = new diff_match_patch();
-  const differences = diffMatch.diff_main(oldDescription, newDescription, false);
 
-  // cleanup
+  const diffMatch = new diff_match_patch();
+  const differences = diffMatch.diff_main(oldDescription ?? '', newDescription, false);
+
   diffMatch.diff_cleanupSemantic(differences);
 
-  // todo: get a better key
   return (
     <>
       {differences.map((difference, i) => {
-        if (difference[0] === 0) {
-          return <Fragment key={i}>{difference[1]}</Fragment>;
-        } else if (difference[0] === -1) {
-          return <del key={i}>{difference[1]}</del>;
-        } else if (difference[0] === 1) {
-          return <ins key={i}>{difference[1]}</ins>;
+        switch (difference[0]) {
+          case DIFF_EQUAL:
+            return <Fragment key={i}>{difference[1]}</Fragment>;
+          case DIFF_DELETE:
+            return <del key={i}>{difference[1]}</del>;
+          case DIFF_INSERT:
+            return <ins key={i}>{difference[1]}</ins>;
         }
       })}
     </>
@@ -1180,8 +1180,7 @@ function DescriptionHistory({ author, edits }: DescriptionHistoryProps) {
         <h2>Description history</h2>
         <div className='description-history'>
           {edits.map((edit, index) => {
-            const previousDescription =
-              index === 0 ? edit.description : edits[index - 1].description;
+            const previousDescription = index === 0 ? null : edits[index - 1].description;
 
             return (
               <div key={edit.id} className='description-history-item'>
@@ -1194,7 +1193,7 @@ function DescriptionHistory({ author, edits }: DescriptionHistoryProps) {
                   <i>No description</i>
                 ) : (
                   <DescriptionDifference
-                    oldDescription={previousDescription ?? edit.description}
+                    oldDescription={previousDescription}
                     newDescription={edit.description}
                   />
                 )}
