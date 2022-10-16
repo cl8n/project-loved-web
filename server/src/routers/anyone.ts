@@ -348,7 +348,10 @@ anyoneRouter.post(
       });
     }
 
-    const beatmapset = await res.typedLocals.osu.createOrRefreshBeatmapset(req.body.beatmapsetId);
+    const beatmapset = await res.typedLocals.osu.createOrRefreshBeatmapset(
+      req.body.beatmapsetId,
+      true,
+    );
 
     if (beatmapset == null) {
       return res.status(422).json({ error: 'Invalid beatmapset ID' });
