@@ -14,7 +14,7 @@ import {
   Role,
 } from 'loved-bridge/tables';
 import type { FormEvent } from 'react';
-import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { FormattedDate } from 'react-intl';
 import { Link, useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
@@ -1152,7 +1152,7 @@ function DescriptionDifference({ oldDescription, newDescription }: DescriptionDi
     <>
       {differences.map((difference, i) => {
         if (difference[0] === 0) {
-          return <>{difference[1]}</>;
+          return <Fragment key={i}>{difference[1]}</Fragment>;
         } else if (difference[0] === -1) {
           return <del key={i}>{difference[1]}</del>;
         } else if (difference[0] === 1) {
