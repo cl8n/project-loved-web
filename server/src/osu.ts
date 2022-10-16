@@ -296,7 +296,7 @@ export class Osu {
           Date.now() <= currentInDb.api_fetched_at.getTime() + retainApiObjectsFor)
       ) {
         const beatmaps = await db.query<Pick<Beatmap, 'game_mode'>>(
-          'SELECT game_mode FROM beatmaps WHERE beatmapset_id = ?',
+          'SELECT game_mode FROM beatmaps WHERE beatmapset_id = ? AND deleted_at IS NULL',
           [beatmapsetId],
         );
 

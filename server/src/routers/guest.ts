@@ -235,6 +235,7 @@ guestRouter.get(
           SELECT beatmapset_id, bpm, game_mode, key_count, play_count, total_length
           FROM beatmaps
           WHERE beatmapset_id IN (?)
+            AND deleted_at IS NULL
         `,
         [[...beatmapsetIds]],
       ),
