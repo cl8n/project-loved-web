@@ -165,9 +165,10 @@ export function Picks() {
 
     if (roundInfo != null) {
       for (const nomination of roundInfo.nominations) {
-        cache[nomination.id] = roundInfo.round.done
-          ? new Set()
-          : nominationProgressWarnings(nomination, roundInfo.round, authUser);
+        cache[nomination.id] =
+          authUser == null || roundInfo.round.done
+            ? new Set()
+            : nominationProgressWarnings(nomination, roundInfo.round, authUser);
       }
     }
 
