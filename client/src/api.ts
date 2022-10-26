@@ -142,7 +142,10 @@ export function getNewsAuthors(): Response<IUser[]> {
 
 export function getNominations(roundId: number): Response<{
   nominations: INominationWithPoll[];
-  round: IRound & { news_author: IUser };
+  round: IRound & {
+    hide_nomination_status?: ISettings['hideNominationStatus'];
+    news_author: IUser;
+  };
 }> {
   return superagent.get('/api/nominations').query({ roundId });
 }

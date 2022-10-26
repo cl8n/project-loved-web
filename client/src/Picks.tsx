@@ -335,72 +335,87 @@ export function Picks() {
         showTodo={showTodo}
         setShowTodo={setShowTodo}
       />
-      {roundGameModes.filter(showNominations).map((gameMode) => (
-        <div key={gameMode} className='content-block'>
-          <h2>
-            {gameModeLongName(gameMode)}
-            {nominationsLocked(gameMode) && <span className='success'> ✓ Locked</span>}
-          </h2>
-          {canAdd(gameMode) && (
-            <AddNomination
-              gameMode={gameMode}
-              onNominationAdd={onNominationAdd}
-              roundId={round.id}
-            />
-          )}
-          {(canOrder(gameMode) || canLock(gameMode)) && (
-            <div className='flex-left'>
-              {canOrder(gameMode) && (
-                <button type='button' onClick={() => toggleOrdering(gameMode)}>
-                  {ordering[gameMode] ? 'Done ordering' : 'Change order'}
-                </button>
-              )}
-              {canLock(gameMode) &&
-                (nominationsLocked(gameMode) ? (
-                  <button type='button' onClick={() => toggleLock(gameMode)}>
-                    Unlock nominations
-                  </button>
-                ) : (
-                  <button type='button' className='angry' onClick={() => toggleLock(gameMode)}>
-                    Lock nominations
-                  </button>
-                ))}
+      {roundGameModes.filter(showNominations).map((gameMode) => {
+        if (round.hide_nomination_status?.[gameMode]) {
+          return (
+            <div key={gameMode} className='content-block'>
+              <h2>{gameModeLongName(gameMode)}</h2>
+              <div className='warning-box'>
+                Nominations for {gameModeLongName(gameMode)} are hidden until polls begin.
+              </div>
             </div>
-          )}
-          <Orderable
-            enabled={ordering[gameMode] && canOrder(gameMode)}
-            onMoveChild={(i, j) => onNominationMove(gameMode, i, j)}
-          >
-            {nominationsByGameMode[gameMode].filter(showNomination).map((nomination) => {
-              const parent =
-                nomination.parent_id == null
-                  ? undefined
-                  : nominations.find((parent) => parent.id === nomination.parent_id);
+          );
+        }
 
-              return (
-                <Nomination
-                  key={nomination.id}
-                  assigneesApi={[
-                    assigneesApi[0]?.metadatas,
-                    assigneesApi[0]?.moderators,
-                    assigneesApi[1],
-                  ]}
-                  captainsApi={[captainsApi[0], captainsApi[1]]}
-                  gameModesMissingParent={nominationOtherGameModesMissingParentCache[nomination.id]}
-                  gameModesWithBeatmaps={nominationOtherGameModesWithBeatmapsCache[nomination.id]}
-                  locked={nominationsLocked(gameMode)}
-                  nomination={nomination}
-                  onNominationDelete={onNominationDelete}
-                  onNominationUpdate={onNominationUpdate}
-                  parentGameMode={parent?.game_mode}
-                  progressWarnings={nominationProgressWarningsCache[nomination.id]}
-                  round={round}
-                />
-              );
-            })}
-          </Orderable>
-        </div>
-      ))}
+        return (
+          <div key={gameMode} className='content-block'>
+            <h2>
+              {gameModeLongName(gameMode)}
+              {nominationsLocked(gameMode) && <span className='success'> ✓ Locked</span>}
+            </h2>
+            {canAdd(gameMode) && (
+              <AddNomination
+                gameMode={gameMode}
+                onNominationAdd={onNominationAdd}
+                roundId={round.id}
+              />
+            )}
+            {(canOrder(gameMode) || canLock(gameMode)) && (
+              <div className='flex-left'>
+                {canOrder(gameMode) && (
+                  <button type='button' onClick={() => toggleOrdering(gameMode)}>
+                    {ordering[gameMode] ? 'Done ordering' : 'Change order'}
+                  </button>
+                )}
+                {canLock(gameMode) &&
+                  (nominationsLocked(gameMode) ? (
+                    <button type='button' onClick={() => toggleLock(gameMode)}>
+                      Unlock nominations
+                    </button>
+                  ) : (
+                    <button type='button' className='angry' onClick={() => toggleLock(gameMode)}>
+                      Lock nominations
+                    </button>
+                  ))}
+              </div>
+            )}
+            <Orderable
+              enabled={ordering[gameMode] && canOrder(gameMode)}
+              onMoveChild={(i, j) => onNominationMove(gameMode, i, j)}
+            >
+              {nominationsByGameMode[gameMode].filter(showNomination).map((nomination) => {
+                const parent =
+                  nomination.parent_id == null
+                    ? undefined
+                    : nominations.find((parent) => parent.id === nomination.parent_id);
+
+                return (
+                  <Nomination
+                    key={nomination.id}
+                    assigneesApi={[
+                      assigneesApi[0]?.metadatas,
+                      assigneesApi[0]?.moderators,
+                      assigneesApi[1],
+                    ]}
+                    captainsApi={[captainsApi[0], captainsApi[1]]}
+                    gameModesMissingParent={
+                      nominationOtherGameModesMissingParentCache[nomination.id]
+                    }
+                    gameModesWithBeatmaps={nominationOtherGameModesWithBeatmapsCache[nomination.id]}
+                    locked={nominationsLocked(gameMode)}
+                    nomination={nomination}
+                    onNominationDelete={onNominationDelete}
+                    onNominationUpdate={onNominationUpdate}
+                    parentGameMode={parent?.game_mode}
+                    progressWarnings={nominationProgressWarningsCache[nomination.id]}
+                    round={round}
+                  />
+                );
+              })}
+            </Orderable>
+          </div>
+        );
+      })}
     </>
   );
 }
