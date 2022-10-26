@@ -270,10 +270,14 @@ guestRouter.get(
     const hasRole = currentUserRoles(req, res);
 
     if (!hasRole('any')) {
-      round.hide_nomination_status = accessSetting('hideNominationStatus');
-      nominations = nominations.filter(
-        (nomination) => !round.hide_nomination_status?.[nomination.game_mode],
-      );
+      const poll = await db.queryOne('SELECT 1 FROM polls WHERE round_id = ?', [req.query.roundId]);
+
+      if (poll == null) {
+        round.hide_nomination_status = accessSetting('hideNominationStatus');
+        nominations = nominations.filter(
+          (nomination) => !round.hide_nomination_status?.[nomination.game_mode],
+        );
+      }
     }
 
     round.game_modes = groupBy<RoundGameMode['game_mode'], RoundGameMode>(
