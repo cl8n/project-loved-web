@@ -148,7 +148,11 @@ router.get(
   '/nominations',
   asyncHandler(async (req, res) => {
     const round:
-      | (Round & { game_modes?: Record<GameMode, RoundGameMode>; news_author: User })
+      | (Round & {
+          game_modes?: Record<GameMode, RoundGameMode>;
+          hide_nomination_status?: Record<GameMode, boolean | null | undefined>;
+          news_author: User;
+        })
       | null = await db.queryOneWithGroups<Round & { news_author: User }>(
       `
           SELECT rounds.*, users:news_author
@@ -265,7 +269,7 @@ router.get(
       'nomination_id',
       'nominator',
     );
-    const nominations: (Nomination & {
+    let nominations: (Nomination & {
       beatmaps?: (Beatmap & { excluded: boolean })[];
       beatmapset: Beatmapset;
       beatmapset_creators?: User[];
@@ -299,6 +303,15 @@ router.get(
       `,
       [req.query.roundId],
     );
+
+    const hasRole = currentUserRoles(req, res);
+
+    if (!hasRole('any')) {
+      round.hide_nomination_status = accessSetting('hideNominationStatus');
+      nominations = nominations.filter(
+        (nomination) => !round.hide_nomination_status?.[nomination.game_mode],
+      );
+    }
 
     round.game_modes = groupBy<RoundGameMode['game_mode'], RoundGameMode>(
       await db.query<RoundGameMode>(
