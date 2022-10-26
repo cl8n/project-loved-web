@@ -20,7 +20,7 @@ function Round(round: RoundProps) {
   return (
     <div className='box'>
       <h2>
-        <Link to={`/admin/picks/${round.id}`}>
+        <Link to={`/picks/${round.id}`}>
           {round.name} [#{round.id}]
         </Link>
       </h2>
@@ -72,7 +72,7 @@ function AddRound() {
     }
 
     addRound()
-      .then((response) => history.push(`/admin/picks/${response.body.id}`))
+      .then((response) => history.push(`/picks/${response.body.id}`))
       .catch(alertApiErrorMessage);
   };
 

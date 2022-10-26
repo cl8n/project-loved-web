@@ -66,6 +66,13 @@ render(
           <CurrentNewsPostNotice />
           <SubmissionForm />
         </Route>
+        <Route exact path='/picks'>
+          <PicksRoundListing />
+        </Route>
+        <Route exact path='/picks/:round(\d+)'>
+          <Picks />
+        </Route>
+        <Redirect exact from='/admin/picks/:round(\d+)?' to='/picks/:round?' />
         <Route exact path='/mappers'>
           <MapperConsentsPage />
         </Route>
@@ -80,12 +87,6 @@ render(
         <Route exact path='/more'>
           <MorePages />
         </Route>
-        <ProtectedRoute exact path='/admin/picks' role='any'>
-          <PicksRoundListing />
-        </ProtectedRoute>
-        <ProtectedRoute exact path='/admin/picks/:round(\d+)' role='any'>
-          <Picks />
-        </ProtectedRoute>
         <ProtectedRoute path='/admin/manage' role='any'>
           <Manage />
         </ProtectedRoute>
