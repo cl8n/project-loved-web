@@ -72,6 +72,9 @@ export function Header() {
         <NavLink className='attention' to='/submit'>
           <FormattedMessage defaultMessage='Submit a map' description='[Header] Nav link' />
         </NavLink>
+        <NavLink to='/picks'>
+          <FormattedMessage defaultMessage='Picks' description='[Header] Nav link' />
+        </NavLink>
         <NavLink to='/mappers'>
           <FormattedMessage defaultMessage='Mapper consents' description='[Header] Nav link' />
         </NavLink>
@@ -97,15 +100,8 @@ export function Header() {
         </a>
         {hasRole(authUser, 'any') && (
           <>
-            <FormattedMessage
-              defaultMessage='Admin:'
-              description='[Header] Nav separator'
-              tagName='span'
-            />
-            <NavLink to='/admin/picks'>
-              <FormattedMessage defaultMessage='Picks' description='[Header] Nav link' />
-            </NavLink>
-            <NavLink to='/admin/manage'>
+            <span />
+            <NavLink className='manage' to='/admin/manage'>
               <FormattedMessage defaultMessage='Manage' description='[Header] Nav link' />
             </NavLink>
           </>

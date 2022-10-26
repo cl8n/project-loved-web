@@ -247,6 +247,11 @@ nav {
         background-color: var(--secondary-accent-hover);
       }
     }
+
+    &.manage {
+      margin-left: auto;
+      margin-right: 0;
+    }
   }
 
   span {
