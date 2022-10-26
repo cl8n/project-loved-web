@@ -8,7 +8,7 @@ import UserAdder from './UserAdder';
 import UserRolesEditor from './UserRolesEditor';
 
 export default function UsersAndRolesList() {
-  const authUser = useOsuAuth().user!;
+  const authUser = useOsuAuth().user;
   const [users, usersError, setUsers] = useApi(getUsersWithRoles);
 
   if (usersError != null) {

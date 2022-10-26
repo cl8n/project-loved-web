@@ -153,7 +153,7 @@ export default function MapperConsents() {
           <table className='main-table'>
             <thead>
               <tr className='sticky'>
-                {authUser != null && hasRole(authUser, Role.captain) && <th />}
+                {hasRole(authUser, Role.captain) && <th />}
                 <FormattedMessage
                   defaultMessage='Mapper'
                   description='[Mapper consents] Mapper consents table header'

@@ -26,7 +26,7 @@ export default function Header({
   showTodo,
   setShowTodo,
 }: HeaderProps) {
-  const authUser = useOsuAuth().user!;
+  const authUser = useOsuAuth().user;
   const [editing, setEditing] = useState(false);
 
   return (

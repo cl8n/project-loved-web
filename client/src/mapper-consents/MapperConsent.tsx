@@ -98,7 +98,7 @@ export default function MapperConsent({ consent, onConsentUpdate }: MapperConsen
   return (
     <Fragment key={consent.user_id}>
       <tr>
-        {authUser != null && hasRole(authUser, Role.captain) && (
+        {hasRole(authUser, Role.captain) && (
           <MapperConsentEditor consent={consent} onConsentUpdate={onConsentUpdate} />
         )}
         <td>

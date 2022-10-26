@@ -6,7 +6,7 @@ import { hasRole } from './permissions';
 export function NotReady({ children }: PropsWithChildren<unknown>) {
   const authUser = useOsuAuth().user;
 
-  if (children == null || authUser == null || !hasRole(authUser, 'any')) {
+  if (children == null || !hasRole(authUser, 'any')) {
     return (
       <>
         <FormattedMessage

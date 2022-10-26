@@ -20,7 +20,7 @@ const messages = defineMessages({
 });
 
 export function Header() {
-  const { logOut, user } = useOsuAuth();
+  const { logOut, user: authUser } = useOsuAuth();
 
   return (
     <header className='big-center'>
@@ -46,7 +46,7 @@ export function Header() {
             values={{ selector: <LocaleSelector /> }}
           />
         </span>
-        {user == null ? (
+        {authUser == null ? (
           <a href={loginUrl}>
             <FormattedMessage
               defaultMessage='Log in with osu!'
@@ -55,7 +55,7 @@ export function Header() {
           </a>
         ) : (
           <span>
-            <UserInline showId user={user} /> —{' '}
+            <UserInline showId user={authUser} /> —{' '}
             <button type='button' className='fake-a' onClick={logOut}>
               <FormattedMessage
                 defaultMessage='Log out'
@@ -95,7 +95,7 @@ export function Header() {
         <a href='https://osu.ppy.sh/wiki/Project_Loved'>
           <FormattedMessage defaultMessage='Wiki' description='[Header] Nav link' />
         </a>
-        {user != null && hasRole(user, 'any') && (
+        {hasRole(authUser, 'any') && (
           <>
             <FormattedMessage
               defaultMessage='Admin:'

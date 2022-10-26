@@ -42,11 +42,15 @@ function isAdmin(user: Readonly<IUserWithRoles>): boolean {
 }
 
 function hasRoleExport(
-  user: Readonly<IUserWithRoles>,
+  user: Readonly<IUserWithRoles> | undefined,
   roleId: Role | readonly Role[] | 'any',
   gameMode?: GameMode,
   skipAdminCheck?: boolean,
 ): boolean {
+  if (user == null) {
+    return false;
+  }
+
   if (roleId === 'any') {
     return hasRole(user, allRoles);
   }
@@ -63,6 +67,18 @@ function hasRoleExport(
 }
 export { hasRoleExport as hasRole };
 
-export function canActAs(user: Readonly<IUserWithRoles>, userIds: readonly number[]): boolean {
-  return isAdmin(user) || userIds.some((id) => user.id === id);
+export function canActAs(
+  user: Readonly<IUserWithRoles> | undefined,
+  userIds: readonly number[],
+  skipAdminCheck?: boolean,
+): boolean {
+  if (user == null) {
+    return false;
+  }
+
+  if (!skipAdminCheck && isAdmin(user)) {
+    return true;
+  }
+
+  return userIds.some((id) => user.id === id);
 }

@@ -57,7 +57,7 @@ export default function ReviewEditor({
   onReviewUpdate,
   review,
 }: ReviewEditorProps) {
-  const authUser = useOsuAuth().user!;
+  const authUser = useOsuAuth().user;
   const intl = useIntl();
   const [busy, setBusy] = useState(false);
 

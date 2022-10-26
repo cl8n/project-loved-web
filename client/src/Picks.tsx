@@ -80,7 +80,7 @@ function orderingReducer(
 }
 
 export function Picks() {
-  const authUser = useOsuAuth().user!;
+  const authUser = useOsuAuth().user;
   const params = useParams() as { round: string };
   const roundId = parseInt(params.round);
   const [roundInfo, roundInfoError, setRoundInfo] = useApi(getNominations, [roundId]);
@@ -547,7 +547,7 @@ function Nomination({
   progressWarnings,
   round,
 }: NominationProps) {
-  const authUser = useOsuAuth().user!;
+  const authUser = useOsuAuth().user;
 
   const deleteSelf = () => {
     if (!window.confirm('Are you sure you want to delete this nomination?')) {

@@ -87,7 +87,7 @@ function AddRound() {
 
 export function PicksRoundListing() {
   useTitle('Round listing');
-  const authUser = useOsuAuth().user!;
+  const authUser = useOsuAuth().user;
   const [rounds, roundsError] = useApi(getRounds);
 
   return (
