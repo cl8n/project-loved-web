@@ -171,7 +171,8 @@ guestRouter.get(
           LEFT JOIN nomination_excluded_beatmaps
             ON nominations.id = nomination_excluded_beatmaps.nomination_id
               AND beatmaps.id = nomination_excluded_beatmaps.beatmap_id
-          WHERE nominations.round_id = ?
+          WHERE beatmaps.deleted_at IS NULL
+            AND nominations.round_id = ?
         `,
         [req.query.roundId],
       ),
