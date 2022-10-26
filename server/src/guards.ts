@@ -92,12 +92,20 @@ export const hasLocalInteropKeyMiddleware = asyncHandler(async (request, respons
 export function currentUserRoles(
   request: Request,
   response: Response,
-): (roleId: Role | readonly Role[], gameMode?: GameMode, skipAdminCheck?: boolean) => boolean {
+): (
+  roleId: Role | readonly Role[] | 'any',
+  gameMode?: GameMode,
+  skipAdminCheck?: boolean,
+) => boolean {
   const user = response.typedLocals.user as UserWithRoles | undefined;
 
   return (roleId, gameMode, skipAdminCheck) => {
     if (user == null) {
       return false;
+    }
+
+    if (roleId === 'any') {
+      return hasRole(user, normalRoles);
     }
 
     if (!skipAdminCheck && isAdmin(user, request.method)) {
