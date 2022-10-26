@@ -8,6 +8,8 @@ import type {
   Consent,
   ConsentBeatmapset,
   Nomination,
+  NominationAssignee,
+  NominationDescriptionEdit,
   Poll,
   Review,
   Round,
@@ -16,13 +18,13 @@ import type {
   User,
   UserRole,
 } from 'loved-bridge/tables';
-import { ConsentValue, Role } from 'loved-bridge/tables';
+import { AssigneeType, ConsentValue, Role } from 'loved-bridge/tables';
 import qs from 'querystring';
 import config from '../config.js';
 import db from '../db.js';
 import { asyncHandler } from '../express-helpers.js';
 import { currentUserRoles } from '../guards.js';
-import { groupBy, modeBy } from '../helpers.js';
+import { groupBy, modeBy, sortCreators } from '../helpers.js';
 import { accessSetting } from '../settings.js';
 import { isGameMode } from '../type-guards.js';
 
@@ -102,6 +104,240 @@ guestRouter.get(
     });
 
     res.json(consents);
+  }),
+);
+
+guestRouter.get(
+  '/nominations',
+  asyncHandler(async (req, res) => {
+    const round:
+      | (Round & {
+          game_modes?: Record<GameMode, RoundGameMode>;
+          hide_nomination_status?: Record<GameMode, boolean | null | undefined>;
+          news_author: User;
+        })
+      | null = await db.queryOneWithGroups<Round & { news_author: User }>(
+      `
+        SELECT rounds.*, users:news_author
+        FROM rounds
+        INNER JOIN users
+          ON rounds.news_author_id = users.id
+        WHERE rounds.id = ?
+      `,
+      [req.query.roundId],
+    );
+
+    if (round == null) {
+      return res.status(404).send();
+    }
+
+    const assigneesByNominationId = groupBy<
+      Nomination['id'],
+      {
+        assignee: User;
+        assignee_type: NominationAssignee['type'];
+        nomination_id: Nomination['id'];
+      }
+    >(
+      await db.queryWithGroups<{
+        assignee: User;
+        assignee_type: NominationAssignee['type'];
+        nomination_id: Nomination['id'];
+      }>(
+        `
+          SELECT users:assignee, nomination_assignees.type AS assignee_type, nominations.id AS nomination_id
+          FROM nominations
+          INNER JOIN nomination_assignees
+            ON nominations.id = nomination_assignees.nomination_id
+          INNER JOIN users
+            ON nomination_assignees.assignee_id = users.id
+          WHERE nominations.round_id = ?
+        `,
+        [req.query.roundId],
+      ),
+      'nomination_id',
+    );
+    const beatmapsByNominationId = groupBy<Nomination['id'], Beatmap & { excluded: boolean }>(
+      await db.queryWithGroups<{
+        beatmap: Beatmap & { excluded: boolean };
+        nomination_id: Nomination['id'];
+      }>(
+        `
+          SELECT nominations.id AS nomination_id, beatmaps:beatmap,
+            nomination_excluded_beatmaps.beatmap_id IS NOT NULL AS 'beatmap:excluded'
+          FROM nominations
+          INNER JOIN beatmaps
+            ON nominations.beatmapset_id = beatmaps.beatmapset_id
+          LEFT JOIN nomination_excluded_beatmaps
+            ON nominations.id = nomination_excluded_beatmaps.nomination_id
+              AND beatmaps.id = nomination_excluded_beatmaps.beatmap_id
+          WHERE nominations.round_id = ?
+        `,
+        [req.query.roundId],
+      ),
+      'nomination_id',
+      'beatmap',
+    );
+    const beatmapsetCreatorsByNominationId = groupBy<Nomination['id'], User>(
+      await db.queryWithGroups<{
+        creator: User;
+        nomination_id: Nomination['id'];
+      }>(
+        `
+          SELECT nominations.id AS nomination_id, creators:creator
+          FROM nominations
+          INNER JOIN beatmapset_creators
+            ON nominations.id = beatmapset_creators.nomination_id
+          INNER JOIN users AS creators
+            ON beatmapset_creators.creator_id = creators.id
+          WHERE nominations.round_id = ?
+        `,
+        [req.query.roundId],
+      ),
+      'nomination_id',
+      'creator',
+    );
+    const descriptionEditsByNominationId = groupBy<
+      Nomination['id'],
+      NominationDescriptionEdit & { editor: User }
+    >(
+      await db.queryWithGroups<NominationDescriptionEdit & { editor: User }>(
+        `
+          SELECT nomination_description_edits.*, editors:editor
+          FROM nominations
+          INNER JOIN nomination_description_edits
+            ON nominations.id = nomination_description_edits.nomination_id
+          INNER JOIN users AS editors
+            ON nomination_description_edits.editor_id = editors.id
+          WHERE nominations.round_id = ?
+          ORDER BY nomination_description_edits.edited_at ASC
+        `,
+        [req.query.roundId],
+      ),
+      'nomination_id',
+    );
+    const nominatorsByNominationId = groupBy<Nomination['id'], User>(
+      await db.queryWithGroups<{ nomination_id: Nomination['id']; nominator: User }>(
+        `
+          SELECT users:nominator, nominations.id AS nomination_id
+          FROM nominations
+          INNER JOIN nomination_nominators
+            ON nominations.id = nomination_nominators.nomination_id
+          INNER JOIN users
+            ON nomination_nominators.nominator_id = users.id
+          WHERE nominations.round_id = ?
+        `,
+        [req.query.roundId],
+      ),
+      'nomination_id',
+      'nominator',
+    );
+    let nominations: (Nomination & {
+      beatmaps?: (Beatmap & { excluded: boolean })[];
+      beatmapset: Beatmapset;
+      beatmapset_creators?: User[];
+      description_author: User | null;
+      description_edits?: (NominationDescriptionEdit & { editor: User })[];
+      metadata_assignees?: User[];
+      moderator_assignees?: User[];
+      nominators?: User[];
+      poll: Poll | null;
+    })[] = await db.queryWithGroups<
+      Nomination & {
+        beatmapset: Beatmapset;
+        description_author: User | null;
+        poll: Poll | null;
+      }
+    >(
+      `
+        SELECT nominations.*, beatmapsets:beatmapset, description_authors:description_author,
+          polls:poll
+        FROM nominations
+        INNER JOIN beatmapsets
+          ON nominations.beatmapset_id = beatmapsets.id
+        LEFT JOIN users AS description_authors
+          ON nominations.description_author_id = description_authors.id
+        LEFT JOIN polls
+          ON nominations.round_id = polls.round_id
+            AND nominations.game_mode = polls.game_mode
+            AND nominations.beatmapset_id = polls.beatmapset_id
+        WHERE nominations.round_id = ?
+        ORDER BY nominations.order ASC, nominations.id ASC
+      `,
+      [req.query.roundId],
+    );
+
+    const hasRole = currentUserRoles(req, res);
+
+    if (!hasRole('any')) {
+      round.hide_nomination_status = accessSetting('hideNominationStatus');
+      nominations = nominations.filter(
+        (nomination) => !round.hide_nomination_status?.[nomination.game_mode],
+      );
+    }
+
+    round.game_modes = groupBy<RoundGameMode['game_mode'], RoundGameMode>(
+      await db.query<RoundGameMode>(
+        `
+          SELECT *
+          FROM round_game_modes
+          WHERE round_id = ?
+        `,
+        [req.query.roundId],
+      ),
+      'game_mode',
+      null,
+      true,
+    );
+
+    nominations.forEach((nomination) => {
+      nomination.beatmaps = (beatmapsByNominationId[nomination.id] || [])
+        .sort((a, b) => a.star_rating - b.star_rating)
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        .sort((a, b) => a.key_count! - b.key_count!);
+      nomination.beatmapset_creators = sortCreators(
+        beatmapsetCreatorsByNominationId[nomination.id] || [],
+        nomination.beatmapset.creator_id,
+      );
+      nomination.description_edits = descriptionEditsByNominationId[nomination.id] || [];
+      nomination.nominators = nominatorsByNominationId[nomination.id] || [];
+
+      const assignees = assigneesByNominationId[nomination.id] || [];
+
+      nomination.metadata_assignees = assignees
+        .filter((a) => a.assignee_type === AssigneeType.metadata)
+        .map((a) => a.assignee);
+      nomination.moderator_assignees = assignees
+        .filter((a) => a.assignee_type === AssigneeType.moderator)
+        .map((a) => a.assignee);
+    });
+
+    res.json({
+      nominations,
+      round,
+    });
+  }),
+);
+
+guestRouter.get(
+  '/rounds',
+  asyncHandler(async (_, res) => {
+    const rounds = await db.query<Round & { nomination_count: number }>(`
+      SELECT rounds.*, IFNULL(nomination_counts.count, 0) AS nomination_count
+      FROM rounds
+      LEFT JOIN (
+        SELECT COUNT(*) AS count, round_id
+        FROM nominations
+        GROUP BY round_id
+      ) AS nomination_counts
+        ON rounds.id = nomination_counts.round_id
+      ORDER BY rounds.id ASC
+    `);
+
+    res.json({
+      complete_rounds: rounds.filter((round) => round.done).reverse(),
+      incomplete_rounds: rounds.filter((round) => !round.done),
+    });
   }),
 );
 
