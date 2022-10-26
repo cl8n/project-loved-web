@@ -208,6 +208,7 @@ header {
 nav {
   margin-top: 0.5em;
   display: flex;
+  align-items: flex-end;
 
   &.nested {
     border-bottom: 1px dashed var(--accent);
