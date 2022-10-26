@@ -276,7 +276,7 @@ export function Picks() {
       };
     });
   };
-  const onRoundUpdate = (round: Omit<IRound, 'game_modes'> & { news_author: IUser }) => {
+  const onRoundUpdate = (round: PartialWithId<IRound & { news_author: IUser }>) => {
     setRoundInfo((prev) => {
       return {
         nominations: prev!.nominations,

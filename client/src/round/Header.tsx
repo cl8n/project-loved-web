@@ -1,7 +1,7 @@
 import { Role } from 'loved-bridge/tables';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
-import type { IRound, IUser } from '../interfaces';
+import type { IRound, IUser, PartialWithId } from '../interfaces';
 import Markdown from '../Markdown';
 import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
@@ -12,7 +12,7 @@ import RoundEditor from './RoundEditor';
 interface HeaderProps {
   canEdit: boolean;
   nominationsWithWarnings: number;
-  onRoundUpdate: (round: Omit<IRound, 'game_modes'> & { news_author: IUser }) => void;
+  onRoundUpdate: (round: PartialWithId<IRound & { news_author: IUser }>) => void;
   round: IRound & { news_author: IUser };
   showTodo: boolean;
   setShowTodo: Dispatch<SetStateAction<boolean>>;
