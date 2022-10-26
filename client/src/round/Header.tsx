@@ -41,7 +41,7 @@ export default function Header({
             </button>
           </>
         )}
-        {!round.done && (
+        {!round.done && hasRole(authUser, 'any') && (
           <span className='round-show-todo-menu'>
             <label htmlFor='showTodo'>
               Show only what needs my attention ({nominationsWithWarnings})
