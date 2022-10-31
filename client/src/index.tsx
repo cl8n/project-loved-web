@@ -87,11 +87,12 @@ render(
         <Route exact path='/more'>
           <MorePages />
         </Route>
-        <ProtectedRoute path='/admin/manage' role='any'>
+        <ProtectedRoute path='/manage' role='any'>
           <Manage />
         </ProtectedRoute>
-        <Redirect exact from='/admin/forum-opt-in' to='/admin/manage/forum-opt-in' />
-        <Redirect exact from='/admin/settings' to='/admin/manage/settings' />
+        <Redirect exact from='/admin/forum-opt-in' to='/manage/forum-opt-in' />
+        <Redirect from='/admin/manage' to='/manage' />
+        <Redirect exact from='/admin/settings' to='/manage/settings' />
         <Route exact path='/localization/:locale?'>
           <Localization />
         </Route>

@@ -101,7 +101,7 @@ export function Header() {
         {hasRole(authUser, 'any') && (
           <>
             <span />
-            <NavLink className='manage' to='/admin/manage'>
+            <NavLink className='manage' to='/manage'>
               <FormattedMessage defaultMessage='Manage' description='[Header] Nav link' />
             </NavLink>
           </>

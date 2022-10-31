@@ -15,34 +15,30 @@ export default function Manage() {
   return (
     <>
       <nav className='nested'>
-        <NavLink to='/admin/manage/roles'>Roles</NavLink>
-        <NavLink to='/admin/manage/api-objects'>API objects</NavLink>
-        <NavLink to='/admin/manage/logs'>Logs</NavLink>
-        <NavLink to='/admin/manage/forum-opt-in'>Forum opt-in</NavLink>
-        <NavLink to='/admin/manage/settings'>Site settings</NavLink>
-        <NavLink to='/admin/manage/client-key'>Client key</NavLink>
+        <NavLink to='/manage/roles'>Roles</NavLink>
+        <NavLink to='/manage/api-objects'>API objects</NavLink>
+        <NavLink to='/manage/logs'>Logs</NavLink>
+        <NavLink to='/manage/forum-opt-in'>Forum opt-in</NavLink>
+        <NavLink to='/manage/settings'>Site settings</NavLink>
+        <NavLink to='/manage/client-key'>Client key</NavLink>
       </nav>
       <Switch>
-        <Route exact path='/admin/manage/roles'>
+        <Route exact path='/manage/roles'>
           <Roles />
         </Route>
-        <ProtectedRoute exact path='/admin/manage/api-objects' role={Role.admin}>
+        <ProtectedRoute exact path='/manage/api-objects' role={Role.admin}>
           <ApiObjects />
         </ProtectedRoute>
-        <Route exact path='/admin/manage/logs'>
+        <Route exact path='/manage/logs'>
           <Logs />
         </Route>
-        <ProtectedRoute
-          exact
-          path='/admin/manage/forum-opt-in'
-          role={[Role.captain, Role.newsAuthor]}
-        >
+        <ProtectedRoute exact path='/manage/forum-opt-in' role={[Role.captain, Role.newsAuthor]}>
           <ForumOptIn />
         </ProtectedRoute>
-        <ProtectedRoute exact path='/admin/manage/settings' role={Role.captain}>
+        <ProtectedRoute exact path='/manage/settings' role={Role.captain}>
           <Settings />
         </ProtectedRoute>
-        <ProtectedRoute exact path='/admin/manage/client-key' role={Role.newsAuthor}>
+        <ProtectedRoute exact path='/manage/client-key' role={Role.newsAuthor}>
           <ClientKeyPage />
         </ProtectedRoute>
       </Switch>
