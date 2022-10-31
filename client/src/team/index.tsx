@@ -9,13 +9,10 @@ export default function Team() {
 
   return (
     <>
-      <div className='warning-box'>
-        The osu!catch captains are looking to expand their team. Apply using{' '}
-        <a href='https://docs.google.com/forms/d/e/1FAIpQLScDiVOpgoJ4fK_g31hF2_l2wXRSlKBQ0vOxqhZk2kcoLQNG1w/viewform'>
-          this Google form
-        </a>{' '}
-        if you're interested!
-      </div>
+      {/* <div className='warning-box'>
+        The [mode] captains are looking to expand their team. Apply using{' '}
+        <a href='[form]'>this Google form</a> if you're interested!
+      </div> */}
       <div className='content-block'>
         <FormattedMessage
           defaultMessage='Current'
