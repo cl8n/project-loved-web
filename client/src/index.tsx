@@ -91,7 +91,7 @@ render(
           <Manage />
         </ProtectedRoute>
         <Redirect exact from='/admin/forum-opt-in' to='/manage/forum-opt-in' />
-        <Redirect from='/admin/manage' to='/manage' />
+        <Redirect exact from='/admin/manage/:page?' to='/manage/:page?' />
         <Redirect exact from='/admin/settings' to='/manage/settings' />
         <Route exact path='/localization/:locale?'>
           <Localization />
