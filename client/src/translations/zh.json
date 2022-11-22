@@ -122,9 +122,6 @@
   "BGA5hC": {
     "defaultMessage": "开发者"
   },
-  "BSKWqB": {
-    "defaultMessage": "审核团队"
-  },
   "Bc30qK": {
     "defaultMessage": "排名"
   },
@@ -158,6 +155,9 @@
   "F1tQfW": {
     "defaultMessage": "标题"
   },
+  "FALILK": {
+    "defaultMessage": "现役团队"
+  },
   "FVFRKC": {
     "defaultMessage": "wiki 页面"
   },
@@ -185,8 +185,8 @@
   "IWPQ9l": {
     "defaultMessage": "选择一个选项"
   },
-  "IiYTWb": {
-    "defaultMessage": "当前团队"
+  "IhLq/K": {
+    "defaultMessage": "成员列表"
   },
   "Ipzb3R": {
     "defaultMessage": "未通过"
@@ -293,14 +293,8 @@
   "Tf7XH9": {
     "defaultMessage": "评论"
   },
-  "TqI9fE": {
-    "defaultMessage": "管理："
-  },
   "TrDD+Y": {
     "defaultMessage": "你必须<a>登录</a>后才能填写此表。"
-  },
-  "U1fcdw": {
-    "defaultMessage": "新闻编辑/管理"
   },
   "UjLvid": {
     "defaultMessage": "展开"
@@ -365,6 +359,9 @@
   "aHJR9F": {
     "defaultMessage": "意见"
   },
+  "aJnlND": {
+    "defaultMessage": "意见:"
+  },
   "aXImqo": {
     "defaultMessage": "编辑审阅记录"
   },
@@ -428,6 +425,9 @@
   "kr2W+L": {
     "defaultMessage": "<p>填写这个表格帮助<teamLink>队长们</teamLink>决定每周提名哪些谱面。即使一个谱面已被<submissionsLink>提交</submissionsLink>，你也可以写一写你的想法。</p> <p>需要注意的事项:</p>"
   },
+  "ks9SWH": {
+    "defaultMessage": "公告发布者"
+  },
   "l39agD": {
     "defaultMessage": "状态"
   },
@@ -460,9 +460,6 @@
   },
   "nUQEC7": {
     "defaultMessage": "强烈反对"
-  },
-  "necy1Q": {
-    "defaultMessage": "这个列表只包括从这个网站发送的作品。旧的谷歌表格将很快被移到这里，然后谷歌表格将废弃。"
   },
   "nkWBfH": {
     "defaultMessage": "Loved 项目的主要维护及针对性讨论频道"
