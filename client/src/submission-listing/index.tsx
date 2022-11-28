@@ -604,7 +604,8 @@ function SubmissionListing({
       }))
       .sort(beatmapsetSortFn(sorts[1], beatmapStatus))
       .sort(beatmapsetSortFn(sorts[0], beatmapStatus))
-      .sort((a, b) => +(b.poll?.in_progress ?? false) - +(a.poll?.in_progress ?? false));
+      .sort((a, b) => +(b.poll?.in_progress ?? false) - +(a.poll?.in_progress ?? false))
+      .sort((a, b) => +(a.deleted_at != null) - +(b.deleted_at != null));
   }, [authUser, beatmapStatus, keyMode, reviewStatus, searchLowerCase, sorts, submissionsInfo]);
 
   useEffect(() => {

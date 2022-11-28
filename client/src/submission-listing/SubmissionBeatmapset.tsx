@@ -33,6 +33,11 @@ const messages = defineMessages({
     defaultMessage: 'Close',
     description: '[General] Button to close forms, dropdowns, modals, etc.',
   },
+  deleted: {
+    defaultMessage: 'Deleted',
+    description:
+      '[Submissions] Aggregate review score shown on submissions table for maps that were deleted from osu!',
+  },
   deleteReview: {
     defaultMessage: 'Delete review',
     description: '[Reviews] Button to delete own review',
@@ -401,6 +406,10 @@ interface PriorityCellProps {
 
 function PriorityCell({ beatmapset }: PriorityCellProps) {
   const intl = useIntl();
+
+  if (beatmapset.deleted_at != null) {
+    return <td className='priority rejected'>{intl.formatMessage(messages.deleted)}</td>;
+  }
 
   if (beatmapset.poll?.in_progress) {
     return (
