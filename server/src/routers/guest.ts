@@ -603,6 +603,7 @@ guestRouter.get(
       beatmapset.low_favorites = gameMode === GameMode.osu && beatmapset.favorite_count < 30;
       beatmapset.maximum_length = Math.max(
         ...beatmapsForGameMode.map((beatmap) => beatmap.total_length),
+        0,
       );
       beatmapset.modal_bpm = modeBy(beatmapsForGameMode, 'bpm');
       beatmapset.nominated_round_name = canViewNominationStatus
