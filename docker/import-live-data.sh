@@ -1,7 +1,9 @@
 #!/bin/sh
 
-if [ "$#" -gt 1 ]; then
-  echo "Usage: $0 [export URL]" >&2
+set -eu
+
+if test $# -gt 1; then
+  printf 'Usage: \033[4m%s\033[m [<export URL>]\n' "$(basename "$0")" >&2
   exit 1
 fi
 

@@ -24,10 +24,10 @@ On the first run of the database container, the `project_loved` user will be cre
 
 ### Live data
 
-Regular database exports (sans `extra_tokens` and `sessions`) are posted to <https://loved.sh/exports>. **This will drop and re-create all other tables!**
+Regular database exports are posted to <https://loved.sh/exports>. **This will drop and re-create all other tables!**
 
 ```
-docker-compose exec database /import-live-data.sh [export URL]
+docker-compose exec database /import-live-data.sh [<export URL>]
 ```
 
 ### Creating an admin user
