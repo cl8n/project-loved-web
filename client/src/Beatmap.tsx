@@ -15,7 +15,7 @@ export default function Beatmap({ beatmapset, gameMode }: BeatmapProps) {
   }
 
   return (
-    <a className='beatmap' href={link}>
+    <a className='beatmap' href={link} target="_blank">
       <div className='beatmap-artist'>{beatmapset.artist}</div>
       <div className='beatmap-title'>{beatmapset.title}</div>
     </a>
