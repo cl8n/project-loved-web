@@ -82,6 +82,7 @@ export default function ReviewEditor({
     3,
     review?.score === 2 && 2,
     1,
+    hasRole(authUser, Role.captain, gameMode) && 0,
     -1,
     review?.score === -2 && -2,
     -3,

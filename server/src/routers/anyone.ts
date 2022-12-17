@@ -277,19 +277,16 @@ anyoneRouter.post(
       return res.status(422).json({ error: 'Invalid reason' });
     }
 
-    if (
-      !isInteger(req.body.score) ||
-      req.body.score === 0 ||
-      req.body.score < -4 ||
-      req.body.score > 3
-    ) {
+    if (!isInteger(req.body.score) || req.body.score < -4 || req.body.score > 3) {
       return res.status(422).json({ error: 'Invalid score' });
     }
 
     const hasRole = currentUserRoles(req, res);
 
-    if (req.body.score === -4 && !hasRole(Role.captain, req.body.gameMode)) {
-      return res.status(403).send({ error: 'Must be a captain to mark as not allowed' });
+    if ([-4, 0].includes(req.body.score) && !hasRole(Role.captain, req.body.gameMode)) {
+      return res
+        .status(403)
+        .send({ error: `Must be a captain to use review score ${req.body.score}` });
     }
 
     const captainRole = res.typedLocals.user.roles.find(
