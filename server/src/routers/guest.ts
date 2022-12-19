@@ -383,7 +383,7 @@ guestRouter.get(
 
     const hasRole = currentUserRoles(req, res);
     const canViewNominationStatus =
-      !accessSetting(`hideNominationStatus.${gameMode}`) || hasRole(Role.captain, gameMode);
+      !accessSetting(`hideNominationStatus.${gameMode}`) || hasRole('any');
 
     const submissions = await db.query<Submission>(
       `
