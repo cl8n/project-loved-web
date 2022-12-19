@@ -12,7 +12,9 @@ import Localization from './localization';
 import Manage from './manage';
 import MapperConsentsPage from './mapper-consents/MapperConsentsPage';
 import MorePages from './MorePages';
+import NominationPlannerPage from './nomination-planner/NominationPlannerPage';
 import { NoRoute } from './NoRoute';
+import { NotReady } from './NotReady';
 import { OsuAuthProvider } from './osuAuth';
 import { Picks } from './Picks';
 import { PicksRoundListing } from './PicksRoundListing';
@@ -68,6 +70,11 @@ render(
         </Route>
         <Route exact path='/picks'>
           <PicksRoundListing />
+        </Route>
+        <Route exact path='/picks/planner/:gameMode?'>
+          <NotReady>
+            <NominationPlannerPage />
+          </NotReady>
         </Route>
         <Route exact path='/picks/:round(\d+)'>
           <Picks />

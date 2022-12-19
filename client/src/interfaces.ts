@@ -1,13 +1,18 @@
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import type { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import type {
+  Beatmapset,
   ConsentValue,
   CreatorsState,
   DescriptionState,
   MetadataState,
   ModeratorState,
+  Nomination,
   NominationDescriptionEdit,
+  Review,
   Role,
+  Submission,
+  User,
 } from 'loved-bridge/tables';
 
 // TODO: Replace most of this with bridge types
@@ -76,6 +81,14 @@ export interface INomination {
   overwrite_title?: string;
   parent_id?: number;
   round_id: number | null;
+}
+
+export interface INominationForPlanner extends Nomination {
+  beatmapset: Beatmapset;
+  beatmapset_creators: User[];
+  nominators: User[];
+  reviews: (Review & { active_captain: boolean | null })[];
+  submissions: Submission[];
 }
 
 export interface INominationWithPoll extends INomination {

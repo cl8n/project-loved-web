@@ -7,6 +7,7 @@ import type {
   MetadataState,
   ModeratorState,
   Role,
+  User,
 } from 'loved-bridge/tables';
 import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
@@ -17,6 +18,7 @@ import type {
   IMapperBeatmapsetConsent,
   IMapperConsent,
   INomination,
+  INominationForPlanner,
   INominationWithPoll,
   IPoll,
   IReview,
@@ -148,6 +150,13 @@ export function getNominations(roundId: number): Response<{
   };
 }> {
   return superagent.get('/api/nominations').query({ roundId });
+}
+
+export function getNominationsForPlanner(gameMode: GameMode): Response<{
+  nominations: INominationForPlanner[];
+  submissionUsersById: Record<number, User>;
+} | null> {
+  return superagent.get('/api/planner').query({ gameMode });
 }
 
 export function getPolls(): Response<IPoll[]> {

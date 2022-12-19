@@ -325,6 +325,172 @@ guestRouter.get(
 );
 
 guestRouter.get(
+  '/planner',
+  asyncHandler(async (req, res) => {
+    const gameMode = parseInt(req.query.gameMode ?? '', 10);
+
+    if (!isGameMode(gameMode)) {
+      return res.status(422).json({ error: 'Invalid game mode' });
+    }
+
+    if (accessSetting(`hideNominationStatus.${gameMode}`)) {
+      const hasRole = currentUserRoles(req, res);
+
+      if (!hasRole('any')) {
+        return res.json(null);
+      }
+    }
+
+    const beatmapsetCreatorsByNominationId = groupBy<Nomination['id'], User>(
+      await db.queryWithGroups<{
+        creator: User;
+        nomination_id: Nomination['id'];
+      }>(
+        `
+          SELECT nominations.id AS nomination_id, creators:creator
+          FROM nominations
+          INNER JOIN beatmapset_creators
+            ON nominations.id = beatmapset_creators.nomination_id
+          INNER JOIN users AS creators
+            ON beatmapset_creators.creator_id = creators.id
+          WHERE nominations.game_mode = ?
+            AND nominations.round_id IS NULL
+        `,
+        [gameMode],
+      ),
+      'nomination_id',
+      'creator',
+    );
+    const nominatorsByNominationId = groupBy<Nomination['id'], User>(
+      await db.queryWithGroups<{ nomination_id: Nomination['id']; nominator: User }>(
+        `
+          SELECT users:nominator, nominations.id AS nomination_id
+          FROM nominations
+          INNER JOIN nomination_nominators
+            ON nominations.id = nomination_nominators.nomination_id
+          INNER JOIN users
+            ON nomination_nominators.nominator_id = users.id
+          WHERE nominations.game_mode = ?
+            AND nominations.round_id IS NULL
+        `,
+        [gameMode],
+      ),
+      'nomination_id',
+      'nominator',
+    );
+    const reviewsByNominationId = groupBy<
+      Nomination['id'],
+      Review & { active_captain: boolean | null }
+    >(
+      await db.queryWithGroups<{
+        nomination_id: Nomination['id'];
+        review: Review & { active_captain: boolean | null };
+      }>(
+        `
+          SELECT reviews:review, NOT user_roles.alumni AS 'review:active_captain',
+            nominations.id AS nomination_id
+          FROM reviews
+          INNER JOIN nominations
+            ON nominations.round_id IS NULL
+            AND reviews.beatmapset_id = nominations.beatmapset_id
+            AND reviews.game_mode = nominations.game_mode
+          LEFT JOIN user_roles
+            ON user_roles.role_id = ?
+            AND reviews.game_mode = user_roles.game_mode
+            AND reviews.reviewer_id = user_roles.user_id
+          WHERE reviews.game_mode = ?
+          ORDER BY (reviews.score < -3) DESC, 'review:active_captain' DESC, reviews.reviewed_at ASC
+        `,
+        [Role.captain, gameMode],
+      ),
+      'nomination_id',
+      'review',
+    );
+    const submissionsByNominationId = groupBy<Nomination['id'], Submission>(
+      await db.queryWithGroups<{ nomination_id: Nomination['id']; submission: Submission }>(
+        `
+          SELECT submissions:submission, nominations.id AS nomination_id
+          FROM submissions
+          INNER JOIN nominations
+            ON nominations.round_id IS NULL
+            AND submissions.beatmapset_id = nominations.beatmapset_id
+            AND submissions.game_mode = nominations.game_mode
+          WHERE submissions.game_mode = ?
+          ORDER BY submissions.submitted_at ASC
+        `,
+        [gameMode],
+      ),
+      'nomination_id',
+      'submission',
+    );
+    const nominations: (Nomination & {
+      beatmapset: Beatmapset;
+      beatmapset_creators?: User[];
+      nominators?: User[];
+      reviews?: (Review & { active_captain: boolean | null })[];
+      submissions?: Submission[];
+    })[] = await db.queryWithGroups<Nomination & { beatmapset: Beatmapset }>(
+      `
+        SELECT nominations.*, beatmapsets:beatmapset
+        FROM nominations
+        INNER JOIN beatmapsets
+          ON nominations.beatmapset_id = beatmapsets.id
+        WHERE nominations.game_mode = ?
+          AND nominations.round_id IS NULL
+        ORDER BY nominations.order ASC, nominations.id ASC
+      `,
+      [gameMode],
+    );
+
+    const userIds = new Set<number>();
+
+    nominations.forEach((nomination) => {
+      nomination.beatmapset_creators = sortCreators(
+        beatmapsetCreatorsByNominationId[nomination.id] || [],
+        nomination.beatmapset.creator_id,
+      );
+      nomination.nominators = nominatorsByNominationId[nomination.id] || [];
+      nomination.reviews = reviewsByNominationId[nomination.id] || [];
+      nomination.submissions = submissionsByNominationId[nomination.id] || [];
+
+      for (const review of nomination.reviews) {
+        userIds.add(review.reviewer_id);
+
+        // TODO: Type cast this correctly earlier?
+        if (review.active_captain != null) {
+          review.active_captain = (review.active_captain as unknown) !== 0;
+        }
+      }
+
+      for (const submission of nomination.submissions) {
+        if (submission.submitter_id != null) {
+          userIds.add(submission.submitter_id);
+        }
+      }
+    });
+
+    const submissionUsersById =
+      userIds.size === 0
+        ? {}
+        : groupBy<User['id'], User>(
+            await db.query<User>(
+              `
+                SELECT *
+                FROM users
+                WHERE id IN (?)
+              `,
+              [[...userIds]],
+            ),
+            'id',
+            null,
+            true,
+          );
+
+    res.json({ nominations, submissionUsersById });
+  }),
+);
+
+guestRouter.get(
   '/rounds',
   asyncHandler(async (_, res) => {
     const rounds = await db.query<Round & { nomination_count: number }>(`
