@@ -47,7 +47,7 @@ guestRouter.get(
     `);
 
     if (ongoingPoll == null) {
-      return res.status(404).send();
+      return res.json(null);
     }
 
     const round = await db.queryOne<Pick<Round, 'name' | 'news_posted_at'>>(
@@ -60,7 +60,7 @@ guestRouter.get(
     );
 
     if (round?.news_posted_at == null) {
-      return res.status(404).send();
+      return res.json(null);
     }
 
     const slugDate = round.news_posted_at.toISOString().slice(0, 10);

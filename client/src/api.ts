@@ -126,7 +126,7 @@ export function getCaptains(): Response<{ [P in GameMode]?: IUser[] }> {
   return superagent.get('/api/captains');
 }
 
-export function getCurrentNewsPost(): Response<{ roundName: string; url: string }> {
+export function getCurrentNewsPost(): Response<{ roundName: string; url: string } | null> {
   return superagent.get('/api/current-news-post');
 }
 
