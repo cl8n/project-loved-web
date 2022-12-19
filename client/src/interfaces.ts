@@ -58,6 +58,7 @@ export interface INomination {
   beatmapset: IBeatmapset;
   beatmapset_creators: IUser[];
   beatmapset_id: number;
+  category: string | null;
   creators_state: CreatorsState;
   description?: string;
   description_author?: IUser;
@@ -74,7 +75,7 @@ export interface INomination {
   overwrite_artist?: string;
   overwrite_title?: string;
   parent_id?: number;
-  round_id: number;
+  round_id: number | null;
 }
 
 export interface INominationWithPoll extends INomination {

@@ -153,6 +153,7 @@ export interface Log {
 export interface Nomination {
   id: number;
   beatmapset_id: number;
+  category: string | null;
   creators_state: CreatorsState;
   description: string | null;
   description_author_id: number | null;
@@ -165,7 +166,7 @@ export interface Nomination {
   overwrite_artist: string | null;
   overwrite_title: string | null;
   parent_id: number | null;
-  round_id: number;
+  round_id: number | null;
 }
 
 export interface NominationAssignee {
