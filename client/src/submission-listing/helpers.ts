@@ -81,6 +81,44 @@ export function beatmapsetNotAllowed(beatmapset: SubmittedBeatmapset): boolean {
   );
 }
 
+export function combineReviewsAndSubmissions(
+  reviews: IReview[],
+  submissions: ISubmission[],
+): (IReview | ISubmission)[] {
+  const reviewsAndSubmissions: (IReview | ISubmission)[] = [];
+  let reviewIndex = 0;
+  let submissionIndex = 0;
+
+  while (reviewIndex < reviews.length || submissionIndex < submissions.length) {
+    if (reviewIndex >= reviews.length) {
+      reviewsAndSubmissions.push(submissions[submissionIndex]);
+      submissionIndex++;
+      continue;
+    }
+
+    if (submissionIndex >= submissions.length) {
+      reviewsAndSubmissions.push(reviews[reviewIndex]);
+      reviewIndex++;
+      continue;
+    }
+
+    if (
+      reviews[reviewIndex].active_captain != null ||
+      submissions[submissionIndex].submitted_at == null ||
+      dateFromString(reviews[reviewIndex].reviewed_at).getTime() <=
+        dateFromString(submissions[submissionIndex].submitted_at as string).getTime()
+    ) {
+      reviewsAndSubmissions.push(reviews[reviewIndex]);
+      reviewIndex++;
+    } else {
+      reviewsAndSubmissions.push(submissions[submissionIndex]);
+      submissionIndex++;
+    }
+  }
+
+  return reviewsAndSubmissions;
+}
+
 export function displayRange(values: number[], displayFn?: (value: number) => string) {
   const max = Math.max(...values);
   const min = Math.min(...values);

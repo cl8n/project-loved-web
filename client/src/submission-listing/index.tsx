@@ -13,12 +13,17 @@ import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import { apiErrorMessage, getSubmissions, useApi } from '../api';
 import { dateFromString } from '../date-format';
 import Help from '../Help';
-import type { IReview, ISubmission } from '../interfaces';
+import type { IReview } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import PageSelector from '../PageSelector';
 import useTitle from '../useTitle';
 import type { ToggleableColumn, ToggleableColumnsState } from './helpers';
-import { aggregateReviewScore, beatmapsetNotAllowed, toggleableColumns } from './helpers';
+import {
+  aggregateReviewScore,
+  beatmapsetNotAllowed,
+  combineReviewsAndSubmissions,
+  toggleableColumns,
+} from './helpers';
 import type { SubmittedBeatmapset } from './interfaces';
 import SortButton from './SortButton';
 import SubmissionBeatmapset from './SubmissionBeatmapset';
@@ -492,44 +497,6 @@ function beatmapsetSortFn(
       a,
       b,
     );
-}
-
-function combineReviewsAndSubmissions(
-  reviews: IReview[],
-  submissions: ISubmission[],
-): (IReview | ISubmission)[] {
-  const reviewsAndSubmissions: (IReview | ISubmission)[] = [];
-  let reviewIndex = 0;
-  let submissionIndex = 0;
-
-  while (reviewIndex < reviews.length || submissionIndex < submissions.length) {
-    if (reviewIndex >= reviews.length) {
-      reviewsAndSubmissions.push(submissions[submissionIndex]);
-      submissionIndex++;
-      continue;
-    }
-
-    if (submissionIndex >= submissions.length) {
-      reviewsAndSubmissions.push(reviews[reviewIndex]);
-      reviewIndex++;
-      continue;
-    }
-
-    if (
-      reviews[reviewIndex].active_captain != null ||
-      submissions[submissionIndex].submitted_at == null ||
-      dateFromString(reviews[reviewIndex].reviewed_at).getTime() <=
-        dateFromString(submissions[submissionIndex].submitted_at as string).getTime()
-    ) {
-      reviewsAndSubmissions.push(reviews[reviewIndex]);
-      reviewIndex++;
-    } else {
-      reviewsAndSubmissions.push(submissions[submissionIndex]);
-      submissionIndex++;
-    }
-  }
-
-  return reviewsAndSubmissions;
 }
 
 function sortReviews(a: IReview, b: IReview): number {
