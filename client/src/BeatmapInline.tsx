@@ -3,11 +3,11 @@ import { gameModeShortName } from 'loved-bridge/beatmaps/gameMode';
 import type { IBeatmapset } from './interfaces';
 
 interface BeatmapInlineProps {
-  artist?: string;
+  artist?: string | null;
   beatmapset: IBeatmapset;
   gameMode?: GameMode;
   showCreator?: boolean;
-  title?: string;
+  title?: string | null;
 }
 
 export function BeatmapInline(props: BeatmapInlineProps) {
