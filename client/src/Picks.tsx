@@ -531,6 +531,8 @@ function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProp
         </span>
         <input type='number' name='parentId' data-value-type='int' />
         <button type='submit'>{busy ? 'Adding...' : 'Add'}</button>
+        <span className='flex-separator' />
+        <Link to={`/picks/planner/${gameModeShortName(gameMode)}`}>Nomination planner</Link>
       </p>
     </Form>
   );

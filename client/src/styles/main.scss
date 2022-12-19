@@ -935,3 +935,9 @@ tr.sticky > th {
     width: 100%;
   }
 }
+
+.flex-separator {
+  align-self: stretch;
+  background: var(--accent-light);
+  flex: 0 0 1px;
+}
