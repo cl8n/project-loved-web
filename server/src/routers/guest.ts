@@ -408,13 +408,13 @@ guestRouter.get(
         SELECT reviews.*, NOT user_roles.alumni AS active_captain
         FROM reviews
         LEFT JOIN user_roles
-          ON user_roles.game_mode = ?
-          AND user_roles.role_id = ?
+          ON user_roles.role_id = ?
+          AND reviews.game_mode = user_roles.game_mode
           AND reviews.reviewer_id = user_roles.user_id
         WHERE reviews.game_mode = ?
         ORDER BY (score < -3) DESC, active_captain DESC, reviews.reviewed_at ASC
       `,
-      [gameMode, Role.captain, gameMode],
+      [Role.captain, gameMode],
     );
 
     for (const review of reviews) {
