@@ -135,6 +135,24 @@ router.post(
       return res.status(422).json({ error: 'Invalid round ID' });
     }
 
+    const existingNominationInPlanner = await db.queryOne(
+      `
+        SELECT 1
+        FROM nominations
+        WHERE beatmapset_id = ?
+          AND game_mode = ?
+          AND round_id IS NULL
+      `,
+      [req.body.beatmapsetId, req.body.gameMode],
+    );
+
+    // Make sure the nomination is not already in the planner
+    if (existingNominationInPlanner != null) {
+      return res.status(422).json({
+        error: 'This map is already in the nomination planner, move it from there instead',
+      });
+    }
+
     // If there is a parent nomination ID, make sure it refers to an existing nomination with the
     // same round, same beatmapset, and different game mode
     if (req.body.parentId != null) {
