@@ -2,38 +2,53 @@ This project contains the web client (<https://loved.sh>), web server (<https://
 
 ## Development with Docker
 
-The provided `docker-compose` configuration sets up a development environment with the client, API, MySQL, and Nginx. The client is served from http://localhost:8080 by default. Server environment variables under "API server options" and "MySQL connection options" are overridden in this environment.
+The provided Docker Compose configuration sets up a development environment with the client, API, MySQL, and Nginx. The website is exposed to the host on port 8080, and the MySQL server on port 3306.
 
-### Bridge package
+### Environment variables
 
-The `bridge` directory contains a package required by both the client and server, but it's not built automatically by either. You will need to rebuild it yourself if changes are made:
-
-```
-cd bridge
-npm install
-npm run build
-```
-
-The package will also need to be reinstalled in `client` and `server` if any of its dependencies change, with `npm install ../bridge`.
-
-### Database migrations
-
-`server/migrations` contains SQL to create the `project_loved` database schema. There are no backward migrations.
-
-On the first run of the database container, the `project_loved` user will be created with an empty password. MySQL is exposed to the host machine on port 3306. The `project_loved` database will be created and existing migrations will be applied, but future ones need to be run manually.
+Server environment variables can be written to `server/.env`. If this file doesn't exist, it will be created as a copy of `server/.env.example` during the containers' startup. Variables under "API server options" and "MySQL connection options" are overridden by the containers.
 
 ### Live data
 
-Regular database exports are posted to <https://loved.sh/exports>. **This will drop and re-create all other tables!**
+Regular database exports are posted to <https://loved.sh/exports>. They can be imported with the following command. **This will drop and re-create all tables!**
 
 ```
-docker-compose exec database /import-live-data.sh [<export URL>]
+docker compose exec database import [<export URL>]
 ```
+
+This will be run automatically to get the latest live data on the first run of the database container.
 
 ### Creating an admin user
 
 ```
-docker-compose run --rm api build/bin/create-admin.js <osu! username>
+docker compose exec api build/bin/create-admin.js <osu! username>
+```
+
+### Translations
+
+Translations need to be extracted from the app and recompiled whenever English strings change. This is done automatically during the assets container's startup.
+
+```
+docker compose exec assets sh -c 'npm run extract-translations && npm run compile-translations'
+```
+
+### Database migrations
+
+`server/migrations` contains SQL to create the `project_loved` database schema. There are no backward migrations. Normally, running all migrations is not necessary, because the live data import on first run will create an up-to-date schema.
+
+### Bridge package
+
+The `bridge` directory contains a package required by both the client and server. It's built automatically during the containers' startup, but you will need to rebuild it yourself if changes are made:
+
+```
+docker compose exec assets sh -c 'cd /app/bridge && npm install && npm run build-no-lint'
+```
+
+...and reinstall it in `client` and `server`:
+
+```
+docker compose exec assets sh -c 'rm -rf node_modules/loved-bridge && npm install'
+docker compose exec api sh -c 'rm -rf node_modules/loved-bridge && npm install'
 ```
 
 ## Deployment
@@ -59,4 +74,4 @@ The built webpage will be in `client/build`; it's an SPA.
 
 Request paths under `/api` should proxy to the server, paths exactly matching files should serve the files, and everything else should serve the client's `index.html`.
 
-Also note that the `loved-bridge` package is installed as a link to `../bridge`, so it will need to be deployed either at that path or at the target of a symbolic link from that path.
+Also note that the `loved-bridge` package is installed from `../bridge`, so it will need to be deployed either at that path or at the target of a symbolic link from that path.

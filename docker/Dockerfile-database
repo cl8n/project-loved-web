@@ -1,8 +1,8 @@
-FROM mysql:8
+FROM mysql:8.0-debian
 RUN ["apt-get", "update", "-y"]
 RUN ["apt-get", "install", "-y", "curl"]
 CMD ["--default-authentication-plugin=mysql_native_password"]
-COPY import-live-data.sh /
+COPY database-import.sh /bin/import
 COPY database-setup.sql /docker-entrypoint-initdb.d/0-setup.sql
-COPY database-migrate.sh /docker-entrypoint-initdb.d/1-migrate.sh
-ENV MYSQL_ALLOW_EMPTY_PASSWORD=true MYSQL_ONETIME_PASSWORD=true
+RUN ["ln", "-s", "/bin/import", "/docker-entrypoint-initdb.d/1-import.sh"]
+ENV MYSQL_ALLOW_EMPTY_PASSWORD=true

@@ -1,0 +1,4 @@
+FROM node:16-slim
+RUN ["npm", "install", "-g", "npm"]
+COPY setup-entrypoint.sh /
+CMD ["/setup-entrypoint.sh"]

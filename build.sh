@@ -83,7 +83,7 @@ case "$mode" in
       "$dirname/server/package.json" \
       "$dirname/server/package-lock.json" \
       "$REMOTE_HOSTNAME:$REMOTE_LOVED_DIRECTORY/server"
-    ssh "$REMOTE_HOSTNAME" "cd $REMOTE_LOVED_DIRECTORY/server && npm i --omit dev"
+    ssh "$REMOTE_HOSTNAME" "cd $REMOTE_LOVED_DIRECTORY/server && rm -rf node_modules/loved-bridge && npm i --omit dev"
 
     if test "$keep_maintenance"; then
       ssh "$REMOTE_HOSTNAME" "$REMOTE_API_STOP"
@@ -97,6 +97,7 @@ case "$mode" in
     "$0" server no-deps
     ;;
   bridge)
+    rm -rf "$dirname/client/node_modules/loved-bridge" "$dirname/server/node_modules/loved-bridge"
     cd "$dirname/bridge"
     npm install
     npm run build

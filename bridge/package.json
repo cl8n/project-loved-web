@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npm run lint && rm -rf build && tsc --noEmitOnError",
+    "build": "npm run lint && npm run build-no-lint",
+    "build-no-lint": "rm -rf build && tsc --noEmitOnError",
     "lint": "eslint --max-warnings 0 ."
   },
   "devDependencies": {

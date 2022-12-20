@@ -1,10 +1,4 @@
-FROM node:16
-RUN ["apt-get", "update", "-y"]
-RUN ["apt-get", "install", "-y", "netcat"]
+FROM node:16-slim
 RUN ["npm", "install", "-g", "npm"]
-RUN ["mkdir", "/storage"]
-RUN ["chown", "-R", "node:node", "/storage"]
-USER node
 WORKDIR /app/server
-COPY api-entrypoint.sh /
-CMD ["/api-entrypoint.sh"]
+CMD ["npm", "start"]

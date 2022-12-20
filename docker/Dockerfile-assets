@@ -1,4 +1,8 @@
-FROM node:16
+FROM node:16-slim
 RUN ["npm", "install", "-g", "npm"]
 WORKDIR /app/client
-CMD npm install && exec npm start
+CMD \
+  # TODO: Translations should be extracted and recompiled by webpack
+  npm run extract-translations && \
+  npm run compile-translations && \
+  exec npm start
