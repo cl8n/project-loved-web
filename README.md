@@ -51,6 +51,10 @@ docker compose exec assets sh -c 'rm -rf node_modules/loved-bridge && npm instal
 docker compose exec api sh -c 'rm -rf node_modules/loved-bridge && npm install'
 ```
 
+### File permissions
+
+Note that the docker containers are running their commands as root, and any files created by them (build artifacts, Node packages, etc.) will be owned by the user with the matching ID on the host (typically also root). Different hosts may behave differently in this case. It's safe to claim ownership of these files on the host if necessary.
+
 ## Deployment
 
 The `build.sh` script's `publish` target can be used to help automate deployments. Please read the script for more details.
