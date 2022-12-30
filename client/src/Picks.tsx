@@ -1,10 +1,5 @@
 import { DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, diff_match_patch } from 'diff-match-patch';
-import {
-  GameMode,
-  gameModeLongName,
-  gameModes,
-  gameModeShortName,
-} from 'loved-bridge/beatmaps/gameMode';
+import { GameMode, gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import type { NominationDescriptionEdit } from 'loved-bridge/tables';
 import {
   AssigneeType,
@@ -13,13 +8,11 @@ import {
   ModeratorState,
   Role,
 } from 'loved-bridge/tables';
-import type { FormEvent } from 'react';
 import { Fragment, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { FormattedDate } from 'react-intl';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
 import {
-  addNomination,
   alertApiErrorMessage,
   apiErrorMessage,
   deleteNomination,
@@ -27,7 +20,6 @@ import {
   getCaptains,
   getNominations,
   lockNominations,
-  searchBeatmapsets,
   updateApiObject,
   updateExcludedBeatmaps,
   updateNominationAssignees,
@@ -38,21 +30,15 @@ import {
 } from './api';
 import { autoHeightRef } from './auto-height';
 import { BBCode } from './BBCode';
-import { BeatmapInline, beatmapText } from './BeatmapInline';
+import { BeatmapInline } from './BeatmapInline';
 import type { FormSubmitHandler } from './dom-helpers';
 import { Form } from './dom-helpers';
 import Help from './Help';
-import type {
-  IBeatmapset,
-  INomination,
-  INominationWithPoll,
-  IRound,
-  IUser,
-  PartialWithId,
-} from './interfaces';
+import type { INomination, INominationWithPoll, IRound, IUser, PartialWithId } from './interfaces';
 import ListInline from './ListInline';
 import ListInput from './ListInput';
 import { Modal } from './Modal';
+import AddNomination from './nomination/AddNomination';
 import EditModeration from './nomination/EditModeration';
 import EditNominators from './nomination/EditNominators';
 import type { NominationProgressWarning } from './nomination/progress';
@@ -64,7 +50,6 @@ import StatusLine from './nomination/StatusLine';
 import { Orderable } from './Orderable';
 import { useOsuAuth } from './osuAuth';
 import { canActAs, hasRole } from './permissions';
-import { useEffectExceptOnMount } from './react-helpers';
 import Header from './round/Header';
 import { UserInline } from './UserInline';
 import useTitle from './useTitle';
@@ -417,124 +402,6 @@ export function Picks() {
         );
       })}
     </>
-  );
-}
-
-interface AddNominationProps {
-  gameMode: GameMode;
-  onNominationAdd: (nomination: INomination) => void;
-  roundId: number;
-}
-
-function AddNomination({ gameMode, onNominationAdd, roundId }: AddNominationProps) {
-  const [busy, setBusy] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const [searchRequest, setSearchRequest] = useState<ReturnType<typeof searchBeatmapsets>>();
-  const [searchResults, setSearchResults] = useState<IBeatmapset[]>();
-  const [selectedBeatmapset, setSelectedBeatmapset] = useState<IBeatmapset>();
-
-  useEffectExceptOnMount(() => {
-    if (searchInputRef.current != null && selectedBeatmapset == null) {
-      searchInputRef.current.focus();
-    }
-  }, [selectedBeatmapset]);
-
-  const onSearchInput = (event: FormEvent<HTMLInputElement>) => {
-    if (searchRequest != null) {
-      searchRequest.abort();
-    }
-
-    const query = event.currentTarget.value;
-
-    if (query.length === 0) {
-      setSearchRequest(undefined);
-      setSearchResults(undefined);
-      return;
-    }
-
-    const request = searchBeatmapsets(query);
-
-    request
-      .then((response) => setSearchResults(response.body))
-      .catch((error) => error.code !== 'ABORTED' && alertApiErrorMessage(error));
-
-    setSearchRequest(request);
-  };
-  const onSubmit: FormSubmitHandler = (form, then) => {
-    if (selectedBeatmapset == null) {
-      window.alert('Select a beatmapset');
-      return null;
-    }
-
-    return addNomination(selectedBeatmapset.id, gameMode, form.parentId, roundId)
-      .then((response) => {
-        onNominationAdd(response.body);
-        setSearchResults(undefined);
-        setSelectedBeatmapset(undefined);
-      })
-      .then(then)
-      .catch(alertApiErrorMessage);
-  };
-
-  // TODO class should probably go on the form itself
-  // TODO better way to set parent ID lol
-  return (
-    <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
-      <p className='flex-left'>
-        <span>
-          <label htmlFor='beatmapset'>Beatmapset</label>{' '}
-          <Help>
-            If you can't find the beatmapset here, make sure it's been{' '}
-            <Link to={`/submissions/${gameModeShortName(gameMode)}`}>submitted</Link> first!
-          </Help>
-        </span>
-        <div className='beatmapset-search'>
-          {selectedBeatmapset == null ? (
-            <input
-              ref={searchInputRef}
-              type='text'
-              name='beatmapset'
-              onInput={onSearchInput}
-              placeholder='Enter a beatmapset ID or search by artist, title, and creator'
-            />
-          ) : (
-            <div
-              className='beatmapset-search-selection'
-              onClick={() => setSelectedBeatmapset(undefined)}
-            >
-              {beatmapText(selectedBeatmapset, true)}
-            </div>
-          )}
-          {!!searchResults?.length && (
-            <div className='beatmapset-search-results'>
-              {searchResults.map((beatmapset) => (
-                <button
-                  key={beatmapset.id}
-                  type='button'
-                  onClick={() => {
-                    setSearchResults(undefined);
-                    setSelectedBeatmapset(beatmapset);
-                  }}
-                >
-                  {beatmapText(beatmapset, true)}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-        <span>
-          <label htmlFor='parentId'>Parent nomination ID</label>{' '}
-          <Help>
-            If this map is being nominated because another mode's captains picked it first, set this
-            field to the original mode's nomination ID
-          </Help>
-        </span>
-        <input type='number' name='parentId' data-value-type='int' />
-        <button type='submit'>{busy ? 'Adding...' : 'Add'}</button>
-        <span className='flex-separator' />
-        <Link to={`/picks/planner/${gameModeShortName(gameMode)}`}>Nomination planner</Link>
-      </p>
-    </Form>
   );
 }
 
