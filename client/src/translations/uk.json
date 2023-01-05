@@ -2,6 +2,12 @@
   "+3rK3I": {
     "defaultMessage": "Немає відповіді"
   },
+  "+9RCG/": {
+    "defaultMessage": "Інші значки від {author}"
+  },
+  "+bCbtl": {
+    "defaultMessage": "Стовпчики"
+  },
   "+d4ZcX": {
     "defaultMessage": "Модератори"
   },
@@ -20,8 +26,14 @@
   "/SSCZX": {
     "defaultMessage": "Так"
   },
+  "0+S3hP": {
+    "defaultMessage": "Якщо карта, яку ви опубліковуєте, або дуже непопулярна, або її повністю неможливо зіграти, капітани можуть ніколи не подивитися на неї. Будь ласка, опубліковуйте тільки ті карти, які, на вашу думку, підходять для категорії Loved."
+  },
   "06WpMi": {
     "defaultMessage": "Рейтингова"
+  },
+  "07J8la": {
+    "defaultMessage": "Ви повинні <a>увійти</a> щоб опубліковувати відгуки "
   },
   "0Vz3c/": {
     "defaultMessage": "Відсоток та усього"
@@ -31,6 +43,9 @@
   },
   "2YTMfX": {
     "defaultMessage": "Відправити та залишитися на сторінці"
+  },
+  "2dOoEc": {
+    "defaultMessage": "Оглядачі метадати"
   },
   "34q5Z7": {
     "defaultMessage": "Оновити"
@@ -50,11 +65,17 @@
   "3RdYB+": {
     "defaultMessage": "Режим гри:"
   },
+  "4xOZTS": {
+    "defaultMessage": "Головна сторінка з опитуваннями які визначають чи потраплять карти у Loved"
+  },
   "54toJS": {
     "defaultMessage": "Темна"
   },
   "5NZbY5": {
     "defaultMessage": "Відображення результату:"
+  },
+  "5OS21f": {
+    "defaultMessage": "Зовнішні"
   },
   "5oqovx": {
     "defaultMessage": "Відправити бітмапу"
@@ -62,8 +83,17 @@
   "6RxUSQ": {
     "defaultMessage": "Більше сторінок"
   },
+  "6iCh6Z": {
+    "defaultMessage": "Редагувати мою згоду"
+  },
   "7CJMwD": {
     "defaultMessage": "Пріорітет"
+  },
+  "7u3Yi2": {
+    "defaultMessage": "Ви також можете утримувати клавішу {key}, коли натискаєте на мапсет, щоб відкрити модуль з огляду"
+  },
+  "8NqvA2": {
+    "defaultMessage": "Кількість клавіш:"
   },
   "8bAHuK": {
     "defaultMessage": "Закрити"
@@ -89,20 +119,32 @@
   "Bc30qK": {
     "defaultMessage": "Ранк"
   },
+  "Be0kKF": {
+    "defaultMessage": "Карта, яку ви опубліковуєте, може ніколи не бути номінованою на Loved, навіть якщо вона має певні заслуги. В даний час, кількість карт які можуть отримати статус Loved - обмежена, тому можливо що капітани будуть постійно обирати кращі карти, ніж ту, яку ви опублікували."
+  },
   "Bppfuf": {
     "defaultMessage": "(alumni)"
   },
   "Bsld0J": {
     "defaultMessage": "Пошук:"
   },
+  "CCGzFA": {
+    "defaultMessage": "Голосування пройлено"
+  },
   "CIAu6S": {
     "defaultMessage": "Вікі"
+  },
+  "Cg4Je8": {
+    "defaultMessage": "без переваг"
   },
   "CxsxoI": {
     "defaultMessage": "Відправляємо..."
   },
+  "Do+EPJ": {
+    "defaultMessage": "{user} висловив {score} - {timestamp, date, long}"
+  },
   "E7ffvt": {
-    "defaultMessage": "велика підтримка"
+    "defaultMessage": "сильна підтримка"
   },
   "F1tQfW": {
     "defaultMessage": "Назва"
@@ -113,8 +155,20 @@
   "FVFRKC": {
     "defaultMessage": "Сторінка вікі"
   },
+  "G1mG5h": {
+    "defaultMessage": "Маппер запросив щоб ця карта не входила в Loved категорію."
+  },
+  "H+WN2F": {
+    "defaultMessage": "заперечення "
+  },
+  "H65rvb": {
+    "defaultMessage": "Ви не настільки круті щоб бачити цю сторінку."
+  },
   "HVzPRU": {
     "defaultMessage": "Ні"
+  },
+  "Hf1vPz": {
+    "defaultMessage": "Вибори"
   },
   "HvpI7B": {
     "defaultMessage": "Видаленний мапсет"
@@ -125,14 +179,32 @@
   "IWPQ9l": {
     "defaultMessage": "Вибрати варіант згоди"
   },
+  "IhLq/K": {
+    "defaultMessage": "Вкладники"
+  },
+  "Ipzb3R": {
+    "defaultMessage": "Не дозволенна"
+  },
+  "IuLFa/": {
+    "defaultMessage": "Оглянутий"
+  },
   "J0oKMn": {
     "defaultMessage": "Гравець"
+  },
+  "JFDpsO": {
+    "defaultMessage": "Те що ви напишете в цій формі буде видно усім, тому не пишіть те, що ви не хотіли б щоб хтось інший побачив."
   },
   "JHNIy2": {
     "defaultMessage": "Порядок раундів:"
   },
   "JPKVz4": {
     "defaultMessage": "Мапсет"
+  },
+  "JPSkxB": {
+    "defaultMessage": "{country} прапор"
+  },
+  "Jy6JW8": {
+    "defaultMessage": "Я не знаю хто ви! Спробуйте спочатку <a>увійти</a>."
   },
   "K4bZ6F": {
     "defaultMessage": "Діскорд сервери"
@@ -143,23 +215,56 @@
   "Lm++cZ": {
     "defaultMessage": "Project Loved"
   },
+  "MItLwF": {
+    "defaultMessage": "Відгук"
+  },
+  "MLkhaQ": {
+    "defaultMessage": "На голосуванні"
+  },
   "MUDTXQ": {
     "defaultMessage": "Посилання або ID мапсету"
+  },
+  "MXeEOs": {
+    "defaultMessage": "Не оглянутий"
   },
   "Mo+8Ww": {
     "defaultMessage": "Вік аккаунту"
   },
+  "MoR8Of": {
+    "defaultMessage": "Згоди мапперів"
+  },
+  "N4xf2i": {
+    "defaultMessage": "Вподобайки"
+  },
   "N72lge": {
     "defaultMessage": "Експорт інформації"
+  },
+  "NG8X9U": {
+    "defaultMessage": "У розробці."
   },
   "Nee/tG": {
     "defaultMessage": "підтримка"
   },
+  "NjIKQe": {
+    "defaultMessage": "Недоступна"
+  },
   "OZm2HC": {
     "defaultMessage": "Як сильно ви підтримуєте додання цієї бітмапи до Улюблених?"
   },
+  "OcsUKU": {
+    "defaultMessage": "Статус мого відгуку:"
+  },
   "Oep6va": {
     "defaultMessage": "Відправити"
+  },
+  "PCZJkZ": {
+    "defaultMessage": "Вихідний код та трекер проблем"
+  },
+  "PHaXeh": {
+    "defaultMessage": "Видалено "
+  },
+  "PuVvCo": {
+    "defaultMessage": "Клавіші"
   },
   "R0gvL0": {
     "defaultMessage": "Автор"
@@ -176,11 +281,14 @@
   "SNqK4E": {
     "defaultMessage": "Мапсети"
   },
+  "Sti+Y3": {
+    "defaultMessage": "Після того як ви опублікували карту, ви можете перевірити її статус на <submissionsLink>сторінці \"відправлення\"</submissionsLink>."
+  },
+  "T8mfr2": {
+    "defaultMessage": "Ви впевененні що хочете видалити ваш відгук?"
+  },
   "Tf7XH9": {
     "defaultMessage": "Нотатки"
-  },
-  "TqI9fE": {
-    "defaultMessage": "Адмін:"
   },
   "TrDD+Y": {
     "defaultMessage": "Ви повинні <a>увійти</a>, щоб заповнити форму."
@@ -209,6 +317,9 @@
   "WLJwOC": {
     "defaultMessage": "Сторінка команди на вікі"
   },
+  "WXZA2u": {
+    "defaultMessage": "Канал для всього що стосується Project Loved; не дуже активний і рідко перевіряєтся"
+  },
   "WjsRpS": {
     "defaultMessage": "Кожна бітмана у цьому сеті занадто коротка (менше ніж 30 секунд)."
   },
@@ -217,6 +328,9 @@
   },
   "XiH1Li": {
     "defaultMessage": "(в каналі {channel})"
+  },
+  "YhVhtI": {
+    "defaultMessage": "Карта має дуже мало вподобайок."
   },
   "YzUPhx": {
     "defaultMessage": "Загальний сервер для {gameMode} Project Loved"
@@ -242,8 +356,14 @@
   "aJnlND": {
     "defaultMessage": "Згода:"
   },
+  "aXImqo": {
+    "defaultMessage": "Редагувати відгук"
+  },
   "bcLpeC": {
     "defaultMessage": "Незвичайний"
+  },
+  "c/1pjl": {
+    "defaultMessage": "Порівняти з:"
   },
   "c2UCNp": {
     "defaultMessage": "Відсоток"
@@ -259,6 +379,9 @@
   },
   "dG9/uH": {
     "defaultMessage": "Кваліфікована"
+  },
+  "dv53Wk": {
+    "defaultMessage": "Інструменти для переводу та локалізації вебсайту"
   },
   "eJYnVj": {
     "defaultMessage": "Більше"
@@ -281,17 +404,32 @@
   "iCkWun": {
     "defaultMessage": "Раунд"
   },
+  "iy6RR2": {
+    "defaultMessage": "Видалити відгук"
+  },
   "jVP2nx": {
     "defaultMessage": "Хост мапсету заблокований."
   },
+  "jlkqJz": {
+    "defaultMessage": "Керувати"
+  },
   "jlqkv1": {
     "defaultMessage": "Номінована"
+  },
+  "kr2W+L": {
+    "defaultMessage": "<p>Заповнення цієї форми допоможе <teamLink>капітанам</teamLink> вирішити які карти номінувати на Loved для щомісячного голосування. Навіть якщо карта вже була <submissionsLink>опублікована</submissionsLink>, ви можете додати ваші думки на рахунок карти.</p> <p>Декілька речей, які потрібно мати на увазі:</p>"
   },
   "ks9SWH": {
     "defaultMessage": "Редактори новин"
   },
   "l39agD": {
     "defaultMessage": "Статус"
+  },
+  "lMSjPi": {
+    "defaultMessage": "Це ще не доступно для вас. Перевірте пізніше!"
+  },
+  "lULo+e": {
+    "defaultMessage": "Голосування провалено"
   },
   "lbC8H+": {
     "defaultMessage": "Маппер"
@@ -305,8 +443,17 @@
   "mhBW5h": {
     "defaultMessage": "Маппер"
   },
+  "mhVjD+": {
+    "defaultMessage": "Значки прапорів від {author}"
+  },
+  "mucI2W": {
+    "defaultMessage": "Метод заповнювання для сортування цього списку. {definition}"
+  },
   "nAQn+f": {
     "defaultMessage": "Натисніть тут, щоб проголосувати у {roundName} раунді!"
+  },
+  "nUQEC7": {
+    "defaultMessage": "сильне заперечення"
   },
   "nkWBfH": {
     "defaultMessage": "Основний канал для дискуссій обслуговування та керівництва Project Loved"
@@ -316,6 +463,12 @@
   },
   "nvvuiw": {
     "defaultMessage": "Редактори відео"
+  },
+  "o0LXIL": {
+    "defaultMessage": "Основна інформація про вкладників Project Loved'a."
+  },
+  "oFqE9e": {
+    "defaultMessage": "Мапперів зазвичай повідомляють про використання їх карт в Loved категорії. Ця таблиця показує згоду кожного маппера що дозволяє використовувати їх карти для голосування та потенційного додавання таблиці лідерів до них. Зауважте, що маппери можуть попросити прибрати їх карту з Loved категорії в будь-який час, навіть якщо на її використання була дана згода раніше"
   },
   "p9Evn8": {
     "defaultMessage": "Локалізація"
@@ -329,6 +482,9 @@
   "pXOU6C": {
     "defaultMessage": "Тут нічого немає =("
   },
+  "phKBIX": {
+    "defaultMessage": "Невідома країна"
+  },
   "pvfxi+": {
     "defaultMessage": "Відправлення"
   },
@@ -340,6 +496,12 @@
   },
   "rFOang": {
     "defaultMessage": "ID мапсету"
+  },
+  "rnfyPi": {
+    "defaultMessage": "відгук {beatmapset} "
+  },
+  "rv3gh8": {
+    "defaultMessage": "{user} позначив карту як <score>не дозволену</score> - {timestamp, date, long}"
   },
   "sG6ons": {
     "defaultMessage": "Список Улюблених"
@@ -364,6 +526,9 @@
   },
   "utiTez": {
     "defaultMessage": "Згода"
+  },
+  "uwBono": {
+    "defaultMessage": "{hasTimestamp,select,true{{user} опублікував цю карту {timestamp, date, long}} other{{user} опублікував цю карту}}"
   },
   "v96otU": {
     "defaultMessage": "Світла"
