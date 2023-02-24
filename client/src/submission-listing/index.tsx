@@ -13,7 +13,7 @@ import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import { apiErrorMessage, getSubmissions, useApi } from '../api';
 import { dateFromString } from '../date-format';
 import Help from '../Help';
-import type { IReview } from '../interfaces';
+import type { IReview, ISubmission } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import PageSelector from '../PageSelector';
 import useTitle from '../useTitle';
@@ -45,6 +45,10 @@ const messages = defineMessages({
     defaultMessage: 'Diffs',
     description: '[Submissions] Submissions table header',
   },
+  earliestReview: {
+    defaultMessage: 'Earliest review',
+    description: '[Submissions] Submissions table sort option',
+  },
   favoriteCount: {
     defaultMessage: 'Favs',
     description: '[Submissions] Submissions table header',
@@ -56,6 +60,10 @@ const messages = defineMessages({
   keyModes: {
     defaultMessage: 'Keys',
     description: '[Submissions] Submissions table header',
+  },
+  latestReview: {
+    defaultMessage: 'Latest review',
+    description: '[Submissions] Submissions table sort option',
   },
   lovedAndRanked: {
     defaultMessage: 'Loved and ranked',
@@ -130,6 +138,8 @@ const allSorts = [
   'playCount',
   'favoriteCount',
   'year',
+  'latestReview',
+  'earliestReview',
 ] as const;
 type Sort = typeof allSorts[number];
 
@@ -175,6 +185,7 @@ type SortsState = [
 ];
 
 const defaultAscendingSorts = new Set<Sort>(['artist', 'title', 'year']);
+const alwaysAscendingSorts = new Set<Sort>(['latestReview', 'earliestReview']);
 const initialSortsState: SortsState = [
   {
     ascending: false,
@@ -436,6 +447,7 @@ export default function SubmissionListingContainer() {
               </select>{' '}
               <SortButton
                 ascending={sort.ascending}
+                hidden={alwaysAscendingSorts.has(sort.sort)}
                 toggle={() => {
                   updateSort({ action: 'toggleOrder', index: sortIndex as 0 | 1 });
                   setPage(1);
@@ -460,6 +472,13 @@ export default function SubmissionListingContainer() {
   );
 }
 
+function getReviewTimes({ reviews, submissions }: SubmittedBeatmapset): number[] {
+  return [...reviews, ...submissions.filter((submission) => submission.submitted_at != null)].map(
+    (rOrS) =>
+      dateFromString('submitted_at' in rOrS ? rOrS.submitted_at! : rOrS.reviewed_at).getTime(),
+  );
+}
+
 function compareOrFallback<T>(a: T, b: T, hasProperty: (item: T) => boolean): number | null {
   const aHasProperty = hasProperty(a);
   return +aHasProperty - +hasProperty(b) || (aHasProperty ? 0 : null);
@@ -470,7 +489,9 @@ const beatmapsetSortFns: Record<
   (a: SubmittedBeatmapset, b: SubmittedBeatmapset) => number
 > = {
   artist: (a, b) => a.artist.toLowerCase().localeCompare(b.artist.toLowerCase()),
+  earliestReview: (a, b) => Math.min(...getReviewTimes(a)) - Math.min(...getReviewTimes(b)),
   favoriteCount: (a, b) => a.favorite_count - b.favorite_count,
+  latestReview: (a, b) => Math.max(...getReviewTimes(b)) - Math.max(...getReviewTimes(a)),
   playCount: (a, b) => a.play_count - b.play_count,
   priority: (a, b) =>
     compareOrFallback(a, b, (set) => set.nominated_round_name != null) ??
@@ -492,7 +513,7 @@ function beatmapsetSortFn(
   beatmapStatus: BeatmapStatus,
 ): (a: SubmittedBeatmapset, b: SubmittedBeatmapset) => number {
   return (a, b) =>
-    (ascending ? 1 : -1) *
+    (ascending || alwaysAscendingSorts.has(sort) ? 1 : -1) *
     beatmapsetSortFns[beatmapStatus === 'lovedAndRanked' && sort === 'priority' ? 'status' : sort](
       a,
       b,
