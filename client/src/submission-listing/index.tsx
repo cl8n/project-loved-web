@@ -13,7 +13,7 @@ import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import { apiErrorMessage, getSubmissions, useApi } from '../api';
 import { dateFromString } from '../date-format';
 import Help from '../Help';
-import type { IReview, ISubmission } from '../interfaces';
+import type { IReview } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import PageSelector from '../PageSelector';
 import useTitle from '../useTitle';
