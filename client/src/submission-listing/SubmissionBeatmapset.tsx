@@ -274,7 +274,7 @@ export default function SubmissionBeatmapset({
       >
         <td>
           <span className='selector-indicator'>{expanded ? '▲' : '▼'}</span>{' '}
-          {reviewAngry && <span className='important-bad'>★</span>}
+          {reviewAngry && <span className='angry'>★</span>}
         </td>
         {gameMode === GameMode.mania && columns.keyModes && (
           <td>

@@ -10,12 +10,13 @@
   all: unset;
   cursor: pointer;
 
+  &.button--angry {
+    color: var(--rating--3);
+    font-weight: bold;
+  }
+
   &.button--edit {
     color: var(--control-heavy);
-
-    &:hover {
-      color: var(--control);
-    }
   }
 }
 
@@ -515,13 +516,9 @@ del {
   }
 }
 
-.important {
+.angry {
+  color: var(--rating--3);
   font-weight: bold;
-
-  &-bad {
-    color: var(--rating--3);
-    font-weight: bold;
-  }
 }
 
 .flex-grow {

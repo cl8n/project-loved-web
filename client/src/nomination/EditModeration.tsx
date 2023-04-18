@@ -45,7 +45,7 @@ export default function EditModeration({
       <button
         type='button'
         onClick={() => setModalOpen(true)}
-        className={`flex-no-shrink fake-a button--edit${moderationStarted ? '' : ' important-bad'}`}
+        className={`flex-no-shrink fake-a ${moderationStarted ? 'button--edit' : 'button--angry'}`}
       >
         Edit moderation
       </button>

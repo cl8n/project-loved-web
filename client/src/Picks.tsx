@@ -751,7 +751,7 @@ function EditMetadata({ metadataStarted, nomination, onNominationUpdate }: EditM
       <button
         type='button'
         onClick={() => setModalOpen(true)}
-        className={`flex-no-shrink fake-a button--edit${metadataStarted ? '' : ' important-bad'}`}
+        className={`flex-no-shrink fake-a ${metadataStarted ? 'button--edit' : 'button--angry'}`}
       >
         Edit metadata
       </button>
@@ -913,7 +913,7 @@ function EditAssignees({
       <button
         type='button'
         onClick={() => setModalOpen(true)}
-        className={`fake-a button--edit${assignees.length === 0 ? ' important-bad' : ''}`}
+        className={`fake-a ${assignees.length === 0 ? 'button--angry' : 'button--edit'}`}
       >
         Edit
       </button>
@@ -956,10 +956,10 @@ function EditDifficulties({ nomination, onNominationUpdate, round }: EditDifficu
       <button
         type='button'
         onClick={() => setModalOpen(true)}
-        className={`fake-a button--edit${
+        className={`fake-a ${
           !round.ignore_creator_and_difficulty_checks && !nomination.difficulties_set
-            ? ' important-bad'
-            : ''
+            ? 'button--angry'
+            : 'button--edit'
         }`}
       >
         Edit
@@ -1152,7 +1152,7 @@ function Description({
         {canEdit && (
           <button
             type='button'
-            className={`fake-a button--edit${text == null ? ' important-bad' : ''}`}
+            className={`fake-a ${text == null ? 'button--angry' : 'button--edit'}`}
             onClick={() => setEditing(true)}
           >
             Edit
