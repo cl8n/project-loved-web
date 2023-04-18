@@ -154,7 +154,7 @@ export default function ReviewEditor({
             </tr>
           </tbody>
         </table>
-        <button type='submit' className='modal-submit-button'>
+        <button type='submit' className='button--modal-submit'>
           {intl.formatMessage(
             busy
               ? review == null

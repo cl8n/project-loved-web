@@ -9,6 +9,14 @@
 .fake-a {
   all: unset;
   cursor: pointer;
+
+  &.button--edit {
+    color: var(--control-heavy);
+
+    &:hover {
+      color: var(--control);
+    }
+  }
 }
 
 a, .fake-a {
@@ -77,12 +85,28 @@ button:not(.fake-a) {
     opacity: 0.4;
     pointer-events: none;
   }
-}
 
-.modal-submit-button {
-  display: block;
-  margin: 1em auto 0;
-  font-weight: bold;
+  &.button--angry {
+    background-color: var(--rating--3);
+
+    &:hover {
+      background-color: var(--rating--3-hover);
+    }
+  }
+
+  &.button--edit {
+    background-color: var(--control-heavy);
+
+    &:hover {
+      background-color: var(--control);
+    }
+  }
+
+  &.button--modal-submit {
+    display: block;
+    margin: 1em auto 0;
+    font-weight: bold;
+  }
 }
 
 .textarea-wrapper {
@@ -497,14 +521,6 @@ del {
   &-bad {
     color: var(--rating--3);
     font-weight: bold;
-  }
-}
-
-button.angry {
-  background-color: var(--rating--3);
-
-  &:hover {
-    background-color: var(--rating--3-hover);
   }
 }
 

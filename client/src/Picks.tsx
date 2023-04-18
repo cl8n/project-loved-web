@@ -348,20 +348,23 @@ export function Picks() {
             {(canOrder(gameMode) || canLock(gameMode)) && (
               <div className='flex-left'>
                 {canOrder(gameMode) && (
-                  <button type='button' onClick={() => toggleOrdering(gameMode)}>
+                  <button
+                    type='button'
+                    className={ordering[gameMode] ? undefined : 'button--edit'}
+                    onClick={() => toggleOrdering(gameMode)}
+                  >
                     {ordering[gameMode] ? 'Done ordering' : 'Change order'}
                   </button>
                 )}
-                {canLock(gameMode) &&
-                  (nominationsLocked(gameMode) ? (
-                    <button type='button' onClick={() => toggleLock(gameMode)}>
-                      Unlock nominations
-                    </button>
-                  ) : (
-                    <button type='button' className='angry' onClick={() => toggleLock(gameMode)}>
-                      Lock nominations
-                    </button>
-                  ))}
+                {canLock(gameMode) && (
+                  <button
+                    type='button'
+                    className={nominationsLocked(gameMode) ? undefined : 'button--angry'}
+                    onClick={() => toggleLock(gameMode)}
+                  >
+                    {nominationsLocked(gameMode) ? 'Unlock nominations' : 'Lock nominations'}
+                  </button>
+                )}
               </div>
             )}
             <Orderable
@@ -748,7 +751,7 @@ function EditMetadata({ metadataStarted, nomination, onNominationUpdate }: EditM
       <button
         type='button'
         onClick={() => setModalOpen(true)}
-        className={`flex-no-shrink fake-a${metadataStarted ? '' : ' important-bad'}`}
+        className={`flex-no-shrink fake-a button--edit${metadataStarted ? '' : ' important-bad'}`}
       >
         Edit metadata
       </button>
@@ -822,7 +825,7 @@ function EditMetadata({ metadataStarted, nomination, onNominationUpdate }: EditM
               </td>
             </tr>
           </table>
-          <button type='submit' className='modal-submit-button'>
+          <button type='submit' className='button--modal-submit'>
             {busy ? 'Updating...' : 'Update'}
           </button>
         </Form>
@@ -898,7 +901,7 @@ function EditAssignees({
             </tr>
           ))}
         </table>
-        <button type='submit' className='modal-submit-button'>
+        <button type='submit' className='button--modal-submit'>
           {busy ? 'Updating...' : 'Update'}
         </button>
       </Form>
@@ -910,7 +913,7 @@ function EditAssignees({
       <button
         type='button'
         onClick={() => setModalOpen(true)}
-        className={`fake-a${assignees.length === 0 ? ' important-bad' : ''}`}
+        className={`fake-a button--edit${assignees.length === 0 ? ' important-bad' : ''}`}
       >
         Edit
       </button>
@@ -953,7 +956,7 @@ function EditDifficulties({ nomination, onNominationUpdate, round }: EditDifficu
       <button
         type='button'
         onClick={() => setModalOpen(true)}
-        className={`fake-a${
+        className={`fake-a button--edit${
           !round.ignore_creator_and_difficulty_checks && !nomination.difficulties_set
             ? ' important-bad'
             : ''
@@ -984,7 +987,7 @@ function EditDifficulties({ nomination, onNominationUpdate, round }: EditDifficu
                 </tr>
               ))}
           </table>
-          <button type='submit' className='modal-submit-button'>
+          <button type='submit' className='button--modal-submit'>
             {busy ? 'Updating...' : 'Update'}
           </button>
         </Form>
@@ -1149,7 +1152,7 @@ function Description({
         {canEdit && (
           <button
             type='button'
-            className={`fake-a${text == null ? ' important-bad' : ''}`}
+            className={`fake-a button--edit${text == null ? ' important-bad' : ''}`}
             onClick={() => setEditing(true)}
           >
             Edit

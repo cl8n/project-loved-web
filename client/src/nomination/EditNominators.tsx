@@ -20,7 +20,7 @@ export default function EditNominators(props: EditNominatorsProps) {
 
   return (
     <>
-      <button type='button' onClick={() => setModalOpen(true)} className='fake-a'>
+      <button type='button' onClick={() => setModalOpen(true)} className='fake-a button--edit'>
         Edit
       </button>
       <Modal close={() => setModalOpen(false)} open={modalOpen}>
@@ -87,7 +87,7 @@ function EditNominatorsForm({
           </tr>
         ))}
       </table>
-      <button type='submit' className='modal-submit-button'>
+      <button type='submit' className='button--modal-submit'>
         {busy ? 'Updating...' : 'Update'}
       </button>
     </Form>

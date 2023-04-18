@@ -199,7 +199,7 @@ export default function MapperConsentEditor({
   return (
     <>
       {editSelf ? (
-        <button type='button' onClick={() => setModalOpen(true)}>
+        <button type='button' onClick={() => setModalOpen(true)} className='button--edit'>
           <FormattedMessage
             defaultMessage='Edit my consent'
             description='[Mapper consents] Button to edit the mapper consent status of the current user'
@@ -207,7 +207,7 @@ export default function MapperConsentEditor({
         </button>
       ) : (
         <td>
-          <button type='button' onClick={() => setModalOpen(true)} className='fake-a'>
+          <button type='button' onClick={() => setModalOpen(true)} className='fake-a button--edit'>
             Edit
           </button>
         </td>
@@ -294,7 +294,7 @@ export default function MapperConsentEditor({
             items={consent?.beatmapset_consents ?? []}
             renderItemInput={renderMapperConsentBeatmapsetInput(intl)}
           />
-          <button type='submit' className='modal-submit-button'>
+          <button type='submit' className='button--modal-submit'>
             {intl.formatMessage(busy ? messages.submitting : messages.submit)}
           </button>
         </Form>

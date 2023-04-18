@@ -122,7 +122,7 @@ export default function UserRolesEditor({ onRolesUpdate, user }: UserRolesEditor
   return (
     <>
       <td>
-        <button type='button' onClick={() => setModalOpen(true)} className='fake-a'>
+        <button type='button' onClick={() => setModalOpen(true)} className='fake-a button--edit'>
           Edit roles
         </button>
       </td>
@@ -132,7 +132,7 @@ export default function UserRolesEditor({ onRolesUpdate, user }: UserRolesEditor
         </h2>
         <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
           <ListInputCustom items={user.roles} renderItemInput={renderRoleInput} />
-          <button type='submit' className='modal-submit-button'>
+          <button type='submit' className='button--modal-submit'>
             {busy ? 'Updating...' : 'Update'}
           </button>
         </Form>

@@ -36,7 +36,7 @@ export default function Header({
         {canEdit && !editing && (
           <>
             {' — '}
-            <button type='button' className='fake-a' onClick={() => setEditing(true)}>
+            <button type='button' className='fake-a button--edit' onClick={() => setEditing(true)}>
               Edit
             </button>
           </>

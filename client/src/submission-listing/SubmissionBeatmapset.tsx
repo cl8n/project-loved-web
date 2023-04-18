@@ -349,7 +349,7 @@ export default function SubmissionBeatmapset({
             {canReview ? (
               <div className='review-button-container'>
                 {review != null && (
-                  <button type='button' onClick={onDeleteReviewClick} className='angry'>
+                  <button type='button' onClick={onDeleteReviewClick} className='button--angry'>
                     {intl.formatMessage(messages.deleteReview)}
                   </button>
                 )}{' '}

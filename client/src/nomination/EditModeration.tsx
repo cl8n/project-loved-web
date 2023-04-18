@@ -45,7 +45,7 @@ export default function EditModeration({
       <button
         type='button'
         onClick={() => setModalOpen(true)}
-        className={`flex-no-shrink fake-a${moderationStarted ? '' : ' important-bad'}`}
+        className={`flex-no-shrink fake-a button--edit${moderationStarted ? '' : ' important-bad'}`}
       >
         Edit moderation
       </button>
@@ -85,7 +85,7 @@ export default function EditModeration({
               </td>
             </tr>
           </table>
-          <button type='submit' className='modal-submit-button'>
+          <button type='submit' className='button--modal-submit'>
             {busy ? 'Updating...' : 'Update'}
           </button>
         </Form>
