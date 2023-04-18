@@ -7,6 +7,7 @@ import type {
   Beatmapset,
   Consent,
   ConsentBeatmapset,
+  ExtraToken,
   InteropKey,
   Log,
   Nomination,
@@ -1205,10 +1206,39 @@ router.post(
       });
     }
 
+    // If the user had a captain or news author role but doesn't anymore, revoke
+    // and delete their forum.write osu! API token.
+    //
+    // TODO: Should only delete the token if forum.write is the only scope (this
+    //       is currently true for all extra_tokens).
+    let extraTokenToDelete: ExtraToken | null | undefined;
+
+    if (
+      userRoles.some(
+        (role) =>
+          !role.alumni && (role.role_id === Role.captain || role.role_id === Role.newsAuthor),
+      ) &&
+      !req.body.roles.some(
+        (role) =>
+          !role.alumni && (role.role_id === Role.captain || role.role_id === Role.newsAuthor),
+      )
+    ) {
+      extraTokenToDelete = await db.queryOne<ExtraToken>(
+        'SELECT * FROM extra_tokens WHERE user_id = ?',
+        [user.id],
+      );
+    }
+
     const logActor = pick(res.typedLocals.user, ['banned', 'country', 'id', 'name']);
     const logUser = pick(user, ['banned', 'country', 'id', 'name']);
 
     await db.transact(async (connection) => {
+      // If an extra API token was marked for deletion, delete it here.
+      if (extraTokenToDelete != null) {
+        await connection.query('DELETE FROM extra_tokens WHERE user_id = ?', [user.id]);
+        await dbLog(LogType.extraTokenDeleted, { user: logUser }, connection);
+      }
+
       for (const newRole of req.body.roles as Omit<UserRole, 'user_id'>[]) {
         const existingRole = userRoles.find(
           (role) => role.game_mode === newRole.game_mode && role.role_id === newRole.role_id,
@@ -1270,6 +1300,15 @@ router.post(
         );
       }
     });
+
+    // If an extra API token was marked for deletion, revoke it here. The token
+    // has already been deleted from the database and won't be used beyond here,
+    // so ignore any errors from the osu! API.
+    if (extraTokenToDelete != null) {
+      try {
+        await new Osu(extraTokenToDelete.token).revokeToken();
+      } catch {}
+    }
 
     res.status(204).send();
   }),
