@@ -318,12 +318,12 @@ router.post(
         WHERE beatmapset_id = ?
           AND deleted_at IS NULL
           AND game_mode = ?
-          AND total_length >= 30
+          AND total_length >= 20
       `,
       [beatmapset.id, req.body.gameMode],
     );
 
-    // Make sure at least one beatmap is 30 seconds or longer
+    // Make sure at least one beatmap is 20 seconds or longer
     if (allowedLengthBeatmap == null) {
       return res.status(422).json({ error: 'Every beatmap in the beatmapset is too short' });
     }

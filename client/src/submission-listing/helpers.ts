@@ -76,7 +76,7 @@ export function beatmapsetNotAllowed(beatmapset: SubmittedBeatmapset): boolean {
     beatmapset.strictly_rejected ||
     beatmapset.consent === false ||
     beatmapset.creator.banned ||
-    beatmapset.maximum_length < 30 ||
+    beatmapset.maximum_length < 20 ||
     beatmapset.low_favorites
   );
 }
