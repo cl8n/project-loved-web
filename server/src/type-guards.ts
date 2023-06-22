@@ -107,6 +107,10 @@ export function isRecord(record: unknown): record is Record<number | string, unk
   return typeof record === 'object' && record != null;
 }
 
+export function isRecordArray(records: unknown): records is Record<number | string, unknown>[] {
+  return Array.isArray(records) && records.every(isRecord);
+}
+
 export function isResponseError(error: unknown): error is ResponseError {
   return isRecord(error) && error.response != null && isInteger(error.status);
 }

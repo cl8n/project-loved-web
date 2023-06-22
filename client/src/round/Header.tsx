@@ -1,3 +1,4 @@
+import { gameModeLongName } from 'loved-bridge/beatmaps/gameMode';
 import { Role } from 'loved-bridge/tables';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
@@ -8,6 +9,20 @@ import { hasRole } from '../permissions';
 import { UserInline } from '../UserInline';
 import PostDate from './PostDate';
 import RoundEditor from './RoundEditor';
+
+function getVideoUrl(videoIdOrUrl: string | null): string | null {
+  if (videoIdOrUrl == null) {
+    return null;
+  }
+
+  // MP4 video link
+  if (videoIdOrUrl.startsWith('http')) {
+    return videoIdOrUrl;
+  }
+
+  // YouTube video ID
+  return `https://www.youtube.com/watch?v=${videoIdOrUrl}`;
+}
 
 interface HeaderProps {
   canEdit: boolean;
@@ -28,6 +43,8 @@ export default function Header({
 }: HeaderProps) {
   const authUser = useOsuAuth().user;
   const [editing, setEditing] = useState(false);
+
+  const introVideoUrl = getVideoUrl(round.video);
 
   return (
     <div className='content-block'>
@@ -65,6 +82,23 @@ export default function Header({
             </span>
             <br />
             <PostDate round={round} />
+            <h3>Videos</h3>
+            <ul>
+              <li>
+                Intro:{' '}
+                {introVideoUrl == null ? <i>None</i> : <a href={introVideoUrl}>{introVideoUrl}</a>}
+              </li>
+              {Object.values(round.game_modes).map((roundGameMode) => {
+                const videoUrl = getVideoUrl(roundGameMode.video);
+
+                return (
+                  <li key={roundGameMode.game_mode}>
+                    {gameModeLongName(roundGameMode.game_mode)}:{' '}
+                    {videoUrl == null ? <i>None</i> : <a href={videoUrl}>{videoUrl}</a>}
+                  </li>
+                );
+              })}
+            </ul>
             <h3>News intro preview</h3>
             <p>
               <Markdown text={round.news_intro_preview ?? 'No news intro preview'} />
