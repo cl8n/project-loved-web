@@ -44,11 +44,11 @@ The `bridge` directory contains a package required by both the client and server
 docker compose exec assets sh -c 'cd /app/bridge && npm install && npm run build-no-lint'
 ```
 
-...and reinstall it in `client` and `server`:
+...and reinstall it in `client` and `server`, if its dependencies change:
 
 ```
-docker compose exec assets sh -c 'rm -rf node_modules/loved-bridge && npm install'
-docker compose exec api sh -c 'rm -rf node_modules/loved-bridge && npm install'
+docker compose exec assets npm install ../bridge
+docker compose exec api npm install ../bridge
 ```
 
 ### File permissions
@@ -61,7 +61,7 @@ The `build.sh` script's `publish` target can be used to help automate deployment
 
 ### Dependencies
 
-- [Node.js](https://nodejs.org/en/download/) 16
+- [Node.js](https://nodejs.org/en/download/) 18
 - [MySQL](https://dev.mysql.com/downloads/mysql/) 8
 
 ### Client
