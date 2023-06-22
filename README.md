@@ -47,8 +47,8 @@ docker compose exec assets sh -c 'cd /app/bridge && npm install && npm run build
 ...and reinstall it in `client` and `server`, if its dependencies change:
 
 ```
-docker compose exec assets npm install ../bridge
-docker compose exec api npm install ../bridge
+docker compose exec assets npm install
+docker compose exec api npm install
 ```
 
 ### File permissions
