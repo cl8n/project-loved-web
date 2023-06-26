@@ -69,8 +69,7 @@ const sessionStore = new (mysqlSessionStoreFactory(session as any))(
   },
   db.pool,
 );
-// TODO: Remove typing hack when @types/express-mysql-session updates
-await (sessionStore as unknown as { onReady: () => Promise<void> }).onReady();
+await sessionStore.onReady();
 
 const app = express();
 const sessionLock = new AsyncLock();
@@ -316,8 +315,7 @@ systemLog('Starting', SyslogLevel.debug);
 async function shutdown(): Promise<void> {
   systemLog('Received exit signal', SyslogLevel.debug);
 
-  // TODO: Remove typing hack when @types/express-mysql-session updates
-  await (sessionStore as unknown as { close: () => Promise<void> })
+  await sessionStore
     .close()
     .then(() => systemLog('Closed session store', SyslogLevel.debug))
     .catch((error) => systemLog(error, SyslogLevel.err));
