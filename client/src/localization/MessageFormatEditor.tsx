@@ -79,26 +79,20 @@ function renderLeaf({ attributes, children, leaf }: RenderLeafProps): JSX.Elemen
   );
 }
 
-type MessageFormatEditorProps =
-  | {
-      readOnly?: false;
-      setValue: (value: string) => void;
-      value: string;
-    }
-  | {
-      readOnly: true;
-      setValue?: undefined;
-      value: string;
-    };
+interface MessageFormatEditorProps {
+  setValue?: (value: string) => void;
+  value: string;
+}
 
 export default function MessageFormatEditor({
   className,
-  readOnly,
   setValue,
   value,
   ...props
 }: MessageFormatEditorProps & TextareaHTMLAttributes<HTMLDivElement>) {
   const editor = useMemo(() => withReact(createEditor()), []);
+
+  const readOnly = setValue == null;
 
   return (
     <Slate

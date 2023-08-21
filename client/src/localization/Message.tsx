@@ -29,7 +29,7 @@ function Message({
   return (
     <div className={classNames.join(' ')}>
       <h3>{description}</h3>
-      <MessageFormatEditor className='message-reference' readOnly value={englishMessage} />
+      <MessageFormatEditor className='message-reference' value={englishMessage} />
       <MessageFormatEditor
         setValue={(value) => updateMessage(id, value)}
         value={workingMessage ?? ''}
