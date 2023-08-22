@@ -60,9 +60,8 @@ function saveSession(session: Request['session']): Promise<void> {
 
 await db.initialize();
 
-// Impossible to type
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const sessionStore = new (mysqlSessionStoreFactory(session as any))(
+// @ts-expect-error The import type of express-session isn't supported here
+const sessionStore = new (mysqlSessionStoreFactory(session))(
   {
     checkExpirationInterval: 1800000, // 30 minutes
     expiration: 2592000000, // 30 days

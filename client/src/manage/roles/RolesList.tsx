@@ -18,7 +18,7 @@ export function renderRole(role: IUserRole) {
   return (
     <span className={classNames.join(' ')}>
       {roleNames[role.role_id]}
-      {role.game_mode >= 0 && ` (${gameModeLongName(role.game_mode)})`}
+      {role.game_mode !== -1 && ` (${gameModeLongName(role.game_mode)})`}
       {role.alumni && ' (alumni)'}
     </span>
   );

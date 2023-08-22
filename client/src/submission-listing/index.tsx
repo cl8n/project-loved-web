@@ -124,10 +124,10 @@ const messages = defineMessages({
 });
 
 const allBeatmapStatuses = ['pendingAndGrave', 'lovedAndRanked'] as const;
-type BeatmapStatus = typeof allBeatmapStatuses[number];
+type BeatmapStatus = (typeof allBeatmapStatuses)[number];
 
 const allReviewStatuses = ['any', 'reviewed', 'notReviewed'] as const;
-type ReviewStatus = typeof allReviewStatuses[number];
+type ReviewStatus = (typeof allReviewStatuses)[number];
 
 const allSorts = [
   'artist',
@@ -141,7 +141,7 @@ const allSorts = [
   'latestReview',
   'earliestReview',
 ] as const;
-type Sort = typeof allSorts[number];
+type Sort = (typeof allSorts)[number];
 
 function getNewSubmissionsListingPath(gameMode: GameMode, keyMode: number | null): string {
   let path = `/submissions/${gameModeShortName(gameMode)}`;

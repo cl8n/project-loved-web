@@ -789,8 +789,8 @@ guestRouter.get(
 
       if (beatmapset.poll != null) {
         delete beatmapset.poll.beatmapset_id;
-        beatmapset.poll.in_progress = beatmapset.poll.in_progress > 0;
-        beatmapset.poll.passed = beatmapset.poll.passed > 0;
+        beatmapset.poll.in_progress = beatmapset.poll.in_progress === 1;
+        beatmapset.poll.passed = beatmapset.poll.passed === 1;
       }
 
       beatmapset.beatmap_counts = {} as Record<GameMode, number>;
