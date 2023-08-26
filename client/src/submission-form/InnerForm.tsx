@@ -1,7 +1,7 @@
 import { gameModeLongName, gameModes, gameModeShortName } from 'loved-bridge/beatmaps/gameMode';
 import { useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { addReviews, alertApiErrorMessage } from '../api';
 import { autoHeightRef } from '../auto-height';
 import type { FormSubmitHandler } from '../dom-helpers';
@@ -29,8 +29,8 @@ const messages = defineMessages({
 });
 
 export default function InnerForm() {
-  const history = useHistory();
   const intl = useIntl();
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
 
   const onSubmit: FormSubmitHandler = (form, then) => {
@@ -51,7 +51,7 @@ export default function InnerForm() {
     return addReviews(beatmapsetId, form.gameModes, form.reason, form.score)
       .then(() => {
         if (form.submitValue) {
-          history.push(`/submissions/${gameModeShortName(form.gameModes[0])}`, beatmapsetId);
+          navigate(`/submissions/${gameModeShortName(form.gameModes[0])}`, { state: beatmapsetId });
         }
       })
       .then(then)

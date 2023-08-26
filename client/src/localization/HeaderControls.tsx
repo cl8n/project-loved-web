@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { locales } from '../intl';
 
 function exportMessages(): void {
@@ -14,8 +14,8 @@ interface HeaderControlsProps {
 }
 
 export default function HeaderControls({ locale, progress }: HeaderControlsProps) {
-  const history = useHistory();
   const [localeInput, setLocaleInput] = useState('');
+  const navigate = useNavigate();
 
   return (
     <div className='flex-bar'>
@@ -41,7 +41,7 @@ export default function HeaderControls({ locale, progress }: HeaderControlsProps
           disabled={!/^[a-z]{2}(?:-[a-z]{2})?$/.test(localeInput)}
           onClick={() => {
             if (localeInput !== locale) {
-              history.push(`/localization/${localeInput}`);
+              navigate(localeInput);
             }
 
             setLocaleInput('');

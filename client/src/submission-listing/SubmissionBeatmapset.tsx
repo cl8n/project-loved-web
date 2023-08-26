@@ -182,7 +182,7 @@ export default function SubmissionBeatmapset({
 }: SubmissionBeatmapsetProps) {
   const authUser = useOsuAuth().user;
   const intl = useIntl();
-  const { state: submittedBeatmapsetId } = useLocation<number | undefined>();
+  const { state: submittedBeatmapsetId } = useLocation() as { state: unknown };
   const [expanded, setExpanded] = useState(submittedBeatmapsetId === beatmapset.id);
   const [hovered, setHovered] = useState(false);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);

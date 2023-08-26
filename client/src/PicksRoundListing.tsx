@@ -1,5 +1,5 @@
 import { Role } from 'loved-bridge/tables';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
 import { addRound, alertApiErrorMessage, apiErrorMessage, getRounds, useApi } from './api';
 import type { IRound } from './interfaces';
@@ -20,7 +20,7 @@ function Round(round: RoundProps) {
   return (
     <div className='box'>
       <h2>
-        <Link to={`/picks/${round.id}`}>
+        <Link to={round.id.toString()}>
           {round.name} [#{round.id}]
         </Link>
       </h2>
@@ -64,7 +64,7 @@ function PicksRoundListingInner({ rounds, roundsError }: PicksRoundListingInnerP
 }
 
 function AddRound() {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onClick = () => {
     if (!window.confirm('Are you sure you want to create a new round?')) {
@@ -72,7 +72,7 @@ function AddRound() {
     }
 
     addRound()
-      .then((response) => history.push(`/picks/${response.body.id}`))
+      .then((response) => navigate(response.body.id.toString()))
       .catch(alertApiErrorMessage);
   };
 
@@ -98,7 +98,7 @@ export function PicksRoundListing() {
         <PicksRoundListingInner rounds={rounds?.incomplete_rounds} roundsError={roundsError} />
         <div className='box'>
           <h2>
-            <Link to='/picks/planner'>Nomination planner</Link>
+            <Link to='planner'>Nomination planner</Link>
           </h2>
         </div>
       </div>
