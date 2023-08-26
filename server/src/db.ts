@@ -1,5 +1,5 @@
-import type { Pool, PoolConfig, PoolConnection } from 'mysql';
-import { createPool } from 'mysql';
+import type { Pool, PoolConnection, PoolOptions } from 'mysql2/promise';
+import { createPool } from 'mysql2/promise';
 import config from './config.js';
 
 type Field = Date | boolean | number | string | null;
@@ -28,15 +28,7 @@ class MysqlConnection {
     sql: string,
     values?: unknown[],
   ): Promise<unknown[] | { changedRows: number } | { insertId: number } | void> {
-    return new Promise((resolve, reject) => {
-      this.#connection.query(sql, values, function (error, results) {
-        if (error) {
-          return reject(error);
-        }
-
-        resolve(results);
-      });
-    });
+    return this.#connection.query(sql, values).then((result) => result[0]);
   }
 
   async queryOne<T = Row>(sql: StatementSelect, values?: unknown[]): Promise<T | null> {
@@ -148,7 +140,7 @@ class MysqlPool {
   #columnsByTable?: Record<string, string[]>;
   #pool: Pool;
 
-  constructor(config: PoolConfig) {
+  constructor(config: PoolOptions) {
     this.#pool = createPool(config);
   }
 
@@ -156,22 +148,14 @@ class MysqlPool {
     return this.#pool;
   }
 
-  close(): Promise<void> {
+  async close(): Promise<void> {
     if (this.#closed) {
-      return Promise.resolve();
+      return;
     }
 
-    return new Promise((resolve, reject) => {
-      this.#pool.end((error) => {
-        if (error) {
-          return reject(error);
-        }
+    await this.#pool.end();
 
-        this.#closed = true;
-
-        resolve();
-      });
-    });
+    this.#closed = true;
   }
 
   async initialize(): Promise<void> {
@@ -221,22 +205,18 @@ class MysqlPool {
   readonly transact: MysqlConnection['transact'] = (...args) =>
     this.useConnection((connection) => connection.transact(...args));
 
-  useConnection<T>(fn: (connection: MysqlConnection) => Promise<T>): Promise<T> {
+  async useConnection<T>(fn: (connection: MysqlConnection) => Promise<T>): Promise<T> {
     if (this.#closed) {
-      return Promise.reject('Connection pool has been closed');
+      throw 'Connection pool has been closed';
     }
 
-    return new Promise((resolve, reject) => {
-      this.#pool.getConnection((error, connection) => {
-        if (error) {
-          return reject(error);
-        }
+    const connection = await this.#pool.getConnection();
 
-        fn(new MysqlConnection(connection, this.#columnsByTable))
-          .then(resolve, reject)
-          .finally(() => connection.release());
-      });
-    });
+    try {
+      return await fn(new MysqlConnection(connection, this.#columnsByTable));
+    } finally {
+      connection.release();
+    }
   }
 }
 

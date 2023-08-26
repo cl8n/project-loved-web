@@ -66,6 +66,7 @@ const sessionStore = new (mysqlSessionStoreFactory(session))(
     checkExpirationInterval: 1800000, // 30 minutes
     expiration: 2592000000, // 30 days
   },
+  // @ts-expect-error The typings package for express-mysql-session isn't correct
   db.pool,
 );
 await sessionStore.onReady();
