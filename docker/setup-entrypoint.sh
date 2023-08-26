@@ -11,6 +11,4 @@ npm install
 
 cd /app/server
 npm install
-if test ! -f .env; then
-  cp .env.example .env
-fi
+cp -n .env.example .env
