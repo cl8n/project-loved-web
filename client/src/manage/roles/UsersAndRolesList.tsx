@@ -1,6 +1,5 @@
 import { apiErrorMessage, getUsersWithRoles, useApi } from '../../api';
 import type { IUser, IUserRole } from '../../interfaces';
-import { useOsuAuth } from '../../osuAuth';
 import { hasRole } from '../../permissions';
 import { UserInline } from '../../UserInline';
 import RolesList from './RolesList';
@@ -8,7 +7,6 @@ import UserAdder from './UserAdder';
 import UserRolesEditor from './UserRolesEditor';
 
 export default function UsersAndRolesList() {
-  const authUser = useOsuAuth().user;
   const [users, usersError, setUsers] = useApi(getUsersWithRoles);
 
   if (usersError != null) {
@@ -32,18 +30,16 @@ export default function UsersAndRolesList() {
 
   return (
     <>
-      {hasRole(authUser, []) && <UserAdder onUserAdd={onUserAdd} />}
+      <UserAdder onUserAdd={onUserAdd} />
       <table>
         <tr>
-          {hasRole(authUser, []) && <th />}
+          <th />
           <th>User</th>
           <th>Roles</th>
         </tr>
         {users.map((user) => (
           <tr key={user.id} className={hasRole(user, 'any') ? undefined : 'faded'}>
-            {hasRole(authUser, []) && (
-              <UserRolesEditor onRolesUpdate={onRolesUpdate(user.id)} user={user} />
-            )}
+            <UserRolesEditor onRolesUpdate={onRolesUpdate(user.id)} user={user} />
             <td>
               <UserInline user={user} />
             </td>

@@ -31,6 +31,7 @@ import { asyncHandler } from './express-helpers.js';
 import {
   currentUserRoles,
   isAdminMiddleware,
+  isAnyRoleMiddleware,
   isCaptainMiddleware,
   isModeratorMiddleware,
   isNewsAuthorMiddleware,
@@ -831,15 +832,10 @@ router.post(
 
 router.post(
   '/add-user',
+  isAnyRoleMiddleware,
   asyncHandler(async (req, res) => {
     if (typeof req.body.name !== 'string') {
       return res.status(422).json({ error: 'Invalid username' });
-    }
-
-    const hasRole = currentUserRoles(req, res);
-
-    if (!hasRole(Role.captain)) {
-      return res.status(403).json({ error: 'Must be a captain' });
     }
 
     const user = await res.typedLocals.osu.createOrRefreshUser(req.body.name, {
@@ -1212,7 +1208,7 @@ router.get(
 
 router.post(
   '/update-permissions',
-  isAdminMiddleware,
+  isAnyRoleMiddleware,
   asyncHandler(async (req, res) => {
     if (!isUserRoleWithoutUserIdArray(req.body.roles)) {
       return res.status(422).json({ error: 'Invalid roles' });
