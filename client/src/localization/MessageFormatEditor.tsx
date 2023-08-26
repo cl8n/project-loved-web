@@ -1,11 +1,10 @@
 import { parse, TYPE } from '@formatjs/icu-messageformat-parser';
-import type { KeyboardEvent, TextareaHTMLAttributes } from 'react';
-import { useMemo } from 'react';
+import type { Dispatch, KeyboardEvent, TextareaHTMLAttributes } from 'react';
 import type { MessageFormatElement } from 'react-intl';
 import type { Element, NodeEntry, Path, Range } from 'slate';
-import { createEditor, Text } from 'slate';
+import { Text } from 'slate';
 import type { RenderLeafProps } from 'slate-react';
-import { Editable, Slate, withReact } from 'slate-react';
+import ControlledSlate from './ControlledSlate';
 
 function addRanges(ranges: Range[], path: Path, elements: MessageFormatElement[]): void {
   for (const element of elements) {
@@ -80,7 +79,7 @@ function renderLeaf({ attributes, children, leaf }: RenderLeafProps): JSX.Elemen
 }
 
 interface MessageFormatEditorProps {
-  setValue?: (value: string) => void;
+  setValue?: Dispatch<string>;
   value: string;
 }
 
@@ -90,28 +89,17 @@ export default function MessageFormatEditor({
   value,
   ...props
 }: MessageFormatEditorProps & TextareaHTMLAttributes<HTMLDivElement>) {
-  const editor = useMemo(() => withReact(createEditor()), []);
-
-  const readOnly = setValue == null;
-
   return (
-    <Slate
-      editor={editor}
-      onChange={(value) => {
-        if (!readOnly) {
-          setValue(((value[0] as Element).children[0] as Text).text);
-        }
+    <ControlledSlate
+      {...props}
+      className={`slate-editor${setValue == null ? '' : ' editable'} ${className ?? ''}`}
+      decorate={decorate}
+      descendants={[{ children: [{ text: value, type: 0 }] }]}
+      onKeyDown={onKeyDown}
+      renderLeaf={renderLeaf}
+      setDescendants={(value) => {
+        setValue?.(((value[0] as Element).children[0] as Text).text);
       }}
-      value={[{ children: [{ text: value, type: 0 }] }]}
-    >
-      <Editable
-        {...props}
-        className={`slate-editor${readOnly ? '' : ' editable'} ${className ?? ''}`}
-        decorate={decorate}
-        onKeyDown={onKeyDown}
-        readOnly={readOnly}
-        renderLeaf={renderLeaf}
-      />
-    </Slate>
+    />
   );
 }
