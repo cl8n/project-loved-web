@@ -112,14 +112,7 @@ function RootRoutes() {
         }
       >
         <Route path='roles' element={<Roles />} />
-        <Route
-          path='api-objects'
-          element={
-            <Authorize role={Role.admin}>
-              <ApiObjects />
-            </Authorize>
-          }
-        />
+        <Route path='api-objects' element={<ApiObjects />} />
         <Route path='logs' element={<Logs />} />
         <Route
           path='forum-opt-in'

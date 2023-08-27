@@ -30,7 +30,6 @@ import db from './db.js';
 import { asyncHandler } from './express-helpers.js';
 import {
   currentUserRoles,
-  isAdminMiddleware,
   isAnyRoleMiddleware,
   isCaptainMiddleware,
   isModeratorMiddleware,
@@ -1363,7 +1362,7 @@ router.post(
 
 router.post(
   '/update-api-object',
-  isAdminMiddleware,
+  isAnyRoleMiddleware,
   asyncHandler(async (req, res) => {
     if (!isInteger(req.body.id)) {
       return res.status(422).json({ error: 'Invalid ID' });
@@ -1396,7 +1395,7 @@ router.post(
   }),
 );
 
-router.post('/update-api-object-bulk', isAdminMiddleware, (req, res) => {
+router.post('/update-api-object-bulk', isAnyRoleMiddleware, (req, res) => {
   let apiObject;
   const type = req.body.type;
   const bulkOsu = new Osu();
@@ -1433,7 +1432,7 @@ router.post('/update-api-object-bulk', isAdminMiddleware, (req, res) => {
 
 router.delete(
   '/beatmapset',
-  isAdminMiddleware,
+  isAnyRoleMiddleware,
   asyncHandler(async (req, res) => {
     const id = req.query.beatmapsetId;
     const beatmapset = await db.queryOne<Beatmapset>('SELECT * FROM beatmapsets WHERE id = ?', [

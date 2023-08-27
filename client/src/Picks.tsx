@@ -524,6 +524,8 @@ function Nomination({
     nomination.poll == null &&
     !locked &&
     hasRole(authUser, Role.captain, nomination.game_mode);
+  // TODO: Any role should be allowed to do this, but the window reloading
+  //       thing should be fixed before expanding it to more users.
   const canForceBeatmapsetUpdate = hasRole(authUser, []);
 
   return (
