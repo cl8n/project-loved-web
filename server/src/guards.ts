@@ -52,7 +52,7 @@ function hasRoleMiddleware(roleIds: readonly Role[], errorMessage: string): Requ
 }
 
 export const hasLocalInteropKeyMiddleware = asyncHandler(async (request, response, next) => {
-  if (request.get('X-Loved-InteropVersion') !== '7') {
+  if (request.get('X-Loved-InteropVersion') !== '8') {
     return response.status(422).json({ error: 'Unsupported program version' });
   }
 
