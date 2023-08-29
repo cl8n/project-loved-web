@@ -2,7 +2,6 @@ import type { Request, RequestHandler, Response } from 'express';
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import type { UserRole } from 'loved-bridge/tables';
 import { Role } from 'loved-bridge/tables';
-import config from './config.js';
 import db from './db.js';
 import { asyncHandler } from './express-helpers.js';
 
