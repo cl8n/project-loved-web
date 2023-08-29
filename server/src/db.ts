@@ -228,6 +228,8 @@ const db = new MysqlPool({
   user: config.dbUser,
 
   charset: 'utf8mb4_general_ci',
+  decimalNumbers: true,
+
   typeCast: function (field, next) {
     if (field.type === 'TINY' && field.length === 1) {
       const string = field.string();
