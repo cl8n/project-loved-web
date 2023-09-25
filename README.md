@@ -1,3 +1,6 @@
+> [!WARNING]
+> This project is currently undergoing a major series of refactorings and will not be receiving many new features in the meantime. I don't recommend contributing to it at the moment either if you aren't already familiar with the codebase.
+
 This project contains the web client (<https://loved.sh>), web server (<https://loved.sh/api>), and related tools for osu!'s [Project Loved](https://osu.ppy.sh/wiki/Project_Loved). See [cl8n/project-loved](https://github.com/cl8n/project-loved) for more management tools.
 
 ## Development with Docker
