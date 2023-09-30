@@ -3,7 +3,6 @@ import { isAbsolute } from 'path';
 
 interface Config {
   httpsAlways: boolean;
-  interopVersion: number | undefined;
   port: number;
   sessionSecret: string;
   storagePath: string;
@@ -57,7 +56,6 @@ function tryParseString(value: string | null | undefined): string | undefined {
 }
 
 partialConfig.httpsAlways = tryParseBoolean(process.env.HTTPS_ALWAYS);
-partialConfig.interopVersion = tryParseInt(process.env.INTEROP_VERSION);
 partialConfig.port = tryParseInt(process.env.PORT);
 partialConfig.sessionSecret = tryParseString(process.env.SESSION_SECRET);
 partialConfig.storagePath = tryParseString(process.env.STORAGE_PATH);
@@ -78,7 +76,6 @@ partialConfig.surveyId = tryParseString(process.env.SURVEY_ID);
 partialConfig.surveyLinkTemplate = tryParseString(process.env.SURVEY_LINK_TEMPLATE);
 
 const optionalOptions = new Set([
-  'interopVersion',
   'osuBaseUrlExternal',
   'surveyConfirmationSecret',
   'surveyId',

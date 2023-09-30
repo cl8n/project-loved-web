@@ -1,3 +1,6 @@
+> [!WARNING]
+> This project is currently undergoing a major series of refactorings and will not be receiving many new features in the meantime. I don't recommend contributing to it at the moment either if you aren't already familiar with the codebase.
+
 This project contains the web client (<https://loved.sh>), web server (<https://loved.sh/api>), and related tools for osu!'s [Project Loved](https://osu.ppy.sh/wiki/Project_Loved). See [cl8n/project-loved](https://github.com/cl8n/project-loved) for more management tools.
 
 ## Development with Docker
@@ -44,11 +47,11 @@ The `bridge` directory contains a package required by both the client and server
 docker compose exec assets sh -c 'cd /app/bridge && npm install && npm run build-no-lint'
 ```
 
-...and reinstall it in `client` and `server`:
+...and reinstall it in `client` and `server`, if its dependencies change:
 
 ```
-docker compose exec assets sh -c 'rm -rf node_modules/loved-bridge && npm install'
-docker compose exec api sh -c 'rm -rf node_modules/loved-bridge && npm install'
+docker compose exec assets npm install
+docker compose exec api npm install
 ```
 
 ### File permissions
@@ -61,7 +64,7 @@ The `build.sh` script's `publish` target can be used to help automate deployment
 
 ### Dependencies
 
-- [Node.js](https://nodejs.org/en/download/) 16
+- [Node.js](https://nodejs.org/en/download/) 18
 - [MySQL](https://dev.mysql.com/downloads/mysql/) 8
 
 ### Client

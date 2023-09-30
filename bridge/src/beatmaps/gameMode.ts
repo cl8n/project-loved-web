@@ -9,7 +9,7 @@ export const gameModes = [0, 1, 2, 3] as const;
 const gameModeShortNames = ['osu', 'taiko', 'fruits', 'mania'] as const;
 const gameModeLongNames = ['osu!standard', 'osu!taiko', 'osu!catch', 'osu!mania'] as const;
 
-export function gameModeShortName(gameMode: GameMode): typeof gameModeShortNames[number] {
+export function gameModeShortName(gameMode: GameMode): (typeof gameModeShortNames)[number] {
   return gameModeShortNames[gameMode];
 }
 
@@ -23,6 +23,6 @@ export function gameModeFromShortName(shortName: string | null | undefined): Gam
   return gameMode < 0 ? null : gameMode;
 }
 
-export function gameModeLongName(gameMode: GameMode): typeof gameModeLongNames[number] {
+export function gameModeLongName(gameMode: GameMode): (typeof gameModeLongNames)[number] {
   return gameModeLongNames[gameMode];
 }

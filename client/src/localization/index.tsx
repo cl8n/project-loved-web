@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Redirect, useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { locales } from '../intl';
 import useTitle from '../useTitle';
 import Header from './Header';
@@ -112,7 +112,7 @@ export default function Localization() {
   }, [englishMessageIds, locale, workingMessages]);
 
   if (locale != null && locale !== locale.toLowerCase()) {
-    return <Redirect to={`/localization/${locale.toLowerCase()}`} />;
+    return <Navigate replace to={locale.toLowerCase()} />;
   }
 
   const localeName = locales.find(({ code }) => code === locale)?.name;

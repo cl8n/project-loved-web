@@ -125,7 +125,10 @@ export interface IRound {
   game_modes: Record<
     GameMode,
     {
+      game_mode: GameMode;
       nominations_locked: boolean;
+      results_post_id: number | null;
+      video: string | null;
       voting_threshold: number;
     }
   >;
@@ -137,6 +140,7 @@ export interface IRound {
   news_intro_preview?: string;
   news_outro?: string;
   news_posted_at?: string;
+  video: string | null;
 }
 
 type ISetting<T> = T | null | undefined;
@@ -194,5 +198,5 @@ export interface IMapperBeatmapsetConsent {
   consent_reason: string | null;
 }
 
-export type PartialWithoutId<T extends { id: unknown }> = Partial<Omit<T, 'id'>>;
-export type PartialWithId<T extends { id: unknown }> = { id: T['id'] } & PartialWithoutId<T>;
+export type PartialWith<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>;
+export type PartialWithId<T extends { id: unknown }> = PartialWith<T, 'id'>;

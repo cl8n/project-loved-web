@@ -13,6 +13,7 @@ import type {
   Nomination,
   NominationDescriptionEdit,
   Round,
+  RoundGameMode,
   User,
   UserRole,
 } from 'loved-bridge/tables';
@@ -29,7 +30,7 @@ import db from './db.js';
 import { asyncHandler } from './express-helpers.js';
 import {
   currentUserRoles,
-  isAdminMiddleware,
+  isAnyRoleMiddleware,
   isCaptainMiddleware,
   isModeratorMiddleware,
   isNewsAuthorMiddleware,
@@ -46,6 +47,7 @@ import {
   isIntegerArray,
   isLogTypeArray,
   isRecord,
+  isRecordArray,
   isStringArray,
   isUserRoleWithoutUserIdArray,
 } from './type-guards.js';
@@ -829,15 +831,10 @@ router.post(
 
 router.post(
   '/add-user',
+  isAnyRoleMiddleware,
   asyncHandler(async (req, res) => {
     if (typeof req.body.name !== 'string') {
       return res.status(422).json({ error: 'Invalid username' });
-    }
-
-    const hasRole = currentUserRoles(req, res);
-
-    if (!hasRole(Role.captain)) {
-      return res.status(403).json({ error: 'Must be a captain' });
     }
 
     const user = await res.typedLocals.osu.createOrRefreshUser(req.body.name, {
@@ -919,8 +916,14 @@ router.post(
   '/update-round',
   isNewsAuthorMiddleware,
   asyncHandler(async (req, res) => {
+    // TODO guards are lazy
+
     if (!isRecord(req.body.round)) {
-      return res.status(422).json({ error: 'Invalid round params' });
+      return res.status(422).json({ error: 'Invalid round update params' });
+    }
+
+    if (!isRecordArray(req.body.roundGameModes)) {
+      return res.status(422).json({ error: 'Invalid round game mode update params' });
     }
 
     if (!isInteger(req.body.roundId)) {
@@ -939,18 +942,61 @@ router.post(
       req.body.roundId,
     ]);
 
-    res.json(
-      await db.queryOneWithGroups<Round & { news_author: User }>(
+    for (const roundGameMode of req.body.roundGameModes) {
+      if (
+        // Checking for exactly null to validate input
+        // eslint-disable-next-line eqeqeq
+        roundGameMode.video !== null &&
+        !(
+          typeof roundGameMode.video === 'string' &&
+          /^(?:https?:\/\/.+\.mp4|[A-Za-z0-9_-]{11})$/.test(roundGameMode.video)
+        )
+      ) {
+        continue;
+      }
+
+      await db.query('UPDATE round_game_modes SET video = ? WHERE round_id = ? AND game_mode = ?', [
+        roundGameMode.video,
+        req.body.roundId,
+        roundGameMode.game_mode,
+      ]);
+    }
+
+    const round:
+      | (Round & {
+          game_modes?: Record<GameMode, RoundGameMode>;
+          news_author: User;
+        })
+      | null = await db.queryOneWithGroups<Round & { news_author: User }>(
+      `
+        SELECT rounds.*, users:news_author
+        FROM rounds
+        INNER JOIN users
+          ON rounds.news_author_id = users.id
+        WHERE rounds.id = ?
+      `,
+      [req.body.roundId],
+    );
+
+    if (round == null) {
+      throw 'Missing round on round update';
+    }
+
+    round.game_modes = groupBy<RoundGameMode['game_mode'], RoundGameMode>(
+      await db.query<RoundGameMode>(
         `
-          SELECT rounds.*, users:news_author
-          FROM rounds
-          INNER JOIN users
-            ON rounds.news_author_id = users.id
-          WHERE rounds.id = ?
+          SELECT *
+          FROM round_game_modes
+          WHERE round_id = ?
         `,
         [req.body.roundId],
       ),
+      'game_mode',
+      null,
+      true,
     );
+
+    res.json(round);
   }),
 );
 
@@ -1161,7 +1207,7 @@ router.get(
 
 router.post(
   '/update-permissions',
-  isAdminMiddleware,
+  isAnyRoleMiddleware,
   asyncHandler(async (req, res) => {
     if (!isUserRoleWithoutUserIdArray(req.body.roles)) {
       return res.status(422).json({ error: 'Invalid roles' });
@@ -1316,7 +1362,7 @@ router.post(
 
 router.post(
   '/update-api-object',
-  isAdminMiddleware,
+  isAnyRoleMiddleware,
   asyncHandler(async (req, res) => {
     if (!isInteger(req.body.id)) {
       return res.status(422).json({ error: 'Invalid ID' });
@@ -1349,7 +1395,7 @@ router.post(
   }),
 );
 
-router.post('/update-api-object-bulk', isAdminMiddleware, (req, res) => {
+router.post('/update-api-object-bulk', isAnyRoleMiddleware, (req, res) => {
   let apiObject;
   const type = req.body.type;
   const bulkOsu = new Osu();
@@ -1386,7 +1432,7 @@ router.post('/update-api-object-bulk', isAdminMiddleware, (req, res) => {
 
 router.delete(
   '/beatmapset',
-  isAdminMiddleware,
+  isAnyRoleMiddleware,
   asyncHandler(async (req, res) => {
     const id = req.query.beatmapsetId;
     const beatmapset = await db.queryOne<Beatmapset>('SELECT * FROM beatmapsets WHERE id = ?', [

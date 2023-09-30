@@ -1,18 +1,5 @@
-import type { Context, DependencyList, Dispatch, EffectCallback, SetStateAction } from 'react';
+import type { Context, DependencyList, EffectCallback } from 'react';
 import { useContext, useEffect, useRef } from 'react';
-
-export function setProperty<T, K extends keyof T>(
-  setter: Dispatch<SetStateAction<T>>,
-  property: K,
-  value: T[K],
-) {
-  setter((prevState) => {
-    return {
-      ...prevState,
-      [property]: value,
-    };
-  });
-}
 
 export function useEffectExceptOnMount(effect: EffectCallback, deps?: DependencyList): void {
   const firstUpdate = useRef(true);
@@ -26,16 +13,6 @@ export function useEffectExceptOnMount(effect: EffectCallback, deps?: Dependency
     return effect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
-}
-
-export function usePrevious<T>(value: T) {
-  const ref = useRef<T>();
-
-  useEffect(() => {
-    ref.current = value;
-  }, [value]);
-
-  return ref.current;
 }
 
 export function useRequiredContext<T>(context: Context<T | undefined>): T {

@@ -3,6 +3,7 @@ import { gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import { useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
+import { Never } from '../Never';
 import useTitle from '../useTitle';
 import type { ComparingStatistic, UserIdentity } from './helpers';
 import { comparingStatistics, userIdentities } from './helpers';
@@ -54,6 +55,10 @@ export default function SurveyResults() {
   const [comparingStatistic, setComparingStatistic] = useState<ComparingStatistic>();
   const [gameMode, setGameMode] = useState<GameMode>();
   const [userIdentity, setUserIdentity] = useState<UserIdentity>();
+
+  if (survey == null) {
+    return <Never />;
+  }
 
   return (
     <>

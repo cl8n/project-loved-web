@@ -9,7 +9,7 @@ import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import type { ChangeEvent, Dispatch } from 'react';
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { apiErrorMessage, getSubmissions, useApi } from '../api';
 import { dateFromString } from '../date-format';
 import Help from '../Help';
@@ -124,10 +124,10 @@ const messages = defineMessages({
 });
 
 const allBeatmapStatuses = ['pendingAndGrave', 'lovedAndRanked'] as const;
-type BeatmapStatus = typeof allBeatmapStatuses[number];
+type BeatmapStatus = (typeof allBeatmapStatuses)[number];
 
 const allReviewStatuses = ['any', 'reviewed', 'notReviewed'] as const;
-type ReviewStatus = typeof allReviewStatuses[number];
+type ReviewStatus = (typeof allReviewStatuses)[number];
 
 const allSorts = [
   'artist',
@@ -141,9 +141,9 @@ const allSorts = [
   'latestReview',
   'earliestReview',
 ] as const;
-type Sort = typeof allSorts[number];
+type Sort = (typeof allSorts)[number];
 
-function getNewSubmissionsListingPath(gameMode: GameMode, keyMode: number | null): string {
+function getNewSubmissionsListingPath(gameMode: GameMode, keyMode?: number | undefined): string {
   let path = `/submissions/${gameModeShortName(gameMode)}`;
 
   if (keyMode != null) {
@@ -226,16 +226,13 @@ function sortsReducer(prevSorts: SortsState, action: SortsReducerAction): SortsS
 }
 
 type SubmissionListingParams =
-  | { gameMode: string | undefined }
-  | {
-      gameMode: `${'M' | 'm'}ania`;
-      keyMode: `${number}${'K' | 'k'}`;
-    };
+  | { gameMode: string | undefined; keyMode: never }
+  | { gameMode: never; keyMode: string };
 
 export default function SubmissionListingContainer() {
   const authUser = useOsuAuth().user;
-  const history = useHistory();
   const intl = useIntl();
+  const navigate = useNavigate();
   const params = useParams<SubmissionListingParams>();
   const [beatmapStatus, setBeatmapStatus] = useState<BeatmapStatus>('pendingAndGrave');
   const [columns, toggleColumn] = useReducer(columnsReducer, {
@@ -257,8 +254,15 @@ export default function SubmissionListingContainer() {
     [sorts],
   );
 
-  const gameMode = gameModeFromShortName(params.gameMode?.toLowerCase());
-  const keyMode = 'keyMode' in params ? parseInt(params.keyMode) : null;
+  const [gameMode, keyMode, redirectGameMode] =
+    params.keyMode != null
+      ? // The game mode is osu!mania. If the key mode is in a valid format,
+        // set it, and otherwise redirect to osu!mania without a key mode
+        /^\d+K$/.test(params.keyMode)
+        ? [GameMode.mania, parseInt(params.keyMode, 10)]
+        : [undefined, undefined, GameMode.mania]
+      : // The game mode is not osu!mania, so parse it and leave key mode unset
+        [gameModeFromShortName(params.gameMode?.toLowerCase())];
 
   useTitle(
     gameMode == null
@@ -268,29 +272,33 @@ export default function SubmissionListingContainer() {
 
   if (gameMode == null) {
     return (
-      <Redirect
+      <Navigate
+        replace
         to={getNewSubmissionsListingPath(
-          gameModeFromShortName(localStorage.getItem('gameMode')) ?? GameMode.osu,
-          null,
+          redirectGameMode ??
+            gameModeFromShortName(localStorage.getItem('gameMode')) ??
+            GameMode.osu,
         )}
       />
     );
   }
 
   const onGameModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const newGameMode = parseInt(event.currentTarget.value);
+    const newGameMode = parseInt(event.currentTarget.value, 10);
 
     if (newGameMode !== gameMode) {
       localStorage.setItem('gameMode', gameModeShortName(newGameMode));
-      history.push(getNewSubmissionsListingPath(newGameMode, null));
+      navigate(getNewSubmissionsListingPath(newGameMode));
       setPage(1);
     }
   };
   const onKeyModeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const newKeyMode = event.currentTarget.value ? parseInt(event.currentTarget.value, 10) : null;
+    const newKeyMode = event.currentTarget.value
+      ? parseInt(event.currentTarget.value, 10)
+      : undefined;
 
     if (newKeyMode !== keyMode) {
-      history.push(getNewSubmissionsListingPath(gameMode, newKeyMode));
+      navigate(getNewSubmissionsListingPath(GameMode.mania, newKeyMode));
       setPage(1);
     }
   };
@@ -320,7 +328,7 @@ export default function SubmissionListingContainer() {
                 description='[Submissions] Selector to change osu!mania key mode'
                 tagName='span'
               />
-              <select value={keyMode ?? undefined} onChange={onKeyModeChange}>
+              <select value={keyMode} onChange={onKeyModeChange}>
                 <option value=''>{intl.formatMessage(messages.any)}</option>
                 <optgroup label={intl.formatMessage(messages.commonKeyModes)}>
                   {[4, 7].map((keyMode) => (
@@ -534,7 +542,7 @@ interface SubmissionListingProps {
   beatmapStatus: BeatmapStatus;
   columns: ToggleableColumnsState;
   gameMode: GameMode;
-  keyMode: number | null;
+  keyMode: number | undefined;
   page: number;
   reviewStatus: ReviewStatus;
   searchLowerCase: string;
@@ -553,9 +561,9 @@ function SubmissionListing({
   setPage,
   sorts,
 }: SubmissionListingProps) {
-  const history = useHistory();
   const intl = useIntl();
-  const { state: submittedBeatmapsetId } = useLocation<number | undefined>();
+  const { state: submittedBeatmapsetId } = useLocation() as { state: unknown };
+  const navigate = useNavigate();
   const authUser = useOsuAuth().user;
   const [submissionsInfo, submissionsInfoError, setSubmissionsInfo] = useApi(getSubmissions, [
     gameMode,
@@ -597,7 +605,7 @@ function SubmissionListing({
   }, [authUser, beatmapStatus, keyMode, reviewStatus, searchLowerCase, sorts, submissionsInfo]);
 
   useEffect(() => {
-    if (displayBeatmapsets == null || submittedBeatmapsetId == null) {
+    if (displayBeatmapsets == null || typeof submittedBeatmapsetId !== 'number') {
       return;
     }
 
@@ -606,7 +614,7 @@ function SubmissionListing({
     );
 
     if (submittedBeatmapsetIndex < 0) {
-      history.replace({});
+      navigate({}, { replace: true });
       return;
     }
 
@@ -618,8 +626,8 @@ function SubmissionListing({
     }
 
     document.querySelector(`[data-beatmapset-id="${submittedBeatmapsetId}"]`)?.scrollIntoView();
-    history.replace({});
-  }, [displayBeatmapsets, history, page, setPage, submittedBeatmapsetId]);
+    navigate({}, { replace: true });
+  }, [displayBeatmapsets, navigate, page, setPage, submittedBeatmapsetId]);
 
   if (submissionsInfoError != null) {
     return (
@@ -666,7 +674,7 @@ function SubmissionListing({
         usersById: prev!.usersById,
       };
     });
-    history.replace({}, deletedReview.beatmapset_id);
+    navigate({}, { replace: true, state: deletedReview.beatmapset_id });
   };
   const onReviewUpdate = (review: IReview) => {
     setSubmissionsInfo((prev) => {
@@ -695,7 +703,7 @@ function SubmissionListing({
         usersById: { ...prev!.usersById },
       };
     });
-    history.replace({}, review.beatmapset_id);
+    navigate({}, { replace: true, state: review.beatmapset_id });
   };
 
   return (

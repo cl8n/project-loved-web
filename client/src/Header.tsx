@@ -25,7 +25,7 @@ export function Header() {
   return (
     <header className='big-center'>
       <div className='info'>
-        <Link className='logo' to='/'>
+        <Link className='logo' to=''>
           <FormattedMessage defaultMessage='Project Loved' description='[Header] Site title' />
         </Link>
         <span className='icon-label-container'>
@@ -66,25 +66,25 @@ export function Header() {
         )}
       </div>
       <nav>
-        <NavLink className='attention' to='/submissions'>
+        <NavLink className='attention' to='submissions'>
           <FormattedMessage defaultMessage='Submissions' description='[Header] Nav link' />
         </NavLink>
-        <NavLink className='attention' to='/submit'>
+        <NavLink className='attention' to='submit'>
           <FormattedMessage defaultMessage='Submit a map' description='[Header] Nav link' />
         </NavLink>
-        <NavLink to='/picks'>
+        <NavLink to='picks'>
           <FormattedMessage defaultMessage='Picks' description='[Header] Nav link' />
         </NavLink>
-        <NavLink to='/mappers'>
+        <NavLink to='mappers'>
           <FormattedMessage defaultMessage='Mapper consents' description='[Header] Nav link' />
         </NavLink>
-        <NavLink to='/contributors'>
+        <NavLink to='contributors'>
           <FormattedMessage defaultMessage='Contributors' description='[Header] Nav link' />
         </NavLink>
-        <NavLink to='/statistics'>
+        <NavLink to='statistics'>
           <FormattedMessage defaultMessage='Statistics' description='[Header] Nav link' />
         </NavLink>
-        <NavLink to='/more'>
+        <NavLink to='more'>
           <FormattedMessage defaultMessage='More' description='[Header] Nav link' />
         </NavLink>
         <FormattedMessage
@@ -101,14 +101,14 @@ export function Header() {
         {hasRole(authUser, 'any') && (
           <>
             <span />
-            <NavLink className='manage' to='/manage'>
+            <NavLink className='manage' to='manage'>
               <FormattedMessage defaultMessage='Manage' description='[Header] Nav link' />
             </NavLink>
           </>
         )}
         {/* TODO: <Dropdown align='right' data-clayton-websites>
           <h3>My websites</h3>
-          <Link className='active' to='/'>
+          <Link className='active' to=''>
             <FormattedMessage
               defaultMessage='Project Loved'
               description='[Header] Site title'

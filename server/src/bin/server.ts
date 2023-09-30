@@ -20,10 +20,6 @@ import anyoneRouter from '../routers/anyone.js';
 import guestRouter from '../routers/guest.js';
 import interopRouter from '../routers/interop.js';
 
-// Impossible to type
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const MysqlSessionStore = mysqlSessionStoreFactory(session as any);
-
 function destroySession(session: Request['session']): Promise<void> {
   return new Promise((resolve, reject) => {
     session.destroy((error) => {
@@ -64,6 +60,17 @@ function saveSession(session: Request['session']): Promise<void> {
 
 await db.initialize();
 
+// @ts-expect-error The import type of express-session isn't supported here
+const sessionStore = new (mysqlSessionStoreFactory(session))(
+  {
+    checkExpirationInterval: 1800000, // 30 minutes
+    expiration: 2592000000, // 30 days
+  },
+  // @ts-expect-error The typings package for express-mysql-session isn't correct
+  db.pool,
+);
+await sessionStore.onReady();
+
 const app = express();
 const sessionLock = new AsyncLock();
 
@@ -92,13 +99,7 @@ app.use(
     rolling: true,
     saveUninitialized: false,
     secret: config.sessionSecret,
-    store: new MysqlSessionStore(
-      {
-        checkExpirationInterval: 1800000, // 30 minutes
-        expiration: 2592000000, // 30 days
-      },
-      db.pool,
-    ),
+    store: sessionStore,
   }),
 );
 
@@ -309,24 +310,29 @@ const httpServer = app.listen(config.port);
 const httpTerminator = createHttpTerminator({ server: httpServer });
 
 dbLog(LogType.apiServerStarted);
-systemLog('Starting', SyslogLevel.info);
+systemLog('Starting', SyslogLevel.debug);
 
-function shutdown(): void {
-  systemLog('Received exit signal', SyslogLevel.info);
+async function shutdown(): Promise<void> {
+  systemLog('Received exit signal', SyslogLevel.debug);
 
-  Promise.allSettled([
+  await sessionStore
+    .close()
+    .then(() => systemLog('Closed session store', SyslogLevel.debug))
+    .catch((error) => systemLog(error, SyslogLevel.err));
+
+  await Promise.allSettled([
     httpTerminator
       .terminate()
-      .then(() => systemLog('Closed all HTTP(S) connections', SyslogLevel.info))
+      .then(() => systemLog('Closed all HTTP(S) connections', SyslogLevel.debug))
       .catch((error) => systemLog(error, SyslogLevel.err)),
     db
       .close()
-      .then(() => systemLog('Closed all DB connections', SyslogLevel.info))
+      .then(() => systemLog('Closed all DB connections', SyslogLevel.debug))
       .catch((error) => systemLog(error, SyslogLevel.err)),
-  ]).finally(() => {
-    systemLog('Exiting', SyslogLevel.info);
-    process.exit();
-  });
+  ]);
+
+  systemLog('Exiting', SyslogLevel.debug);
+  process.exit();
 }
 
 process.on('SIGINT', shutdown);

@@ -2,7 +2,6 @@ import type { Request, RequestHandler, Response } from 'express';
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import type { UserRole } from 'loved-bridge/tables';
 import { Role } from 'loved-bridge/tables';
-import config from './config.js';
 import db from './db.js';
 import { asyncHandler } from './express-helpers.js';
 
@@ -53,10 +52,7 @@ function hasRoleMiddleware(roleIds: readonly Role[], errorMessage: string): Requ
 }
 
 export const hasLocalInteropKeyMiddleware = asyncHandler(async (request, response, next) => {
-  if (
-    config.interopVersion == null ||
-    request.get('X-Loved-InteropVersion') !== config.interopVersion.toString()
-  ) {
+  if (request.get('X-Loved-InteropVersion') !== '8') {
     return response.status(422).json({ error: 'Unsupported program version' });
   }
 

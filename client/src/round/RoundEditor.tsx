@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { gameModeLongName } from 'loved-bridge/beatmaps/gameMode';
+import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import { Fragment, useState } from 'react';
 import { alertApiErrorMessage, apiErrorMessage, getNewsAuthors, updateRound, useApi } from '../api';
 import { autoHeightRef } from '../auto-height';
 import { inputDateTime } from '../date-format';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
-import type { IRound, IUser, PartialWithId } from '../interfaces';
+import type { IRound, IUser, PartialWith, PartialWithId } from '../interfaces';
 
 interface RoundEditorProps {
   close: () => void;
@@ -29,7 +31,15 @@ export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditor
   }
 
   const onSubmit: FormSubmitHandler = (form, then) => {
-    return updateRound(round.id, form)
+    const roundGameModes: PartialWith<IRound['game_modes'][GameMode], 'game_mode'>[] = [];
+
+    for (const [key, value] of Object.entries(form)) {
+      if (key.endsWith(':video')) {
+        roundGameModes.push({ game_mode: parseInt(key.split(':')[0], 10), video: value });
+      }
+    }
+
+    return updateRound(round.id, form, roundGameModes)
       .then(({ body }) => onRoundUpdate(body))
       .then(then)
       .catch(alertApiErrorMessage)
@@ -65,6 +75,30 @@ export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditor
           data-value-type='mySqlDate'
           pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}'
         />
+        <label htmlFor='video'>Video (intro)</label>
+        <input
+          type='text'
+          name='video'
+          defaultValue={round.video ?? undefined}
+          pattern='https?://.+\.mp4|[A-Za-z0-9_-]{11}'
+          placeholder='MP4 video link or YouTube video ID'
+          size={50}
+        />
+        {Object.values(round.game_modes).map((roundGameMode) => (
+          <Fragment key={roundGameMode.game_mode}>
+            <label htmlFor={`${roundGameMode.game_mode}:video`}>
+              Video ({gameModeLongName(roundGameMode.game_mode)})
+            </label>
+            <input
+              type='text'
+              name={`${roundGameMode.game_mode}:video`}
+              defaultValue={roundGameMode.video ?? undefined}
+              pattern='https?://.+\.mp4|[A-Za-z0-9_-]{11}'
+              placeholder='MP4 video link or YouTube video ID'
+              size={50}
+            />
+          </Fragment>
+        ))}
         <label htmlFor='news_intro_preview'>Intro preview</label>
         <textarea
           name='news_intro_preview'

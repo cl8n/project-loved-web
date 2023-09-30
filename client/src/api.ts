@@ -28,8 +28,8 @@ import type {
   IUser,
   IUserRole,
   IUserWithRoles,
+  PartialWith,
   PartialWithId,
-  PartialWithoutId,
 } from './interfaces';
 
 interface SuperAgentResponseWithBody<BodyType> extends SuperAgentResponse {
@@ -302,9 +302,10 @@ export function updateNominators(
 
 export function updateRound(
   roundId: number,
-  round: PartialWithoutId<IRound>,
-): Response<Omit<IRound, 'game_modes'> & { news_author: IUser }> {
-  return superagent.post('/api/update-round').send({ roundId, round });
+  round: Partial<Readonly<Omit<IRound, 'game_modes'>>>,
+  roundGameModes: readonly PartialWith<Readonly<IRound['game_modes'][GameMode]>, 'game_mode'>[],
+): Response<IRound & { news_author: IUser }> {
+  return superagent.post('/api/update-round').send({ round, roundGameModes, roundId });
 }
 
 export function updateSettings(settings: ISettings): Response<ISettings> {

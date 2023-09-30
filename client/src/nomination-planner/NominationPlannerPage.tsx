@@ -6,7 +6,7 @@ import {
   gameModeShortName,
 } from 'loved-bridge/beatmaps/gameMode';
 import type { MouseEvent } from 'react';
-import { NavLink, Redirect, useParams } from 'react-router-dom';
+import { Navigate, NavLink, useParams } from 'react-router-dom';
 import useTitle from '../useTitle';
 import NominationPlanner from './NominationPlanner';
 
@@ -17,9 +17,7 @@ export default function NominationPlannerPage() {
 
   if (gameMode == null) {
     return (
-      <Redirect
-        to={`/picks/planner/${localStorage.getItem('gameMode') ?? gameModeShortName(GameMode.osu)}`}
-      />
+      <Navigate replace to={localStorage.getItem('gameMode') ?? gameModeShortName(GameMode.osu)} />
     );
   }
 
@@ -40,7 +38,7 @@ export default function NominationPlannerPage() {
             key={gameMode}
             data-game-mode={gameMode}
             onClick={onGameModeClick}
-            to={`/picks/planner/${gameModeShortName(gameMode)}`}
+            to={gameModeShortName(gameMode)}
           >
             {gameModeLongName(gameMode)}
           </NavLink>
