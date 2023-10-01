@@ -463,7 +463,12 @@ function Nomination({
 
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
   const descriptionStarted = nomination.description != null;
-  const hasProgressWarnings = progressWarnings.size > 0;
+  const hasProgressWarnings =
+    !round.done &&
+    votingResult !== false &&
+    (progressWarnings.size > 0 ||
+      (hasRole(authUser, Role.captain, nomination.game_mode, true) &&
+        (gameModesWithBeatmaps.length > 0 || gameModesMissingParent.length > 0)));
   const metadataAssigned = nomination.metadata_assignees.length > 0;
   const metadataDone = nomination.metadata_state === MetadataState.good;
   const metadataStarted = nomination.metadata_state !== MetadataState.unchecked;
