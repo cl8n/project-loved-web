@@ -447,7 +447,6 @@ function Nomination({
       .catch(alertApiErrorMessage);
   };
 
-  let failedVoting = false;
   let votingResult: boolean | undefined;
 
   if (
@@ -456,10 +455,10 @@ function Nomination({
     nomination.poll.result_yes != null
   ) {
     const { result_no, result_yes } = nomination.poll;
-    const yesFraction = result_yes / (result_no + result_yes);
 
-    failedVoting = yesFraction < round.game_modes[nomination.game_mode].voting_threshold;
-    votingResult = !failedVoting;
+    votingResult =
+      result_yes / (result_no + result_yes) >=
+      round.game_modes[nomination.game_mode].voting_threshold;
   }
 
   const descriptionDone = nomination.description_state === DescriptionState.reviewed;
@@ -476,12 +475,12 @@ function Nomination({
 
   const canAssignMetadata =
     !round.done &&
-    !(failedVoting && !metadataAssigned) &&
+    !(votingResult === false && !metadataAssigned) &&
     !metadataDone &&
     hasRole(authUser, [Role.metadata, Role.newsAuthor]);
   const canAssignModeration =
     !round.done &&
-    !(failedVoting && !moderationAssigned) &&
+    !(votingResult === false && !moderationAssigned) &&
     !moderationDone &&
     hasRole(authUser, [Role.moderator, Role.newsAuthor]);
   const canDelete =
@@ -506,7 +505,7 @@ function Nomination({
     hasRole(authUser, Role.captain, nomination.game_mode);
   const canEditMetadata =
     !round.done &&
-    !failedVoting &&
+    votingResult !== false &&
     (canActAs(
       authUser,
       nomination.metadata_assignees.map((a) => a.id),
@@ -514,7 +513,7 @@ function Nomination({
       hasRole(authUser, Role.newsAuthor));
   const canEditModeration =
     !round.done &&
-    !failedVoting &&
+    votingResult !== false &&
     canActAs(
       authUser,
       nomination.moderator_assignees.map((a) => a.id),
