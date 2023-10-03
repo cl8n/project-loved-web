@@ -1,6 +1,10 @@
-/.idea
 /build-env
+/client/src/compiled-translations/
+/client/src/survey/data/
+/client/src/translations/en.json
+/import-legacy-data/mapper-consents/*.sql
+/import-legacy-data/mapper-consents/config.json
+/import-legacy-data/mapper-consents/mapper-sheet*.tsv
+.env
 build/
 node_modules/
-.env
-config.json
