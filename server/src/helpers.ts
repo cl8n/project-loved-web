@@ -37,7 +37,10 @@ export async function cleanNominationDescription(
     .replace(/\b(\d+) ?k\b/gi, '$1K')
     .replace(/\b(\d+) ?bpm\b/gi, '$1 BPM')
     .replace(/o2jam/gi, 'O2Jam')
-    .replace(/\[url=https?:\/\/osu\.ppy\.sh(\/wiki\/[^\]]+)\]/g, '[url=$1]');
+    .replace(
+      /\[url=(?:https?:\/\/)?osu\.ppy\.sh\/wiki\/(?:[a-z]{2}(?:-[a-z]{2})?\/)?([^\]]+)\]/g,
+      '[url=/wiki/$1]',
+    );
 
   let profileMatchStart = 0;
 
