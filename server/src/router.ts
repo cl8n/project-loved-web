@@ -507,7 +507,10 @@ router.post(
             : prevDescription == null
             ? res.typedLocals.user.id
             : prevAuthorId,
-          hasRole(Role.newsEditor) && prevDescription != null && description != null
+          hasRole(Role.newsEditor) &&
+          description != null &&
+          prevAuthorId !== res.typedLocals.user.id &&
+          prevDescription != null
             ? DescriptionState.reviewed
             : DescriptionState.notReviewed,
           req.body.nominationId,
