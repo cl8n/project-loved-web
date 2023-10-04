@@ -18,7 +18,7 @@ During the containers' startup, each file will be created with a default configu
 Regular database exports are posted to <https://loved.sh/exports>. They can be imported with the following command. **This will drop and re-create all tables!**
 
 ```
-docker compose exec database import [<export URL>]
+docker compose run --rm database import [<export URL>]
 ```
 
 This will be run automatically to get the latest live data on the first run of the database container.
@@ -26,15 +26,15 @@ This will be run automatically to get the latest live data on the first run of t
 ### Creating an admin user
 
 ```
-docker compose exec api build/bin/create-admin.js <osu! username>
+docker compose run --rm api build/bin/create-admin.js <osu! username>
 ```
 
 ### Translations
 
-Translations need to be extracted from the app and recompiled whenever English strings change. This is done automatically during the assets container's startup.
+Translations need to be extracted from the app and recompiled whenever English strings change.
 
 ```
-docker compose exec assets sh -c 'npm run extract-translations && npm run compile-translations'
+docker compose run --rm assets sh -c 'npm run extract-translations && npm run compile-translations'
 ```
 
 ### Database migrations
@@ -43,22 +43,18 @@ docker compose exec assets sh -c 'npm run extract-translations && npm run compil
 
 ### Bridge package
 
-The `bridge` directory contains a package required by both the client and server. It's built automatically during the containers' startup, but you will need to rebuild it yourself if changes are made:
+The `bridge` directory contains a package required by both the client and server. You will need to rebuild it yourself if changes are made:
 
 ```
-docker compose exec assets sh -c 'cd /app/bridge && npm install && npm run build-no-lint'
+docker compose run --rm assets sh -c 'cd /app/bridge && npm install && npm run build-no-lint'
 ```
 
 ...and reinstall it in `client` and `server`, if its dependencies change:
 
 ```
-docker compose exec assets npm install
-docker compose exec api npm install
+docker compose run --rm assets npm install
+docker compose run --rm api npm install
 ```
-
-### File permissions
-
-Note that the docker containers are running their commands as root, and any files created by them (build artifacts, Node packages, etc.) will be owned by the user with the matching ID on the host (typically also root). Different hosts may behave differently in this case. It's safe to claim ownership of these files on the host if necessary.
 
 ## Deployment
 

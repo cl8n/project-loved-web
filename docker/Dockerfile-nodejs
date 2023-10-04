@@ -1,0 +1,12 @@
+FROM node:18-slim
+
+RUN ["apt-get", "update", "-y"]
+RUN ["apt-get", "install", "-y", "gosu"]
+RUN ["npm", "install", "-g", "npm"]
+
+COPY run-with-host-uid.sh /
+COPY setup-cmd.sh /
+
+ENV NODE_ENV=development
+
+ENTRYPOINT ["/run-with-host-uid.sh"]

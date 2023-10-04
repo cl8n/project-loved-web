@@ -2,7 +2,8 @@ services:
   api:
     build:
       context: ./docker
-      dockerfile: Dockerfile-api
+      dockerfile: Dockerfile-nodejs
+    command: ["npm", "start"]
     depends_on:
       database:
         condition: service_healthy
@@ -18,22 +19,27 @@ services:
       DB_PASSWORD: ""
       DB_PORT: 3306
       DB_USER: project_loved
-      NODE_ENV: development
+      DOCKER_HOST_UID_SOURCE_DIR: /app/server
     volumes:
       - api_storage:/storage
       - ./bridge:/app/bridge
       - ./server:/app/server
+    working_dir: /app/server
 
   assets:
     build:
       context: ./docker
-      dockerfile: Dockerfile-assets
+      dockerfile: Dockerfile-nodejs
+    command: ["npm", "start"]
     depends_on:
       setup:
         condition: service_completed_successfully
+    environment:
+      DOCKER_HOST_UID_SOURCE_DIR: /app/client
     volumes:
       - ./bridge:/app/bridge
       - ./client:/app/client
+    working_dir: /app/client
 
   database:
     build:
@@ -67,7 +73,10 @@ services:
   setup:
     build:
       context: ./docker
-      dockerfile: Dockerfile-setup
+      dockerfile: Dockerfile-nodejs
+    command: ["/setup-cmd.sh"]
+    environment:
+      DOCKER_HOST_UID_SOURCE_DIR: /app
     volumes:
       - .:/app
 
