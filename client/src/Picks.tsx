@@ -1,13 +1,7 @@
 import { DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, diff_match_patch } from 'diff-match-patch';
 import { GameMode, gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import type { NominationDescriptionEdit } from 'loved-bridge/tables';
-import {
-  AssigneeType,
-  DescriptionState,
-  MetadataState,
-  ModeratorState,
-  Role,
-} from 'loved-bridge/tables';
+import { AssigneeType, MetadataState, ModeratorState, Role } from 'loved-bridge/tables';
 import { Fragment, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { FormattedDate } from 'react-intl';
 import { useParams } from 'react-router-dom';
