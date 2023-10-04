@@ -2,17 +2,20 @@
 
 set -eu
 
-user_name=project-loved
+host_uid="$(stat -c '%u' "$DOCKER_HOST_UID_SOURCE_DIR")"
+host_gid="$(stat -c '%g' "$DOCKER_HOST_UID_SOURCE_DIR")"
 
-groupadd -f "$user_name" >/dev/null
-id "$user_name" >/dev/null 2>&1 || useradd -g "$user_name" "$user_name" >/dev/null
-
-uid="$(stat -c '%u' "$DOCKER_HOST_UID_SOURCE_DIR")"
-gid="$(stat -c '%g' "$DOCKER_HOST_UID_SOURCE_DIR")"
-
-if test "$uid" -ne 0; then
-	usermod -ou "$uid" "$user_name" >/dev/null
-	groupmod -og "$gid" "$user_name" >/dev/null
+# If the host UID is root, just run the command. We are already root
+if test "$host_uid" -eq 0; then
+	exec "$@"
 fi
 
-exec gosu "$user_name" "$@"
+# If the host UID exists in the image, run gosu with that user
+if id "$host_uid" >/dev/null 2>&1; then
+	exec gosu "$host_uid" "$@"
+fi
+
+# Otherwise, make a new user with the host UID and GID
+groupadd -og "$host_gid" project-loved
+useradd -g "$host_gid" -u "$host_uid" project-loved
+exec gosu project-loved "$@"
