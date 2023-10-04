@@ -5,11 +5,13 @@ This project contains the web client (<https://loved.sh>), web server (<https://
 
 ## Development with Docker
 
-The provided Docker Compose configuration sets up a development environment with the client, API, MySQL, and Nginx. The website is exposed to the host on port 8080, and the MySQL server on port 3306.
+The provided Docker Compose configuration sets up a development environment with the client, API, MySQL, and Nginx. By default, Nginx is exposed to the host on port 8080, and MySQL on port 3306 (see [§ Environment variables](#environment-variables)).
 
 ### Environment variables
 
-Server environment variables can be written to `server/.env`. If this file doesn't exist, it will be created as a copy of `server/.env.example` during the containers' startup. Variables under "API server options" and "MySQL connection options" are overridden by the containers.
+Two sets of environment variables are available at `.env` and `server/.env`. The former can be used to configure the Docker Compose environment, and the latter can be used to configure the API server.
+
+During the containers' startup, each file will be created with a default configuration if it doesn't already exist. API server variables under "API server options" and "MySQL connection options" are overridden by the container.
 
 ### Live data
 

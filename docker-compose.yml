@@ -50,7 +50,7 @@ services:
       timeout: 60s
       start_period: 60s
     ports:
-      - "3306:3306"
+      - "${DOCKER_EXTERNAL_MYSQL_PORT:-3306}:3306"
     volumes:
       - database:/var/lib/mysql
 
@@ -60,7 +60,7 @@ services:
       - api
       - assets
     ports:
-      - "8080:80"
+      - "${DOCKER_EXTERNAL_NGINX_PORT:-8080}:80"
     volumes:
       - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
 
@@ -69,9 +69,7 @@ services:
       context: ./docker
       dockerfile: Dockerfile-setup
     volumes:
-      - ./bridge:/app/bridge
-      - ./client:/app/client
-      - ./server:/app/server
+      - .:/app
 
 volumes:
   api_storage:

@@ -11,4 +11,6 @@ npm install
 
 cd /app/server
 npm install
-cp -n .env.example .env
+
+cp -n /app/.env.example /app/.env
+cp -n /app/server/.env.example /app/server/.env
