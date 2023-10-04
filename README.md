@@ -1,7 +1,7 @@
 > [!WARNING]
 > This project is currently undergoing a major series of refactorings and will not be receiving many new features in the meantime. I don't recommend contributing to it at the moment either if you aren't already familiar with the codebase.
 
-This project contains the web client (<https://loved.sh>), web server (<https://loved.sh/api>), and related tools for osu!'s [Project Loved](https://osu.ppy.sh/wiki/Project_Loved). See [cl8n/project-loved](https://github.com/cl8n/project-loved) for more management tools.
+This project contains the web client (<https://loved.sh>), API server (<https://loved.sh/api>), and related tools for osu!'s [Project Loved](https://osu.ppy.sh/wiki/Project_Loved). See [cl8n/project-loved](https://github.com/cl8n/project-loved) for more management tools.
 
 ## Development with Docker
 
@@ -77,6 +77,6 @@ The built webpage will be in `client/build`; it's an SPA.
 - Copy `.env.example` to `.env` and fill in the options, or export the environment variables separately
 - Run the server: `NODE_ENV=production server/build/bin/server.js`
 
-Request paths under `/api` should proxy to the server, paths exactly matching files should serve the files, and everything else should serve the client's `index.html`.
+Request paths under `/api` should proxy to the server, paths exactly matching files should serve the files, and everything else should serve the client's `index.html`. See `docker/nginx.conf` for additional recommended configuration (but keep in mind that it's set up for a development environment).
 
 Also note that the `loved-bridge` package is installed from `../bridge`, so it will need to be deployed either at that path or at the target of a symbolic link from that path.
