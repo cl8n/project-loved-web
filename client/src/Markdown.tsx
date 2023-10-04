@@ -22,5 +22,5 @@ interface MarkdownProps {
 }
 
 export default function Markdown({ text }: MarkdownProps) {
-  return <span dangerouslySetInnerHTML={{ __html: processor.processSync(text).toString() }} />;
+  return <p dangerouslySetInnerHTML={{ __html: processor.processSync(text).toString() }} />;
 }
