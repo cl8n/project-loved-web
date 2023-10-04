@@ -447,6 +447,10 @@ router.post(
 router.post(
   '/nomination-edit-description',
   asyncHandler(async (req, res) => {
+    // TODO if round is done, deny
+    // TODO if polls are open and user is not news author, deny
+    // TODO if polls are open and user is news author, allow
+
     // Checking for exactly null to validate input
     // eslint-disable-next-line eqeqeq
     if (req.body.description !== null && typeof req.body.description !== 'string') {
