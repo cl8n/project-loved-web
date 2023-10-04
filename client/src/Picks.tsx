@@ -461,8 +461,6 @@ function Nomination({
       round.game_modes[nomination.game_mode].voting_threshold;
   }
 
-  const descriptionDone = nomination.description_state === DescriptionState.reviewed;
-  const descriptionStarted = nomination.description != null;
   const hasProgressWarnings =
     !round.done &&
     votingResult !== false &&
@@ -499,8 +497,8 @@ function Nomination({
   const canEditDescription =
     !round.done &&
     (nomination.poll == null
-      ? (!descriptionDone && hasRole(authUser, Role.captain, nomination.game_mode)) ||
-        (descriptionStarted && hasRole(authUser, Role.newsEditor))
+      ? hasRole(authUser, Role.captain, nomination.game_mode) ||
+        (nomination.description != null && hasRole(authUser, Role.newsEditor))
       : hasRole(authUser, Role.newsAuthor));
   const canEditDifficulties =
     !round.done &&

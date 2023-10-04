@@ -462,10 +462,10 @@ router.post(
     }
 
     const existingNomination = await db.queryOne<
-      Pick<Nomination, 'description' | 'description_author_id' | 'description_state' | 'game_mode'>
+      Pick<Nomination, 'description' | 'description_author_id' | 'game_mode'>
     >(
       `
-        SELECT description, description_author_id, description_state, game_mode
+        SELECT description, description_author_id, game_mode
         FROM nominations
         WHERE id = ?
       `,
@@ -479,13 +479,12 @@ router.post(
     const {
       description: prevDescription,
       description_author_id: prevAuthorId,
-      description_state: prevState,
       game_mode: gameMode,
     } = existingNomination;
     const hasRole = currentUserRoles(req, res);
 
     if (
-      !(prevState !== DescriptionState.reviewed && hasRole(Role.captain, gameMode)) &&
+      !hasRole(Role.captain, gameMode) &&
       !(prevDescription != null && hasRole(Role.newsEditor))
     ) {
       return res.status(403).send();
