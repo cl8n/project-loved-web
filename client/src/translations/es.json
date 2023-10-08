@@ -135,7 +135,7 @@
     "defaultMessage": "Buscar:"
   },
   "CCGzFA": {
-    "defaultMessage": "Votación fallida"
+    "defaultMessage": "Votación aprobada"
   },
   "CIAu6S": {
     "defaultMessage": "Wiki"
@@ -444,7 +444,7 @@
     "defaultMessage": "Esta página no esta disponible para ti aún. ¡Revisa más tarde!"
   },
   "lULo+e": {
-    "defaultMessage": "Falló en la votación"
+    "defaultMessage": "Votación fallida"
   },
   "lbC8H+": {
     "defaultMessage": "Mapper"
