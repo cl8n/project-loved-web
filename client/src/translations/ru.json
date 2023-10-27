@@ -24,7 +24,7 @@
     "defaultMessage": "Статус карты:"
   },
   "/SSCZX": {
-    "defaultMessage": "Да"
+    "defaultMessage": "За"
   },
   "0+S3hP": {
     "defaultMessage": "Если карта, которую вы отправляете, либо очень непопулярна, либо совершенно неиграбельна, капитаны могут никогда не проверить ее. Пожалуйста, отправляйте только те карты, которые, по вашему мнению, действительно подходят для категории «Любимая»."
@@ -60,7 +60,7 @@
     "defaultMessage": "Низкий"
   },
   "3FN4wO": {
-    "defaultMessage": "Этот опрос был закрыт. Спасибо за ваше участие!"
+    "defaultMessage": "Этот опрос завершён. Спасибо за ваше участие!"
   },
   "3Kch6P": {
     "defaultMessage": "По возрастанию"
@@ -96,7 +96,7 @@
     "defaultMessage": "Приоритет"
   },
   "7u3Yi2": {
-    "defaultMessage": "Вы также можете удерживать {key} пока нажимаете на карту чтобы открыть модальный обзор."
+    "defaultMessage": "Вы также можете удерживать {key} при нажатии на карту, чтобы открыть форму для обзора."
   },
   "8NqvA2": {
     "defaultMessage": "Режим клавиш:"
@@ -105,7 +105,7 @@
     "defaultMessage": "Закрыть"
   },
   "8l6BC0": {
-    "defaultMessage": "Соглашения мапперов"
+    "defaultMessage": "Согласия мапперов"
   },
   "8x1LMQ": {
     "defaultMessage": "Добавить"
@@ -114,7 +114,7 @@
     "defaultMessage": "Список карт"
   },
   "A1mh2c": {
-    "defaultMessage": "Счёт"
+    "defaultMessage": "Оценка"
   },
   "AGzOYr": {
     "defaultMessage": "Добавить карту в Любимые!"
@@ -126,7 +126,7 @@
     "defaultMessage": "Ранг"
   },
   "Be0kKF": {
-    "defaultMessage": "Карта, которую вы отправляете, может быть никогда не номинирована на «Любимая», даже если у нее есть какие-то достоинства. В настоящее время процент избранных карт ограничен, поэтому вполне возможно, что капитаны будут постоянно находить лучший выбор, чем карта, которую вы отправляете."
+    "defaultMessage": "Карта, которую вы отправляете, может быть никогда не номинирована на «Любимая», даже если у нее есть какие-то достоинства. В настоящее время частота попадания в избранные карты ограничена, поэтому вполне возможно, что капитаны будут постоянно находить более лучший выбор, чем карта, которую вы отправляете."
   },
   "Bppfuf": {
     "defaultMessage": "(alumni)"
@@ -141,16 +141,16 @@
     "defaultMessage": "Вики"
   },
   "Cg4Je8": {
-    "defaultMessage": "без предпочтения"
+    "defaultMessage": "безразличием"
   },
   "CxsxoI": {
     "defaultMessage": "Отправляем..."
   },
   "Do+EPJ": {
-    "defaultMessage": "{user} оценивает с {score} - {timestamp, date, long}"
+    "defaultMessage": "{user} оценивает {score} - {timestamp, date, long}"
   },
   "E7ffvt": {
-    "defaultMessage": "сильная поддержка"
+    "defaultMessage": "с сильной поддержкой"
   },
   "F1tQfW": {
     "defaultMessage": "Название"
@@ -165,13 +165,13 @@
     "defaultMessage": "Маппер просит, чтобы эта карта не относилась к категории «Любимые»."
   },
   "H+WN2F": {
-    "defaultMessage": "несогласие"
+    "defaultMessage": "с возражением"
   },
   "H65rvb": {
     "defaultMessage": "Вы недостаточно круты, чтобы увидеть эту страницу."
   },
   "HVzPRU": {
-    "defaultMessage": "Нет"
+    "defaultMessage": "Против"
   },
   "Hf1vPz": {
     "defaultMessage": "Выборы"
@@ -198,13 +198,13 @@
     "defaultMessage": "Игрок"
   },
   "JFDpsO": {
-    "defaultMessage": "То, что вы напишете в этой форме будет видно всем, так что не пишите что-то что вы не хотите чтобы другие увидели."
+    "defaultMessage": "То, что вы напишете в этой форме, будет видно всем, так что не следует писать того, чего не хотите, чтобы другие увидели."
   },
   "JHNIy2": {
     "defaultMessage": "Отображать раунды:"
   },
   "JPKVz4": {
-    "defaultMessage": "Список карт"
+    "defaultMessage": "Карта"
   },
   "JPSkxB": {
     "defaultMessage": "{country} флаг"
@@ -222,7 +222,7 @@
     "defaultMessage": "Project Loved"
   },
   "MItLwF": {
-    "defaultMessage": "Обозреть"
+    "defaultMessage": "Сделать обзор"
   },
   "MLkhaQ": {
     "defaultMessage": "На голосовании"
@@ -249,7 +249,7 @@
     "defaultMessage": "В разработке"
   },
   "Nee/tG": {
-    "defaultMessage": "поддержка"
+    "defaultMessage": "поддержкой"
   },
   "NjIKQe": {
     "defaultMessage": "Недоступно"
@@ -264,7 +264,7 @@
     "defaultMessage": "Отправить"
   },
   "PCZJkZ": {
-    "defaultMessage": "Исходный код и трекер"
+    "defaultMessage": "Исходный код и трекер ошибок"
   },
   "PHaXeh": {
     "defaultMessage": "Карта удалена"
@@ -351,7 +351,7 @@
     "defaultMessage": "Сложности"
   },
   "Ze8fJ0": {
-    "defaultMessage": "Выберите счёт"
+    "defaultMessage": "Выберите оценку"
   },
   "a/VT/Q": {
     "defaultMessage": "Общая информация про Project Loved"
@@ -366,7 +366,7 @@
     "defaultMessage": "Изменить обзор"
   },
   "bcLpeC": {
-    "defaultMessage": "Необычный"
+    "defaultMessage": "Нестандартные"
   },
   "c/1pjl": {
     "defaultMessage": "Сравнить через:"
@@ -411,7 +411,7 @@
     "defaultMessage": "Выйти"
   },
   "ht0/kF": {
-    "defaultMessage": "Обычный"
+    "defaultMessage": "Стандартные"
   },
   "iCkWun": {
     "defaultMessage": "Раунд"
@@ -468,7 +468,7 @@
     "defaultMessage": "Нажмите здесь чтобы проголосовать в раунде {roundName}!"
   },
   "nUQEC7": {
-    "defaultMessage": "сильное несогласие"
+    "defaultMessage": "с сильным возражением"
   },
   "nkWBfH": {
     "defaultMessage": "Основной канал для дискуссий о поддержании и направлении Project Loved"
@@ -570,7 +570,7 @@
     "defaultMessage": "Регулярные бекапы (почти) всей информации на этом сайте"
   },
   "xv9aUB": {
-    "defaultMessage": "Да и нет"
+    "defaultMessage": "За и Против"
   },
   "yQeX5q": {
     "defaultMessage": "Тема: {selector}"
