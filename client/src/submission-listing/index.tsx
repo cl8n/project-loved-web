@@ -341,7 +341,7 @@ export default function SubmissionListingContainer() {
                   ))}
                 </optgroup>
                 <optgroup label={intl.formatMessage(messages.uncommonKeyModes)}>
-                  {[1, 2, 3, 5, 6, 8, 9, 10].map((keyMode) => (
+                  {[1, 2, 3, 5, 6, 8, 9, 10, 12, 14, 16, 18].map((keyMode) => (
                     <option key={keyMode} value={keyMode}>
                       {keyMode}K
                     </option>
