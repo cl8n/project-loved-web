@@ -58,4 +58,8 @@
       transform: translateX(-50%) translateY(-50%) rotateZ(-135deg);
     }
   }
+
+  > * {
+    --accent-background: var(--background);
+  }
 }

@@ -306,7 +306,7 @@ main {
   background-color: var(--background);
 }
 
-main, .box, .content-block {
+main, .box, .content-block, .tooltip {
   > :first-child {
     margin-top: 0;
   }
@@ -409,6 +409,11 @@ footer {
 .flex-text {
   display: flex;
   gap: 0.35em;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+  gap: 0.25em 1em;
 }
 
 .success {
@@ -686,6 +691,22 @@ tr.sticky > th {
   margin-left: auto;
   margin-right: auto;
   max-width: max-content;
+}
+
+.submissions-search-help-table {
+  border-collapse: collapse;
+
+  tr + tr > td {
+    padding-top: 0.5em;
+  }
+
+  td {
+    vertical-align: top;
+
+    + td {
+      padding-left: 1em;
+    }
+  }
 }
 
 .submissions-table {

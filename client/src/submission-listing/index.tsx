@@ -392,11 +392,87 @@ export default function SubmissionListingContainer() {
           )}
         </div>
         <div className='flex-left slim-margin'>
-          <FormattedMessage
-            defaultMessage='Search:'
-            description='[Submissions] Title for submissions search input'
-            tagName='span'
-          />
+          <span>
+            <FormattedMessage
+              defaultMessage='Search:'
+              description='[Submissions] Title for submissions search input'
+            />{' '}
+            <Help>
+              <FormattedMessage
+                defaultMessage='Typing into this field will search by title, artist, and creator.'
+                description='[Submissions] Help text for the "Search" field (basic use)'
+                tagName='p'
+              />
+              <FormattedMessage
+                defaultMessage='Comparisons may be included to match against more properties. For example, {comparison} will filter to maps with more than 100 favorites.'
+                description='[Submissions] Help text for the "Search" field (intro to comparisons)'
+                tagName='p'
+                values={{
+                  comparison: (
+                    <>
+                      <span className='search-input search-input--operand-1'>favorites</span>
+                      <span className='search-input search-input--operator'>{'>'}</span>
+                      <span className='search-input search-input--operand-2'>100</span>
+                    </>
+                  ),
+                }}
+              />
+              <table className='submissions-search-help-table'>
+                <tbody>
+                  <tr>
+                    <FormattedMessage
+                      defaultMessage='Available properties:'
+                      description='[Submissions] Help text for the "Search" field (properties)'
+                      tagName='td'
+                    />
+                    <td>
+                      <div className='flex-left flex-wrap'>
+                        <span className='search-input search-input--operand-1'>artist</span>
+                        <span className='search-input search-input--operand-1'>bpm</span>
+                        <span className='search-input search-input--operand-1'>creator</span>
+                        <span className='search-input search-input--operand-1'>difficulties</span>
+                        <span className='search-input search-input--operand-1'>diffs</span>
+                        <span className='search-input search-input--operand-1'>favorites</span>
+                        <span className='search-input search-input--operand-1'>favs</span>
+                        <span className='search-input search-input--operand-1'>length</span>
+                        <span className='search-input search-input--operand-1'>mapper</span>
+                        <span className='search-input search-input--operand-1'>playcount</span>
+                        <span className='search-input search-input--operand-1'>plays</span>
+                        <span className='search-input search-input--operand-1'>priority</span>
+                        <span className='search-input search-input--operand-1'>rating</span>
+                        <span className='search-input search-input--operand-1'>score</span>
+                        <span className='search-input search-input--operand-1'>submitted</span>
+                        <span className='search-input search-input--operand-1'>title</span>
+                        <span className='search-input search-input--operand-1'>updated</span>
+                        <span className='search-input search-input--operand-1'>year</span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <FormattedMessage
+                      defaultMessage='Available operators:'
+                      description='[Submissions] Help text for the "Search" field (operators)'
+                      tagName='td'
+                    />
+                    <td>
+                      <div className='flex-left flex-wrap'>
+                        <span className='search-input search-input--operator'>{'='}</span>
+                        <span className='search-input search-input--operator'>{'=='}</span>
+                        <span className='search-input search-input--operator'>{':'}</span>
+                        <span className='search-input search-input--operator'>{'!='}</span>
+                        <span className='search-input search-input--operator'>{'!:'}</span>
+                        <span className='search-input search-input--operator'>{'<>'}</span>
+                        <span className='search-input search-input--operator'>{'<'}</span>
+                        <span className='search-input search-input--operator'>{'<='}</span>
+                        <span className='search-input search-input--operator'>{'>'}</span>
+                        <span className='search-input search-input--operator'>{'>='}</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </Help>
+          </span>
           <SearchInput
             search={search}
             setSearch={(search) => {
