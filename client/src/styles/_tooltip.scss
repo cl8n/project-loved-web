@@ -1,9 +1,6 @@
 .has-tooltip {
   display: inline-block;
-}
-
-.tooltip-container {
-  position: absolute;
+  position: relative;
 }
 
 .tooltip {
@@ -11,20 +8,34 @@
   border: 1px solid var(--content);
   color: var(--content);
   font-weight: normal;
-  margin-bottom: 0.5em;
+  left: 50%;
+  max-width: 500px;
   padding: 0.5em;
   position: absolute;
   transform: translateX(-50%);
   width: max-content;
   z-index: 1;
 
+  &--above {
+    bottom: calc(100% + 0.5em);
+  }
+
+  &--below {
+    top: calc(100% + 0.5em);
+  }
+
   &__hover-area {
-    bottom: calc(-0.5em - 2px);
-    left: -1px;
+    inset: -1px;
     position: absolute;
-    right: -1px;
-    top: -1px;
     z-index: -1;
+
+    .tooltip--above & {
+      bottom: calc(-0.5em - 2px);
+    }
+
+    .tooltip--below & {
+      top: calc(-0.5em - 2px);
+    }
   }
 
   &__triangle {
@@ -34,9 +45,17 @@
     height: 10px;
     left: 50%;
     position: absolute;
-    top: calc(100% + 1px);
-    transform: translateX(-50%) translateY(-50%) rotateZ(45deg);
     width: 10px;
     z-index: -1;
+
+    .tooltip--above & {
+      bottom: -1px;
+      transform: translateX(-50%) translateY(50%) rotateZ(45deg);
+    }
+
+    .tooltip--below & {
+      top: -1px;
+      transform: translateX(-50%) translateY(-50%) rotateZ(-135deg);
+    }
   }
 }
