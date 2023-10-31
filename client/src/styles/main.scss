@@ -392,21 +392,23 @@ footer {
   justify-content: space-between;
 }
 
-.flex-left {
-  display: flex;
+.flex-center {
   align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  justify-content: center;
+}
 
-  > :not(:first-child) {
-    margin-left: 1em;
-  }
+.flex-left {
+  align-items: center;
+  display: flex;
+  gap: 1em;
 }
 
 .flex-text {
   display: flex;
-
-  > :not(:first-child) {
-    margin-left: 0.35em;
-  }
+  gap: 0.35em;
 }
 
 .success {
