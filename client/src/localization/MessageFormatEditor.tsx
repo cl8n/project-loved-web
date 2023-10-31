@@ -12,7 +12,7 @@ function addRanges(ranges: Range[], path: Path, elements: MessageFormatElement[]
       anchor: { path, offset: element.location!.start.offset },
       focus: { path, offset: element.location!.end.offset },
       type: element.type,
-    } as Range);
+    });
 
     if (element.type === TYPE.select || element.type === TYPE.plural) {
       for (const option of Object.values(element.options)) {
