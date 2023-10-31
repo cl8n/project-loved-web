@@ -1,0 +1,15 @@
+.search-input {
+  background-color: var(--accent-background);
+
+  &--operand-1, &--operand-2 {
+    color: var(--accent-light);
+  }
+
+  &--operator {
+    color: var(--accent);
+  }
+
+  &--quote {
+    color: var(--secondary-accent);
+  }
+}

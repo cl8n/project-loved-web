@@ -10,6 +10,7 @@ import type { ChangeEvent, Dispatch } from 'react';
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
+import type { GetSubmissionsResponseBody } from '../api';
 import { apiErrorMessage, getSubmissions, useApi } from '../api';
 import { dateFromString } from '../date-format';
 import Help from '../Help';
@@ -25,6 +26,8 @@ import {
   toggleableColumns,
 } from './helpers';
 import type { SubmittedBeatmapset } from './interfaces';
+import type { Comparison, Search } from './SearchInput';
+import SearchInput from './SearchInput';
 import SortButton from './SortButton';
 import SubmissionBeatmapset from './SubmissionBeatmapset';
 
@@ -247,7 +250,7 @@ export default function SubmissionListingContainer() {
   });
   const [page, setPage] = useState(1);
   const [reviewStatus, setReviewStatus] = useState<ReviewStatus>('any');
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState<Search>({ comparisons: [], rawSearch: '' });
   const [sorts, updateSort] = useReducer(sortsReducer, initialSortsState);
   const sortOptions = useMemo(
     () => [allSorts, allSorts.filter((sort) => sort !== sorts[0].sort)] as const,
@@ -370,12 +373,10 @@ export default function SubmissionListingContainer() {
             description='[Submissions] Title for submissions search input'
             tagName='span'
           />
-          <input
-            type='search'
-            className='flex-grow'
-            value={search}
-            onChange={(event) => {
-              setSearch(event.currentTarget.value);
+          <SearchInput
+            search={search}
+            setSearch={(search) => {
+              setSearch(search);
               setPage(1);
             }}
           />
@@ -472,7 +473,7 @@ export default function SubmissionListingContainer() {
         keyMode={keyMode}
         page={page}
         reviewStatus={reviewStatus}
-        searchLowerCase={search.toLowerCase()}
+        search={search}
         setPage={setPage}
         sorts={sorts}
       />
@@ -528,6 +529,74 @@ function beatmapsetSortFn(
     );
 }
 
+function matchesSearch(
+  beatmapset: GetSubmissionsResponseBody['beatmapsets'][number],
+  gameMode: GameMode,
+  search: Search,
+): boolean {
+  if (
+    search.textSearch != null &&
+    !beatmapset.artist.toLowerCase().includes(search.textSearch) &&
+    !beatmapset.creator_name.toLowerCase().includes(search.textSearch) &&
+    !beatmapset.title.toLowerCase().includes(search.textSearch)
+  ) {
+    return false;
+  }
+
+  if (search.comparisons.length > 0) {
+    const comparisonLhsMap = {
+      artist: beatmapset.artist.toLowerCase(),
+      beatmap_count: beatmapset.beatmap_counts[gameMode],
+      bpm: beatmapset.modal_bpm,
+      creator_name: beatmapset.creator_name.toLowerCase(),
+      favorites: beatmapset.favorite_count,
+      length: beatmapset.maximum_length,
+      plays: beatmapset.play_count,
+      priority: beatmapset.review_score,
+      rating: beatmapset.review_score_all,
+      score: beatmapset.score,
+      title: beatmapset.title.toLowerCase(),
+      submitted_at: dateFromString(beatmapset.submitted_at).getFullYear(),
+      updated_at: dateFromString(beatmapset.updated_at).getFullYear(),
+    };
+
+    return search.comparisons.every((c) => satisfiesComparison(c, comparisonLhsMap[c.lhs]));
+  }
+
+  return true;
+}
+
+function satisfiesComparison(comparison: Comparison, lhs: number | string): boolean {
+  const { operator, rhs } = comparison;
+
+  if (typeof lhs === 'number' && typeof rhs === 'number') {
+    const roundedLhs = Math.round(lhs * 100) / 100;
+    const roundedRhs = Math.round(rhs * 100) / 100;
+
+    switch (operator) {
+      case '=':
+        return roundedLhs === roundedRhs;
+      case '!=':
+        return roundedLhs !== roundedRhs;
+      case '<':
+        return roundedLhs < roundedRhs;
+      case '<=':
+        return roundedLhs <= roundedRhs;
+      case '>':
+        return roundedLhs > roundedRhs;
+      case '>=':
+        return roundedLhs >= roundedRhs;
+    }
+  }
+
+  if (typeof lhs === 'string' && typeof rhs === 'string') {
+    const result = lhs.includes(rhs);
+    return operator === '=' ? result : !result;
+  }
+
+  return false;
+}
+
 function sortReviews(a: IReview, b: IReview): number {
   return (
     +(b.score < -3) - +(a.score < -3) ||
@@ -545,7 +614,7 @@ interface SubmissionListingProps {
   keyMode: number | undefined;
   page: number;
   reviewStatus: ReviewStatus;
-  searchLowerCase: string;
+  search: Search;
   setPage: Dispatch<number>;
   sorts: SortsState;
 }
@@ -557,7 +626,7 @@ function SubmissionListing({
   keyMode,
   page,
   reviewStatus,
-  searchLowerCase,
+  search,
   setPage,
   sorts,
 }: SubmissionListingProps) {
@@ -581,10 +650,7 @@ function SubmissionListing({
           (beatmapStatus === 'lovedAndRanked'
             ? beatmapset.ranked_status > RankedStatus.pending
             : beatmapset.ranked_status <= RankedStatus.pending) &&
-          (searchLowerCase.length === 0 ||
-            beatmapset.artist.toLowerCase().includes(searchLowerCase) ||
-            beatmapset.creator_name.toLowerCase().includes(searchLowerCase) ||
-            beatmapset.title.toLowerCase().includes(searchLowerCase)) &&
+          matchesSearch(beatmapset, gameMode, search) &&
           (authUser == null ||
             reviewStatus === 'any' ||
             (reviewStatus === 'reviewed') ===
@@ -602,7 +668,7 @@ function SubmissionListing({
       .sort(beatmapsetSortFn(sorts[0], beatmapStatus))
       .sort((a, b) => +(b.poll?.in_progress ?? false) - +(a.poll?.in_progress ?? false))
       .sort((a, b) => +(a.deleted_at != null) - +(b.deleted_at != null));
-  }, [authUser, beatmapStatus, keyMode, reviewStatus, searchLowerCase, sorts, submissionsInfo]);
+  }, [authUser, beatmapStatus, gameMode, keyMode, reviewStatus, search, sorts, submissionsInfo]);
 
   useEffect(() => {
     if (displayBeatmapsets == null || typeof submittedBeatmapsetId !== 'number') {
