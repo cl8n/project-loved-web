@@ -314,8 +314,8 @@ export default function SubmissionListingContainer() {
         description='[Submissions] Submissions table title'
         tagName='h1'
       />
-      <div className='block-margin'>
-        <div className='flex-left'>
+      <div className='block-margin submissions-controls'>
+        <div className='flex-center'>
           <label htmlFor='gameMode'>{intl.formatMessage(messages.gameMode)}</label>
           <select name='gameMode' value={gameMode} onChange={onGameModeChange}>
             {gameModes.map((m) => (
@@ -368,6 +368,30 @@ export default function SubmissionListingContainer() {
               </option>
             ))}
           </select>
+          {authUser != null && (
+            <>
+              <FormattedMessage
+                defaultMessage='My review status:'
+                description='[Submissions] Selector to change own review status filter'
+                tagName='span'
+              />
+              <select
+                value={reviewStatus}
+                onChange={(event) => {
+                  setReviewStatus(event.currentTarget.value as ReviewStatus);
+                  setPage(1);
+                }}
+              >
+                {allReviewStatuses.map((status) => (
+                  <option key={status} value={status}>
+                    {intl.formatMessage(messages[status])}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
+        </div>
+        <div className='flex-left slim-margin'>
           <FormattedMessage
             defaultMessage='Search:'
             description='[Submissions] Title for submissions search input'
@@ -381,29 +405,7 @@ export default function SubmissionListingContainer() {
             }}
           />
         </div>
-        {authUser != null && (
-          <div className='flex-left slim-margin'>
-            <FormattedMessage
-              defaultMessage='My review status:'
-              description='[Submissions] Selector to change own review status filter'
-              tagName='span'
-            />
-            <select
-              value={reviewStatus}
-              onChange={(event) => {
-                setReviewStatus(event.currentTarget.value as ReviewStatus);
-                setPage(1);
-              }}
-            >
-              {allReviewStatuses.map((status) => (
-                <option key={status} value={status}>
-                  {intl.formatMessage(messages[status])}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-        <div className='flex-left slim-margin'>
+        <div className='flex-center slim-margin'>
           <FormattedMessage
             defaultMessage='Columns:'
             description='[Submissions] Title for options to show or hide columns'
