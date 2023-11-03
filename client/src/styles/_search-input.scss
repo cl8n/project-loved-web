@@ -1,6 +1,10 @@
 .search-input {
   background-color: var(--accent-background);
 
+  .tooltip & {
+    background-color: var(--background);
+  }
+
   &--operand-1, &--operand-2 {
     color: var(--accent-light);
   }
