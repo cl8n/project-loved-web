@@ -894,12 +894,19 @@ router.get(
   }),
 );
 
-router.post('/add-round', isNewsAuthorMiddleware, (_, res) => {
+router.post('/add-round', (req, res) => {
+  const hasRole = currentUserRoles(req, res);
+
+  if (!hasRole([Role.captain, Role.newsAuthor])) {
+    return res.status(403).json({ error: 'Must be a captain or news author' });
+  }
+
   db.transact(async (connection) => {
     const queryResult = await connection.query('INSERT INTO rounds SET ?', [
       {
         name: 'Unnamed round',
-        news_author_id: res.typedLocals.user.id,
+        // BanchoBot if current user is not a news author
+        news_author_id: hasRole(Role.newsAuthor, undefined, true) ? res.typedLocals.user.id : 3,
       },
     ]);
 
