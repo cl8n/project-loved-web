@@ -122,8 +122,8 @@ export default function AddNomination({ gameMode, onNominationAdd, roundId }: Ad
         </span>
         <input type='number' name='parentId' data-value-type='int' />
         <button type='submit'>{busy ? 'Adding...' : 'Add'}</button>
-        <span className='flex-separator' />
-        <Link to={`../planner/${gameModeShortName(gameMode)}`}>Nomination planner</Link>
+        {/* <span className='flex-separator' />
+        <Link to={`../planner/${gameModeShortName(gameMode)}`}>Nomination planner</Link> */}
       </p>
     </Form>
   );
