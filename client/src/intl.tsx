@@ -18,19 +18,19 @@ function loadMessages(locale: string): Record<string, MessageFormatElement[]> {
 
 export const locales = [
   { code: 'en', name: 'English' },
-  { code: 'bg', name: 'Български' },
+  { code: 'bg', name: 'български' },
   { code: 'de', name: 'Deutsch' },
   { code: 'es', name: 'español' },
-  { code: 'fi', name: 'Suomi' },
-  { code: 'it', name: 'Italiano' },
+  { code: 'fi', name: 'suomi' },
+  { code: 'it', name: 'italiano' },
   { code: 'ja', name: '日本語' },
   { code: 'pl', name: 'polski' },
-  { code: 'pt-br', name: 'Português (Brasil)' },
-  { code: 'ru', name: 'Русский' },
-  { code: 'sv', name: 'Svenska' },
+  { code: 'pt-br', name: 'português brasileiro' },
+  { code: 'ru', name: 'русский' },
+  { code: 'sv', name: 'svenska' },
   { code: 'tr', name: 'Türkçe' },
-  { code: 'uk', name: 'Українська мова' },
-  { code: 'vi', name: 'Tiếng Việt' },
+  { code: 'uk', name: 'українська мова' },
+  { code: 'vi', name: 'tiếng Việt' },
   { code: 'zh', name: '简体中文' },
 ] as const;
 
