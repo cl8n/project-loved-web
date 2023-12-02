@@ -38,7 +38,7 @@ export default function HeaderControls({ locale, progress }: HeaderControlsProps
         </datalist>
         <button
           type='button'
-          disabled={!/^[a-z]{2}(?:-[a-z]{2})?$/.test(localeInput)}
+          disabled={!/^[a-z-]{2,5}$/.test(localeInput)}
           onClick={() => {
             if (localeInput !== locale) {
               navigate(localeInput);

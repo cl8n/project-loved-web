@@ -38,7 +38,7 @@ export async function cleanNominationDescription(
     .replace(/\b(\d+) ?bpm\b/gi, '$1 BPM')
     .replace(/o2jam/gi, 'O2Jam')
     .replace(
-      /\[url=(?:https?:\/\/)?osu\.ppy\.sh\/wiki\/(?:[a-z]{2}(?:-[a-z]{2})?\/)?([^\]]+)\]/g,
+      /\[url=(?:https?:\/\/)?osu\.ppy\.sh\/wiki\/(?:[a-z-]{2,5}\/)?([^\]]+)\]/g,
       '[url=/wiki/$1]',
     );
 
