@@ -129,8 +129,8 @@ const messages = defineMessages({
     defaultMessage: 'Low',
     description: '[Submissions] Aggregate review score shown on submissions table',
   },
-  rejected: {
-    defaultMessage: 'Rejected',
+  veryLow: {
+    defaultMessage: 'Very low',
     description: '[Submissions] Aggregate review score shown on submissions table',
   },
   pending: {
@@ -397,7 +397,7 @@ const priorities = [
   [5, messages.high, 'high'],
   [0, messages.medium, 'medium'],
   [-5, messages.low, 'low'],
-  [-Infinity, messages.rejected, 'rejected'],
+  [-Infinity, messages.veryLow, 'very-low'],
 ] as const;
 
 interface PriorityCellProps {
@@ -408,7 +408,7 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
   const intl = useIntl();
 
   if (beatmapset.deleted_at != null) {
-    return <td className='priority rejected'>{intl.formatMessage(messages.deleted)}</td>;
+    return <td className='priority very-low'>{intl.formatMessage(messages.deleted)}</td>;
   }
 
   if (beatmapset.poll?.in_progress) {
@@ -422,12 +422,12 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
   }
 
   if (beatmapset.strictly_rejected) {
-    return <td className='priority rejected'>{intl.formatMessage(messages.notAllowed)}</td>;
+    return <td className='priority very-low'>{intl.formatMessage(messages.notAllowed)}</td>;
   }
 
   if (beatmapset.consent === false) {
     return (
-      <td className='priority rejected'>
+      <td className='priority very-low'>
         {intl.formatMessage(messages.notAllowed)}{' '}
         <Help>{intl.formatMessage(messages.notAllowedNoConsent)}</Help>
       </td>
@@ -469,7 +469,7 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
 
   if (beatmapset.creator.banned) {
     return (
-      <td className='priority rejected'>
+      <td className='priority very-low'>
         {intl.formatMessage(messages.notAllowed)}{' '}
         <Help>{intl.formatMessage(messages.notAllowedMapperBanned)}</Help>
       </td>
@@ -478,7 +478,7 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
 
   if (beatmapset.maximum_length < 20) {
     return (
-      <td className='priority rejected'>
+      <td className='priority very-low'>
         {intl.formatMessage(messages.notAllowed)}{' '}
         <Help>{intl.formatMessage(messages.notAllowedTooShort)}</Help>
       </td>
@@ -487,7 +487,7 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
 
   if (beatmapset.low_favorites) {
     return (
-      <td className='priority rejected'>
+      <td className='priority very-low'>
         {intl.formatMessage(messages.notAllowed)}{' '}
         <Help>{intl.formatMessage(messages.notAllowedLowFavorites)}</Help>
       </td>

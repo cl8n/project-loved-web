@@ -6,6 +6,11 @@ import {
   gameModeShortName,
 } from 'loved-bridge/beatmaps/gameMode';
 import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
+import {
+  beatmapCaptainPriority,
+  beatmapRating,
+  containsNotAllowed,
+} from 'loved-bridge/beatmaps/reviews';
 import type { ChangeEvent, Dispatch } from 'react';
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
@@ -19,12 +24,7 @@ import { useOsuAuth } from '../osuAuth';
 import PageSelector from '../PageSelector';
 import useTitle from '../useTitle';
 import type { ToggleableColumn, ToggleableColumnsState } from './helpers';
-import {
-  aggregateReviewScore,
-  beatmapsetNotAllowed,
-  combineReviewsAndSubmissions,
-  toggleableColumns,
-} from './helpers';
+import { beatmapsetNotAllowed, combineReviewsAndSubmissions, toggleableColumns } from './helpers';
 import type { SubmittedBeatmapset } from './interfaces';
 import type { Comparison, Search } from './SearchInput';
 import SearchInput from './SearchInput';
@@ -809,9 +809,9 @@ function SubmissionListing({
       beatmapset.reviews = beatmapset.reviews
         .filter((review) => review.id !== deletedReview.id)
         .sort(sortReviews);
-      beatmapset.review_score = aggregateReviewScore(beatmapset.reviews);
-      beatmapset.review_score_all = aggregateReviewScore(beatmapset.reviews, true);
-      beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
+      beatmapset.review_score = beatmapCaptainPriority(beatmapset.reviews);
+      beatmapset.review_score_all = beatmapRating(beatmapset.reviews);
+      beatmapset.strictly_rejected = containsNotAllowed(beatmapset.reviews);
 
       return {
         beatmapsets: [...prev!.beatmapsets],
@@ -834,9 +834,9 @@ function SubmissionListing({
       }
 
       beatmapset.reviews.sort(sortReviews);
-      beatmapset.review_score = aggregateReviewScore(beatmapset.reviews);
-      beatmapset.review_score_all = aggregateReviewScore(beatmapset.reviews, true);
-      beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
+      beatmapset.review_score = beatmapCaptainPriority(beatmapset.reviews);
+      beatmapset.review_score_all = beatmapRating(beatmapset.reviews);
+      beatmapset.strictly_rejected = containsNotAllowed(beatmapset.reviews);
 
       if (prev!.usersById[review.reviewer_id] == null) {
         prev!.usersById[review.reviewer_id] = { ...authUser! };

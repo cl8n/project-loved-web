@@ -48,29 +48,6 @@ const messages = defineMessages({
   },
 });
 
-const reviewScoreMap = new Map([
-  [-3, -6.5],
-  [-2, -3.5],
-  [-1, -1.5],
-  [1, 1.5],
-  [2, 3.5],
-  [3, 6.5],
-]);
-export function aggregateReviewScore(reviews: IReview[], includeNonCaptain?: boolean): number {
-  reviews = reviews.filter(
-    (review) =>
-      (includeNonCaptain || review.active_captain) &&
-      review.score >= -3 &&
-      review.score <= 3 &&
-      review.score !== 0,
-  );
-
-  return reviews.length === 0
-    ? 0
-    : reviews.reduce((sum, review) => sum + reviewScoreMap.get(review.score)!, 0) /
-        Math.sqrt(reviews.length);
-}
-
 export function beatmapsetNotAllowed(beatmapset: SubmittedBeatmapset): boolean {
   return (
     beatmapset.strictly_rejected ||

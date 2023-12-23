@@ -1,7 +1,11 @@
 import { createHash } from 'crypto';
 import { Router } from 'express';
 import { GameMode, gameModes } from 'loved-bridge/beatmaps/gameMode';
-import { reviewRating } from 'loved-bridge/beatmaps/reviewRating';
+import {
+  beatmapCaptainPriority,
+  beatmapRating,
+  containsNotAllowed,
+} from 'loved-bridge/beatmaps/reviews';
 import type {
   Beatmap,
   Beatmapset,
@@ -782,10 +786,10 @@ guestRouter.get(
         0,
       );
       beatmapset.poll = pollByBeatmapsetId[beatmapset.id];
-      beatmapset.review_score = reviewRating(beatmapset.reviews);
-      beatmapset.review_score_all = reviewRating(beatmapset.reviews, true);
+      beatmapset.review_score = beatmapCaptainPriority(beatmapset.reviews);
+      beatmapset.review_score_all = beatmapRating(beatmapset.reviews);
       beatmapset.score = beatmapset.favorite_count * 75 + beatmapset.play_count;
-      beatmapset.strictly_rejected = beatmapset.reviews.some((review) => review.score < -3);
+      beatmapset.strictly_rejected = containsNotAllowed(beatmapset.reviews);
 
       if (beatmapset.poll != null) {
         delete beatmapset.poll.beatmapset_id;
