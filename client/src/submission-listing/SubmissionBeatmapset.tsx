@@ -393,10 +393,10 @@ export default function SubmissionBeatmapset({
   );
 }
 
-const priorities = [
+const captainPriorityThresholds = [
   [5, messages.high, 'high'],
   [0, messages.medium, 'medium'],
-  [-5, messages.low, 'low'],
+  [-3.9999, messages.low, 'low'],
   [-Infinity, messages.veryLow, 'very-low'],
 ] as const;
 
@@ -498,13 +498,13 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
     return <td className='priority low'>{intl.formatMessage(messages.pending)}</td>;
   }
 
-  const [, priorityMessage, priorityClass] = priorities.find(
+  const [, message, priorityClass] = captainPriorityThresholds.find(
     (p) => beatmapset.review_score >= p[0],
   )!;
 
   return (
     <td className={'priority ' + priorityClass}>
-      {intl.formatMessage(priorityMessage)} (
+      {intl.formatMessage(message)} (
       {intl.formatNumber(beatmapset.review_score, {
         maximumFractionDigits: 2,
         signDisplay: 'exceptZero',
@@ -514,13 +514,20 @@ function PriorityCell({ beatmapset }: PriorityCellProps) {
   );
 }
 
+const ratingThresholds = [
+  [10, 'high'],
+  [0, 'medium'],
+  [-9.9999, 'low'],
+  [-Infinity, 'very-low'],
+] as const;
+
 interface RatingCellProps {
   beatmapset: SubmittedBeatmapset;
 }
 
 function RatingCell({ beatmapset }: RatingCellProps) {
   const intl = useIntl();
-  const [, , priorityClass] = priorities.find((p) => beatmapset.review_score_all >= p[0])!;
+  const [, priorityClass] = ratingThresholds.find((p) => beatmapset.review_score_all >= p[0])!;
 
   return (
     <td className={'priority ' + priorityClass}>
