@@ -96,19 +96,6 @@ export default function MorePages() {
             values={{ gameMode: gameModeLongName(GameMode.mania) }}
           />
         </li>
-        <li>
-          <a href='https://discord.gg/0Vxo9AsejDkGlk3H'>osu!</a>{' '}
-          <FormattedMessage
-            defaultMessage='(in {channel})'
-            description='[Discord] Specifier for a channel of a Discord server'
-            values={{ channel: <code>#project-loved</code> }}
-          />
-          <br />
-          <FormattedMessage
-            defaultMessage='Anything-goes channel about Project Loved; not very active and rarely checked'
-            description='[Discord] osu! community Discord channel description'
-          />
-        </li>
       </ul>
       <FormattedMessage
         defaultMessage='osu! website'
