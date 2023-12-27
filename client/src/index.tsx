@@ -23,6 +23,7 @@ import MorePages from './MorePages';
 import NominationPlannerPage from './nomination-planner/NominationPlannerPage';
 import { NoRoute } from './NoRoute';
 import { NotReady } from './NotReady';
+import OnlineUsers from './OnlineUsers';
 import { OsuAuthProvider } from './osuAuth';
 import { Picks } from './Picks';
 import { PicksRoundListing } from './PicksRoundListing';
@@ -42,24 +43,27 @@ function Root() {
         <RootRoutes />
       </main>
       <footer>
-        <FormattedMessage
-          defaultMessage='Flag icons by {author}'
-          description='[Footer] Credit in site footer'
-          values={{ author: <a href='http://famfamfam.com'>Mark James</a> }}
-        />
-        {' | '}
-        <FormattedMessage
-          defaultMessage='Other icons by {author}'
-          description='[Footer] Credit in site footer'
-          values={{ author: <a href='https://icons8.com'>Icons8</a> }}
-        />
-        {' | '}
-        <a href='https://github.com/cl8n/project-loved-web'>
+        <OnlineUsers />
+        <div>
           <FormattedMessage
-            defaultMessage='Source code and issue tracker'
-            description='[Footer] Link to GitHub repository in site footer'
+            defaultMessage='Flag icons by {author}'
+            description='[Footer] Credit in site footer'
+            values={{ author: <a href='http://famfamfam.com'>Mark James</a> }}
           />
-        </a>
+          {' | '}
+          <FormattedMessage
+            defaultMessage='Other icons by {author}'
+            description='[Footer] Credit in site footer'
+            values={{ author: <a href='https://icons8.com'>Icons8</a> }}
+          />
+          {' | '}
+          <a href='https://github.com/cl8n/project-loved-web'>
+            <FormattedMessage
+              defaultMessage='Source code and issue tracker'
+              description='[Footer] Link to GitHub repository in site footer'
+            />
+          </a>
+        </div>
       </footer>
       <BackToTopButton />
     </>

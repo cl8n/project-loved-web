@@ -159,6 +159,10 @@ export function getNominationsForPlanner(gameMode: GameMode): Response<{
   return superagent.get('/api/planner').query({ gameMode });
 }
 
+export function getOnlineUsers(): Response<IUser[]> {
+  return superagent.get('/api/online');
+}
+
 export function getPolls(): Response<IPoll[]> {
   return superagent.get('/api/stats/polls');
 }
