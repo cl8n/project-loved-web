@@ -1017,3 +1017,9 @@ tr.sticky > th {
   background: var(--accent-light);
   flex: 0 0 1px;
 }
+
+.markdown {
+  img {
+    max-width: 670px;
+  }
+}
