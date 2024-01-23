@@ -402,6 +402,10 @@ export function Picks() {
   );
 }
 
+function toggle(value: boolean): boolean {
+  return !value;
+}
+
 interface NominationProps {
   assigneesApi: readonly [IUser[] | undefined, IUser[] | undefined, ResponseError | undefined];
   captainsApi: readonly [{ [P in GameMode]?: IUser[] } | undefined, ResponseError | undefined];
@@ -430,6 +434,7 @@ function Nomination({
   round,
 }: NominationProps) {
   const authUser = useOsuAuth().user;
+  const [backgroundExpanded, toggleBackgroundExpanded] = useReducer(toggle, false);
 
   const deleteSelf = () => {
     if (!window.confirm('Are you sure you want to delete this nomination?')) {
@@ -526,138 +531,162 @@ function Nomination({
 
   return (
     <div className={`box nomination${hasProgressWarnings ? ' nomination--warning' : ''}`}>
-      <div className='flex-bar'>
-        <span>
-          <h3 className='nomination-title'>
-            <BeatmapInline
-              artist={nomination.overwrite_artist}
-              beatmapset={nomination.beatmapset}
-              gameMode={nomination.game_mode}
-              title={nomination.overwrite_title}
-            />{' '}
-            [#{nomination.id}]
-          </h3>
-          {canDelete && (
-            <>
-              {' — '}
-              <button type='button' className='error fake-a' onClick={deleteSelf}>
-                Delete
-              </button>
-            </>
+      <div
+        className={`nomination__info-container${
+          backgroundExpanded ? ' nomination__info-container--background-expanded' : ''
+        }`}
+      >
+        <button className='nomination__background-button' onClick={toggleBackgroundExpanded}>
+          {backgroundExpanded ? (
+            <img
+              alt=''
+              className='nomination__background nomination__background--expanded'
+              src={`https://assets.ppy.sh/beatmaps/${nomination.beatmapset_id}/covers/fullsize.jpg?${nomination.beatmapset.updated_at}`}
+            />
+          ) : (
+            <img
+              alt=''
+              className='nomination__background'
+              src={`https://assets.ppy.sh/beatmaps/${nomination.beatmapset_id}/covers/list.jpg?${nomination.beatmapset.updated_at}`}
+              srcSet={`https://assets.ppy.sh/beatmaps/${nomination.beatmapset_id}/covers/list@2x.jpg?${nomination.beatmapset.updated_at} 2x`}
+            />
           )}
-        </span>
-        <span className='flex-no-shrink'>
-          Nominated by{' '}
-          <ListInline
-            array={nomination.nominators}
-            none='nobody'
-            render={(user) => <UserInline user={user} />}
-          />
-          {canEditNominators && (
-            <>
-              {' — '}
-              <EditNominators
-                captainsApi={captainsApi}
-                nomination={nomination}
-                onNominationUpdate={onNominationUpdate}
+        </button>
+        <div className='nomination__info'>
+          <div className='flex-bar'>
+            <span>
+              <h3 className='nomination-title'>
+                <BeatmapInline
+                  artist={nomination.overwrite_artist}
+                  beatmapset={nomination.beatmapset}
+                  gameMode={nomination.game_mode}
+                  title={nomination.overwrite_title}
+                />{' '}
+                [#{nomination.id}]
+              </h3>
+              {canDelete && (
+                <>
+                  {' — '}
+                  <button type='button' className='error fake-a' onClick={deleteSelf}>
+                    Delete
+                  </button>
+                </>
+              )}
+            </span>
+            <span className='flex-no-shrink'>
+              Nominated by{' '}
+              <ListInline
+                array={nomination.nominators}
+                none='nobody'
+                render={(user) => <UserInline user={user} />}
               />
-            </>
-          )}
-        </span>
-      </div>
-      <div className='flex-left'>
-        <span className='flex-grow'>
-          by{' '}
-          <ListInline
-            array={nomination.beatmapset_creators}
-            none='nobody'
-            render={(user) => <UserInline user={user} />}
-          />
-        </span>
-        {canEditMetadata && (
-          <EditMetadata
-            metadataStarted={metadataStarted}
-            nomination={nomination}
-            onNominationUpdate={onNominationUpdate}
-          />
-        )}
-        <span className='flex-no-shrink'>
-          Metadata assignees:{' '}
-          <ListInline
-            array={nomination.metadata_assignees}
-            render={(user) => <UserInline user={user} />}
-          />
-          {canAssignMetadata && (
-            <>
-              {' — '}
-              <EditAssignees
-                assignees={nomination.metadata_assignees}
-                candidatesApi={[assigneesApi[0], assigneesApi[2]]}
-                nominationId={nomination.id}
-                onNominationUpdate={onNominationUpdate}
-                type={AssigneeType.metadata}
+              {canEditNominators && (
+                <>
+                  {' — '}
+                  <EditNominators
+                    captainsApi={captainsApi}
+                    nomination={nomination}
+                    onNominationUpdate={onNominationUpdate}
+                  />
+                </>
+              )}
+            </span>
+          </div>
+          <div className='flex-left'>
+            <span className='flex-grow'>
+              by{' '}
+              <ListInline
+                array={nomination.beatmapset_creators}
+                none='nobody'
+                render={(user) => <UserInline user={user} />}
               />
-            </>
-          )}
-        </span>
-      </div>
-      <div className='flex-left'>
-        <span className='flex-grow'>
-          Excluded diffs:{' '}
-          <ListInline
-            array={nomination.beatmaps.filter((beatmap) => beatmap.excluded)}
-            render={(beatmap) => beatmap.version}
-          />
-          {canEditDifficulties && (
-            <>
-              {' — '}
-              <EditDifficulties
-                nomination={nomination}
-                onNominationUpdate={onNominationUpdate}
-                round={round}
-              />
-            </>
-          )}
-        </span>
-        {!round.ignore_moderator_checks && (
-          <>
-            {canEditModeration && (
-              <EditModeration
-                moderationStarted={moderationStarted}
+            </span>
+            {canEditMetadata && (
+              <EditMetadata
+                metadataStarted={metadataStarted}
                 nomination={nomination}
                 onNominationUpdate={onNominationUpdate}
               />
             )}
             <span className='flex-no-shrink'>
-              Moderator assignees:{' '}
+              Metadata assignees:{' '}
               <ListInline
-                array={nomination.moderator_assignees}
+                array={nomination.metadata_assignees}
                 render={(user) => <UserInline user={user} />}
               />
-              {canAssignModeration && (
+              {canAssignMetadata && (
                 <>
                   {' — '}
                   <EditAssignees
-                    assignees={nomination.moderator_assignees}
-                    candidatesApi={[assigneesApi[1], assigneesApi[2]]}
+                    assignees={nomination.metadata_assignees}
+                    candidatesApi={[assigneesApi[0], assigneesApi[2]]}
                     nominationId={nomination.id}
                     onNominationUpdate={onNominationUpdate}
-                    type={AssigneeType.moderator}
+                    type={AssigneeType.metadata}
                   />
                 </>
               )}
             </span>
-          </>
-        )}
-      </div>
-      {parentGameMode != null && (
-        <div style={{ fontStyle: 'italic' }}>
-          Parent nomination in {gameModeLongName(parentGameMode)}
+          </div>
+          <div className='flex-left'>
+            <span className='flex-grow'>
+              Excluded diffs:{' '}
+              <ListInline
+                array={nomination.beatmaps.filter((beatmap) => beatmap.excluded)}
+                render={(beatmap) => beatmap.version}
+              />
+              {canEditDifficulties && (
+                <>
+                  {' — '}
+                  <EditDifficulties
+                    nomination={nomination}
+                    onNominationUpdate={onNominationUpdate}
+                    round={round}
+                  />
+                </>
+              )}
+            </span>
+            {!round.ignore_moderator_checks && (
+              <>
+                {canEditModeration && (
+                  <EditModeration
+                    moderationStarted={moderationStarted}
+                    nomination={nomination}
+                    onNominationUpdate={onNominationUpdate}
+                  />
+                )}
+                <span className='flex-no-shrink'>
+                  Moderator assignees:{' '}
+                  <ListInline
+                    array={nomination.moderator_assignees}
+                    render={(user) => <UserInline user={user} />}
+                  />
+                  {canAssignModeration && (
+                    <>
+                      {' — '}
+                      <EditAssignees
+                        assignees={nomination.moderator_assignees}
+                        candidatesApi={[assigneesApi[1], assigneesApi[2]]}
+                        nominationId={nomination.id}
+                        onNominationUpdate={onNominationUpdate}
+                        type={AssigneeType.moderator}
+                      />
+                    </>
+                  )}
+                </span>
+              </>
+            )}
+          </div>
+          {parentGameMode != null && (
+            <div style={{ fontStyle: 'italic' }}>
+              Parent nomination in {gameModeLongName(parentGameMode)}
+            </div>
+          )}
+          <div className='flex-bar'>
+            <StatusLine nomination={nomination} round={round} votingResult={votingResult} />
+            {canForceBeatmapsetUpdate && <ForceBeatmapsetUpdate nomination={nomination} />}
+          </div>
         </div>
-      )}
-      <div className='flex-bar'>
-        <StatusLine nomination={nomination} round={round} votingResult={votingResult} />
-        {canForceBeatmapsetUpdate && <ForceBeatmapsetUpdate nomination={nomination} />}
       </div>
       <Description
         author={nomination.description_author}

@@ -442,12 +442,43 @@ footer {
     border-color: var(--rating-0);
   }
 
-  > * {
-    margin-bottom: 0.25em;
-  }
-
   > .submissions {
     margin-top: 1em;
+  }
+
+  &__background {
+    // The height of the smallest .nomination__info
+    width: 74px;
+
+    &--expanded {
+      width: 100%;
+    }
+  }
+
+  &__background-button {
+    appearance: none;
+    background: none !important;
+    display: flex;
+    flex-shrink: 0;
+    padding: 0 !important;
+  }
+
+  &__info-container {
+    align-items: center;
+    display: flex;
+    gap: 1em;
+
+    &--background-expanded {
+      flex-direction: column;
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 0.25em;
+    width: 100%;
   }
 
   &-title {
