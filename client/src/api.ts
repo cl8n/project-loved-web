@@ -11,7 +11,11 @@ import type {
 } from 'loved-bridge/tables';
 import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
-import type { ResponseError, SuperAgentRequest, Response as SuperAgentResponse } from 'superagent';
+import type {
+  ResponseError,
+  Request as SuperAgentRequest,
+  Response as SuperAgentResponse,
+} from 'superagent';
 import superagent from 'superagent';
 import type {
   IBeatmapset,

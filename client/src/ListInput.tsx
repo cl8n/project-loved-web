@@ -1,7 +1,7 @@
-import type { Key, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
-interface ListInputProps<T, VT extends Key> {
+interface ListInputProps<T, VT extends number | string> {
   items: T[];
   itemValue: (item: T) => VT;
   itemRender: (item: T) => ReactNode;
@@ -13,7 +13,7 @@ interface ListInputProps<T, VT extends Key> {
 
 let nextKey = 0;
 
-export default function ListInput<T, VT extends Key>(props: ListInputProps<T, VT>) {
+export default function ListInput<T, VT extends number | string>(props: ListInputProps<T, VT>) {
   const [inputKeys, setInputKeys] = useState<number[]>([]);
   const [items, setItems] = useState(props.items);
 

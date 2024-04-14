@@ -13,7 +13,7 @@ import type {
 } from 'loved-bridge/tables';
 import { LogType } from 'loved-bridge/tables';
 import qs from 'querystring';
-import type { Request, Response, SuperAgentStatic } from 'superagent';
+import type { Agent, Response } from 'superagent';
 import superagent from 'superagent';
 import config from './config.js';
 import db from './db.js';
@@ -69,7 +69,7 @@ export function redirectToAuth(
 }
 
 export class Osu {
-  #apiAgent!: SuperAgentStatic & Request;
+  #apiAgent!: Agent;
   #limiter: Limiter;
   #refreshToken!: string;
   #scopes!: OsuApiScopes;
