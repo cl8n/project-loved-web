@@ -1,0 +1,31 @@
+.news-post-notice {
+	background-image: image-set(
+		url('../images/news-post-notice-background.png') 1x,
+		url('../images/news-post-notice-background@2x.png') 2x,
+	);
+	background-position: left;
+	background-size: cover;
+	display: flex;
+	height: 50px;
+	justify-content: center;
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: none;
+	}
+
+	> :first-child {
+		align-self: flex-start;
+		color: var(--accent-light);
+		font-size: 20px;
+		margin-right: -75px;
+	}
+
+	> :last-child {
+		align-self: flex-end;
+		color: var(--accent);
+		font-size: 32px;
+		font-style: italic;
+		font-weight: bold;
+	}
+}

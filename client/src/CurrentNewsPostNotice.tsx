@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { getCurrentNewsPost, useApi } from './api';
 
@@ -9,14 +10,14 @@ export default function CurrentNewsPostNotice() {
   }
 
   return (
-    <div className='news-post-notice'>
-      <a href={newsPost.url}>
-        <FormattedMessage
-          defaultMessage='Click here to vote in the round of {roundName}!'
-          description='[Submissions] Banner linked to news post of ongoing voting'
-          values={{ roundName: newsPost.roundName }}
-        />
-      </a>
-    </div>
+    <a className='news-post-notice' href={newsPost.url}>
+      <FormattedMessage
+        defaultMessage='<b>Click here</b> to vote in the round of'
+        description='[Submissions] Banner introducing the news post of ongoing voting'
+        tagName='span'
+        values={{ b: (c: ReactNode) => <b>{c}</b> }}
+      />
+      <span>{newsPost.roundName}</span>
+    </a>
   );
 }
