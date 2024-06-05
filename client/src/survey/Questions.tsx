@@ -122,7 +122,6 @@ export default function Questions({
       .catch(() => setSurveyData(null));
   }, [survey]);
 
-  // eslint-disable-next-line eqeqeq
   if (surveyData === null) {
     return (
       <div className='content-block'>

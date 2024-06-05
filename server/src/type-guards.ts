@@ -17,8 +17,6 @@ export function isAssigneeType(type: unknown): type is AssigneeType {
 }
 
 export function isConsentValue(consent: unknown): consent is ConsentValue | null {
-  // Checking for exactly null to validate input
-  // eslint-disable-next-line eqeqeq
   return consent === null || isNumericEnumValue(ConsentValue, consent);
 }
 
@@ -60,8 +58,6 @@ export function isMapperConsent(
   return (
     isRecord(consent) &&
     isConsentValue(consent.consent) &&
-    // Checking for exactly null to validate input
-    // eslint-disable-next-line eqeqeq
     (consent.consent_reason === null || typeof consent.consent_reason === 'string') &&
     isInteger(consent.user_id)
   );
@@ -77,8 +73,6 @@ export function isMapperConsentBeatmapsetArray(
         isRecord(beatmapset) &&
         isInteger(beatmapset.beatmapset_id) &&
         typeof beatmapset.consent === 'boolean' &&
-        // Checking for exactly null to validate input
-        // eslint-disable-next-line eqeqeq
         (beatmapset.consent_reason === null || typeof beatmapset.consent_reason === 'string'),
     )
   );

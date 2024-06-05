@@ -453,8 +453,6 @@ router.post(
     // TODO if polls are open and user is not news author, deny
     // TODO if polls are open and user is news author, allow
 
-    // Checking for exactly null to validate input
-    // eslint-disable-next-line eqeqeq
     if (req.body.description !== null && typeof req.body.description !== 'string') {
       return res.status(422).json({ error: 'Invalid description' });
     }
@@ -959,8 +957,6 @@ router.post(
 
     for (const roundGameMode of req.body.roundGameModes) {
       if (
-        // Checking for exactly null to validate input
-        // eslint-disable-next-line eqeqeq
         roundGameMode.video !== null &&
         !(
           typeof roundGameMode.video === 'string' &&

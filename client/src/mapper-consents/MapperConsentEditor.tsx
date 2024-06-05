@@ -235,7 +235,6 @@ export default function MapperConsentEditor({
                   <select
                     name='consent'
                     required
-                    // eslint-disable-next-line eqeqeq
                     defaultValue={consent?.consent === null ? 'null' : consent?.consent}
                     key={
                       consent?.consent /* TODO: Workaround for https://github.com/facebook/react/issues/21025 */
