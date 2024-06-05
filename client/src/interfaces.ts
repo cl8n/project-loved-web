@@ -75,6 +75,7 @@ export interface INomination {
   metadata_state: MetadataState;
   moderator_assignees: IUser[];
   moderator_state: ModeratorState;
+  news_editor_assignees: IUser[];
   nominators: IUser[];
   order: number;
   overwrite_artist?: string;

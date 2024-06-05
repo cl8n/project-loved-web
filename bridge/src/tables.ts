@@ -5,10 +5,7 @@ declare global {
   type TableDateType = unknown;
 }
 
-export enum AssigneeType {
-  metadata,
-  moderator,
-}
+export type AssigneeType = 'metadata' | 'moderator' | 'news_editor';
 
 export enum ConsentValue {
   no,

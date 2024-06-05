@@ -20,6 +20,7 @@ export enum NominationProgressWarning {
   moderatorUnchecked,
   moderatorNeedsChange,
   moderatorSentToReview,
+  newsEditorAssigneesMissing,
 }
 
 export const nominationProgressWarningMessages: Record<NominationProgressWarning, string> = {
@@ -36,6 +37,7 @@ export const nominationProgressWarningMessages: Record<NominationProgressWarning
   [NominationProgressWarning.moderatorNeedsChange]:
     'Content needs to be re-checked by a moderator after the map is updated',
   [NominationProgressWarning.moderatorSentToReview]: 'Waiting on result of moderation review',
+  [NominationProgressWarning.newsEditorAssigneesMissing]: 'News editors need to be assigned',
 };
 
 export function nominationProgressWarnings(
@@ -104,12 +106,18 @@ export function nominationProgressWarnings(
     }
   }
 
-  if (
-    hasRole(user, Role.newsEditor, undefined, true) &&
-    nomination.description != null &&
-    nomination.description_state === DescriptionState.notReviewed
-  ) {
-    warnings.add(NominationProgressWarning.descriptionNeedsReview);
+  if (hasRole(user, Role.newsEditor, undefined, true)) {
+    if (nomination.news_editor_assignees.length === 0) {
+      warnings.add(NominationProgressWarning.newsEditorAssigneesMissing);
+    }
+
+    if (
+      nomination.news_editor_assignees.some((assignee) => assignee.id === user.id) &&
+      nomination.description != null &&
+      nomination.description_state === DescriptionState.notReviewed
+    ) {
+      warnings.add(NominationProgressWarning.descriptionNeedsReview);
+    }
   }
 
   if (hasRole(user, Role.newsAuthor, undefined, true)) {
@@ -126,6 +134,10 @@ export function nominationProgressWarnings(
 
     if (!round.ignore_moderator_checks && nomination.moderator_assignees.length === 0) {
       warnings.add(NominationProgressWarning.moderatorAssigneesMissing);
+    }
+
+    if (nomination.news_editor_assignees.length === 0) {
+      warnings.add(NominationProgressWarning.newsEditorAssigneesMissing);
     }
   }
 

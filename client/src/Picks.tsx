@@ -1,16 +1,17 @@
 import { DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, diff_match_patch } from 'diff-match-patch';
 import { GameMode, gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
-import type { NominationDescriptionEdit } from 'loved-bridge/tables';
-import { AssigneeType, MetadataState, ModeratorState, Role } from 'loved-bridge/tables';
+import type { AssigneeType } from 'loved-bridge/tables';
+import { DescriptionState, MetadataState, ModeratorState, Role } from 'loved-bridge/tables';
 import { Fragment, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { FormattedDate } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import type { ResponseError } from 'superagent';
+import type { useApiReturn } from './api';
 import {
   alertApiErrorMessage,
   apiErrorMessage,
   deleteNomination,
-  getAssignees,
+  getAssigneeCandidates,
   getCaptains,
   getNominations,
   lockNominations,
@@ -64,8 +65,8 @@ export function Picks() {
   const roundId = parseInt(params.round);
   const [roundInfo, roundInfoError, setRoundInfo] = useApi(getNominations, [roundId]);
   useTitle(roundInfo == null ? `Round #${roundId}` : roundInfo.round.name);
-  const assigneesApi = useApi(getAssignees, [], {
-    condition: hasRole(authUser, [Role.newsAuthor, Role.metadata, Role.moderator]),
+  const assigneeCandidatesApi = useApi(getAssigneeCandidates, [], {
+    condition: hasRole(authUser, [Role.newsAuthor, Role.metadata, Role.moderator, Role.newsEditor]),
   });
   const captainsApi = useApi(getCaptains, [], {
     condition: hasRole(authUser, Role.captain),
@@ -374,11 +375,7 @@ export function Picks() {
                 return (
                   <Nomination
                     key={nomination.id}
-                    assigneesApi={[
-                      assigneesApi[0]?.metadatas,
-                      assigneesApi[0]?.moderators,
-                      assigneesApi[1],
-                    ]}
+                    assigneeCandidatesApi={assigneeCandidatesApi}
                     captainsApi={[captainsApi[0], captainsApi[1]]}
                     gameModesMissingParent={
                       nominationOtherGameModesMissingParentCache[nomination.id]
@@ -407,7 +404,7 @@ function toggle(value: boolean): boolean {
 }
 
 interface NominationProps {
-  assigneesApi: readonly [IUser[] | undefined, IUser[] | undefined, ResponseError | undefined];
+  assigneeCandidatesApi: useApiReturn<Record<AssigneeType, IUser[]>>;
   captainsApi: readonly [{ [P in GameMode]?: IUser[] } | undefined, ResponseError | undefined];
   gameModesMissingParent: GameMode[];
   gameModesWithBeatmaps: GameMode[];
@@ -421,7 +418,7 @@ interface NominationProps {
 }
 
 function Nomination({
-  assigneesApi,
+  assigneeCandidatesApi,
   captainsApi,
   gameModesMissingParent,
   gameModesWithBeatmaps,
@@ -474,6 +471,7 @@ function Nomination({
     nomination.moderator_state === ModeratorState.good ||
     nomination.moderator_state === ModeratorState.notAllowed;
   const moderationStarted = nomination.moderator_state !== ModeratorState.unchecked;
+  const newsEditorAssigned = nomination.news_editor_assignees.length > 0;
 
   const canAssignMetadata =
     !round.done &&
@@ -485,6 +483,11 @@ function Nomination({
     !(votingResult === false && !moderationAssigned) &&
     !moderationDone &&
     hasRole(authUser, [Role.moderator, Role.newsAuthor]);
+  const canAssignNewsEditor =
+    !round.done &&
+    !(votingResult === false && !newsEditorAssigned) &&
+    nomination.description_state !== DescriptionState.reviewed &&
+    hasRole(authUser, [Role.newsEditor, Role.newsAuthor]);
   const canDelete =
     !round.done &&
     nomination.poll == null &&
@@ -618,11 +621,10 @@ function Nomination({
                 <>
                   {' — '}
                   <EditAssignees
-                    assignees={nomination.metadata_assignees}
-                    candidatesApi={[assigneesApi[0], assigneesApi[2]]}
-                    nominationId={nomination.id}
+                    assigneeCandidatesApi={assigneeCandidatesApi}
+                    nomination={nomination}
                     onNominationUpdate={onNominationUpdate}
-                    type={AssigneeType.metadata}
+                    type='metadata'
                   />
                 </>
               )}
@@ -665,11 +667,10 @@ function Nomination({
                     <>
                       {' — '}
                       <EditAssignees
-                        assignees={nomination.moderator_assignees}
-                        candidatesApi={[assigneesApi[1], assigneesApi[2]]}
-                        nominationId={nomination.id}
+                        assigneeCandidatesApi={assigneeCandidatesApi}
+                        nomination={nomination}
                         onNominationUpdate={onNominationUpdate}
-                        type={AssigneeType.moderator}
+                        type='moderator'
                       />
                     </>
                   )}
@@ -689,12 +690,11 @@ function Nomination({
         </div>
       </div>
       <Description
-        author={nomination.description_author}
+        assigneeCandidatesApi={assigneeCandidatesApi}
+        canAssignNewsEditor={canAssignNewsEditor}
         canEdit={canEditDescription}
-        edits={nomination.description_edits}
-        nominationId={nomination.id}
+        nomination={nomination}
         onNominationUpdate={onNominationUpdate}
-        text={nomination.description}
       />
       {hasProgressWarnings && (
         <div className='nomination__warnings'>
@@ -861,23 +861,22 @@ function EditMetadata({ metadataStarted, nomination, onNominationUpdate }: EditM
   );
 }
 
-const assigneeTypeNames = {
-  [AssigneeType.metadata]: 'Metadata',
-  [AssigneeType.moderator]: 'Moderator',
-} as const;
+const assigneeTypeNames: Record<AssigneeType, string> = {
+  metadata: 'Metadata',
+  moderator: 'Moderator',
+  news_editor: 'News editor',
+};
 
 interface EditAssigneesProps {
-  assignees: IUser[];
-  candidatesApi: readonly [IUser[] | undefined, ResponseError | undefined];
-  nominationId: number;
+  assigneeCandidatesApi: useApiReturn<Record<AssigneeType, IUser[]>>;
+  nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
   type: AssigneeType;
 }
 
 function EditAssignees({
-  assignees,
-  candidatesApi,
-  nominationId,
+  assigneeCandidatesApi,
+  nomination,
   onNominationUpdate,
   type,
 }: EditAssigneesProps) {
@@ -885,33 +884,39 @@ function EditAssignees({
   const [modalOpen, setModalOpen] = useState(false);
 
   const onSubmit: FormSubmitHandler = (form, then) => {
-    return updateNominationAssignees(nominationId, type, form.assigneeIds)
+    return updateNominationAssignees(nomination.id, type, form.assigneeIds)
       .then((response) => onNominationUpdate(response.body))
       .then(then)
       .catch(alertApiErrorMessage)
       .finally(() => setModalOpen(false));
   };
 
+  const assignees = nomination[`${type}_assignees`];
+  const assigneeCandidates = assigneeCandidatesApi[0]?.[type];
+  const assigneeCandidatesError = assigneeCandidatesApi[1];
+
   // TODO: check performance of creating this every render
   const FormOrError = () => {
-    if (candidatesApi[1] != null) {
+    if (assigneeCandidatesError != null) {
       return (
-        <span className='panic'>Failed to load assignees: {apiErrorMessage(candidatesApi[1])}</span>
+        <span className='panic'>
+          Failed to load assignees: {apiErrorMessage(assigneeCandidatesError)}
+        </span>
       );
     }
 
-    if (candidatesApi[0] == null) {
+    if (assigneeCandidates == null) {
       return <span>Loading assignees...</span>;
     }
 
-    if (candidatesApi[0].length === 0) {
+    if (assigneeCandidates.length === 0) {
       return <span>There is nobody with this role to assign.</span>;
     }
 
     return (
       <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
         <table>
-          {candidatesApi[0].map((user) => (
+          {assigneeCandidates.map((user) => (
             <tr key={user.id}>
               <td>
                 <input
@@ -1079,11 +1084,10 @@ function DescriptionDifference({ oldDescription, newDescription }: DescriptionDi
 }
 
 interface DescriptionHistoryProps {
-  author?: IUser;
-  edits: (NominationDescriptionEdit & { editor: IUser })[];
+  nomination: INomination;
 }
 
-function DescriptionHistory({ author, edits }: DescriptionHistoryProps) {
+function DescriptionHistory({ nomination }: DescriptionHistoryProps) {
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
@@ -1094,18 +1098,20 @@ function DescriptionHistory({ author, edits }: DescriptionHistoryProps) {
       <Modal close={() => setModalOpen(false)} open={modalOpen}>
         <h2>Description history</h2>
         <div className='description-history'>
-          {edits.map((edit, index) => (
+          {nomination.description_edits.map((edit, index) => (
             <div key={edit.id} className='description-history-item'>
               <h3 className='description-history-item__title'>
                 Edit by <UserInline user={edit.editor} />
-                {edit.editor_id === author?.id && ' (author)'} on{' '}
+                {edit.editor_id === nomination.description_author?.id && ' (author)'} on{' '}
                 <FormattedDate dateStyle='long' timeStyle='medium' value={edit.edited_at} />
               </h3>
               {edit.description == null ? (
                 <i>No description</i>
               ) : (
                 <DescriptionDifference
-                  oldDescription={index === 0 ? null : edits[index - 1].description}
+                  oldDescription={
+                    index === 0 ? null : nomination.description_edits[index - 1].description
+                  }
                   newDescription={edit.description}
                 />
               )}
@@ -1118,21 +1124,19 @@ function DescriptionHistory({ author, edits }: DescriptionHistoryProps) {
 }
 
 interface DescriptionProps {
-  author?: IUser;
+  assigneeCandidatesApi: useApiReturn<Record<AssigneeType, IUser[]>>;
+  canAssignNewsEditor: boolean;
   canEdit: boolean;
-  edits: (NominationDescriptionEdit & { editor: IUser })[];
-  nominationId: number;
+  nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
-  text?: string;
 }
 
 function Description({
-  author,
+  assigneeCandidatesApi,
+  canAssignNewsEditor,
   canEdit,
-  edits,
-  nominationId,
+  nomination,
   onNominationUpdate,
-  text,
 }: DescriptionProps) {
   const [busy, setBusy] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -1146,7 +1150,7 @@ function Description({
   }, [editing]);
 
   const onSubmit: FormSubmitHandler = (form, then) => {
-    return updateNominationDescription(nominationId, form.description)
+    return updateNominationDescription(nomination.id, form.description)
       .then((response) => onNominationUpdate(response.body))
       .then(then)
       .catch(alertApiErrorMessage)
@@ -1154,44 +1158,74 @@ function Description({
   };
 
   canEdit &&= !editing;
-  const canShowHistory = edits.length > 1;
-  const editors = edits
+  const canShowHistory = nomination.description_edits.length > 1;
+  const editors = nomination.description_edits
     .map((edit) => edit.editor)
-    .filter((u1, i, all) => u1.id !== author?.id && all.findIndex((u2) => u1.id === u2.id) === i);
+    .filter(
+      (u1, i, all) =>
+        u1.id !== nomination.description_author?.id && all.findIndex((u2) => u1.id === u2.id) === i,
+    );
 
   return (
     <div className='description'>
       <div className='description__info'>
-        {text == null ? (
-          <i>No description</i>
-        ) : (
-          <>
-            Description by <UserInline user={author! /* TODO: type properly */} />
-            {editors.length > 0 && (
-              <>
-                {' (edited by '}
-                <ListInline array={editors} render={(user) => <UserInline user={user} />} />)
-              </>
-            )}
-          </>
-        )}
-        {(canEdit || canShowHistory) && ' — '}
-        {canEdit && (
-          <button
-            type='button'
-            className={`fake-a ${text == null ? 'button--angry' : 'button--edit'}`}
-            onClick={() => setEditing(true)}
-          >
-            Edit
-          </button>
-        )}
-        {canEdit && canShowHistory && ', '}
-        {canShowHistory && <DescriptionHistory author={author} edits={edits} />}
+        <span>
+          {nomination.description == null ? (
+            <i>No description</i>
+          ) : (
+            <>
+              Description by{' '}
+              <UserInline user={nomination.description_author! /* TODO: type properly */} />
+              {editors.length > 0 && (
+                <>
+                  {' (edited by '}
+                  <ListInline array={editors} render={(user) => <UserInline user={user} />} />)
+                </>
+              )}
+            </>
+          )}
+          {(canEdit || canShowHistory) && ' — '}
+          {canEdit && (
+            <button
+              type='button'
+              className={`fake-a ${
+                nomination.description == null ? 'button--angry' : 'button--edit'
+              }`}
+              onClick={() => setEditing(true)}
+            >
+              Edit
+            </button>
+          )}
+          {canEdit && canShowHistory && ', '}
+          {canShowHistory && <DescriptionHistory nomination={nomination} />}
+        </span>
+        <span className='flex-no-shrink'>
+          News editor assignees:{' '}
+          <ListInline
+            array={nomination.news_editor_assignees}
+            render={(user) => <UserInline user={user} />}
+          />
+          {canAssignNewsEditor && (
+            <>
+              {' — '}
+              <EditAssignees
+                assigneeCandidatesApi={assigneeCandidatesApi}
+                nomination={nomination}
+                onNominationUpdate={onNominationUpdate}
+                type='news_editor'
+              />
+            </>
+          )}
+        </span>
       </div>
       {editing ? (
         <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
           <div className='textarea-wrapper'>
-            <textarea name='description' defaultValue={text} ref={descriptionRef} />
+            <textarea
+              name='description'
+              defaultValue={nomination.description}
+              ref={descriptionRef}
+            />
             <div className='description__editor-buttons'>
               <span>Use BBCode for formatting</span>
               <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>
@@ -1202,7 +1236,7 @@ function Description({
           </div>
         </Form>
       ) : (
-        text != null && <BBCode text={text} />
+        nomination.description != null && <BBCode text={nomination.description} />
       )}
     </div>
   );

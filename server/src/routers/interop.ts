@@ -12,7 +12,7 @@ import type {
   RoundGameMode,
   User,
 } from 'loved-bridge/tables';
-import { AssigneeType, LogType } from 'loved-bridge/tables';
+import { LogType } from 'loved-bridge/tables';
 import config from '../config.js';
 import db from '../db.js';
 import { asyncHandler } from '../express-helpers.js';
@@ -147,6 +147,7 @@ interopRouter.get(
       description_author: User | null;
       metadata_assignees?: User[];
       moderator_assignees?: User[];
+      news_editor_assignees?: User[];
       nominators?: User[];
       poll: Poll | null;
     })[] = await db.queryWithGroups<
@@ -202,10 +203,13 @@ interopRouter.get(
       const assignees = assigneesByNominationId[nomination.id] || [];
 
       nomination.metadata_assignees = assignees
-        .filter((a) => a.assignee_type === AssigneeType.metadata)
+        .filter((a) => a.assignee_type === 'metadata')
         .map((a) => a.assignee);
       nomination.moderator_assignees = assignees
-        .filter((a) => a.assignee_type === AssigneeType.moderator)
+        .filter((a) => a.assignee_type === 'moderator')
+        .map((a) => a.assignee);
+      nomination.news_editor_assignees = assignees
+        .filter((a) => a.assignee_type === 'news_editor')
         .map((a) => a.assignee);
     });
 

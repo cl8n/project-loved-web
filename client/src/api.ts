@@ -119,11 +119,8 @@ export function deleteReview(reviewId: number): Response {
   return superagent.delete('/api/review').query({ reviewId });
 }
 
-export function getAssignees(): Response<{
-  metadatas: IUser[];
-  moderators: IUser[];
-}> {
-  return superagent.get('/api/assignees');
+export function getAssigneeCandidates(): Response<Record<AssigneeType, IUser[]>> {
+  return superagent.get('/api/assignee-candidates');
 }
 
 export function getCaptains(): Response<{ [P in GameMode]?: IUser[] }> {
@@ -338,7 +335,7 @@ export function apiErrorMessage(error: ResponseError): string {
   return error.response?.body?.error ?? error.message;
 }
 
-type useApiReturn<T> = [
+export type useApiReturn<T> = [
   T | undefined,
   ResponseError | undefined,
   Dispatch<SetStateAction<T | undefined>>,

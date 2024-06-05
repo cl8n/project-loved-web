@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { GameMode, gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import type {
+  AssigneeType,
   Beatmap,
   Beatmapset,
   Consent,
@@ -18,7 +19,6 @@ import type {
   UserRole,
 } from 'loved-bridge/tables';
 import {
-  AssigneeType,
   ConsentValue,
   CreatorsState,
   DescriptionState,
@@ -388,6 +388,7 @@ router.post(
       description_edits?: [];
       metadata_assignees?: [];
       moderator_assignees?: [];
+      news_editor_assignees?: [];
       nominators?: User[];
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     } = (await db.queryOne<Nomination & { description_author: null }>(
@@ -437,6 +438,7 @@ router.post(
     nomination.nominators = nominators;
     nomination.metadata_assignees = [];
     nomination.moderator_assignees = [];
+    nomination.news_editor_assignees = [];
 
     // TODO: log me!
 
@@ -1036,38 +1038,29 @@ router.get(
 );
 
 router.get(
-  '/assignees',
+  '/assignee-candidates',
   asyncHandler(async (_, res) => {
-    const metadatas = await db.query<User>(
-      `
-        SELECT users.*
-        FROM users
-        INNER JOIN user_roles
-          ON users.id = user_roles.user_id
-        WHERE user_roles.game_mode = -1
-          AND user_roles.role_id = ?
-          AND user_roles.alumni = 0
-        ORDER BY users.name ASC
-      `,
-      [Role.metadata],
-    );
-    const moderators = await db.query<User>(
-      `
-        SELECT users.*
-        FROM users
-        INNER JOIN user_roles
-          ON users.id = user_roles.user_id
-        WHERE user_roles.game_mode = -1
-          AND user_roles.role_id = ?
-          AND user_roles.alumni = 0
-        ORDER BY users.name ASC
-      `,
-      [Role.moderator],
+    const usersByRole = groupBy<Role, User>(
+      await db.queryWithGroups<Pick<UserRole, 'role_id'> & { user: User }>(
+        `
+          SELECT user_roles.role_id, users:user
+          FROM users
+          INNER JOIN user_roles
+            ON users.id = user_roles.user_id
+          WHERE user_roles.alumni = 0
+            AND user_roles.role_id IN (?)
+          ORDER BY users.name ASC
+        `,
+        [[Role.metadata, Role.moderator, Role.newsEditor]],
+      ),
+      'role_id',
+      'user',
     );
 
     res.json({
-      metadatas,
-      moderators,
+      metadata: usersByRole[Role.metadata] ?? [],
+      moderator: usersByRole[Role.moderator] ?? [],
+      news_editor: usersByRole[Role.newsEditor] ?? [],
     });
   }),
 );
@@ -1128,24 +1121,27 @@ router.post(
 router.post(
   '/update-nomination-assignees',
   asyncHandler(async (req, res) => {
-    const typeRoles = {
-      [AssigneeType.metadata]: Role.metadata,
-      [AssigneeType.moderator]: Role.moderator,
+    const typeRoles: Record<AssigneeType, Role> = {
+      metadata: Role.metadata,
+      moderator: Role.moderator,
+      news_editor: Role.newsEditor,
     } as const;
-    const typeStrings = {
-      [AssigneeType.metadata]: 'metadata',
-      [AssigneeType.moderator]: 'moderator',
-    } as const;
+    const typeNames: Record<AssigneeType, string> = {
+      metadata: 'metadata',
+      moderator: 'moderator',
+      news_editor: 'news editor',
+    };
 
     if (!isAssigneeType(req.body.type)) {
       return res.status(422).json({ error: 'Invalid assignee type' });
     }
 
     const hasRole = currentUserRoles(req, res);
-    const typeString = typeStrings[req.body.type];
 
     if (!hasRole([Role.newsAuthor, typeRoles[req.body.type]])) {
-      return res.status(403).json({ error: `Must have ${typeString} or news author role` });
+      return res
+        .status(403)
+        .json({ error: `Must have ${typeNames[req.body.type]} or news author role` });
     }
 
     await db.transact(async (connection) => {
@@ -1180,7 +1176,7 @@ router.post(
 
     res.json({
       id: req.body.nominationId,
-      [`${typeString}_assignees`]: assignees || [],
+      [`${req.body.type}_assignees`]: assignees,
     });
   }),
 );

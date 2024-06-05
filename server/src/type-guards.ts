@@ -1,6 +1,6 @@
 import { GameMode } from 'loved-bridge/beatmaps/gameMode';
-import type { Consent, ConsentBeatmapset, UserRole } from 'loved-bridge/tables';
-import { AssigneeType, ConsentValue, LogType, Role } from 'loved-bridge/tables';
+import type { AssigneeType, Consent, ConsentBeatmapset, UserRole } from 'loved-bridge/tables';
+import { ConsentValue, LogType, Role } from 'loved-bridge/tables';
 import type { ResponseError } from 'superagent';
 
 function isNumericEnumValue(
@@ -13,7 +13,7 @@ function isNumericEnumValue(
 }
 
 export function isAssigneeType(type: unknown): type is AssigneeType {
-  return isNumericEnumValue(AssigneeType, type);
+  return type === 'metadata' || type === 'moderator' || type === 'news_editor';
 }
 
 export function isConsentValue(consent: unknown): consent is ConsentValue | null {

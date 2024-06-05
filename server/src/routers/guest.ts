@@ -22,7 +22,7 @@ import type {
   User,
   UserRole,
 } from 'loved-bridge/tables';
-import { AssigneeType, ConsentValue, Role } from 'loved-bridge/tables';
+import { ConsentValue, Role } from 'loved-bridge/tables';
 import qs from 'querystring';
 import config from '../config.js';
 import db from '../db.js';
@@ -245,6 +245,7 @@ guestRouter.get(
       description_edits?: (NominationDescriptionEdit & { editor: User })[];
       metadata_assignees?: User[];
       moderator_assignees?: User[];
+      news_editor_assignees?: User[];
       nominators?: User[];
       poll: Poll | null;
     })[] = await db.queryWithGroups<
@@ -314,10 +315,13 @@ guestRouter.get(
       const assignees = assigneesByNominationId[nomination.id] || [];
 
       nomination.metadata_assignees = assignees
-        .filter((a) => a.assignee_type === AssigneeType.metadata)
+        .filter((a) => a.assignee_type === 'metadata')
         .map((a) => a.assignee);
       nomination.moderator_assignees = assignees
-        .filter((a) => a.assignee_type === AssigneeType.moderator)
+        .filter((a) => a.assignee_type === 'moderator')
+        .map((a) => a.assignee);
+      nomination.news_editor_assignees = assignees
+        .filter((a) => a.assignee_type === 'news_editor')
         .map((a) => a.assignee);
     });
 

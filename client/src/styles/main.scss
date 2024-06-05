@@ -526,8 +526,13 @@ del {
 .description {
   margin-top: 1em;
 
-  &__info:not(:last-child) {
-    margin-bottom: 0.25em;
+  &__info {
+    display: flex;
+    justify-content: space-between;
+
+    &:not(:last-child) {
+      margin-bottom: 0.25em;
+    }
   }
 
   &__editor-buttons {
