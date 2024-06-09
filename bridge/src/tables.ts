@@ -217,12 +217,14 @@ export interface Round {
   done: boolean;
   ignore_creator_and_difficulty_checks: boolean;
   ignore_moderator_checks: boolean;
+  ignore_news_editor_assignees: boolean;
   name: string;
   news_author_id: number;
   news_intro: string | null;
   news_intro_preview: string | null;
   news_outro: string | null;
   news_posted_at: TableDateType | null;
+  video: string | null;
 }
 
 export interface RoundGameMode {
@@ -230,6 +232,7 @@ export interface RoundGameMode {
   game_mode: GameMode;
   nominations_locked: boolean;
   results_post_id: number | null;
+  video: string | null;
   voting_threshold: number;
 }
 

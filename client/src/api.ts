@@ -7,6 +7,8 @@ import type {
   MetadataState,
   ModeratorState,
   Role,
+  Round,
+  RoundGameMode,
   User,
 } from 'loved-bridge/tables';
 import type { Dispatch, SetStateAction } from 'react';
@@ -307,8 +309,8 @@ export function updateNominators(
 
 export function updateRound(
   roundId: number,
-  round: Partial<Readonly<Omit<IRound, 'game_modes'>>>,
-  roundGameModes: readonly PartialWith<Readonly<IRound['game_modes'][GameMode]>, 'game_mode'>[],
+  round: Partial<Readonly<Round>>,
+  roundGameModes: readonly PartialWith<Readonly<RoundGameMode>, 'game_mode'>[],
 ): Response<IRound & { news_author: IUser }> {
   return superagent.post('/api/update-round').send({ round, roundGameModes, roundId });
 }

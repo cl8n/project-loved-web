@@ -71,7 +71,7 @@ export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditor
         <input
           type='datetime-local'
           name='news_posted_at'
-          defaultValue={inputDateTime(round.news_posted_at)}
+          defaultValue={inputDateTime(round.news_posted_at) ?? ''}
           data-value-type='mySqlDate'
           pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}'
         />
@@ -79,7 +79,7 @@ export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditor
         <input
           type='text'
           name='video'
-          defaultValue={round.video ?? undefined}
+          defaultValue={round.video ?? ''}
           pattern='https?://.+\.mp4|[A-Za-z0-9_-]{11}'
           placeholder='MP4 video link or YouTube video ID'
           size={50}
@@ -92,7 +92,7 @@ export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditor
             <input
               type='text'
               name={`${roundGameMode.game_mode}:video`}
-              defaultValue={roundGameMode.video ?? undefined}
+              defaultValue={roundGameMode.video ?? ''}
               pattern='https?://.+\.mp4|[A-Za-z0-9_-]{11}'
               placeholder='MP4 video link or YouTube video ID'
               size={50}
@@ -102,13 +102,13 @@ export default function RoundEditor({ close, onRoundUpdate, round }: RoundEditor
         <label htmlFor='news_intro_preview'>Intro preview</label>
         <textarea
           name='news_intro_preview'
-          defaultValue={round.news_intro_preview}
+          defaultValue={round.news_intro_preview ?? ''}
           ref={autoHeightRef}
         />
         <label htmlFor='news_intro'>Intro</label>
-        <textarea name='news_intro' defaultValue={round.news_intro} ref={autoHeightRef} />
+        <textarea name='news_intro' defaultValue={round.news_intro ?? ''} ref={autoHeightRef} />
         <label htmlFor='news_outro'>Outro</label>
-        <textarea name='news_outro' defaultValue={round.news_outro} ref={autoHeightRef} />
+        <textarea name='news_outro' defaultValue={round.news_outro ?? ''} ref={autoHeightRef} />
       </div>
       <div className='flex-left'>
         <button type='submit'>{busy ? 'Updating...' : 'Update'}</button>

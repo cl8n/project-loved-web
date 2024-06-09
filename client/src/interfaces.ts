@@ -11,6 +11,8 @@ import type {
   NominationDescriptionEdit,
   Review,
   Role,
+  Round,
+  RoundGameMode,
   Submission,
   User,
 } from 'loved-bridge/tables';
@@ -120,28 +122,8 @@ export interface IReview {
   score: number;
 }
 
-export interface IRound {
-  id: number;
-  done: boolean;
-  game_modes: Record<
-    GameMode,
-    {
-      game_mode: GameMode;
-      nominations_locked: boolean;
-      results_post_id: number | null;
-      video: string | null;
-      voting_threshold: number;
-    }
-  >;
-  ignore_creator_and_difficulty_checks: boolean;
-  ignore_moderator_checks: boolean;
-  name: string;
-  news_author_id: number;
-  news_intro?: string;
-  news_intro_preview?: string;
-  news_outro?: string;
-  news_posted_at?: string;
-  video: string | null;
+export interface IRound extends Round {
+  game_modes: Record<GameMode, RoundGameMode>;
 }
 
 type ISetting<T> = T | null | undefined;

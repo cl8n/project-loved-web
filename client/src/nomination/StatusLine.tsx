@@ -1,11 +1,12 @@
 import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
+import type { Round } from 'loved-bridge/tables';
 import {
   CreatorsState,
   DescriptionState,
   MetadataState,
   ModeratorState,
 } from 'loved-bridge/tables';
-import type { INominationWithPoll, IRound } from '../interfaces';
+import type { INominationWithPoll } from '../interfaces';
 import ListInline from '../ListInline';
 
 function creatorsClass(state: CreatorsState) {
@@ -62,7 +63,7 @@ function votingClass(opened: boolean, result: boolean | undefined) {
 
 interface StatusLineProps {
   nomination: INominationWithPoll;
-  round: IRound;
+  round: Round;
   votingResult: boolean | undefined;
 }
 
@@ -76,13 +77,22 @@ export default function StatusLine({ nomination, round, votingResult }: StatusLi
     <span className={metadataClass(nomination.metadata_state)}>Metadata</span>,
   ];
 
-  if (!round.ignore_moderator_checks) {
+  const ignoreCreatorAndDifficultyChecks =
+    round.ignore_creator_and_difficulty_checks &&
+    nomination.creators_state === CreatorsState.unchecked &&
+    !nomination.difficulties_set;
+  const ignoreModeratorChecks =
+    round.ignore_moderator_checks &&
+    nomination.moderator_assignees.length === 0 &&
+    nomination.moderator_state === ModeratorState.unchecked;
+
+  if (!ignoreModeratorChecks) {
     infoArray.push(<span className={moderationClass(nomination.moderator_state)}>Moderation</span>);
   }
 
   return (
     <div>
-      {!round.ignore_creator_and_difficulty_checks && (
+      {!ignoreCreatorAndDifficultyChecks && (
         <>
           <span className={nomination.difficulties_set ? 'success' : 'error'}>Difficulties</span>
           {' → '}

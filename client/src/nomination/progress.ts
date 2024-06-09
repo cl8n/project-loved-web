@@ -1,3 +1,4 @@
+import type { Round } from 'loved-bridge/tables';
 import {
   CreatorsState,
   DescriptionState,
@@ -5,7 +6,7 @@ import {
   ModeratorState,
   Role,
 } from 'loved-bridge/tables';
-import type { INomination, IRound, IUserWithRoles } from '../interfaces';
+import type { INomination, IUserWithRoles } from '../interfaces';
 import { hasRole } from '../permissions';
 
 export enum NominationProgressWarning {
@@ -42,18 +43,29 @@ export const nominationProgressWarningMessages: Record<NominationProgressWarning
 
 export function nominationProgressWarnings(
   nomination: INomination,
-  round: IRound,
+  round: Round,
   user: IUserWithRoles,
 ): Set<NominationProgressWarning> {
   const warnings = new Set<NominationProgressWarning>();
 
+  const ignoreCreatorAndDifficultyChecks =
+    round.ignore_creator_and_difficulty_checks &&
+    nomination.creators_state === CreatorsState.unchecked &&
+    !nomination.difficulties_set;
+  const ignoreModeratorChecks =
+    round.ignore_moderator_checks &&
+    nomination.moderator_assignees.length === 0 &&
+    nomination.moderator_state === ModeratorState.unchecked;
+  const ignoreNewsEditorAssignees =
+    round.ignore_news_editor_assignees && nomination.news_editor_assignees.length === 0;
+
   if (hasRole(user, Role.captain, nomination.game_mode, true)) {
-    if (!round.ignore_creator_and_difficulty_checks && !nomination.difficulties_set) {
+    if (!ignoreCreatorAndDifficultyChecks && !nomination.difficulties_set) {
       warnings.add(NominationProgressWarning.difficultiesUnset);
     }
 
     // TODO: Uncomment when captains can change beatmapset creators
-    // if (!round.ignore_creator_and_difficulty_checks && nomination.creators_state === CreatorsState.unchecked) {
+    // if (!ignoreCreatorAndDifficultyChecks && nomination.creators_state === CreatorsState.unchecked) {
     //   warnings.add(NominationProgressWarning.creatorsUnchecked);
     // }
 
@@ -68,10 +80,7 @@ export function nominationProgressWarnings(
     }
 
     if (nomination.metadata_assignees.some((assignee) => assignee.id === user.id)) {
-      if (
-        !round.ignore_creator_and_difficulty_checks &&
-        nomination.creators_state !== CreatorsState.good
-      ) {
+      if (!ignoreCreatorAndDifficultyChecks && nomination.creators_state !== CreatorsState.good) {
         warnings.add(NominationProgressWarning.creatorsUnchecked);
       }
 
@@ -86,7 +95,7 @@ export function nominationProgressWarnings(
     }
   }
 
-  if (!round.ignore_moderator_checks && hasRole(user, Role.moderator, undefined, true)) {
+  if (!ignoreModeratorChecks && hasRole(user, Role.moderator, undefined, true)) {
     if (nomination.moderator_assignees.length === 0) {
       warnings.add(NominationProgressWarning.moderatorAssigneesMissing);
     }
@@ -114,17 +123,14 @@ export function nominationProgressWarnings(
     if (
       nomination.news_editor_assignees.some((assignee) => assignee.id === user.id) &&
       nomination.description != null &&
-      nomination.description_state === DescriptionState.notReviewed
+      nomination.description_state !== DescriptionState.reviewed
     ) {
       warnings.add(NominationProgressWarning.descriptionNeedsReview);
     }
   }
 
   if (hasRole(user, Role.newsAuthor, undefined, true)) {
-    if (
-      !round.ignore_creator_and_difficulty_checks &&
-      nomination.creators_state !== CreatorsState.good
-    ) {
+    if (!ignoreCreatorAndDifficultyChecks && nomination.creators_state !== CreatorsState.good) {
       warnings.add(NominationProgressWarning.creatorsUnchecked);
     }
 
@@ -132,11 +138,11 @@ export function nominationProgressWarnings(
       warnings.add(NominationProgressWarning.metadataAssigneesMissing);
     }
 
-    if (!round.ignore_moderator_checks && nomination.moderator_assignees.length === 0) {
+    if (!ignoreModeratorChecks && nomination.moderator_assignees.length === 0) {
       warnings.add(NominationProgressWarning.moderatorAssigneesMissing);
     }
 
-    if (nomination.news_editor_assignees.length === 0) {
+    if (!ignoreNewsEditorAssignees && nomination.news_editor_assignees.length === 0) {
       warnings.add(NominationProgressWarning.newsEditorAssigneesMissing);
     }
   }

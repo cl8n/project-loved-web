@@ -1,7 +1,13 @@
 import { DIFF_DELETE, DIFF_EQUAL, DIFF_INSERT, diff_match_patch } from 'diff-match-patch';
 import { GameMode, gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import type { AssigneeType } from 'loved-bridge/tables';
-import { DescriptionState, MetadataState, ModeratorState, Role } from 'loved-bridge/tables';
+import {
+  CreatorsState,
+  DescriptionState,
+  MetadataState,
+  ModeratorState,
+  Role,
+} from 'loved-bridge/tables';
 import { Fragment, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { FormattedDate } from 'react-intl';
 import { useParams } from 'react-router-dom';
@@ -473,6 +479,11 @@ function Nomination({
   const moderationStarted = nomination.moderator_state !== ModeratorState.unchecked;
   const newsEditorAssigned = nomination.news_editor_assignees.length > 0;
 
+  const ignoreModeratorChecks =
+    round.ignore_moderator_checks &&
+    nomination.moderator_assignees.length === 0 &&
+    nomination.moderator_state === ModeratorState.unchecked;
+
   const canAssignMetadata =
     !round.done &&
     !(votingResult === false && !metadataAssigned) &&
@@ -648,7 +659,7 @@ function Nomination({
                 </>
               )}
             </span>
-            {!round.ignore_moderator_checks && (
+            {!ignoreModeratorChecks && (
               <>
                 {canEditModeration && (
                   <EditModeration
@@ -695,6 +706,7 @@ function Nomination({
         canEdit={canEditDescription}
         nomination={nomination}
         onNominationUpdate={onNominationUpdate}
+        round={round}
       />
       {hasProgressWarnings && (
         <div className='nomination__warnings'>
@@ -983,13 +995,18 @@ function EditDifficulties({ nomination, onNominationUpdate, round }: EditDifficu
       .finally(() => setModalOpen(false));
   };
 
+  const ignoreCreatorAndDifficultyChecks =
+    round.ignore_creator_and_difficulty_checks &&
+    nomination.creators_state === CreatorsState.unchecked &&
+    !nomination.difficulties_set;
+
   return (
     <>
       <button
         type='button'
         onClick={() => setModalOpen(true)}
         className={`fake-a ${
-          !round.ignore_creator_and_difficulty_checks && !nomination.difficulties_set
+          !ignoreCreatorAndDifficultyChecks && !nomination.difficulties_set
             ? 'button--angry'
             : 'button--edit'
         }`}
@@ -1129,6 +1146,7 @@ interface DescriptionProps {
   canEdit: boolean;
   nomination: INomination;
   onNominationUpdate: (nomination: PartialWithId<INomination>) => void;
+  round: IRound;
 }
 
 function Description({
@@ -1137,6 +1155,7 @@ function Description({
   canEdit,
   nomination,
   onNominationUpdate,
+  round,
 }: DescriptionProps) {
   const [busy, setBusy] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -1156,6 +1175,9 @@ function Description({
       .catch(alertApiErrorMessage)
       .finally(() => setEditing(false));
   };
+
+  const ignoreNewsEditorAssignees =
+    round.ignore_news_editor_assignees && nomination.news_editor_assignees.length === 0;
 
   canEdit &&= !editing;
   const canShowHistory = nomination.description_edits.length > 1;
@@ -1199,24 +1221,26 @@ function Description({
           {canEdit && canShowHistory && ', '}
           {canShowHistory && <DescriptionHistory nomination={nomination} />}
         </span>
-        <span className='flex-no-shrink'>
-          News editor assignees:{' '}
-          <ListInline
-            array={nomination.news_editor_assignees}
-            render={(user) => <UserInline user={user} />}
-          />
-          {canAssignNewsEditor && (
-            <>
-              {' — '}
-              <EditAssignees
-                assigneeCandidatesApi={assigneeCandidatesApi}
-                nomination={nomination}
-                onNominationUpdate={onNominationUpdate}
-                type='news_editor'
-              />
-            </>
-          )}
-        </span>
+        {!ignoreNewsEditorAssignees && (
+          <span className='flex-no-shrink'>
+            News editor assignees:{' '}
+            <ListInline
+              array={nomination.news_editor_assignees}
+              render={(user) => <UserInline user={user} />}
+            />
+            {canAssignNewsEditor && (
+              <>
+                {' — '}
+                <EditAssignees
+                  assigneeCandidatesApi={assigneeCandidatesApi}
+                  nomination={nomination}
+                  onNominationUpdate={onNominationUpdate}
+                  type='news_editor'
+                />
+              </>
+            )}
+          </span>
+        )}
       </div>
       {editing ? (
         <Form busyState={[busy, setBusy]} onSubmit={onSubmit}>
