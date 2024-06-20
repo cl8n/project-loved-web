@@ -9,7 +9,7 @@ import {
 import type { INomination, IUserWithRoles } from '../interfaces';
 import { hasRole } from '../permissions';
 
-export enum NominationProgressWarning {
+export const enum NominationProgressWarning {
   creatorsUnchecked,
   descriptionMissing,
   descriptionNeedsReview,
@@ -75,7 +75,10 @@ export function nominationProgressWarnings(
   }
 
   if (hasRole(user, Role.metadata, undefined, true)) {
-    if (nomination.metadata_assignees.length === 0) {
+    if (
+      nomination.metadata_assignees.length === 0 &&
+      nomination.metadata_state !== MetadataState.good
+    ) {
       warnings.add(NominationProgressWarning.metadataAssigneesMissing);
     }
 
@@ -96,7 +99,11 @@ export function nominationProgressWarnings(
   }
 
   if (!ignoreModeratorChecks && hasRole(user, Role.moderator, undefined, true)) {
-    if (nomination.moderator_assignees.length === 0) {
+    if (
+      nomination.moderator_assignees.length === 0 &&
+      nomination.moderator_state !== ModeratorState.good &&
+      nomination.moderator_state !== ModeratorState.notAllowed
+    ) {
       warnings.add(NominationProgressWarning.moderatorAssigneesMissing);
     }
 
@@ -116,12 +123,17 @@ export function nominationProgressWarnings(
   }
 
   if (hasRole(user, Role.newsEditor, undefined, true)) {
-    if (nomination.news_editor_assignees.length === 0) {
+    if (
+      !ignoreNewsEditorAssignees &&
+      nomination.news_editor_assignees.length === 0 &&
+      nomination.description_state !== DescriptionState.reviewed
+    ) {
       warnings.add(NominationProgressWarning.newsEditorAssigneesMissing);
     }
 
     if (
-      nomination.news_editor_assignees.some((assignee) => assignee.id === user.id) &&
+      (ignoreNewsEditorAssignees ||
+        nomination.news_editor_assignees.some((assignee) => assignee.id === user.id)) &&
       nomination.description != null &&
       nomination.description_state !== DescriptionState.reviewed
     ) {
@@ -134,15 +146,27 @@ export function nominationProgressWarnings(
       warnings.add(NominationProgressWarning.creatorsUnchecked);
     }
 
-    if (nomination.metadata_assignees.length === 0) {
+    if (
+      nomination.metadata_assignees.length === 0 &&
+      nomination.metadata_state !== MetadataState.good
+    ) {
       warnings.add(NominationProgressWarning.metadataAssigneesMissing);
     }
 
-    if (!ignoreModeratorChecks && nomination.moderator_assignees.length === 0) {
+    if (
+      !ignoreModeratorChecks &&
+      nomination.moderator_assignees.length === 0 &&
+      nomination.moderator_state !== ModeratorState.good &&
+      nomination.moderator_state !== ModeratorState.notAllowed
+    ) {
       warnings.add(NominationProgressWarning.moderatorAssigneesMissing);
     }
 
-    if (!ignoreNewsEditorAssignees && nomination.news_editor_assignees.length === 0) {
+    if (
+      !ignoreNewsEditorAssignees &&
+      nomination.news_editor_assignees.length === 0 &&
+      nomination.description_state !== DescriptionState.reviewed
+    ) {
       warnings.add(NominationProgressWarning.newsEditorAssigneesMissing);
     }
   }
