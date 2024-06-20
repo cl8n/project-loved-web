@@ -142,6 +142,10 @@ export function nominationProgressWarnings(
   }
 
   if (hasRole(user, Role.newsAuthor, undefined, true)) {
+    if (!ignoreCreatorAndDifficultyChecks && !nomination.difficulties_set) {
+      warnings.add(NominationProgressWarning.difficultiesUnset);
+    }
+
     if (!ignoreCreatorAndDifficultyChecks && nomination.creators_state !== CreatorsState.good) {
       warnings.add(NominationProgressWarning.creatorsUnchecked);
     }
