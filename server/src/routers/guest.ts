@@ -44,7 +44,7 @@ guestRouter.get(
   '/current-news-post',
   asyncHandler(async (_, res) => {
     res.json(
-      await cache('current-news-post', 600, async () => {
+      await cache('current-news-post', 10 * 60, async () => {
         const ongoingPoll = await db.queryOne<Pick<Poll, 'round_id'>>(`
           SELECT round_id
           FROM polls
@@ -86,7 +86,7 @@ guestRouter.get(
   '/mapper-consents',
   asyncHandler(async (_, res) => {
     res.json(
-      await cache('mapper-consents', Infinity, async () => {
+      await cache('mapper-consents', 6 * 60 * 60, async () => {
         const beatmapsetConsentsByMapperId = groupBy<
           ConsentBeatmapset['user_id'],
           ConsentBeatmapset & { beatmapset: Beatmapset }
