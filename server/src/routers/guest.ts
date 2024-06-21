@@ -808,14 +808,21 @@ guestRouter.get(
           Beatmap,
           'beatmapset_id' | 'bpm' | 'game_mode' | 'key_count' | 'play_count' | 'total_length'
         >
-      >(beatmapsByBeatmapsetId[beatmapset.id] || [], 'game_mode');
-      const beatmapsForGameMode = beatmaps[gameMode]?.sort((a, b) => a.bpm - b.bpm) || [];
+      >(beatmapsByBeatmapsetId[beatmapset.id] ?? [], 'game_mode');
+      const beatmapsForGameMode = beatmaps[gameMode]?.sort((a, b) => a.bpm - b.bpm) ?? [];
       const consent: ConsentValue | boolean | null =
         beatmapsetConsentByBeatmapsetUserKey[`${beatmapset.id}-${beatmapset.creator_id}`] ??
         consentByUserId[beatmapset.creator_id];
 
       beatmapset.reviews = reviewsByBeatmapsetId[beatmapset.id] || [];
       beatmapset.submissions = submissionsByBeatmapsetId[beatmapset.id] || [];
+
+      if (Object.keys(beatmaps).length > 1 || beatmaps[gameMode] == null) {
+        beatmapset.play_count = beatmapsForGameMode.reduce(
+          (sum, beatmap) => sum + beatmap.play_count,
+          0,
+        );
+      }
 
       beatmapset.consent =
         consent == null || consent === ConsentValue.unreachable ? null : !!consent;
@@ -835,10 +842,6 @@ guestRouter.get(
             beatmapset.id
           ]?.[0] ?? null
         : null;
-      beatmapset.play_count = beatmapsForGameMode.reduce(
-        (sum, beatmap) => sum + beatmap.play_count,
-        0,
-      );
       beatmapset.poll = pollByBeatmapsetId[beatmapset.id];
       beatmapset.review_score = beatmapCaptainPriority(beatmapset.reviews);
       beatmapset.review_score_all = beatmapRating(beatmapset.reviews);
