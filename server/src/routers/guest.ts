@@ -572,21 +572,23 @@ guestRouter.get(
   '/stats/polls',
   asyncHandler(async (_, res) => {
     res.json(
-      await db.queryWithGroups<
-        Poll & {
-          beatmapset: Beatmapset | null;
-          voting_threshold: RoundGameMode['voting_threshold'] | null;
-        }
-      >(`
-        SELECT polls.*, beatmapsets:beatmapset, round_game_modes.voting_threshold
-        FROM polls
-        LEFT JOIN beatmapsets
-          ON polls.beatmapset_id = beatmapsets.id
-        LEFT JOIN round_game_modes
-          ON polls.round_id = round_game_modes.round_id
-            AND polls.game_mode = round_game_modes.game_mode
-        ORDER BY polls.ended_at DESC
-      `),
+      await cache('polls', 6 * 60 * 60, () =>
+        db.queryWithGroups<
+          Poll & {
+            beatmapset: Beatmapset | null;
+            voting_threshold: RoundGameMode['voting_threshold'] | null;
+          }
+        >(`
+          SELECT polls.*, beatmapsets:beatmapset, round_game_modes.voting_threshold
+          FROM polls
+          LEFT JOIN beatmapsets
+            ON polls.beatmapset_id = beatmapsets.id
+          LEFT JOIN round_game_modes
+            ON polls.round_id = round_game_modes.round_id
+              AND polls.game_mode = round_game_modes.game_mode
+          ORDER BY polls.ended_at DESC
+        `),
+      ),
     );
   }),
 );
