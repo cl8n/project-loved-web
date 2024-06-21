@@ -26,6 +26,7 @@ import {
   MetadataState,
   Role,
 } from 'loved-bridge/tables';
+import { deleteCache } from './cache.js';
 import db from './db.js';
 import { asyncHandler } from './express-helpers.js';
 import {
@@ -51,7 +52,6 @@ import {
   isStringArray,
   isUserRoleWithoutUserIdArray,
 } from './type-guards.js';
-import { deleteCache } from './cache.js';
 
 const router = Router();
 export default router;
