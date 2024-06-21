@@ -24,6 +24,7 @@ import type {
 } from 'loved-bridge/tables';
 import { ConsentValue, Role } from 'loved-bridge/tables';
 import qs from 'querystring';
+import { cache } from '../cache.js';
 import config from '../config.js';
 import db from '../db.js';
 import { asyncHandler } from '../express-helpers.js';
@@ -42,38 +43,42 @@ guestRouter.get('/', (_, res) => {
 guestRouter.get(
   '/current-news-post',
   asyncHandler(async (_, res) => {
-    const ongoingPoll = await db.queryOne<Pick<Poll, 'round_id'>>(`
-      SELECT round_id
-      FROM polls
-      WHERE ended_at > NOW()
-      ORDER BY id DESC
-      LIMIT 1
-    `);
+    res.json(
+      await cache('current-news-post', 600, async () => {
+        const ongoingPoll = await db.queryOne<Pick<Poll, 'round_id'>>(`
+          SELECT round_id
+          FROM polls
+          WHERE ended_at > NOW()
+          ORDER BY id DESC
+          LIMIT 1
+        `);
 
-    if (ongoingPoll == null) {
-      return res.json(null);
-    }
+        if (ongoingPoll == null) {
+          return null;
+        }
 
-    const round = await db.queryOne<Pick<Round, 'name' | 'news_posted_at'>>(
-      `
-        SELECT name, news_posted_at
-        FROM rounds
-        WHERE id = ?
-      `,
-      [ongoingPoll.round_id],
+        const round = await db.queryOne<Pick<Round, 'name' | 'news_posted_at'>>(
+          `
+            SELECT name, news_posted_at
+            FROM rounds
+            WHERE id = ?
+          `,
+          [ongoingPoll.round_id],
+        );
+
+        if (round?.news_posted_at == null) {
+          return null;
+        }
+
+        const slugDate = round.news_posted_at.toISOString().slice(0, 10);
+        const slugName = round.name.toLowerCase().replace(/\W+/g, '-');
+
+        return {
+          roundName: round.name,
+          url: `https://osu.ppy.sh/home/news/${slugDate}-project-loved-${slugName}`,
+        };
+      }),
     );
-
-    if (round?.news_posted_at == null) {
-      return res.json(null);
-    }
-
-    const slugDate = round.news_posted_at.toISOString().slice(0, 10);
-    const slugName = round.name.toLowerCase().replace(/\W+/g, '-');
-
-    res.json({
-      roundName: round.name,
-      url: `https://osu.ppy.sh/home/news/${slugDate}-project-loved-${slugName}`,
-    });
   }),
 );
 

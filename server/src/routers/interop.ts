@@ -13,6 +13,7 @@ import type {
   User,
 } from 'loved-bridge/tables';
 import { LogType } from 'loved-bridge/tables';
+import { deleteCache } from '../cache.js';
 import config from '../config.js';
 import db from '../db.js';
 import { asyncHandler } from '../express-helpers.js';
@@ -515,6 +516,8 @@ interopRouter.post(
       );
     }
 
+    deleteCache('current-news-post');
+
     res.json({
       mainTopicIds: Object.values(mainPostTopicIdsByGameMode),
       nominationTopicIds,
@@ -850,6 +853,8 @@ interopRouter.post(
         );
       }
     });
+
+    deleteCache('current-news-post');
 
     res.status(204).send();
   }),
