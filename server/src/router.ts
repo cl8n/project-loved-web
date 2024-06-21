@@ -51,6 +51,7 @@ import {
   isStringArray,
   isUserRoleWithoutUserIdArray,
 } from './type-guards.js';
+import { deleteCache } from './cache.js';
 
 const router = Router();
 export default router;
@@ -1465,6 +1466,8 @@ router.delete(
 
       await connection.query('DELETE FROM beatmapsets WHERE id = ?', [id]);
     });
+
+    deleteCache('mapper-consents');
 
     res.status(204).send();
   }),

@@ -85,34 +85,38 @@ guestRouter.get(
 guestRouter.get(
   '/mapper-consents',
   asyncHandler(async (_, res) => {
-    const beatmapsetConsentsByMapperId = groupBy<
-      ConsentBeatmapset['user_id'],
-      ConsentBeatmapset & { beatmapset: Beatmapset }
-    >(
-      await db.queryWithGroups<ConsentBeatmapset & { beatmapset: Beatmapset }>(`
-        SELECT mapper_consent_beatmapsets.*, beatmapsets:beatmapset
-        FROM mapper_consent_beatmapsets
-        INNER JOIN beatmapsets
-          ON mapper_consent_beatmapsets.beatmapset_id = beatmapsets.id
-      `),
-      'user_id',
+    res.json(
+      await cache('mapper-consents', Infinity, async () => {
+        const beatmapsetConsentsByMapperId = groupBy<
+          ConsentBeatmapset['user_id'],
+          ConsentBeatmapset & { beatmapset: Beatmapset }
+        >(
+          await db.queryWithGroups<ConsentBeatmapset & { beatmapset: Beatmapset }>(`
+            SELECT mapper_consent_beatmapsets.*, beatmapsets:beatmapset
+            FROM mapper_consent_beatmapsets
+            INNER JOIN beatmapsets
+              ON mapper_consent_beatmapsets.beatmapset_id = beatmapsets.id
+          `),
+          'user_id',
+        );
+        const consents: (Consent & {
+          beatmapset_consents?: (ConsentBeatmapset & { beatmapset: Beatmapset })[];
+          mapper: User;
+        })[] = await db.queryWithGroups<Consent & { mapper: User }>(`
+          SELECT mapper_consents.*, mappers:mapper
+          FROM mapper_consents
+          INNER JOIN users AS mappers
+            ON mapper_consents.user_id = mappers.id
+          ORDER BY \`mapper:name\` ASC
+        `);
+
+        consents.forEach((consent) => {
+          consent.beatmapset_consents = beatmapsetConsentsByMapperId[consent.user_id] ?? [];
+        });
+
+        return consents;
+      }),
     );
-    const consents: (Consent & {
-      beatmapset_consents?: (ConsentBeatmapset & { beatmapset: Beatmapset })[];
-      mapper: User;
-    })[] = await db.queryWithGroups<Consent & { mapper: User }>(`
-      SELECT mapper_consents.*, mappers:mapper
-      FROM mapper_consents
-      INNER JOIN users AS mappers
-        ON mapper_consents.user_id = mappers.id
-      ORDER BY \`mapper:name\` ASC
-    `);
-
-    consents.forEach((consent) => {
-      consent.beatmapset_consents = beatmapsetConsentsByMapperId[consent.user_id] || [];
-    });
-
-    res.json(consents);
   }),
 );
 

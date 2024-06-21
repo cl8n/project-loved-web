@@ -3,6 +3,7 @@ import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import type { Beatmapset, Consent, ConsentBeatmapset, Review, User } from 'loved-bridge/tables';
 import { LogType, Role } from 'loved-bridge/tables';
+import { deleteCache } from '../cache.js';
 import type { MysqlConnectionType } from '../db.js';
 import db from '../db.js';
 import { asyncHandler } from '../express-helpers.js';
@@ -230,6 +231,8 @@ anyoneRouter.post(
         }
       }
     });
+
+    deleteCache('mapper-consents');
 
     const consent: Consent & {
       beatmapset_consents?: (ConsentBeatmapset & { beatmapset: Beatmapset })[];
