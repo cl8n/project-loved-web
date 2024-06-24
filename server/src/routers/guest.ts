@@ -683,6 +683,7 @@ guestRouter.get(
             maximum_length: number;
             modal_bpm: number;
             nominated_round_name: string | null;
+            play_count_recalculated: boolean;
             poll:
               | (Partial<Pick<Poll, 'beatmapset_id'>> &
                   Pick<Poll, 'topic_id'> & {
@@ -864,6 +865,9 @@ guestRouter.get(
               (sum, beatmap) => sum + beatmap.play_count,
               0,
             );
+            beatmapset.play_count_recalculated = true;
+          } else {
+            beatmapset.play_count_recalculated = false;
           }
 
           beatmapset.consent =

@@ -69,6 +69,11 @@ const messages = defineMessages({
     description:
       '[Submissions] Aggregate review score shown on submissions table for maps that passed community voting',
   },
+  playCountRecalculated: {
+    defaultMessage:
+      'The play count of this hybrid mapset may not be accurate. osu! resets play counts of each difficulty every time the map is updated.',
+    description: '[Submissions] Help text explaining an inaccurate play count statistic',
+  },
   nominated: {
     defaultMessage: 'Nominated',
     description:
@@ -304,6 +309,12 @@ export default function SubmissionBeatmapset({
           <td>
             <img alt='' src={playIcon} className='content-icon' />{' '}
             {intl.formatNumber(beatmapset.play_count)}
+            {beatmapset.play_count_recalculated && (
+              <>
+                {' '}
+                <Help warning>{intl.formatMessage(messages.playCountRecalculated)}</Help>
+              </>
+            )}
           </td>
         )}
         {columns.favoriteCount && (

@@ -199,6 +199,7 @@ export interface GetSubmissionsResponseBody {
     maximum_length: number;
     modal_bpm: number;
     nominated_round_name?: string | null;
+    play_count_recalculated: boolean;
     poll?: {
       in_progress: boolean;
       passed: boolean;
