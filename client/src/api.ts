@@ -1,6 +1,7 @@
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import type {
   AssigneeType,
+  Beatmapset,
   InteropKey,
   Log,
   LogType,
@@ -20,7 +21,6 @@ import type {
 } from 'superagent';
 import superagent from 'superagent';
 import type {
-  IBeatmapset,
   IMapperBeatmapsetConsent,
   IMapperConsent,
   INomination,
@@ -45,7 +45,7 @@ type Response<BodyType = undefined> = Promise<SuperAgentResponseWithBody<BodyTyp
   SuperAgentRequest;
 
 interface ApiObjectTypes {
-  beatmapset: IBeatmapset;
+  beatmapset: Beatmapset;
   user: IUser;
 }
 type ApiObjectType = keyof ApiObjectTypes;
@@ -191,7 +191,7 @@ export function getLogs(
 }
 
 export interface GetSubmissionsResponseBody {
-  beatmapsets: (IBeatmapset & {
+  beatmapsets: (Beatmapset & {
     beatmap_counts: Record<GameMode, number>;
     consent: boolean | null;
     key_modes: number[];
@@ -239,7 +239,7 @@ export function lockNominations(roundId: number, gameMode: GameMode, lock: boole
   return superagent.post('/api/lock-nominations').send({ roundId, gameMode, lock });
 }
 
-export function searchBeatmapsets(query: string): Response<IBeatmapset[]> {
+export function searchBeatmapsets(query: string): Response<Beatmapset[]> {
   return superagent.get('/api/search-beatmapset').query({ query });
 }
 

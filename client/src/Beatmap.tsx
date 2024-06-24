@@ -1,9 +1,9 @@
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { gameModeShortName } from 'loved-bridge/beatmaps/gameMode';
-import type { IBeatmapset } from './interfaces';
+import type { Beatmapset } from 'loved-bridge/tables';
 
 interface BeatmapProps {
-  beatmapset: IBeatmapset;
+  beatmapset: Beatmapset;
   gameMode?: GameMode;
 }
 

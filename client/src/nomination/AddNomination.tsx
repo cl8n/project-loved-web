@@ -1,5 +1,6 @@
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { gameModeShortName } from 'loved-bridge/beatmaps/gameMode';
+import type { Beatmapset } from 'loved-bridge/tables';
 import type { FormEvent } from 'react';
 import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -8,7 +9,7 @@ import { beatmapText } from '../BeatmapInline';
 import type { FormSubmitHandler } from '../dom-helpers';
 import { Form } from '../dom-helpers';
 import Help from '../Help';
-import type { IBeatmapset, INomination } from '../interfaces';
+import type { INomination } from '../interfaces';
 import { useEffectExceptOnMount } from '../react-helpers';
 
 interface AddNominationProps {
@@ -21,8 +22,8 @@ export default function AddNomination({ gameMode, onNominationAdd, roundId }: Ad
   const [busy, setBusy] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [searchRequest, setSearchRequest] = useState<ReturnType<typeof searchBeatmapsets>>();
-  const [searchResults, setSearchResults] = useState<IBeatmapset[]>();
-  const [selectedBeatmapset, setSelectedBeatmapset] = useState<IBeatmapset>();
+  const [searchResults, setSearchResults] = useState<Beatmapset[]>();
+  const [selectedBeatmapset, setSelectedBeatmapset] = useState<Beatmapset>();
 
   useEffectExceptOnMount(() => {
     if (searchInputRef.current != null && selectedBeatmapset == null) {

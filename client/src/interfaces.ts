@@ -45,24 +45,10 @@ export type IBeatmapWithExcluded = IBeatmap & {
   excluded: boolean;
 };
 
-export interface IBeatmapset {
-  id: number;
-  artist: string;
-  creator_id: number;
-  creator_name: string;
-  deleted_at: string | null;
-  favorite_count: number;
-  play_count: number;
-  ranked_status: RankedStatus;
-  submitted_at: string;
-  title: string;
-  updated_at: string;
-}
-
 export interface INomination {
   id: number;
   beatmaps: IBeatmapWithExcluded[];
-  beatmapset: IBeatmapset;
+  beatmapset: Beatmapset;
   beatmapset_creators: IUser[];
   beatmapset_id: number;
   category: string | null;
@@ -100,7 +86,7 @@ export interface INominationWithPoll extends INomination {
 
 export interface IPoll {
   id: number;
-  beatmapset?: IBeatmapset;
+  beatmapset?: Beatmapset;
   ended_at: string;
   game_mode: GameMode;
   result_no: number | null;
@@ -175,7 +161,7 @@ export interface IMapperConsent {
 
 export interface IMapperBeatmapsetConsent {
   beatmapset_id: number;
-  beatmapset: IBeatmapset;
+  beatmapset: Beatmapset;
   user_id: number;
   consent: boolean;
   consent_reason: string | null;

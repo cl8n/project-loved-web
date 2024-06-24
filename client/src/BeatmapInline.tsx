@@ -1,10 +1,10 @@
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { gameModeShortName } from 'loved-bridge/beatmaps/gameMode';
-import type { IBeatmapset } from './interfaces';
+import type { Beatmapset } from 'loved-bridge/tables';
 
 interface BeatmapInlineProps {
   artist?: string | null;
-  beatmapset: IBeatmapset;
+  beatmapset: Beatmapset;
   gameMode?: GameMode;
   showCreator?: boolean;
   title?: string | null;
@@ -35,7 +35,7 @@ export function BeatmapInline(props: BeatmapInlineProps) {
   );
 }
 
-export function beatmapText(beatmapset: IBeatmapset, showCreator?: boolean): string {
+export function beatmapText(beatmapset: Beatmapset, showCreator?: boolean): string {
   let text = `${beatmapset.artist} - ${beatmapset.title}`;
 
   if (showCreator) {
