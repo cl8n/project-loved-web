@@ -233,6 +233,8 @@ anyoneRouter.post(
     });
 
     deleteCache('mapper-consents');
+    deleteCache('submissions:mapper-consent-beatmapsets');
+    deleteCache('submissions:mapper-consents');
 
     const consent: Consent & {
       beatmapset_consents?: (ConsentBeatmapset & { beatmapset: Beatmapset })[];
@@ -339,6 +341,8 @@ anyoneRouter.post(
         ]);
         await deleteExistingSubmission(connection);
 
+        deleteCache(`submissions:${req.body.gameMode}:reviews`);
+
         res.json({
           ...(await connection.queryOne<Review>('SELECT * FROM reviews WHERE id = ?', [
             existingReview.id,
@@ -376,6 +380,8 @@ anyoneRouter.post(
       ]);
       await deleteExistingSubmission(connection);
 
+      deleteCache(`submissions:${req.body.gameMode}:reviews`);
+
       res.json({
         ...(await connection.queryOne<Review>('SELECT * FROM reviews WHERE id = ?', [insertId])),
         active_captain: activeCaptain,
@@ -393,9 +399,9 @@ anyoneRouter.delete(
       return res.status(422).json({ error: 'Invalid review ID' });
     }
 
-    const review = await db.queryOne<Pick<Review, 'reviewer_id'>>(
+    const review = await db.queryOne<Pick<Review, 'game_mode' | 'reviewer_id'>>(
       `
-        SELECT reviewer_id
+        SELECT game_mode, reviewer_id
         FROM reviews
         WHERE id = ?
       `,
@@ -411,6 +417,8 @@ anyoneRouter.delete(
     }
 
     await db.query('DELETE FROM reviews WHERE id = ?', [reviewId]);
+
+    deleteCache(`submissions:${review.game_mode}:reviews`);
 
     res.status(204).send();
   }),
@@ -512,6 +520,8 @@ anyoneRouter.post(
         }
 
         await deleteExistingSubmission(connection, gameMode);
+
+        deleteCache(`submissions:${gameMode}:reviews`);
       }
     });
 

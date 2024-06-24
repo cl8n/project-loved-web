@@ -602,54 +602,63 @@ guestRouter.get(
       return res.status(422).json({ error: 'Invalid game mode' });
     }
 
-    const beatmapsetIds = new Set<number>();
-    const userIds = new Set<number>();
+    const { beatmapsetIds, reviewsByBeatmapsetId, submissionsByBeatmapsetId, userIds } =
+      await cache({ key: `submissions:${gameMode}:reviews`, ttlSeconds: 6 * 60 * 60 }, async () => {
+        const reviews = await db.query<Review & { active_captain: boolean | null }>(
+          `
+            SELECT reviews.*, NOT user_roles.alumni AS active_captain
+            FROM reviews
+            LEFT JOIN user_roles
+              ON user_roles.role_id = ?
+              AND reviews.game_mode = user_roles.game_mode
+              AND reviews.reviewer_id = user_roles.user_id
+            WHERE reviews.game_mode = ?
+            ORDER BY (score < -3) DESC, active_captain DESC, reviews.reviewed_at ASC
+          `,
+          [Role.captain, gameMode],
+        );
+        const submissions = await db.query<Submission>(
+          `
+            SELECT *
+            FROM submissions
+            WHERE game_mode = ?
+            ORDER BY submitted_at ASC
+          `,
+          [gameMode],
+        );
 
-    const hasRole = currentUserRoles(req, res);
-    const canViewNominationStatus =
-      !accessSetting(`hideNominationStatus.${gameMode}`) || hasRole('any');
+        const beatmapsetIds = new Set<number>();
+        const userIds = new Set<number>();
 
-    const submissions = await db.query<Submission>(
-      `
-        SELECT *
-        FROM submissions
-        WHERE game_mode = ?
-        ORDER BY submitted_at ASC
-      `,
-      [gameMode],
-    );
+        for (const review of reviews) {
+          beatmapsetIds.add(review.beatmapset_id);
+          userIds.add(review.reviewer_id);
 
-    for (const submission of submissions) {
-      beatmapsetIds.add(submission.beatmapset_id);
+          // TODO: Type cast this correctly earlier?
+          if (review.active_captain != null) {
+            review.active_captain = (review.active_captain as unknown) !== 0;
+          }
+        }
 
-      if (submission.submitter_id != null) {
-        userIds.add(submission.submitter_id);
-      }
-    }
+        for (const submission of submissions) {
+          beatmapsetIds.add(submission.beatmapset_id);
 
-    const reviews = await db.query<Review & { active_captain: boolean | null }>(
-      `
-        SELECT reviews.*, NOT user_roles.alumni AS active_captain
-        FROM reviews
-        LEFT JOIN user_roles
-          ON user_roles.role_id = ?
-          AND reviews.game_mode = user_roles.game_mode
-          AND reviews.reviewer_id = user_roles.user_id
-        WHERE reviews.game_mode = ?
-        ORDER BY (score < -3) DESC, active_captain DESC, reviews.reviewed_at ASC
-      `,
-      [Role.captain, gameMode],
-    );
+          if (submission.submitter_id != null) {
+            userIds.add(submission.submitter_id);
+          }
+        }
 
-    for (const review of reviews) {
-      beatmapsetIds.add(review.beatmapset_id);
-      userIds.add(review.reviewer_id);
+        const reviewsByBeatmapsetId = groupBy<
+          Review['beatmapset_id'],
+          Review & { active_captain: boolean | null }
+        >(reviews, 'beatmapset_id');
+        const submissionsByBeatmapsetId = groupBy<Submission['beatmapset_id'], Submission>(
+          submissions,
+          'beatmapset_id',
+        );
 
-      // TODO: Type cast this correctly earlier?
-      if (review.active_captain != null) {
-        review.active_captain = (review.active_captain as unknown) !== 0;
-      }
-    }
+        return { beatmapsetIds, reviewsByBeatmapsetId, submissionsByBeatmapsetId, userIds };
+      });
 
     if (beatmapsetIds.size === 0) {
       return res.json({
@@ -658,237 +667,277 @@ guestRouter.get(
       });
     }
 
-    const beatmapsets: (Beatmapset &
-      Partial<{
-        beatmap_counts: Record<GameMode, number>;
-        consent: boolean | null;
-        key_modes: number[];
-        low_favorites: boolean;
-        maximum_length: number;
-        modal_bpm: number;
-        nominated_round_name: string | null;
-        poll: Partial<Pick<Poll, 'beatmapset_id'>> &
-          Pick<Poll, 'topic_id'> & { in_progress: 0 | 1 | boolean; passed: 0 | 1 | boolean };
-        review_score: number;
-        review_score_all: number;
-        reviews: (Review & { active_captain: boolean | null })[];
-        score: number;
-        strictly_rejected: boolean;
-        submissions: Submission[];
-      }>)[] = await db.query<Beatmapset>(
-      `
-        SELECT *
-        FROM beatmapsets
-        WHERE id IN (?)
-      `,
-      [[...beatmapsetIds]],
-    );
-    const beatmapsByBeatmapsetId = groupBy<
-      Beatmap['beatmapset_id'],
-      Pick<
-        Beatmap,
-        'beatmapset_id' | 'bpm' | 'game_mode' | 'key_count' | 'play_count' | 'total_length'
-      >
-    >(
-      await db.query<
-        Pick<
-          Beatmap,
-          'beatmapset_id' | 'bpm' | 'game_mode' | 'key_count' | 'play_count' | 'total_length'
-        >
-      >(
-        `
-          SELECT beatmapset_id, bpm, game_mode, key_count, play_count, total_length
-          FROM beatmaps
-          WHERE beatmapset_id IN (?)
-            AND deleted_at IS NULL
-        `,
-        [[...beatmapsetIds]],
-      ),
-      'beatmapset_id',
-    );
-    const futureNominationsByBeatmapsetId =
-      canViewNominationStatus &&
-      groupBy<Nomination['beatmapset_id'], Round['name']>(
-        await db.query<Pick<Nomination, 'beatmapset_id'> & Pick<Round, 'name'>>(
+    const { beatmapsets, beatmapsByBeatmapsetId } = await cache(
+      {
+        dependsOn: [`submissions:${gameMode}:reviews`],
+        key: `submissions:${gameMode}:beatmapsets`,
+        ttlSeconds: 6 * 60 * 60,
+      },
+      async () => {
+        const beatmapsets: (Beatmapset &
+          Partial<{
+            beatmap_counts: Record<GameMode, number>;
+            consent: boolean | null;
+            key_modes: number[];
+            low_favorites: boolean;
+            maximum_length: number;
+            modal_bpm: number;
+            nominated_round_name: string | null;
+            poll:
+              | (Partial<Pick<Poll, 'beatmapset_id'>> &
+                  Pick<Poll, 'topic_id'> & {
+                    in_progress: 0 | 1 | boolean;
+                    passed: 0 | 1 | boolean;
+                  })
+              | undefined;
+            review_score: number;
+            review_score_all: number;
+            reviews: (Review & { active_captain: boolean | null })[];
+            score: number;
+            strictly_rejected: boolean;
+            submissions: Submission[];
+          }>)[] = await db.query<Beatmapset>(
           `
-            SELECT nominations.beatmapset_id, rounds.name
-            FROM nominations
-            INNER JOIN rounds
-              ON nominations.round_id = rounds.id
-            WHERE nominations.beatmapset_id IN (?)
-              AND nominations.game_mode = ?
-              AND rounds.done = 0
-            ORDER BY rounds.id DESC
-          `,
-          [[...beatmapsetIds], gameMode],
-        ),
-        'beatmapset_id',
-        'name',
-      );
-    // TODO: Scope to complete polls when incomplete polls are stored in `polls`
-    const pollByBeatmapsetId = groupBy<
-      Poll['beatmapset_id'],
-      Pick<Poll, 'beatmapset_id' | 'topic_id'> & { in_progress: 0 | 1; passed: 0 | 1 }
-    >(
-      await db.query<
-        Pick<Poll, 'beatmapset_id' | 'topic_id'> & { in_progress: 0 | 1; passed: 0 | 1 }
-      >(
-        `
-          SELECT polls.beatmapset_id, polls.topic_id,
-            polls.result_no IS NULL OR polls.result_yes IS NULL AS in_progress,
-            polls.result_no IS NOT NULL AND polls.result_yes IS NOT NULL AND
-              polls.result_yes / (polls.result_no + polls.result_yes) >= round_game_modes.voting_threshold AS passed
-          FROM polls
-          INNER JOIN round_game_modes
-            ON polls.round_id = round_game_modes.round_id
-              AND polls.game_mode = round_game_modes.game_mode
-          WHERE polls.id IN (
-            SELECT MAX(id)
-            FROM polls
-            WHERE game_mode = ?
-            GROUP BY beatmapset_id
-          )
-            AND polls.beatmapset_id IN (?)
-        `,
-        [gameMode, [...beatmapsetIds]],
-      ),
-      'beatmapset_id',
-      null,
-      true,
-    );
-    const reviewsByBeatmapsetId = groupBy<
-      Review['beatmapset_id'],
-      Review & { active_captain: boolean | null }
-    >(reviews, 'beatmapset_id');
-    const submissionsByBeatmapsetId = groupBy<Submission['beatmapset_id'], Submission>(
-      submissions,
-      'beatmapset_id',
-    );
-
-    const beatmapsetConsentByBeatmapsetUserKey = groupBy<
-      `${number}-${number}`,
-      ConsentBeatmapset['consent'] | undefined
-    >(
-      await db.query<
-        Pick<ConsentBeatmapset, 'consent'> & { beatmapset_user: `${number}-${number}` }
-      >(
-        `
-          SELECT consent, CONCAT(beatmapset_id, '-', user_id) as beatmapset_user
-          FROM mapper_consent_beatmapsets
-          WHERE beatmapset_id IN (?)
-        `,
-        [[...beatmapsetIds]],
-      ),
-      'beatmapset_user',
-      'consent',
-      true,
-    );
-    const consentByUserId = groupBy<Consent['user_id'], Consent['consent']>(
-      await db.query<Pick<Consent, 'consent' | 'user_id'>>(
-        `
-          SELECT consent, user_id
-          FROM mapper_consents
-          WHERE user_id IN (
-            SELECT creator_id
+            SELECT *
             FROM beatmapsets
             WHERE id IN (?)
-          )
-        `,
-        [[...beatmapsetIds]],
-      ),
-      'user_id',
-      'consent',
-      true,
+          `,
+          [[...beatmapsetIds]],
+        );
+        const beatmapsByBeatmapsetId = groupBy<
+          Beatmap['beatmapset_id'],
+          Pick<
+            Beatmap,
+            'beatmapset_id' | 'bpm' | 'game_mode' | 'key_count' | 'play_count' | 'total_length'
+          >
+        >(
+          await db.query<
+            Pick<
+              Beatmap,
+              'beatmapset_id' | 'bpm' | 'game_mode' | 'key_count' | 'play_count' | 'total_length'
+            >
+          >(
+            `
+              SELECT beatmapset_id, bpm, game_mode, key_count, play_count, total_length
+              FROM beatmaps
+              WHERE beatmapset_id IN (?)
+                AND deleted_at IS NULL
+            `,
+            [[...beatmapsetIds]],
+          ),
+          'beatmapset_id',
+        );
+
+        return { beatmapsets, beatmapsByBeatmapsetId };
+      },
     );
 
     for (const beatmapset of beatmapsets) {
-      const beatmaps = groupBy<
-        Beatmap['game_mode'],
-        Pick<
-          Beatmap,
-          'beatmapset_id' | 'bpm' | 'game_mode' | 'key_count' | 'play_count' | 'total_length'
-        >
-      >(beatmapsByBeatmapsetId[beatmapset.id] ?? [], 'game_mode');
-      const beatmapsForGameMode = beatmaps[gameMode]?.sort((a, b) => a.bpm - b.bpm) ?? [];
-      const consent: ConsentValue | boolean | null =
-        beatmapsetConsentByBeatmapsetUserKey[`${beatmapset.id}-${beatmapset.creator_id}`] ??
-        consentByUserId[beatmapset.creator_id];
-
-      beatmapset.reviews = reviewsByBeatmapsetId[beatmapset.id] || [];
-      beatmapset.submissions = submissionsByBeatmapsetId[beatmapset.id] || [];
-
-      if (Object.keys(beatmaps).length > 1 || beatmaps[gameMode] == null) {
-        beatmapset.play_count = beatmapsForGameMode.reduce(
-          (sum, beatmap) => sum + beatmap.play_count,
-          0,
-        );
-      }
-
-      beatmapset.consent =
-        consent == null || consent === ConsentValue.unreachable ? null : !!consent;
-      beatmapset.key_modes = (
-        [...new Set(beatmapsForGameMode.map((b) => b.key_count))].filter(
-          (k) => k != null,
-        ) as number[]
-      ).sort((a, b) => a - b);
-      beatmapset.low_favorites = gameMode === GameMode.osu && beatmapset.favorite_count < 30;
-      beatmapset.maximum_length = Math.max(
-        ...beatmapsForGameMode.map((beatmap) => beatmap.total_length),
-        0,
-      );
-      beatmapset.modal_bpm = modeBy(beatmapsForGameMode, 'bpm');
-      beatmapset.nominated_round_name = canViewNominationStatus
-        ? (futureNominationsByBeatmapsetId as Record<number, string[] | undefined>)[
-            beatmapset.id
-          ]?.[0] ?? null
-        : null;
-      beatmapset.poll = pollByBeatmapsetId[beatmapset.id];
-      beatmapset.review_score = beatmapCaptainPriority(beatmapset.reviews);
-      beatmapset.review_score_all = beatmapRating(beatmapset.reviews);
-      beatmapset.score = beatmapset.favorite_count * 75 + beatmapset.play_count;
-      beatmapset.strictly_rejected = containsNotAllowed(beatmapset.reviews);
-
-      if (beatmapset.poll != null) {
-        delete beatmapset.poll.beatmapset_id;
-        beatmapset.poll.in_progress = beatmapset.poll.in_progress === 1;
-        beatmapset.poll.passed = beatmapset.poll.passed === 1;
-      }
-
-      beatmapset.beatmap_counts = {} as Record<GameMode, number>;
-      for (const gameMode of gameModes) {
-        beatmapset.beatmap_counts[gameMode] = beatmaps[gameMode]?.length ?? 0;
-      }
-
       userIds.add(beatmapset.creator_id);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    beatmapsets.sort((a, b) => b.score! - a.score!);
-
-    // Should never happen
-    if (userIds.size === 0) {
-      return res.json({
-        beatmapsets: [],
-        usersById: {},
-      });
-    }
-
-    const usersById = groupBy<User['id'], User>(
-      await db.query<User>(
-        `
-          SELECT *
-          FROM users
-          WHERE id IN (?)
-        `,
-        [[...userIds]],
-      ),
-      'id',
-      null,
-      true,
+    const usersById = await cache(
+      {
+        dependsOn: [`submissions:${gameMode}:reviews`, `submissions:${gameMode}:beatmapsets`],
+        key: `submissions:${gameMode}:users`,
+        ttlSeconds: 6 * 60 * 60,
+      },
+      async () =>
+        groupBy<User['id'], User>(
+          await db.query<User>(
+            `
+              SELECT *
+              FROM users
+              WHERE id IN (?)
+            `,
+            [[...userIds]],
+          ),
+          'id',
+          null,
+          true,
+        ),
     );
 
+    // TODO: Scope to complete polls when incomplete polls are stored in `polls`
+    const pollByBeatmapsetId = await cache(
+      {
+        dependsOn: [`submissions:${gameMode}:reviews`],
+        key: `submissions:${gameMode}:polls`,
+        ttlSeconds: 6 * 60 * 60,
+      },
+      async () =>
+        groupBy<
+          Poll['beatmapset_id'],
+          Pick<Poll, 'beatmapset_id' | 'topic_id'> & { in_progress: 0 | 1; passed: 0 | 1 }
+        >(
+          await db.query<
+            Pick<Poll, 'beatmapset_id' | 'topic_id'> & { in_progress: 0 | 1; passed: 0 | 1 }
+          >(
+            `
+              SELECT polls.beatmapset_id, polls.topic_id,
+                polls.result_no IS NULL OR polls.result_yes IS NULL AS in_progress,
+                polls.result_no IS NOT NULL AND polls.result_yes IS NOT NULL AND
+                  polls.result_yes / (polls.result_no + polls.result_yes) >= round_game_modes.voting_threshold AS passed
+              FROM polls
+              INNER JOIN round_game_modes
+                ON polls.round_id = round_game_modes.round_id
+                  AND polls.game_mode = round_game_modes.game_mode
+              WHERE polls.id IN (
+                SELECT MAX(id)
+                FROM polls
+                WHERE game_mode = ?
+                GROUP BY beatmapset_id
+              )
+                AND polls.beatmapset_id IN (?)
+            `,
+            [gameMode, [...beatmapsetIds]],
+          ),
+          'beatmapset_id',
+          null,
+          true,
+        ),
+    );
+    const beatmapsetConsentByBeatmapsetUserKey = await cache(
+      { key: 'submissions:mapper-consent-beatmapsets', ttlSeconds: Infinity },
+      async () =>
+        groupBy<`${number}-${number}`, ConsentBeatmapset['consent']>(
+          await db.query<
+            Pick<ConsentBeatmapset, 'consent'> & { beatmapset_user: `${number}-${number}` }
+          >(
+            `
+              SELECT consent, CONCAT(beatmapset_id, '-', user_id) as beatmapset_user
+              FROM mapper_consent_beatmapsets
+            `,
+          ),
+          'beatmapset_user',
+          'consent',
+          true,
+        ),
+    );
+    const consentByUserId = await cache(
+      { key: 'submissions:mapper-consents', ttlSeconds: Infinity },
+      async () =>
+        groupBy<Consent['user_id'], Consent['consent']>(
+          await db.query<Pick<Consent, 'consent' | 'user_id'>>(`
+            SELECT consent, user_id
+            FROM mapper_consents
+          `),
+          'user_id',
+          'consent',
+          true,
+        ),
+    );
+
+    // `beatmapsets` is invalid after this
+    const filledBeatmapsets = cache(
+      {
+        dependsOn: [
+          `submissions:${gameMode}:reviews`,
+          `submissions:${gameMode}:beatmapsets`,
+          `submissions:${gameMode}:polls`,
+          'submissions:mapper-consent-beatmapsets',
+          'submissions:mapper-consents',
+        ],
+        key: `submissions:${gameMode}:filled-beatmapsets`,
+        ttlSeconds: Infinity,
+      },
+      () => {
+        for (const beatmapset of beatmapsets) {
+          const beatmaps = groupBy<
+            Beatmap['game_mode'],
+            Pick<
+              Beatmap,
+              'beatmapset_id' | 'bpm' | 'game_mode' | 'key_count' | 'play_count' | 'total_length'
+            >
+          >(beatmapsByBeatmapsetId[beatmapset.id] ?? [], 'game_mode');
+          const beatmapsForGameMode = beatmaps[gameMode]?.sort((a, b) => a.bpm - b.bpm) ?? [];
+          const consent: ConsentValue | boolean | null =
+            beatmapsetConsentByBeatmapsetUserKey[`${beatmapset.id}-${beatmapset.creator_id}`] ??
+            consentByUserId[beatmapset.creator_id] ??
+            null;
+
+          beatmapset.reviews = reviewsByBeatmapsetId[beatmapset.id] ?? [];
+          beatmapset.submissions = submissionsByBeatmapsetId[beatmapset.id] ?? [];
+
+          if (Object.keys(beatmaps).length > 1 || beatmaps[gameMode] == null) {
+            beatmapset.play_count = beatmapsForGameMode.reduce(
+              (sum, beatmap) => sum + beatmap.play_count,
+              0,
+            );
+          }
+
+          beatmapset.consent =
+            consent == null || consent === ConsentValue.unreachable ? null : !!consent;
+          beatmapset.key_modes = (
+            [...new Set(beatmapsForGameMode.map((b) => b.key_count))].filter(
+              (k) => k != null,
+            ) as number[]
+          ).sort((a, b) => a - b);
+          beatmapset.low_favorites = gameMode === GameMode.osu && beatmapset.favorite_count < 30;
+          beatmapset.maximum_length = Math.max(
+            ...beatmapsForGameMode.map((beatmap) => beatmap.total_length),
+            0,
+          );
+          beatmapset.modal_bpm = modeBy(beatmapsForGameMode, 'bpm');
+          beatmapset.poll = pollByBeatmapsetId[beatmapset.id];
+          beatmapset.review_score = beatmapCaptainPriority(beatmapset.reviews);
+          beatmapset.review_score_all = beatmapRating(beatmapset.reviews);
+          beatmapset.score = beatmapset.favorite_count * 75 + beatmapset.play_count;
+          beatmapset.strictly_rejected = containsNotAllowed(beatmapset.reviews);
+
+          if (beatmapset.poll != null) {
+            delete beatmapset.poll.beatmapset_id;
+            beatmapset.poll.in_progress = beatmapset.poll.in_progress === 1;
+            beatmapset.poll.passed = beatmapset.poll.passed === 1;
+          }
+
+          beatmapset.beatmap_counts = {} as Record<GameMode, number>;
+          for (const gameMode of gameModes) {
+            beatmapset.beatmap_counts[gameMode] = beatmaps[gameMode]?.length ?? 0;
+          }
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return beatmapsets.sort((a, b) => b.score! - a.score!);
+      },
+    );
+
+    const hasRole = currentUserRoles(req, res);
+    if (!accessSetting(`hideNominationStatus.${gameMode}`) || hasRole('any')) {
+      const futureNominationsByBeatmapsetId = await cache(
+        {
+          dependsOn: [`submissions:${gameMode}:reviews`],
+          key: `submissions:${gameMode}:future-nominations`,
+          ttlSeconds: 6 * 60 * 60,
+        },
+        async () =>
+          groupBy<Nomination['beatmapset_id'], Round['name']>(
+            await db.query<Pick<Nomination, 'beatmapset_id'> & Pick<Round, 'name'>>(
+              `
+                SELECT nominations.beatmapset_id, rounds.name
+                FROM nominations
+                INNER JOIN rounds
+                  ON nominations.round_id = rounds.id
+                WHERE nominations.beatmapset_id IN (?)
+                  AND nominations.game_mode = ?
+                  AND rounds.done = 0
+                ORDER BY rounds.id DESC
+              `,
+              [[...beatmapsetIds], gameMode],
+            ),
+            'beatmapset_id',
+            'name',
+          ),
+      );
+
+      for (const beatmapset of filledBeatmapsets) {
+        beatmapset.nominated_round_name =
+          futureNominationsByBeatmapsetId[beatmapset.id]?.[0] ?? null;
+      }
+    }
+
     res.json({
-      beatmapsets,
+      beatmapsets: filledBeatmapsets,
       usersById,
     });
   }),

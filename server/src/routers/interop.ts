@@ -370,7 +370,6 @@ interopRouter.post(
       });
     }
 
-    let deletePollsCache = false;
     const firstPostsByNominationId: Partial<Record<number, { body: string; id: number }>> = {};
     const gameModesReversed = [...gameModes].reverse();
     const nominationTopicIds: Partial<Record<number, number>> = {};
@@ -450,7 +449,9 @@ interopRouter.post(
             );
           });
 
-          deletePollsCache = true;
+          deleteCache('polls');
+          deleteCache(`submissions:${gameMode}:polls`);
+
           firstPostsByNominationId[nomination.id] = {
             body: topic.post.body.raw,
             id: topic.post.id,
@@ -470,10 +471,6 @@ interopRouter.post(
           nominationTopicIds[nomination.id] = topic.topic.id;
         }
       }
-    }
-
-    if (deletePollsCache) {
-      deleteCache('polls');
     }
 
     const mainPostTopicIdsByGameMode: Partial<Record<GameMode, number>> = {};
@@ -862,6 +859,9 @@ interopRouter.post(
 
     deleteCache('current-news-post');
     deleteCache('polls');
+    for (const gameMode of gameModesPresentReversed) {
+      deleteCache(`submissions:${gameMode}:polls`);
+    }
 
     res.status(204).send();
   }),

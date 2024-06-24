@@ -1469,6 +1469,10 @@ router.delete(
     });
 
     deleteCache('mapper-consents');
+    deleteCache('submissions:mapper-consent-beatmapsets');
+    for (const gameMode of gameModes) {
+      deleteCache(`submissions:${gameMode}:reviews`);
+    }
 
     res.status(204).send();
   }),

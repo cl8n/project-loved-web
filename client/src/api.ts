@@ -198,7 +198,7 @@ export interface GetSubmissionsResponseBody {
     low_favorites: boolean;
     maximum_length: number;
     modal_bpm: number;
-    nominated_round_name: string | null;
+    nominated_round_name?: string | null;
     poll?: {
       in_progress: boolean;
       passed: boolean;
