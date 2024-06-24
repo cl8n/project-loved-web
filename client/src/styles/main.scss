@@ -582,6 +582,10 @@ del {
   &:hover {
     text-decoration: none;
   }
+
+  &--warning {
+    color: var(--rating-0);
+  }
 }
 
 .no-wrap {
