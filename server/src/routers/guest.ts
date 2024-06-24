@@ -307,7 +307,7 @@ guestRouter.get(
       'game_mode',
       null,
       true,
-    );
+    ) as Record<RoundGameMode['game_mode'], RoundGameMode>;
 
     nominations.forEach((nomination) => {
       nomination.beatmaps = (beatmapsByNominationId[nomination.id] || [])

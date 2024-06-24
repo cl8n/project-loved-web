@@ -188,7 +188,7 @@ interopRouter.get(
       'game_mode',
       null,
       true,
-    );
+    ) as Record<RoundGameMode['game_mode'], RoundGameMode>;
 
     nominations.forEach((nomination) => {
       nomination.beatmaps = (beatmapsByNominationId[nomination.id] || [])
@@ -586,7 +586,7 @@ interopRouter.post(
       'game_mode',
       null,
       true,
-    );
+    ) as Record<RoundGameMode['game_mode'], RoundGameMode>;
 
     const nominations = await db.queryWithGroups<
       Nomination & {

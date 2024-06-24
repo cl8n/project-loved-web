@@ -1006,7 +1006,7 @@ router.post(
       'game_mode',
       null,
       true,
-    );
+    ) as Record<RoundGameMode['game_mode'], RoundGameMode>;
 
     res.json(round);
   }),
@@ -1200,7 +1200,8 @@ router.get(
     );
 
     for (const user of users) {
-      user.roles = userRolesByUserId[user.id];
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      user.roles = userRolesByUserId[user.id]!;
     }
 
     users.sort(

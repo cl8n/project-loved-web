@@ -77,13 +77,13 @@ export function groupBy<K extends number | string | null, T>(
   key: string,
   dataKey?: string | null,
   keyIsUnique?: false,
-): Record<Exclude<K, null> | 'null', T[]>;
+): Partial<Record<Exclude<K, null> | 'null', T[]>>;
 export function groupBy<K extends number | string | null, T>(
   array: unknown[],
   key: string,
   dataKey: string | null,
   keyIsUnique: true,
-): Record<Exclude<K, null>, T>;
+): Partial<Record<Exclude<K, null>, T>>;
 export function groupBy<
   K extends number | string | null,
   T,
@@ -94,14 +94,14 @@ export function groupBy<
   dataKey: string | null,
   keyIsUnique: boolean,
   nullKeyGroup: NullKeyGroup,
-): Record<Exclude<K, null> | NullKeyGroup, T[]>;
+): Partial<Record<Exclude<K, null> | NullKeyGroup, T[]>>;
 export function groupBy(
   array: unknown[],
   key: string,
   dataKey?: string | null,
   keyIsUnique = false,
   nullKeyGroup = 'null',
-): Record<number | string, unknown> {
+): Partial<Record<number | string, unknown>> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return array.reduce<any>((prev, value) => {
     const groupKey = accessNested<number | string>(value, key) ?? nullKeyGroup;
