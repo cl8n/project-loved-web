@@ -830,7 +830,7 @@ guestRouter.get(
     );
 
     // `beatmapsets` is invalid after this
-    const filledBeatmapsets = cache(
+    const filledBeatmapsets = await cache(
       {
         dependsOn: [
           `submissions:${gameMode}:reviews`,

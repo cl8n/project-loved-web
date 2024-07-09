@@ -1,13 +1,14 @@
 import { systemLog } from './log.js';
 
-const cacheStore: Partial<Record<string, { cachedAt: number; value: unknown } | null>> = {};
+const cacheStore: Partial<Record<string, { cachedAt: number; value: Promise<unknown> } | null>> =
+  {};
 const usedBy: Partial<Record<string, string[]>> = {};
 const usedByFilled = new Set<string>();
 
 export function cache<T>(
   { dependsOn, key, ttlSeconds }: { dependsOn?: string[]; key: string; ttlSeconds: number },
-  fn: () => T,
-): T {
+  fn: () => T | Promise<T>,
+): Promise<Awaited<T>> {
   if (!usedByFilled.has(key)) {
     for (const dependency of dependsOn ?? []) {
       (usedBy[dependency] ??= []).push(key);
@@ -28,15 +29,15 @@ export function cache<T>(
 
   if (cacheItem != null) {
     if (now < cacheItem.cachedAt + ttlSeconds) {
-      return cacheItem.value as T;
+      return (cacheItem.value as Promise<Awaited<T>>).then(structuredClone);
     }
 
     deleteCache(key);
   }
 
-  const value = fn();
+  const value = Promise.resolve(fn());
   cacheStore[key] = { cachedAt: now, value };
-  return value;
+  return value.then(structuredClone);
 }
 
 export function deleteCache(key: string): void {
