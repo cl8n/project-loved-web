@@ -1,4 +1,6 @@
-const cacheStore: Partial<Record<string, { cachedAt: number; value: unknown }>> = {};
+import { systemLog } from './log.js';
+
+const cacheStore: Partial<Record<string, { cachedAt: number; value: unknown } | null>> = {};
 const usedBy: Partial<Record<string, string[]>> = {};
 const usedByFilled = new Set<string>();
 
@@ -9,6 +11,13 @@ export function cache<T>(
   if (!usedByFilled.has(key)) {
     for (const dependency of dependsOn ?? []) {
       (usedBy[dependency] ??= []).push(key);
+
+      if (!(dependency in cacheStore)) {
+        systemLog(
+          `Cache entry "${key}" depends on nonexistent entry "${dependency}"`,
+          SyslogLevel.err,
+        );
+      }
     }
 
     usedByFilled.add(key);
@@ -31,6 +40,10 @@ export function cache<T>(
 }
 
 export function deleteCache(key: string): void {
-  delete cacheStore[key];
+  if (!(key in cacheStore)) {
+    systemLog(`Tried to delete nonexistent cache entry "${key}"`, SyslogLevel.warning);
+  }
+
+  cacheStore[key] = null;
   usedBy[key]?.forEach(deleteCache);
 }
