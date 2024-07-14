@@ -112,8 +112,8 @@ export default function MapperConsents() {
                 event.currentTarget.value === 'any'
                   ? 'any'
                   : event.currentTarget.value === 'null'
-                  ? null
-                  : parseInt(event.currentTarget.value, 10),
+                    ? null
+                    : parseInt(event.currentTarget.value, 10),
               );
               setPage(1);
             }}

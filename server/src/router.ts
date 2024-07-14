@@ -509,8 +509,8 @@ router.post(
           description == null
             ? null
             : prevDescription == null
-            ? res.typedLocals.user.id
-            : prevAuthorId,
+              ? res.typedLocals.user.id
+              : prevAuthorId,
           hasRole(Role.newsEditor) &&
           description != null &&
           prevAuthorId !== res.typedLocals.user.id &&

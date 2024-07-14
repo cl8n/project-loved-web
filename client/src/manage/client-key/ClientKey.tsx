@@ -41,8 +41,8 @@ export default function ClientKey() {
             ? 'Generating client key...'
             : 'Generate client key'
           : busy
-          ? 'Regenerating client key...'
-          : 'Regenerate client key'}
+            ? 'Regenerating client key...'
+            : 'Regenerate client key'}
       </button>
     </div>
   );

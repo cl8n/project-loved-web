@@ -21,14 +21,17 @@ export default function NominationPlanner({ gameMode }: NominationPlannerProps) 
 
         return {
           ...nominationInfo,
-          nominations: nominationInfo.nominations.reduce((prev, nomination) => {
-            const groupKey = nomination.category ?? '';
+          nominations: nominationInfo.nominations.reduce(
+            (prev, nomination) => {
+              const groupKey = nomination.category ?? '';
 
-            prev[groupKey] ??= [];
-            prev[groupKey].push(nomination);
+              prev[groupKey] ??= [];
+              prev[groupKey].push(nomination);
 
-            return prev;
-          }, {} as Record<string, INominationForPlanner[]>),
+              return prev;
+            },
+            {} as Record<string, INominationForPlanner[]>,
+          ),
         };
       },
     },

@@ -233,8 +233,8 @@ function ResultCells({ poll, showPercent }: ResultCellsProps) {
     poll.voting_threshold == null
       ? undefined
       : yesFraction >= poll.voting_threshold
-      ? 'success'
-      : 'error';
+        ? 'success'
+        : 'error';
 
   return showPercent ? (
     <>

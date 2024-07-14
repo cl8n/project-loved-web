@@ -162,8 +162,8 @@ export default function ReviewEditor({
                 ? messages.adding
                 : messages.updating
               : review == null
-              ? messages.add
-              : messages.update,
+                ? messages.add
+                : messages.update,
           )}
         </button>
       </Form>
