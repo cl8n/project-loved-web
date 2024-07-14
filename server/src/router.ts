@@ -1,4 +1,3 @@
-import { randomBytes } from 'crypto';
 import { Router } from 'express';
 import { GameMode, gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
@@ -26,6 +25,7 @@ import {
   MetadataState,
   Role,
 } from 'loved-bridge/tables';
+import { randomBytes } from 'node:crypto';
 import { deleteCache } from './cache.js';
 import db from './db.js';
 import { asyncHandler } from './express-helpers.js';

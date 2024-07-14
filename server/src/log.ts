@@ -1,5 +1,5 @@
 import type { LogType } from 'loved-bridge/tables';
-import { inspect } from 'util';
+import { inspect } from 'node:util';
 import config from './config.js';
 import type { MysqlConnectionType } from './db.js';
 import db from './db.js';

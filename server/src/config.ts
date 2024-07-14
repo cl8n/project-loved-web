@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { isAbsolute } from 'path';
+import { isAbsolute } from 'node:path';
 
 interface Config {
   httpsAlways: boolean;

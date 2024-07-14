@@ -1,4 +1,3 @@
-import { randomBytes } from 'crypto';
 import type { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 import { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
@@ -12,7 +11,8 @@ import type {
   User,
 } from 'loved-bridge/tables';
 import { LogType } from 'loved-bridge/tables';
-import qs from 'querystring';
+import { randomBytes } from 'node:crypto';
+import qs from 'node:querystring';
 import type { Agent, Response } from 'superagent';
 import superagent from 'superagent';
 import config from './config.js';

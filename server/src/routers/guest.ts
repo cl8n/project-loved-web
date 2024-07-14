@@ -1,4 +1,3 @@
-import { createHash } from 'crypto';
 import { Router } from 'express';
 import { GameMode, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import {
@@ -23,7 +22,8 @@ import type {
   UserRole,
 } from 'loved-bridge/tables';
 import { ConsentValue, Role } from 'loved-bridge/tables';
-import qs from 'querystring';
+import { createHash } from 'node:crypto';
+import qs from 'node:querystring';
 import { cache } from '../cache.js';
 import config from '../config.js';
 import db from '../db.js';
