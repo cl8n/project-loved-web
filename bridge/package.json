@@ -8,10 +8,10 @@
     "lint": "eslint --max-warnings 0 ."
   },
   "devDependencies": {
-    "@types/node": "^18.16.18",
+    "@types/node": "^18.19.39",
     "eslint": "^8.57.0",
     "loved-eslint-config": "file:../eslint-config",
-    "typescript": "^5.1.3"
+    "typescript": "^5.5.3"
   },
   "engines": {
     "node": ">=18"
