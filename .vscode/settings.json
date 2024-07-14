@@ -1,7 +1,8 @@
 {
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+  "eslint.format.enable": true,
+  "eslint.quiet": true,
+  "typescript.tsdk": "./server/node_modules/typescript/lib",
+  "[javascript][javascriptreact][json][typescript][typescriptreact]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   },
-  "editor.formatOnSave": false,
-  "typescript.tsdk": "./server/node_modules/typescript/lib"
 }
