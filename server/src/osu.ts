@@ -129,7 +129,7 @@ export class Osu {
    *                  the token's expiration time. Defaults to 1 hour.
    * @returns The new token, if it was refreshed.
    */
-  async tryRefreshToken(threshold?: number): Promise<TokenInfo | void> {
+  async tryRefreshToken(threshold?: number): Promise<TokenInfo | undefined> {
     if (Date.now() >= this.#tokenExpiresAt - (threshold ?? refreshTokenThreshold)) {
       const tokenInfo = serializeTokenResponse(
         await superagent
@@ -506,23 +506,22 @@ export class Osu {
     };
   }
 
-  async createOrRefreshUser(): Promise<User | null>;
+  async createOrRefreshUser(
+    userId?: number,
+    options?: { byName?: false; forceUpdate?: boolean; storeBanned?: false },
+  ): Promise<User | null>;
   async createOrRefreshUser(
     userId: number,
     options: { byName?: false; forceUpdate?: boolean; storeBanned: true },
   ): Promise<User>;
   async createOrRefreshUser(
-    userId: number,
-    options?: { byName?: false; forceUpdate?: boolean; storeBanned?: boolean },
+    userName: string,
+    options: { byName: true; forceUpdate?: boolean; storeBanned?: false },
   ): Promise<User | null>;
   async createOrRefreshUser(
     userName: string,
     options: { byName: true; forceUpdate?: boolean; storeBanned: true },
   ): Promise<User>;
-  async createOrRefreshUser(
-    userName: string,
-    options: { byName: true; forceUpdate?: boolean; storeBanned?: boolean },
-  ): Promise<User | null>;
   async createOrRefreshUser(
     userIdOrName?: number | string,
     options?: { byName?: boolean; forceUpdate?: boolean; storeBanned?: boolean },

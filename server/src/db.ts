@@ -24,15 +24,12 @@ class MysqlConnection {
   query<T = Row>(sql: StatementSelect, values?: unknown[]): Promise<T[]>;
   query(sql: StatementUpdate, values?: unknown[]): Promise<{ changedRows: number }>;
   query(sql: string, values?: unknown[]): Promise<void>;
-  query(
-    sql: string,
-    values?: unknown[],
-  ): Promise<unknown[] | { changedRows: number } | { insertId: number } | void> {
+  query(sql: string, values?: unknown[]): Promise<unknown> {
     return this.#connection.query(sql, values).then((result) => result[0]);
   }
 
-  async queryOne<T = Row>(sql: StatementSelect, values?: unknown[]): Promise<T | null> {
-    return (await this.query<T>(sql, values))[0] ?? null;
+  queryOne<T = Row>(sql: StatementSelect, values?: unknown[]): Promise<T | null> {
+    return this.query<T>(sql, values).then((result) => result[0] ?? null);
   }
 
   async queryWithGroups<T = RowWithGroups>(sql: StatementSelect, values?: unknown[]): Promise<T[]> {
