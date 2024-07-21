@@ -554,6 +554,7 @@ del {
     &-item {
       border: 1px solid var(--accent-light);
       padding: 0.5em;
+      white-space: pre-wrap;
 
       &__title {
         margin-top: 0;
@@ -1025,4 +1026,8 @@ tr.sticky > th {
   img {
     max-width: 670px;
   }
+}
+
+.bbcode {
+  white-space: pre-wrap;
 }

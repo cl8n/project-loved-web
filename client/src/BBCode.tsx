@@ -29,5 +29,5 @@ export function BBCode({ text }: BBCodeProps) {
       '<blockquote>$1</blockquote>',
     );
 
-  return <span style={{ whiteSpace: 'pre-wrap' }} dangerouslySetInnerHTML={{ __html: html }} />;
+  return <span className='bbcode' dangerouslySetInnerHTML={{ __html: html }} />;
 }
