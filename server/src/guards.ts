@@ -100,12 +100,12 @@ export function currentUserRoles(
       return false;
     }
 
-    if (roleId === 'any') {
-      return hasRole(user, normalRoles);
-    }
-
     if (!skipAdminCheck && isAdmin(user, request.method)) {
       return true;
+    }
+
+    if (roleId === 'any') {
+      return hasRole(user, normalRoles);
     }
 
     if (typeof roleId === 'number') {
