@@ -68,7 +68,7 @@ function orderingReducer(
 export function Picks() {
   const authUser = useOsuAuth().user;
   const params = useParams() as { round: string };
-  const roundId = parseInt(params.round);
+  const roundId = parseInt(params.round, 10);
   const [roundInfo, roundInfoError, setRoundInfo] = useApi(getNominations, [roundId]);
   useTitle(roundInfo == null ? `Round #${roundId}` : roundInfo.round.name);
   const assigneeCandidatesApi = useApi(getAssigneeCandidates, [], {

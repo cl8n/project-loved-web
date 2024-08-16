@@ -109,7 +109,7 @@ export default function UserRolesEditor({ onRolesUpdate, user }: UserRolesEditor
       }
 
       roles[currentRole][control.name as keyof IUserRole] =
-        control.type === 'checkbox' ? control.checked : parseInt(control.value);
+        control.type === 'checkbox' ? control.checked : parseInt(control.value, 10);
     }
 
     return updateUserRoles(user.id, roles as IUserRole[])

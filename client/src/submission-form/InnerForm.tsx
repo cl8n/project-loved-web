@@ -46,7 +46,7 @@ export default function InnerForm() {
       return null;
     }
 
-    const beatmapsetId = parseInt(beatmapsetMatch[1]);
+    const beatmapsetId = parseInt(beatmapsetMatch[1], 10);
 
     return addReviews(beatmapsetId, form.gameModes, form.reason, form.score)
       .then(() => {

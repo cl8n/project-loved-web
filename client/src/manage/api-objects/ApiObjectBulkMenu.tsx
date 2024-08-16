@@ -15,7 +15,7 @@ export default function ApiObjectBulkMenu() {
       return null;
     }
 
-    const numericIds = ids.split('\n').map((id) => parseInt(id));
+    const numericIds = ids.split('\n').map((id) => parseInt(id, 10));
 
     return updateApiObjectBulk(type, numericIds).then(then).catch(alertApiErrorMessage);
   };

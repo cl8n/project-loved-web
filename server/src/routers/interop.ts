@@ -224,7 +224,7 @@ interopRouter.get(
           FROM round_game_modes
           WHERE round_id = ?
         `,
-        [parseInt(req.query.roundId) - 1], // TODO: naive
+        [parseInt(req.query.roundId, 10) - 1], // TODO: naive
       ),
       'game_mode',
       'results_post_id',

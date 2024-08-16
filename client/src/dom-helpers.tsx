@@ -39,7 +39,7 @@ export const valueCasts = {
   bool: wrapCast((value) => value !== '0'),
   date: wrapCast((value) => dateFromString(value)),
   decimal: wrapCast(parseFloat),
-  int: wrapCast(parseInt),
+  int: wrapCast((value) => parseInt(value, 10)),
   mySqlDate: wrapCast((value) => mySqlDateTime(value)),
   string: wrapCast((value) => value),
 };
