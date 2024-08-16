@@ -51,12 +51,12 @@ function hasRoleExport(
     return false;
   }
 
-  if (roleId === 'any') {
-    return hasRole(user, allRoles);
-  }
-
   if (!skipAdminCheck && isAdmin(user)) {
     return true;
+  }
+
+  if (roleId === 'any') {
+    return hasRole(user, allRoles);
   }
 
   if (typeof roleId === 'number') {
