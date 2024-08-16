@@ -284,7 +284,7 @@ guestRouter.get(
 
     const hasRole = currentUserRoles(req, res);
 
-    if (!hasRole('any')) {
+    if (!hasRole('any_including_alumni')) {
       const poll = await db.queryOne('SELECT 1 FROM polls WHERE round_id = ?', [req.query.roundId]);
 
       if (poll == null) {
@@ -392,7 +392,7 @@ guestRouter.get(
     if (accessSetting(`hideNominationStatus.${gameMode}`)) {
       const hasRole = currentUserRoles(req, res);
 
-      if (!hasRole('any')) {
+      if (!hasRole('any_including_alumni')) {
         return res.json(null);
       }
     }
@@ -907,7 +907,7 @@ guestRouter.get(
     );
 
     const hasRole = currentUserRoles(req, res);
-    if (!accessSetting(`hideNominationStatus.${gameMode}`) || hasRole('any')) {
+    if (!accessSetting(`hideNominationStatus.${gameMode}`) || hasRole('any_including_alumni')) {
       const futureNominationsByBeatmapsetId = await cache(
         {
           dependsOn: [`submissions:${gameMode}:reviews`],

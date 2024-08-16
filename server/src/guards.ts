@@ -89,7 +89,7 @@ export function currentUserRoles(
   request: Request,
   response: Response,
 ): (
-  roleId: Role | readonly Role[] | 'any',
+  roleId: Role | readonly Role[] | 'any' | 'any_including_alumni',
   gameMode?: GameMode,
   skipAdminCheck?: boolean,
 ) => boolean {
@@ -108,6 +108,10 @@ export function currentUserRoles(
       return hasRole(user, normalRoles);
     }
 
+    if (roleId === 'any_including_alumni') {
+      return normalRoles.some((roleId) => user.roles.some((role) => role.role_id === roleId));
+    }
+
     if (typeof roleId === 'number') {
       return gameMode == null
         ? hasRole(user, [roleId])
@@ -118,6 +122,7 @@ export function currentUserRoles(
   };
 }
 
+// TODO use same logic as currentUserRoles
 export const isAdminMiddleware = hasRoleMiddleware([], 'Must be an admin');
 export const isAnyRoleMiddleware = hasRoleMiddleware(normalRoles, 'Must have a role');
 export const isCaptainMiddleware = hasRoleMiddleware([Role.captain], 'Must be a captain');
