@@ -986,7 +986,17 @@ guestRouter.get(
         WHERE user_roles.role_id IN (?)
         ORDER BY users.name ASC
       `,
-      [[Role.captain, Role.metadata, Role.moderator, Role.newsEditor, Role.developer, Role.video]],
+      [
+        [
+          Role.captain,
+          Role.metadata,
+          Role.moderator,
+          Role.newsEditor,
+          Role.developer,
+          Role.video,
+          Role.packUploader,
+        ],
+      ],
     );
     const groupedUsers: Record<
       'alumni' | 'current',

@@ -79,6 +79,7 @@ export enum Role {
   spectator,
   video,
   newsAuthor,
+  packUploader,
 }
 
 export interface Beatmap {

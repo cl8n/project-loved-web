@@ -13,6 +13,7 @@ const normalRoles = [
   Role.developer,
   Role.video,
   Role.newsAuthor,
+  Role.packUploader,
 ] as const;
 
 function hasRole(user: Readonly<UserWithRoles>, roleIds: readonly Role[]): boolean {

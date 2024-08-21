@@ -27,6 +27,10 @@ const messages = defineMessages({
     defaultMessage: 'News editors',
     description: '[Team] Team listing title',
   },
+  packUploader: {
+    defaultMessage: 'Beatmap packers',
+    description: '[Team] Team listing title',
+  },
   video: {
     defaultMessage: 'Video editors',
     description: '[Team] Team listing title',
@@ -56,6 +60,7 @@ export default function TeamList({ current, teamApi }: TeamListProps) {
   const moderatorUsers = teamUsers[Role.moderator]?.[-1];
   const developerUsers = teamUsers[Role.developer]?.[-1];
   const videoUsers = teamUsers[Role.video]?.[-1];
+  const packUploaderUsers = teamUsers[Role.packUploader]?.[-1];
 
   return (
     <div className='team-list'>
@@ -88,6 +93,9 @@ export default function TeamList({ current, teamApi }: TeamListProps) {
       )}
       {videoUsers != null && (
         <UserList title={intl.formatMessage(messages.video)} users={videoUsers} />
+      )}
+      {packUploaderUsers != null && (
+        <UserList title={intl.formatMessage(messages.packUploader)} users={packUploaderUsers} />
       )}
     </div>
   );

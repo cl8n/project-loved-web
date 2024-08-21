@@ -17,6 +17,7 @@ export const roleNames = {
   [Role.spectator]: 'Spectator',
   [Role.video]: 'Video editor',
   [Role.newsAuthor]: 'News author',
+  [Role.packUploader]: 'Beatmap packer',
 } as const;
 
 function hasRole(user: Readonly<IUserWithRoles>, roleIds: readonly Role[]): boolean {
