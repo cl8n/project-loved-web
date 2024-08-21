@@ -9,6 +9,16 @@ import type { INominationWithPoll, IRound, PartialWithId } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
 
+function nominationFailedVoting(nomination: INominationWithPoll, round: IRound): boolean {
+  return (
+    nomination.poll != null &&
+    nomination.poll.result_no != null &&
+    nomination.poll.result_yes != null &&
+    nomination.poll.result_yes / (nomination.poll.result_no + nomination.poll.result_yes) <
+      round.game_modes[nomination.game_mode].voting_threshold
+  );
+}
+
 interface ButtonsProps {
   onRoundUpdate: (round: PartialWithId<Round>) => void;
   round: Round;
@@ -67,7 +77,10 @@ function UploadInfo({ nominations, round }: Pick<PackStatusProps, 'nominations' 
       <h3>Upload commands</h3>
       {[...gameModes].reverse().map((gameMode) => {
         const beatmapsetIdsString = nominations
-          .filter((nomination) => nomination.game_mode === gameMode)
+          .filter(
+            (nomination) =>
+              nomination.game_mode === gameMode && !nominationFailedVoting(nomination, round),
+          )
           .map((nomination) => nomination.beatmapset_id)
           .join(',');
         const packName = `Project Loved: ${round.name} (${gameModePackNames[gameMode]})`;
@@ -124,12 +137,8 @@ export default function PackStatus({ nominations, onRoundUpdate, round }: PackSt
   if (round.packs_state === PacksState.uploadedInitial) {
     const allLovedOrFailed = nominations.every(
       (nomination) =>
-        nomination.poll != null &&
-        nomination.poll.result_no != null &&
-        nomination.poll.result_yes != null &&
-        (nomination.beatmapset.ranked_status === RankedStatus.loved ||
-          nomination.poll.result_yes / (nomination.poll.result_no + nomination.poll.result_yes) <
-            round.game_modes[nomination.game_mode].voting_threshold),
+        nomination.beatmapset.ranked_status === RankedStatus.loved ||
+        nominationFailedVoting(nomination, round),
     );
 
     return (
