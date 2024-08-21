@@ -69,6 +69,12 @@ export enum ModeratorState {
   notAllowed,
 }
 
+export enum PacksState {
+  notUploaded,
+  uploadedInitial,
+  uploadedFinal,
+}
+
 export enum Role {
   admin,
   captain,
@@ -219,12 +225,14 @@ export interface Round {
   ignore_creator_and_difficulty_checks: boolean;
   ignore_moderator_checks: boolean;
   ignore_news_editor_assignees: boolean;
+  ignore_packs_checks: boolean;
   name: string;
   news_author_id: number;
   news_intro: string | null;
   news_intro_preview: string | null;
   news_outro: string | null;
   news_posted_at: TableDateType | null;
+  packs_state: PacksState;
   video: string | null;
 }
 

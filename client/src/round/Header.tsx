@@ -2,11 +2,12 @@ import { gameModeLongName } from 'loved-bridge/beatmaps/gameMode';
 import { Role } from 'loved-bridge/tables';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
-import type { IRound, IUser, PartialWithId } from '../interfaces';
+import type { INominationWithPoll, IRound, IUser, PartialWithId } from '../interfaces';
 import Markdown from '../Markdown';
 import { useOsuAuth } from '../osuAuth';
 import { hasRole } from '../permissions';
 import { UserInline } from '../UserInline';
+import PackStatus from './PackStatus';
 import PostDate from './PostDate';
 import RoundEditor from './RoundEditor';
 
@@ -26,6 +27,7 @@ function getVideoUrl(videoIdOrUrl: string | null): string | null {
 
 interface HeaderProps {
   canEdit: boolean;
+  nominations: INominationWithPoll[];
   nominationsWithWarnings: number;
   onRoundUpdate: (round: PartialWithId<IRound & { news_author: IUser }>) => void;
   round: IRound & { news_author: IUser };
@@ -35,6 +37,7 @@ interface HeaderProps {
 
 export default function Header({
   canEdit,
+  nominations,
   nominationsWithWarnings,
   onRoundUpdate,
   round,
@@ -75,13 +78,15 @@ export default function Header({
       {editing ? (
         <RoundEditor close={() => setEditing(false)} onRoundUpdate={onRoundUpdate} round={round} />
       ) : (
-        (!showTodo || hasRole(authUser, Role.newsAuthor, undefined, true)) && (
+        (!showTodo || hasRole(authUser, [Role.newsAuthor, Role.packUploader], undefined, true)) && (
           <>
             <span>
               News post by <UserInline user={round.news_author} />
             </span>
             <br />
             <PostDate round={round} />
+            <br />
+            <PackStatus nominations={nominations} onRoundUpdate={onRoundUpdate} round={round} />
             <h3>Videos</h3>
             <ul>
               <li>

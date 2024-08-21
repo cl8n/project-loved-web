@@ -12,6 +12,7 @@ import type {
   Log,
   Nomination,
   NominationDescriptionEdit,
+  Poll,
   Round,
   RoundGameMode,
   User,
@@ -23,6 +24,7 @@ import {
   DescriptionState,
   LogType,
   MetadataState,
+  PacksState,
   Role,
 } from 'loved-bridge/tables';
 import { randomBytes } from 'node:crypto';
@@ -35,6 +37,7 @@ import {
   isCaptainMiddleware,
   isModeratorMiddleware,
   isNewsAuthorMiddleware,
+  isPackUploaderMiddleware,
 } from './guards.js';
 import { cleanNominationDescription, groupBy, pick, sortCreators } from './helpers.js';
 import { dbLog, systemLog } from './log.js';
@@ -1175,6 +1178,75 @@ router.post(
       id: req.body.nominationId,
       [`${req.body.type}_assignees`]: assignees,
     });
+  }),
+);
+
+router.post(
+  '/mark-pack-uploaded',
+  isPackUploaderMiddleware,
+  asyncHandler(async (req, res) => {
+    const round = await db.queryOne<Round>('SELECT * FROM rounds WHERE id = ?', [
+      req.query.roundId,
+    ]);
+
+    if (round == null) {
+      return res.status(404).json({ error: 'Round not found' });
+    }
+
+    if (round.packs_state === PacksState.uploadedFinal) {
+      return res
+        .status(422)
+        .json({ error: 'Final pack upload has already been marked on this round' });
+    }
+
+    const nominations = await db.queryWithGroups<
+      Nomination & {
+        beatmapset: Beatmapset;
+        poll: Poll | null;
+      }
+    >(
+      `
+        SELECT nominations.*, beatmapsets:beatmapset, polls:poll
+        FROM nominations
+        INNER JOIN beatmapsets
+          ON nominations.beatmapset_id = beatmapsets.id
+        LEFT JOIN polls
+          ON nominations.round_id = polls.round_id
+            AND nominations.game_mode = polls.game_mode
+            AND nominations.beatmapset_id = polls.beatmapset_id
+        WHERE nominations.round_id = ?
+      `,
+      [round.id],
+    );
+    const roundGameModes = groupBy<RoundGameMode['game_mode'], RoundGameMode>(
+      await db.query<RoundGameMode>('SELECT * FROM round_game_modes WHERE round_id = ?', [
+        round.id,
+      ]),
+      'game_mode',
+      null,
+      true,
+    );
+
+    const allLovedOrFailed = nominations.every(
+      (nomination) =>
+        nomination.poll != null &&
+        nomination.poll.result_no != null &&
+        nomination.poll.result_yes != null &&
+        (nomination.beatmapset.ranked_status === RankedStatus.loved ||
+          nomination.poll.result_yes / (nomination.poll.result_no + nomination.poll.result_yes) <
+            (roundGameModes[nomination.game_mode]?.voting_threshold ?? 0)),
+    );
+    const roundUpdate: Partial<Round> = {
+      packs_state: allLovedOrFailed ? PacksState.uploadedFinal : PacksState.uploadedInitial,
+    };
+
+    if (allLovedOrFailed) {
+      roundUpdate.done = true;
+    }
+
+    await db.query('UPDATE rounds SET ? WHERE id = ?', [roundUpdate, round.id]);
+
+    res.json({ ...roundUpdate, id: round.id });
   }),
 );
 

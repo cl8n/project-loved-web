@@ -312,6 +312,7 @@ export function Picks() {
     <>
       <Header
         canEdit={canEditRound}
+        nominations={nominations}
         nominationsWithWarnings={
           Object.values(nominationProgressWarningsCache).filter((warnings) => warnings.size > 0)
             .length

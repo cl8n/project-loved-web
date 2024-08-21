@@ -129,3 +129,7 @@ export const isAnyRoleMiddleware = hasRoleMiddleware(normalRoles, 'Must have a r
 export const isCaptainMiddleware = hasRoleMiddleware([Role.captain], 'Must be a captain');
 export const isModeratorMiddleware = hasRoleMiddleware([Role.moderator], 'Must be a moderator');
 export const isNewsAuthorMiddleware = hasRoleMiddleware([Role.newsAuthor], 'Must be a news author');
+export const isPackUploaderMiddleware = hasRoleMiddleware(
+  [Role.packUploader],
+  'Must be a pack uploader',
+);

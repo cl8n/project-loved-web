@@ -240,6 +240,10 @@ export function lockNominations(roundId: number, gameMode: GameMode, lock: boole
   return superagent.post('/api/lock-nominations').send({ roundId, gameMode, lock });
 }
 
+export function markPackUploaded(roundId: number): Response<PartialWithId<Round>> {
+  return superagent.post('/api/mark-pack-uploaded').query({ roundId });
+}
+
 export function searchBeatmapsets(query: string): Response<Beatmapset[]> {
   return superagent.get('/api/search-beatmapset').query({ query });
 }
