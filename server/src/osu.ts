@@ -1,15 +1,6 @@
 import type { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 import { GameMode } from 'loved-bridge/beatmaps/gameMode';
-import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
-import type {
-  Beatmap,
-  Beatmapset,
-  Poll,
-  Round,
-  RoundGameMode,
-  TokenInfo,
-  User,
-} from 'loved-bridge/tables';
+import type { Beatmap, Beatmapset, TokenInfo, User } from 'loved-bridge/tables';
 import { LogType } from 'loved-bridge/tables';
 import { randomBytes } from 'node:crypto';
 import qs from 'node:querystring';
@@ -423,81 +414,6 @@ export class Osu {
 
       // TODO: If force updating beatmapset, also force update all exisitng beatmapset_creators
       //       who aren't the mapset host
-
-      // If this map is now Loved, check if any of the incomplete rounds it
-      // belongs to now only contain maps that are Loved or failed voting. If so,
-      // mark the round as "done".
-      if (dbFields.ranked_status === RankedStatus.loved) {
-        const incompleteRoundsWithBeatmapset = await connection.query<Pick<Round, 'id'>>(
-          `
-            SELECT rounds.id
-            FROM rounds
-            INNER JOIN polls
-              ON rounds.id = polls.round_id
-            WHERE rounds.done = 0
-              AND polls.result_no IS NOT NULL
-              AND polls.result_yes IS NOT NULL
-              AND polls.beatmapset_id = ?
-          `,
-          [beatmapset.id],
-        );
-        const roundIdsToComplete: number[] = [];
-
-        for (const round of incompleteRoundsWithBeatmapset) {
-          const beatmapsets = await connection.queryWithGroups<
-            Pick<Beatmapset, 'ranked_status'> & {
-              poll: (Poll & Pick<RoundGameMode, 'voting_threshold'>) | null;
-            }
-          >(
-            `
-              SELECT beatmapsets.ranked_status, polls:poll,
-                round_game_modes.voting_threshold AS 'poll:voting_threshold'
-              FROM nominations
-              INNER JOIN beatmapsets
-                ON nominations.beatmapset_id = beatmapsets.id
-              LEFT JOIN polls
-                ON nominations.round_id = polls.round_id
-                AND nominations.game_mode = polls.game_mode
-                AND nominations.beatmapset_id = polls.beatmapset_id
-              INNER JOIN round_game_modes
-                ON nominations.round_id = round_game_modes.round_id
-                AND nominations.game_mode = round_game_modes.game_mode
-              WHERE nominations.round_id = ?
-            `,
-            [round.id],
-          );
-          let roundDone = true;
-
-          for (const beatmapset of beatmapsets) {
-            if (beatmapset.ranked_status === RankedStatus.loved) {
-              continue;
-            }
-
-            const result = beatmapset.poll;
-
-            if (
-              result == null ||
-              result.result_no == null ||
-              result.result_yes == null ||
-              result.voting_threshold == null ||
-              result.result_yes / (result.result_no + result.result_yes) >= result.voting_threshold
-            ) {
-              roundDone = false;
-              break;
-            }
-          }
-
-          if (roundDone) {
-            roundIdsToComplete.push(round.id);
-          }
-        }
-
-        if (roundIdsToComplete.length > 0) {
-          await connection.query('UPDATE rounds SET done = 1 WHERE id IN (?)', [
-            roundIdsToComplete,
-          ]);
-        }
-      }
     });
 
     return {
