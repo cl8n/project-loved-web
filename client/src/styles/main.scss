@@ -1031,3 +1031,13 @@ tr.sticky > th {
 .bbcode {
   white-space: pre-wrap;
 }
+
+.pack-upload-info {
+  background-color: var(--accent-background);
+  margin: 1em 0;
+  padding: 0.01px 1em;
+
+  &__command {
+    color: var(--secondary-accent);
+  }
+}

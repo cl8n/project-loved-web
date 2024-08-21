@@ -60,7 +60,7 @@ function UploadInfo({ nominations, round }: Pick<PackStatusProps, 'nominations' 
   let packNumber = (round.id - 109) * 4 + 1;
 
   return (
-    <div>
+    <div className='pack-upload-info'>
       <p>
         Pack tag range: <b>LR{packNumber}</b> – <b>LR{packNumber + 3}</b>
       </p>
@@ -76,10 +76,10 @@ function UploadInfo({ nominations, round }: Pick<PackStatusProps, 'nominations' 
           <div key={gameMode} className='block-margin'>
             {gameModeLongName(gameMode)}:
             <br />
-            <pre>
+            <code className='pack-upload-info__command'>
               .create-pack "{packName}" "LR{packNumber++}" {beatmapsetIdsString} --overwrite
               --ruleset {gameMode}
-            </pre>
+            </code>
           </div>
         );
       })}
