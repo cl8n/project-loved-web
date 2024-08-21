@@ -252,16 +252,11 @@ export default function MapperConsentEditor({
                         {intl.formatMessage(consentMap[consentValue][0])}
                       </option>
                     ))}
-                    {hasRole(authUser, Role.captain) &&
-                      ['null' as const, ConsentValue.unreachable].map((consentValue) => (
-                        <option
-                          key={consentValue}
-                          className={consentMap[consentValue][1]}
-                          value={consentValue}
-                        >
-                          {intl.formatMessage(consentMap[consentValue][0])}
-                        </option>
-                      ))}
+                    {hasRole(authUser, Role.captain) && (
+                      <option key='null' className={consentMap.null[1]} value='null'>
+                        {intl.formatMessage(consentMap.null[0])}
+                      </option>
+                    )}
                   </select>
                 </td>
               </tr>

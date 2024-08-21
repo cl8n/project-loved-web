@@ -2,7 +2,7 @@ import { Router } from 'express';
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import type { Beatmapset, Consent, ConsentBeatmapset, Review, User } from 'loved-bridge/tables';
-import { LogType, Role } from 'loved-bridge/tables';
+import { ConsentValue, LogType, Role } from 'loved-bridge/tables';
 import { deleteCache } from '../cache.js';
 import type { MysqlConnectionType } from '../db.js';
 import db from '../db.js';
@@ -26,6 +26,12 @@ anyoneRouter.post(
   asyncHandler(async (req, res) => {
     if (!isMapperConsent(req.body.consent)) {
       return res.status(422).json({ error: 'Invalid consent' });
+    }
+
+    if (req.body.consent.consent === ConsentValue.unreachable) {
+      return res
+        .status(422)
+        .json({ error: 'The "unreachable" consent option is no longer supported' });
     }
 
     if (!isMapperConsentBeatmapsetArray(req.body.consentBeatmapsets)) {

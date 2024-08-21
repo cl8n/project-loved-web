@@ -119,17 +119,15 @@ export default function MapperConsents() {
             }}
           >
             <option value='any'>{intl.formatMessage(messages.any)}</option>
-            {[ConsentValue.yes, ConsentValue.no, ConsentValue.unreachable, 'null' as const].map(
-              (consentValue) => (
-                <option
-                  key={consentValue}
-                  className={consentMap[consentValue][1]}
-                  value={consentValue}
-                >
-                  {intl.formatMessage(consentMap[consentValue][0])}
-                </option>
-              ),
-            )}
+            {[ConsentValue.yes, ConsentValue.no, 'null' as const].map((consentValue) => (
+              <option
+                key={consentValue}
+                className={consentMap[consentValue][1]}
+                value={consentValue}
+              >
+                {intl.formatMessage(consentMap[consentValue][0])}
+              </option>
+            ))}
           </select>
           <FormattedMessage
             defaultMessage='Search:'
