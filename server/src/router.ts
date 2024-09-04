@@ -1603,7 +1603,8 @@ router.post(
         `
           SELECT *
           FROM logs
-          ${skipWhere ? '' : 'WHERE type IN (?)'}
+          WHERE type NOT IN (${LogType.loggedIn}, ${LogType.loggedOut})
+          ${skipWhere ? '' : 'AND type IN (?)'}
           ORDER BY id DESC
           LIMIT ? OFFSET ?
         `,
@@ -1615,7 +1616,8 @@ router.post(
         `
           SELECT COUNT(*) AS count
           FROM logs
-          ${skipWhere ? '' : 'WHERE type IN (?)'}
+          WHERE type NOT IN (${LogType.loggedIn}, ${LogType.loggedOut})
+          ${skipWhere ? '' : 'AND type IN (?)'}
         `,
         skipWhere ? undefined : [req.body.types],
       ))!.count,

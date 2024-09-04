@@ -25,7 +25,8 @@ const logTypeNames = {
 };
 
 const allLogTypes = Object.values(LogType).filter(
-  (logType) => typeof logType === 'number',
+  (logType) =>
+    typeof logType === 'number' && logType !== LogType.loggedIn && logType !== LogType.loggedOut,
 ) as LogType[];
 
 export default function Logs() {
