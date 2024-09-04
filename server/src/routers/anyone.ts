@@ -9,7 +9,7 @@ import db from '../db.js';
 import { asyncHandler } from '../express-helpers.js';
 import { currentUserRoles } from '../guards.js';
 import { pick } from '../helpers.js';
-import { dbLog } from '../log.js';
+import { dbLog, dbLogBeatmapset, dbLogUser } from '../log.js';
 import {
   isGameMode,
   isGameModeArray,
@@ -78,8 +78,8 @@ anyoneRouter.post(
       }
     }
 
-    const logActor = pick(res.typedLocals.user, ['banned', 'country', 'id', 'name']);
-    const logUser = pick(user, ['banned', 'country', 'id', 'name']);
+    const logActor = dbLogUser(res.typedLocals.user);
+    const logUser = dbLogUser(user);
 
     // For easier typing in transaction
     const newConsent = req.body.consent;
@@ -159,11 +159,7 @@ anyoneRouter.post(
           LogType.mapperConsentBeatmapsetDeleted,
           {
             actor: logActor,
-            beatmapset: {
-              artist: beatmapset.artist,
-              id: beatmapset.id,
-              title: beatmapset.title,
-            },
+            beatmapset: dbLogBeatmapset(beatmapset),
             user: logUser,
           },
           connection,
@@ -189,7 +185,7 @@ anyoneRouter.post(
           beatmapset_id: consentBeatmapset.beatmapset_id,
           user_id: newConsent.user_id,
         };
-        const logBeatmapset = pick(beatmapset, ['artist', 'id', 'title']);
+        const logBeatmapset = dbLogBeatmapset(beatmapset);
 
         if (currentConsentBeatmapset == null) {
           await connection.query('INSERT INTO mapper_consent_beatmapsets SET ?', [dbFieldsWithPK]);

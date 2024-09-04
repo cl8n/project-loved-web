@@ -18,7 +18,7 @@ import config from '../config.js';
 import db from '../db.js';
 import { asyncHandler } from '../express-helpers.js';
 import { groupBy, pick, sortCreators } from '../helpers.js';
-import { dbLog } from '../log.js';
+import { dbLog, dbLogUser } from '../log.js';
 import {
   mainClosingReply,
   mainPostTitle,
@@ -432,7 +432,7 @@ interopRouter.post(
             await dbLog(
               LogType.pollCreated,
               {
-                actor: pick(res.typedLocals.user, ['banned', 'country', 'id', 'name']),
+                actor: dbLogUser(res.typedLocals.user),
                 beatmapset: {
                   artist: nomination.overwrite_artist ?? nomination.beatmapset.artist,
                   id: nomination.beatmapset_id,
@@ -842,7 +842,7 @@ interopRouter.post(
         await dbLog(
           LogType.pollUpdated,
           {
-            actor: pick(res.typedLocals.user, ['banned', 'country', 'id', 'name']),
+            actor: dbLogUser(res.typedLocals.user),
             beatmapset: {
               artist: nomination.overwrite_artist ?? nomination.beatmapset.artist,
               id: nomination.beatmapset_id,

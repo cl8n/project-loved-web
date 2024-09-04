@@ -40,7 +40,7 @@ import {
   isPackUploaderMiddleware,
 } from './guards.js';
 import { cleanNominationDescription, groupBy, pick, sortCreators } from './helpers.js';
-import { dbLog, systemLog } from './log.js';
+import { dbLog, dbLogUser, systemLog } from './log.js';
 import { Osu, redirectToAuth } from './osu.js';
 import { accessSetting, settings, updateSettings } from './settings.js';
 import {
@@ -1354,8 +1354,8 @@ router.post(
       );
     }
 
-    const logActor = pick(res.typedLocals.user, ['banned', 'country', 'id', 'name']);
-    const logUser = pick(user, ['banned', 'country', 'id', 'name']);
+    const logActor = dbLogUser(res.typedLocals.user);
+    const logUser = dbLogUser(user);
 
     await db.transact(async (connection) => {
       // If an extra API token was marked for deletion, delete it here.
@@ -1565,12 +1565,7 @@ router.put(
         await dbLog(
           LogType.settingUpdated,
           {
-            actor: {
-              banned: res.typedLocals.user.banned,
-              country: res.typedLocals.user.country,
-              id: res.typedLocals.user.id,
-              name: res.typedLocals.user.name,
-            },
+            actor: dbLogUser(res.typedLocals.user),
             setting,
           },
           connection,

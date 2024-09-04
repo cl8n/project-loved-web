@@ -8,9 +8,8 @@ import type { Agent, Response } from 'superagent';
 import superagent from 'superagent';
 import config from './config.js';
 import db from './db.js';
-import { pick } from './helpers.js';
 import Limiter from './Limiter.js';
-import { dbLog, systemLog } from './log.js';
+import { dbLog, dbLogUser, systemLog } from './log.js';
 import { isResponseError } from './type-guards.js';
 
 const apiBaseUrl = `${config.osuBaseUrl}/api/v2`;
@@ -533,7 +532,7 @@ export class Osu {
         [dbFieldsWithPK, dbFields],
       );
 
-      const logUser = pick(dbFieldsWithPK, ['banned', 'country', 'id', 'name']);
+      const logUser = dbLogUser(dbFieldsWithPK);
 
       if (currentInDb == null) {
         await dbLog(LogType.userCreated, { user: logUser }, connection);
@@ -542,19 +541,7 @@ export class Osu {
         currentInDb.country !== logUser.country ||
         currentInDb.name !== logUser.name
       ) {
-        await dbLog(
-          LogType.userUpdated,
-          {
-            from: {
-              banned: currentInDb.banned,
-              country: currentInDb.country,
-              id: currentInDb.id,
-              name: currentInDb.name,
-            },
-            to: logUser,
-          },
-          connection,
-        );
+        await dbLog(LogType.userUpdated, { from: dbLogUser(currentInDb), to: logUser }, connection);
       }
 
       return dbFieldsWithPK;

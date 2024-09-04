@@ -3,7 +3,7 @@
 import type { ExtraToken, User } from 'loved-bridge/tables';
 import { LogType } from 'loved-bridge/tables';
 import db from '../db.js';
-import { dbLog, systemLog } from '../log.js';
+import { dbLog, dbLogUser, systemLog } from '../log.js';
 import { Osu } from '../osu.js';
 import { isResponseError } from '../type-guards.js';
 
@@ -40,7 +40,15 @@ for (const { token, user_id } of extraTokens) {
 
       await db.transact(async (connection) => {
         await connection.query('DELETE FROM extra_tokens WHERE user_id = ?', [user_id]);
-        await dbLog(LogType.extraTokenDeleted, { user }, connection);
+
+        if (user != null) {
+          await dbLog(LogType.extraTokenDeleted, { user: dbLogUser(user) }, connection);
+        } else {
+          systemLog(
+            `Deleted extra token on schedule for user ${user_id} (not in user table)`,
+            SyslogLevel.err,
+          );
+        }
       });
     } else {
       systemLog(`Error refreshing extra token on schedule for user ${user_id}`, SyslogLevel.err);

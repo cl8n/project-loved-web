@@ -12,8 +12,7 @@ import config from '../config.js';
 import db from '../db.js';
 import { asyncHandler } from '../express-helpers.js';
 import { hasLocalInteropKeyMiddleware, isAnyRoleMiddleware } from '../guards.js';
-import { pick } from '../helpers.js';
-import { dbLog, systemLog } from '../log.js';
+import { dbLog, dbLogUser, systemLog } from '../log.js';
 import { Osu, redirectToAuth } from '../osu.js';
 import router from '../router.js';
 import anyoneRouter from '../routers/anyone.js';
@@ -146,7 +145,7 @@ app.get(
       throw 'User not found using /me osu! API';
     }
 
-    const logUser = pick(user, ['banned', 'country', 'id', 'name']);
+    const logUser = dbLogUser(user);
     const scopesWithoutDefault = scopes.filter(
       (scope) => scope !== 'identify' && scope !== 'public',
     );
@@ -271,10 +270,7 @@ app.post(
       throw 'User not found during log out';
     }
 
-    await dbLog(LogType.loggedOut, {
-      user: { banned: user.banned, country: user.country, id: user.id, name: user.name },
-    });
-
+    await dbLog(LogType.loggedOut, { user: dbLogUser(user) });
     await response.typedLocals.osu.revokeToken();
     await destroySession(request.session);
 
@@ -309,7 +305,7 @@ app.use(((error, _request, response, _next) => {
 const httpServer = app.listen(config.port);
 const httpTerminator = createHttpTerminator({ server: httpServer });
 
-dbLog(LogType.apiServerStarted);
+dbLog(LogType.apiServerStarted, undefined);
 systemLog('Starting', SyslogLevel.debug);
 
 async function shutdown(): Promise<void> {
