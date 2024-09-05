@@ -1361,7 +1361,17 @@ router.post(
       // If an extra API token was marked for deletion, delete it here.
       if (extraTokenToDelete != null) {
         await connection.query('DELETE FROM extra_tokens WHERE user_id = ?', [user.id]);
-        await dbLog(LogType.extraTokenDeleted, { user: logUser }, connection);
+        await dbLog(
+          LogType.extraTokenDeleted,
+          {
+            actor: logActor,
+            scopes: (extraTokenToDelete.token.scopes ?? []).filter(
+              (scope) => scope !== 'identify' && scope !== 'public',
+            ),
+            user: logUser,
+          },
+          connection,
+        );
       }
 
       for (const newRole of req.body.roles as Omit<UserRole, 'user_id'>[]) {

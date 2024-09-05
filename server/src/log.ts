@@ -71,7 +71,11 @@ interface LogValues {
   };
   [LogType.settingUpdated]: { actor: LogUser; setting: string };
   [LogType.extraTokenCreated]: { scopes: string[]; user: LogUser };
-  [LogType.extraTokenDeleted]: { user: LogUser };
+  [LogType.extraTokenDeleted]: {
+    actor: LogUser | undefined;
+    scopes: string[] | undefined; // undefined is deprecated
+    user: LogUser;
+  };
   [LogType.pollCreated]: {
     actor: LogUser;
     beatmapset: LogBeatmapset;

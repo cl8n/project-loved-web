@@ -42,7 +42,17 @@ for (const { token, user_id } of extraTokens) {
         await connection.query('DELETE FROM extra_tokens WHERE user_id = ?', [user_id]);
 
         if (user != null) {
-          await dbLog(LogType.extraTokenDeleted, { user: dbLogUser(user) }, connection);
+          await dbLog(
+            LogType.extraTokenDeleted,
+            {
+              actor: undefined,
+              scopes: (token.scopes ?? []).filter(
+                (scope) => scope !== 'identify' && scope !== 'public',
+              ),
+              user: dbLogUser(user),
+            },
+            connection,
+          );
         } else {
           systemLog(
             `Deleted extra token on schedule for user ${user_id} (not in user table)`,
