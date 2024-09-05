@@ -34,9 +34,9 @@ const logTemplates = {
     actor_true_scopes_true: '{actor} deleted extra token for {user} with scopes {scopes}',
   },
   [LogType.pollCreated]:
-    '{actor} created {gameMode} {poll} on {beatmapset} for the round of {round}',
+    '{actor} created {gameMode} poll {poll} on {beatmapset} for the round of {round}',
   [LogType.pollUpdated]:
-    '{actor} updated results for {gameMode} {poll} on {beatmapset} for the round of {round}',
+    '{actor} updated results for {gameMode} poll {poll} on {beatmapset} for the round of {round}',
 } as const;
 
 function logElementForTemplate(
@@ -59,7 +59,7 @@ function logElementForTemplate(
     case 'poll':
       return (
         <a href={`https://osu.ppy.sh/community/forums/topics/${values.poll.topic_id}`}>
-          poll #{values.poll.id}
+          #{values.poll.id}
         </a>
       );
     case 'role':
