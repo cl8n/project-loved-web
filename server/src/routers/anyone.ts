@@ -155,11 +155,18 @@ anyoneRouter.post(
           throw 'Missing beatmapset for logging consent beatmapset delete';
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const consentBeatmapset = currentConsentBeatmapsets.find(
+          (consent) => consent.beatmapset_id === beatmapsetId,
+        )!;
+
         await dbLog(
           LogType.mapperConsentBeatmapsetDeleted,
           {
             actor: logActor,
             beatmapset: dbLogBeatmapset(beatmapset),
+            consent: consentBeatmapset.consent,
+            reason: consentBeatmapset.consent_reason,
             user: logUser,
           },
           connection,

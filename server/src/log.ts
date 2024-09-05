@@ -55,7 +55,17 @@ interface LogValues {
     actor: LogUser;
     beatmapset: LogBeatmapset;
     user: LogUser;
-  };
+  } & (
+    | {
+        consent: boolean;
+        reason: string | null;
+      }
+    | {
+        // deprecated
+        consent: undefined;
+        reason: undefined;
+      }
+  );
   [LogType.mapperConsentBeatmapsetUpdated]: {
     actor: LogUser;
     beatmapset: LogBeatmapset;
