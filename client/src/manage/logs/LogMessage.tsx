@@ -27,12 +27,17 @@ const logTemplates = {
     '{actor} updated mapper consent for {user} on {beatmapset}',
   [LogType.settingUpdated]: '{actor} updated setting {setting}',
   [LogType.extraTokenCreated]: '{user} created extra token with scopes {scopes}',
-  [LogType.extraTokenDeleted]: 'Deleted extra token for {user}',
+  [LogType.extraTokenDeleted]: {
+    actor_false_scopes_false: 'Deleted extra token for {user}',
+    actor_false_scopes_true: 'Deleted extra token for {user} with scopes {scopes}',
+    actor_true_scopes_false: '{actor} deleted extra token for {user}',
+    actor_true_scopes_true: '{actor} deleted extra token for {user} with scopes {scopes}',
+  },
   [LogType.pollCreated]:
     '{actor} created {gameMode} {poll} on {beatmapset} for the round of {round}',
   [LogType.pollUpdated]:
     '{actor} updated results for {gameMode} {poll} on {beatmapset} for the round of {round}',
-};
+} as const;
 
 function logElementForTemplate(
   type: LogType,
@@ -60,6 +65,8 @@ function logElementForTemplate(
       return renderRole(values.role);
     case 'round':
       return `${values.round.name} [#${values.round.id}]`;
+    case 'scopes':
+      return <ListInline<string> array={values.scopes} render={(scope) => <code>{scope}</code>} />;
     case 'user':
       return <UserInline user={values.user} />;
   }
@@ -73,19 +80,28 @@ function logElementForTemplate(
       return values.role.alumni ? 'marked' : 'unmarked';
     case `${LogType.settingUpdated}-setting`:
       return <code>{values.setting}</code>;
-    case `${LogType.extraTokenCreated}-scopes`:
-      return <ListInline<string> array={values.scopes} render={(scope) => <code>{scope}</code>} />;
   }
 
   return <Never />;
 }
 
 export default function LogMessage(log: Log) {
-  const template = logTemplates[log.type] ?? '{invalid}';
+  let template = '{invalid}';
   const templateRegex = /{([a-z]+)}/gi;
   const elements: ReactNode[] = [];
   let match: RegExpExecArray | null;
   let lastMatchEnd = 0;
+
+  if (log.type === LogType.extraTokenDeleted) {
+    if (log.values != null) {
+      const hasActor = log.values.actor != null;
+      const hasScopes = Array.isArray(log.values.scopes) && log.values.scopes.length > 0;
+
+      template = logTemplates[log.type][`actor_${hasActor}_scopes_${hasScopes}`];
+    }
+  } else {
+    template = logTemplates[log.type] ?? '{invalid}';
+  }
 
   if (log.values != null) {
     while ((match = templateRegex.exec(template)) != null) {
