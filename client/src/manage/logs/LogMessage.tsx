@@ -48,7 +48,8 @@ function logElementForTemplate(
 ): ReactNode {
   switch (parameter) {
     case 'actor':
-      return <UserInline user={values.actor} />;
+    case 'user':
+      return <UserInline user={values[parameter]} />;
     case 'beatmapset':
       return <BeatmapInline beatmapset={values.beatmapset} gameMode={values.gameMode} />;
     case 'gameMode':
@@ -67,8 +68,6 @@ function logElementForTemplate(
       return `${values.round.name} [#${values.round.id}]`;
     case 'scopes':
       return <ListInline<string> array={values.scopes} render={(scope) => <code>{scope}</code>} />;
-    case 'user':
-      return <UserInline user={values.user} />;
   }
 
   switch (`${type}-${parameter}`) {
