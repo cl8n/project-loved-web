@@ -222,7 +222,7 @@ export default function SubmissionBeatmapset({
     );
   }, [beatmapset, gameMode, intl]);
 
-  const possibleToReview = beatmapset.ranked_status <= 0;
+  const possibleToReview = beatmapset.ranked_status <= RankedStatus.pending;
   const canReview = possibleToReview && authUser != null;
   const review =
     authUser == null
