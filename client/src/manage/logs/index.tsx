@@ -29,7 +29,6 @@ const logTypeNames = {
   [LogType.beatmapsetCreated]: 'Beatmapset create',
   [LogType.beatmapsetDeleted]: 'Beatmapset delete',
   [LogType.beatmapsetSoftDeleted]: 'Beatmapset soft-delete',
-  [LogType.beatmapsetUpdated]: 'Beatmapset update',
 };
 
 const allLogTypes = Object.values(LogType).filter(

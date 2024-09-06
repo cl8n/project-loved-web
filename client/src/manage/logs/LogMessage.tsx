@@ -64,7 +64,6 @@ const logTemplates = {
   [LogType.beatmapsetCreated]: 'Created beatmapset {beatmapset}',
   [LogType.beatmapsetDeleted]: '{actor} deleted beatmapset {beatmapset}',
   [LogType.beatmapsetSoftDeleted]: 'Soft-deleted beatmapset {beatmapset}',
-  [LogType.beatmapsetUpdated]: 'Updated beatmapset {beatmapset}',
 } as const;
 
 function logElementForTemplate(

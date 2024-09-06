@@ -368,11 +368,13 @@ export class Osu {
         `,
         [dbFieldsWithPK, dbFields],
       );
-      await dbLog(
-        beatmapsetExistedInDb ? LogType.beatmapsetUpdated : LogType.beatmapsetCreated,
-        { beatmapset: dbLogBeatmapset(dbFieldsWithPK) },
-        connection,
-      );
+      if (!beatmapsetExistedInDb) {
+        await dbLog(
+          LogType.beatmapsetCreated,
+          { beatmapset: dbLogBeatmapset(dbFieldsWithPK) },
+          connection,
+        );
+      }
 
       const beatmapIdsToDelete = new Set(
         (
