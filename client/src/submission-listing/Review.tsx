@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { dateFromString } from '../date-format';
 import type { IReview, IUser } from '../interfaces';
 import { UserInline } from '../UserInline';
@@ -11,8 +11,6 @@ interface ReviewProps {
 }
 
 export default function Review({ review }: ReviewProps) {
-  const intl = useIntl();
-
   const messageValues = {
     timestamp: dateFromString(review.reviewed_at),
     user: review.active_captain ? (
