@@ -29,7 +29,7 @@ declare namespace Express {
   interface Response {
     // Required properties are not actually required
     typedLocals: {
-      osu: import('./osu').Osu;
+      osu: import('./osu.js').Osu;
       user: UserWithRoles;
     };
   }
