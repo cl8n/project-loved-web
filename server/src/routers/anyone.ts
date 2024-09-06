@@ -310,10 +310,6 @@ anyoneRouter.post(
         .send({ error: `Must be a captain to use review score ${req.body.score}` });
     }
 
-    const captainRole = res.typedLocals.user.roles.find(
-      (role) => role.game_mode === req.body.gameMode && role.role_id === Role.captain,
-    );
-    const activeCaptain = captainRole == null ? null : !captainRole.alumni;
     const existingReview = await db.queryOne<Review>(
       `
         SELECT *
@@ -333,6 +329,27 @@ anyoneRouter.post(
       return res.status(422).json({ error: 'Invalid score' });
     }
 
+    const beatmapset = await res.typedLocals.osu.createOrRefreshBeatmapset(
+      req.body.beatmapsetId,
+      true,
+    );
+
+    if (beatmapset == null) {
+      return res.status(422).json({ error: 'Invalid beatmapset ID' });
+    }
+
+    // TODO: This should allow cases where the set is Loved but at least one
+    //       difficulty in the requested mode is Pending/WIP/Graveyard
+    if (beatmapset.ranked_status > RankedStatus.pending) {
+      return res.status(422).json({ error: 'Beatmapset is already Ranked/Loved/Qualified' });
+    }
+
+    if (!beatmapset.game_modes.has(req.body.gameMode)) {
+      return res.status(422).json({
+        error: `Beatmapset has no beatmaps in game mode ${req.body.gameMode}`,
+      });
+    }
+
     const deleteExistingSubmission = (connection: MysqlConnectionType) =>
       connection.query(
         `
@@ -344,6 +361,11 @@ anyoneRouter.post(
         `,
         [req.body.beatmapsetId, req.body.gameMode, res.typedLocals.user.id],
       );
+
+    const captainRole = res.typedLocals.user.roles.find(
+      (role) => role.game_mode === req.body.gameMode && role.role_id === Role.captain,
+    );
+    const activeCaptain = captainRole == null ? null : !captainRole.alumni;
 
     if (existingReview != null) {
       return await db.transact(async (connection) => {
@@ -365,21 +387,6 @@ anyoneRouter.post(
           ])),
           active_captain: activeCaptain,
         });
-      });
-    }
-
-    const beatmapset = await res.typedLocals.osu.createOrRefreshBeatmapset(
-      req.body.beatmapsetId,
-      true,
-    );
-
-    if (beatmapset == null) {
-      return res.status(422).json({ error: 'Invalid beatmapset ID' });
-    }
-
-    if (!beatmapset.game_modes.has(req.body.gameMode)) {
-      return res.status(422).json({
-        error: `Beatmapset has no beatmaps in game mode ${req.body.gameMode}`,
       });
     }
 
