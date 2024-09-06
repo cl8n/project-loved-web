@@ -612,16 +612,20 @@ anyoneRouter.post(
               score: req.body.score,
             },
           ]);
+          const newReview = await connection.queryOne<Review>(
+            'SELECT * FROM reviews WHERE id = ?',
+            [insertId],
+          );
+
+          if (newReview == null) {
+            throw 'Missing review immediately after create';
+          }
+
           await dbLog(
             LogType.reviewCreated,
             {
               beatmapset: dbLogBeatmapset(beatmapset),
-              review: dbLogReview({
-                game_mode: gameMode,
-                id: insertId,
-                reason: req.body.reason as string,
-                score: req.body.score as 1 | 3,
-              }),
+              review: dbLogReview(newReview),
               user: dbLogUser(res.typedLocals.user),
             },
             connection,
