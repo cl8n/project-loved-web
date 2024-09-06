@@ -455,9 +455,9 @@ anyoneRouter.delete(
       return res.status(422).json({ error: 'Invalid review ID' });
     }
 
-    const review = await db.queryOne<Pick<Review, 'game_mode' | 'reviewer_id'>>(
+    const review = await db.queryOne<Review>(
       `
-        SELECT game_mode, reviewer_id
+        SELECT *
         FROM reviews
         WHERE id = ?
       `,
@@ -472,7 +472,27 @@ anyoneRouter.delete(
       return res.status(403).json({ error: "This isn't your review" });
     }
 
-    await db.query('DELETE FROM reviews WHERE id = ?', [reviewId]);
+    const beatmapset = await db.queryOne<Beatmapset>('SELECT * FROM beatmapsets WHERE id = ?', [
+      review.beatmapset_id,
+    ]);
+
+    if (beatmapset == null) {
+      throw 'Missing beatmapset attached to review';
+    }
+
+    await db.transact(async (connection) => {
+      await connection.query('DELETE FROM reviews WHERE id = ?', [review.id]);
+      await dbLog(
+        LogType.reviewDeleted,
+        {
+          actor: dbLogUser(res.typedLocals.user),
+          beatmapset: dbLogBeatmapset(beatmapset),
+          review: dbLogReview(review),
+          user: dbLogUser(res.typedLocals.user),
+        },
+        connection,
+      );
+    });
 
     deleteCache(`submissions:${review.game_mode}:reviews`);
 
