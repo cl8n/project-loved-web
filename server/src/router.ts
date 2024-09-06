@@ -13,8 +13,10 @@ import type {
   Nomination,
   NominationDescriptionEdit,
   Poll,
+  Review,
   Round,
   RoundGameMode,
+  Submission,
   User,
   UserRole,
 } from 'loved-bridge/tables';
@@ -40,7 +42,14 @@ import {
   isPackUploaderMiddleware,
 } from './guards.js';
 import { cleanNominationDescription, groupBy, pick, sortCreators } from './helpers.js';
-import { dbLog, dbLogUser, systemLog } from './log.js';
+import {
+  dbLog,
+  dbLogBeatmapset,
+  dbLogReview,
+  dbLogSubmission,
+  dbLogUser,
+  systemLog,
+} from './log.js';
 import { Osu, redirectToAuth } from './osu.js';
 import { accessSetting, settings, updateSettings } from './settings.js';
 import {
@@ -1539,6 +1548,45 @@ router.delete(
       return res.status(422).json({ error: 'Beatmapset has nominations or polls attached' });
     }
 
+    const logActor = dbLogUser(res.typedLocals.user);
+    const logBeatmapset = dbLogBeatmapset(beatmapset);
+    const consentBeatmapsets = await db.queryWithGroups<
+      Pick<ConsentBeatmapset, 'consent' | 'consent_reason'> & { user: User }
+    >(
+      `
+        SELECT mapper_consent_beatmapsets.consent, mapper_consent_beatmapsets.consent_reason, users:user
+        FROM mapper_consent_beatmapsets
+        INNER JOIN users
+          ON mapper_consent_beatmapsets.user_id = users.id
+        WHERE mapper_consent_beatmapsets.beatmapset_id = ?
+      `,
+      [beatmapset.id],
+    );
+    const reviews = await db.queryWithGroups<
+      Pick<Review, 'game_mode' | 'id' | 'reason' | 'score'> & { user: User }
+    >(
+      `
+        SELECT reviews.game_mode, reviews.id, reviews.reason, reviews.score, users:user
+        FROM reviews
+        INNER JOIN users
+          ON reviews.reviewer_id = users.id
+        WHERE reviews.beatmapset_id = ?
+      `,
+      [beatmapset.id],
+    );
+    const submissions = await db.queryWithGroups<
+      Pick<Submission, 'game_mode' | 'id' | 'reason'> & { user: User | null }
+    >(
+      `
+        SELECT submissions.game_mode, submissions.id, submissions.reason, users:user
+        FROM submissions
+        LEFT JOIN users
+          ON submissions.submitter_id = users.id
+        WHERE submissions.beatmapset_id = ?
+      `,
+      [beatmapset.id],
+    );
+
     await db.transact(async (connection) => {
       await connection.query('DELETE FROM beatmaps WHERE beatmapset_id = ?', [id]);
       await connection.query('DELETE FROM mapper_consent_beatmapsets WHERE beatmapset_id = ?', [
@@ -1548,6 +1596,52 @@ router.delete(
       await connection.query('DELETE FROM submissions WHERE beatmapset_id = ?', [id]);
 
       await connection.query('DELETE FROM beatmapsets WHERE id = ?', [id]);
+
+      for (const consentBeatmapset of consentBeatmapsets) {
+        await dbLog(
+          LogType.mapperConsentBeatmapsetDeleted,
+          {
+            actor: logActor,
+            beatmapset: logBeatmapset,
+            consent: consentBeatmapset.consent,
+            reason: consentBeatmapset.consent_reason,
+            user: dbLogUser(consentBeatmapset.user),
+          },
+          connection,
+        );
+      }
+
+      for (const review of reviews) {
+        await dbLog(
+          LogType.reviewDeleted,
+          {
+            actor: logActor,
+            beatmapset: logBeatmapset,
+            review: dbLogReview(review),
+            user: dbLogUser(review.user),
+          },
+          connection,
+        );
+      }
+
+      for (const submission of submissions) {
+        await dbLog(
+          LogType.submissionDeleted,
+          {
+            actor: logActor,
+            beatmapset: logBeatmapset,
+            submission: dbLogSubmission(submission),
+            user: submission.user == null ? undefined : dbLogUser(submission.user),
+          },
+          connection,
+        );
+      }
+
+      await dbLog(
+        LogType.beatmapsetDeleted,
+        { actor: logActor, beatmapset: logBeatmapset },
+        connection,
+      );
     });
 
     deleteCache('mapper-consents');
