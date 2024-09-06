@@ -393,14 +393,33 @@ anyoneRouter.post(
           },
           existingReview.id,
         ]);
+        const newReview = await connection.queryOne<Review>('SELECT * FROM reviews WHERE id = ?', [
+          existingReview.id,
+        ]);
+
+        if (newReview == null) {
+          throw 'Missing review immediately after update';
+        }
+
+        if (existingReview.reason !== req.body.reason || existingReview.score !== req.body.score) {
+          await dbLog(
+            LogType.reviewUpdated,
+            {
+              beatmapset: dbLogBeatmapset(beatmapset),
+              from: dbLogReview(existingReview),
+              to: dbLogReview(newReview),
+              user: dbLogUser(res.typedLocals.user),
+            },
+            connection,
+          );
+        }
+
         await deleteExistingSubmission(connection);
 
         deleteCache(`submissions:${req.body.gameMode}:reviews`);
 
         res.json({
-          ...(await connection.queryOne<Review>('SELECT * FROM reviews WHERE id = ?', [
-            existingReview.id,
-          ])),
+          ...newReview,
           active_captain: activeCaptain,
         });
       });
@@ -559,6 +578,8 @@ anyoneRouter.post(
       [beatmapset.id, req.body.gameModes, res.typedLocals.user.id],
     );
     const now = new Date();
+    const logActorAndUser = dbLogUser(res.typedLocals.user);
+    const logBeatmapset = dbLogBeatmapset(beatmapset);
 
     await db.transact(async (connection) => {
       if (submissionsToDelete.length > 0) {
@@ -570,10 +591,10 @@ anyoneRouter.post(
           await dbLog(
             LogType.submissionDeleted,
             {
-              actor: dbLogUser(res.typedLocals.user),
-              beatmapset: dbLogBeatmapset(beatmapset),
+              actor: logActorAndUser,
+              beatmapset: logBeatmapset,
               submission: dbLogSubmission(submission),
-              user: dbLogUser(res.typedLocals.user),
+              user: logActorAndUser,
             },
             connection,
           );
@@ -581,9 +602,9 @@ anyoneRouter.post(
       }
 
       for (const gameMode of req.body.gameModes as GameMode[]) {
-        const existingReview = await connection.queryOne<Pick<Review, 'id'>>(
+        const existingReview = await connection.queryOne<Review>(
           `
-            SELECT id
+            SELECT *
             FROM reviews
             WHERE beatmapset_id = ?
               AND game_mode = ?
@@ -601,6 +622,30 @@ anyoneRouter.post(
             },
             existingReview.id,
           ]);
+          const newReview = await connection.queryOne<Review>(
+            'SELECT * FROM reviews WHERE id = ?',
+            [existingReview.id],
+          );
+
+          if (newReview == null) {
+            throw 'Missing review immediately after update';
+          }
+
+          if (
+            existingReview.reason !== req.body.reason ||
+            existingReview.score !== req.body.score
+          ) {
+            await dbLog(
+              LogType.reviewUpdated,
+              {
+                beatmapset: logBeatmapset,
+                from: dbLogReview(existingReview),
+                to: dbLogReview(newReview),
+                user: logActorAndUser,
+              },
+              connection,
+            );
+          }
         } else {
           const { insertId } = await connection.query('INSERT INTO reviews SET ?', [
             {
@@ -624,9 +669,9 @@ anyoneRouter.post(
           await dbLog(
             LogType.reviewCreated,
             {
-              beatmapset: dbLogBeatmapset(beatmapset),
+              beatmapset: logBeatmapset,
               review: dbLogReview(newReview),
-              user: dbLogUser(res.typedLocals.user),
+              user: logActorAndUser,
             },
             connection,
           );
