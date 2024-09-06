@@ -38,7 +38,10 @@ const logTemplates = {
     '{actor} created {gameMode} poll {poll} on {beatmapset} for the round of {round}',
   [LogType.pollUpdated]:
     '{actor} updated results for {gameMode} poll {poll} on {beatmapset} for the round of {round}',
-  [LogType.submissionDeleted]: '{actor} deleted {gameMode} submission for {user} on {beatmapset}',
+  [LogType.submissionDeleted]: {
+    user_false: '{actor} deleted {gameMode} submission on {beatmapset}',
+    user_true: '{actor} deleted {gameMode} submission for {user} on {beatmapset}',
+  },
   [LogType.reviewCreated]: '{user} created {gameMode} review with {score} on {beatmapset}',
   [LogType.reviewDeleted]:
     '{actor} deleted {gameMode} review with {score} for {user} on {beatmapset}',
@@ -116,6 +119,12 @@ export default function LogMessage(log: Log) {
       const hasScopes = Array.isArray(log.values.scopes) && log.values.scopes.length > 0;
 
       template = logTemplates[log.type][`actor_${hasActor}_scopes_${hasScopes}`];
+    }
+  } else if (log.type === LogType.submissionDeleted) {
+    if (log.values != null) {
+      const hasUser = log.values.user != null;
+
+      template = logTemplates[log.type][`user_${hasUser}`];
     }
   } else {
     template = logTemplates[log.type] ?? '{invalid}';

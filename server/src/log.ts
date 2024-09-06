@@ -108,7 +108,7 @@ interface LogValues {
     actor: LogUser;
     beatmapset: LogBeatmapset;
     submission: LogSubmission;
-    user: LogUser;
+    user: LogUser | undefined;
   };
   [LogType.reviewCreated]: {
     beatmapset: LogBeatmapset;
