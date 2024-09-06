@@ -3,7 +3,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { dateFromString } from '../date-format';
 import type { IReview, IUser } from '../interfaces';
 import { UserInline } from '../UserInline';
-import { reviewIsNew, reviewScoreClasses, reviewScoreMessages } from './helpers';
+import { reviewIsNew, reviewScoreClasses } from './helpers';
+import ReviewScore from './ReviewScore';
 
 interface ReviewProps {
   review: IReview & { captain: IUser };
@@ -56,11 +57,7 @@ export default function Review({ review }: ReviewProps) {
           description='[Reviews] Review line'
           values={{
             ...messageValues,
-            score: (
-              <span className={'review ' + scoreClass}>
-                {intl.formatMessage(reviewScoreMessages[review.score + 3])}
-              </span>
-            ),
+            score: <ReviewScore review={review} />,
           }}
         />
       )}

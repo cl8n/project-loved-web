@@ -4,7 +4,9 @@ import type {
   ConsentValue,
   LogType,
   Poll,
+  Review,
   Round,
+  Submission,
   User,
   UserRole,
 } from 'loved-bridge/tables';
@@ -15,6 +17,8 @@ import db from './db.js';
 import { pick } from './helpers.js';
 
 type LogBeatmapset = Pick<Beatmapset, 'artist' | 'id' | 'title'>;
+type LogReview = Pick<Review, 'game_mode' | 'id' | 'reason' | 'score'>;
+type LogSubmission = Pick<Submission, 'game_mode' | 'id' | 'reason'>;
 type LogUser = Pick<User, 'banned' | 'country' | 'id' | 'name'>;
 
 interface LogValues {
@@ -100,6 +104,37 @@ interface LogValues {
     poll: Pick<Poll, 'id' | 'topic_id'>;
     round: Pick<Round, 'id' | 'name'>;
   };
+  [LogType.submissionDeleted]: {
+    actor: LogUser;
+    beatmapset: LogBeatmapset;
+    submission: LogSubmission;
+    user: LogUser;
+  };
+  [LogType.reviewCreated]: {
+    beatmapset: LogBeatmapset;
+    review: LogReview;
+    user: LogUser;
+  };
+  [LogType.reviewDeleted]: {
+    actor: LogUser;
+    beatmapset: LogBeatmapset;
+    review: LogReview;
+    user: LogUser;
+  };
+  [LogType.reviewUpdated]: {
+    beatmapset: LogBeatmapset;
+    from: LogReview;
+    to: LogReview;
+    user: LogUser;
+  };
+  [LogType.beatmapsetCreated]: {
+    actor: LogUser;
+    beatmapset: LogBeatmapset;
+  };
+  [LogType.beatmapsetDeleted]: {
+    actor: LogUser;
+    beatmapset: LogBeatmapset;
+  };
 }
 
 export function dbLog<T extends LogType>(
@@ -118,6 +153,14 @@ export function dbLog<T extends LogType>(
 
 export function dbLogBeatmapset(beatmapset: LogBeatmapset): LogBeatmapset {
   return pick(beatmapset, ['artist', 'id', 'title']);
+}
+
+export function dbLogReview(review: LogReview): LogReview {
+  return pick(review, ['game_mode', 'id', 'reason', 'score']);
+}
+
+export function dbLogSubmission(submission: LogSubmission): LogSubmission {
+  return pick(submission, ['game_mode', 'id', 'reason']);
 }
 
 export function dbLogUser(user: LogUser): LogUser {

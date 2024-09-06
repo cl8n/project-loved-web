@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import { BeatmapInline } from '../../BeatmapInline';
 import ListInline from '../../ListInline';
 import { Never } from '../../Never';
+import ReviewScore from '../../submission-listing/ReviewScore';
 import { UserInline } from '../../UserInline';
 import { renderRole } from '../roles/RolesList';
 
@@ -37,6 +38,13 @@ const logTemplates = {
     '{actor} created {gameMode} poll {poll} on {beatmapset} for the round of {round}',
   [LogType.pollUpdated]:
     '{actor} updated results for {gameMode} poll {poll} on {beatmapset} for the round of {round}',
+  [LogType.submissionDeleted]: '{actor} deleted {gameMode} submission for {user} on {beatmapset}',
+  [LogType.reviewCreated]: '{user} created {gameMode} review with {score} on {beatmapset}',
+  [LogType.reviewDeleted]:
+    '{actor} deleted {gameMode} review with {score} for {user} on {beatmapset}',
+  [LogType.reviewUpdated]: '{user} updated {gameMode} review with {from} to {to} on {beatmapset}',
+  [LogType.beatmapsetCreated]: '{actor} created beatmapset {beatmapset}',
+  [LogType.beatmapsetDeleted]: '{actor} deleted beatmapset {beatmapset}',
 } as const;
 
 function logElementForTemplate(
@@ -46,6 +54,26 @@ function logElementForTemplate(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   values: Record<string, any>,
 ): ReactNode {
+  switch (`${type}-${parameter}`) {
+    case `${LogType.userUpdated}-from`:
+    case `${LogType.userUpdated}-to`:
+      return <UserInline user={values[parameter]} />;
+    case `${LogType.roleToggledAlumni}-markedOrUnmarked`:
+      return values.role.alumni ? 'marked' : 'unmarked';
+    case `${LogType.settingUpdated}-setting`:
+      return <code>{values.setting}</code>;
+    case `${LogType.submissionDeleted}-gameMode`:
+      return gameModeLongName(values.submission.game_mode);
+    case `${LogType.reviewCreated}-gameMode`:
+    case `${LogType.reviewDeleted}-gameMode`:
+      return gameModeLongName(values.review.game_mode);
+    case `${LogType.reviewUpdated}-from`:
+    case `${LogType.reviewUpdated}-to`:
+      return <ReviewScore review={values[parameter]} />;
+    case `${LogType.reviewUpdated}-gameMode`:
+      return gameModeLongName(values.from.game_mode);
+  }
+
   switch (parameter) {
     case 'actor':
     case 'user':
@@ -68,17 +96,8 @@ function logElementForTemplate(
       return `${values.round.name} [#${values.round.id}]`;
     case 'scopes':
       return <ListInline<string> array={values.scopes} render={(scope) => <code>{scope}</code>} />;
-  }
-
-  switch (`${type}-${parameter}`) {
-    case `${LogType.userUpdated}-from`:
-      return <UserInline user={values.from} />;
-    case `${LogType.userUpdated}-to`:
-      return <UserInline user={values.to} />;
-    case `${LogType.roleToggledAlumni}-markedOrUnmarked`:
-      return values.role.alumni ? 'marked' : 'unmarked';
-    case `${LogType.settingUpdated}-setting`:
-      return <code>{values.setting}</code>;
+    case 'score':
+      return <ReviewScore review={values.review} />;
   }
 
   return <Never />;
