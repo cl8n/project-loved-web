@@ -20,23 +20,23 @@ const logTemplates = {
   [LogType.roleToggledAlumni]: '{actor} {markedOrUnmarked} role {role} as alumni on {user}',
   [LogType.mapperConsentCreated]: {
     self_false: '{actor} created mapper consent for {user}',
-    self_true: '{user} created mapper consent',
+    self_true: '{user} created their mapper consent',
   },
   [LogType.mapperConsentUpdated]: {
     self_false: '{actor} updated mapper consent for {user}',
-    self_true: '{user} updated mapper consent',
+    self_true: '{user} updated their mapper consent',
   },
   [LogType.mapperConsentBeatmapsetCreated]: {
     self_false: '{actor} created mapper consent for {user} on {beatmapset}',
-    self_true: '{user} created mapper consent on {beatmapset}',
+    self_true: '{user} created their mapper consent on {beatmapset}',
   },
   [LogType.mapperConsentBeatmapsetDeleted]: {
     self_false: '{actor} deleted mapper consent for {user} on {beatmapset}',
-    self_true: '{user} deleted mapper consent on {beatmapset}',
+    self_true: '{user} deleted their mapper consent on {beatmapset}',
   },
   [LogType.mapperConsentBeatmapsetUpdated]: {
     self_false: '{actor} updated mapper consent for {user} on {beatmapset}',
-    self_true: '{user} updated mapper consent on {beatmapset}',
+    self_true: '{user} updated their mapper consent on {beatmapset}',
   },
   [LogType.settingUpdated]: '{actor} updated setting {setting}',
   [LogType.extraTokenCreated]: '{user} created extra token with scopes {scopes}',
@@ -53,12 +53,12 @@ const logTemplates = {
   [LogType.submissionDeleted]: {
     user_false: '{actor} deleted {gameMode} submission on {beatmapset} (no user attached)',
     user_true_self_false: '{actor} deleted {gameMode} submission for {user} on {beatmapset}',
-    user_true_self_true: '{user} deleted {gameMode} submission on {beatmapset}',
+    user_true_self_true: '{user} deleted their {gameMode} submission on {beatmapset}',
   },
   [LogType.reviewCreated]: '{user} created {gameMode} review with {score} on {beatmapset}',
   [LogType.reviewDeleted]: {
     self_false: '{actor} deleted {gameMode} review with {score} for {user} on {beatmapset}',
-    self_true: '{user} deleted {gameMode} review with {score} on {beatmapset}',
+    self_true: '{user} deleted their {gameMode} review with {score} on {beatmapset}',
   },
   [LogType.reviewUpdated]: '{user} updated {gameMode} review with {from} to {to} on {beatmapset}',
   [LogType.beatmapsetCreated]: 'Created beatmapset {beatmapset}',
