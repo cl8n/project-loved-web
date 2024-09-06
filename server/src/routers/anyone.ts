@@ -350,17 +350,33 @@ anyoneRouter.post(
       });
     }
 
-    const deleteExistingSubmission = (connection: MysqlConnectionType) =>
-      connection.query(
+    const deleteExistingSubmission = async (connection: MysqlConnectionType) => {
+      const submissionToDelete = await connection.queryOne<Submission>(
         `
-          DELETE FROM submissions
+          SELECT *
+          FROM submissions
           WHERE beatmapset_id = ?
             AND game_mode = ?
-            AND submitter_id = ?
             AND reason IS NULL
+            AND submitter_id = ?
         `,
         [req.body.beatmapsetId, req.body.gameMode, res.typedLocals.user.id],
       );
+
+      if (submissionToDelete != null) {
+        await connection.query('DELETE FROM submissions WHERE id = ?', [submissionToDelete.id]);
+        await dbLog(
+          LogType.submissionDeleted,
+          {
+            actor: dbLogUser(res.typedLocals.user),
+            beatmapset: dbLogBeatmapset(beatmapset),
+            submission: dbLogSubmission(submissionToDelete),
+            user: dbLogUser(res.typedLocals.user),
+          },
+          connection,
+        );
+      }
+    };
 
     const captainRole = res.typedLocals.user.roles.find(
       (role) => role.game_mode === req.body.gameMode && role.role_id === Role.captain,
