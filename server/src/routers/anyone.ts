@@ -1,7 +1,14 @@
 import { Router } from 'express';
 import type { GameMode } from 'loved-bridge/beatmaps/gameMode';
 import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
-import type { Beatmapset, Consent, ConsentBeatmapset, Review, User } from 'loved-bridge/tables';
+import type {
+  Beatmapset,
+  Consent,
+  ConsentBeatmapset,
+  Review,
+  Submission,
+  User,
+} from 'loved-bridge/tables';
 import { ConsentValue, LogType, Role } from 'loved-bridge/tables';
 import { deleteCache } from '../cache.js';
 import type { MysqlConnectionType } from '../db.js';
@@ -9,7 +16,7 @@ import db from '../db.js';
 import { asyncHandler } from '../express-helpers.js';
 import { currentUserRoles } from '../guards.js';
 import { pick } from '../helpers.js';
-import { dbLog, dbLogBeatmapset, dbLogUser } from '../log.js';
+import { dbLog, dbLogBeatmapset, dbLogSubmission, dbLogUser } from '../log.js';
 import {
   isGameMode,
   isGameModeArray,
@@ -480,20 +487,39 @@ anyoneRouter.post(
       });
     }
 
-    const deleteExistingSubmission = (connection: MysqlConnectionType, gameMode: GameMode) =>
-      connection.query(
-        `
-          DELETE FROM submissions
-          WHERE beatmapset_id = ?
-            AND game_mode = ?
-            AND submitter_id = ?
-            AND reason IS NULL
-        `,
-        [beatmapset.id, gameMode, res.typedLocals.user.id],
-      );
+    const submissionsToDelete = await db.query<Submission>(
+      `
+        SELECT *
+        FROM submissions
+        WHERE beatmapset_id = ?
+          AND game_mode IN (?)
+          AND reason IS NULL
+          AND submitter_id = ?
+      `,
+      [beatmapset.id, req.body.gameModes, res.typedLocals.user.id],
+    );
     const now = new Date();
 
     await db.transact(async (connection) => {
+      if (submissionsToDelete.length > 0) {
+        await connection.query('DELETE FROM submissions WHERE id IN (?)', [
+          submissionsToDelete.map((submission) => submission.id),
+        ]);
+
+        for (const submission of submissionsToDelete) {
+          await dbLog(
+            LogType.submissionDeleted,
+            {
+              actor: dbLogUser(res.typedLocals.user),
+              beatmapset: dbLogBeatmapset(beatmapset),
+              submission: dbLogSubmission(submission),
+              user: dbLogUser(res.typedLocals.user),
+            },
+            connection,
+          );
+        }
+      }
+
       for (const gameMode of req.body.gameModes as GameMode[]) {
         const existingReview = await connection.queryOne<Pick<Review, 'id'>>(
           `
@@ -527,8 +553,6 @@ anyoneRouter.post(
             },
           ]);
         }
-
-        await deleteExistingSubmission(connection, gameMode);
 
         deleteCache(`submissions:${gameMode}:reviews`);
       }
