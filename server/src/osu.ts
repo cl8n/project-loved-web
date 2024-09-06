@@ -422,21 +422,21 @@ export class Osu {
   }
 
   async createOrRefreshUser(
-    userId?: number,
-    options?: { byName?: false; forceUpdate?: boolean; storeBanned?: false },
-  ): Promise<User | null>;
-  async createOrRefreshUser(
     userId: number,
     options: { byName?: false; forceUpdate?: boolean; storeBanned: true },
   ): Promise<User>;
   async createOrRefreshUser(
-    userName: string,
-    options: { byName: true; forceUpdate?: boolean; storeBanned?: false },
+    userId?: number,
+    options?: { byName?: false; forceUpdate?: boolean; storeBanned?: boolean },
   ): Promise<User | null>;
   async createOrRefreshUser(
     userName: string,
     options: { byName: true; forceUpdate?: boolean; storeBanned: true },
   ): Promise<User>;
+  async createOrRefreshUser(
+    userName: string,
+    options: { byName: true; forceUpdate?: boolean; storeBanned?: boolean },
+  ): Promise<User | null>;
   async createOrRefreshUser(
     userIdOrName?: number | string,
     options?: { byName?: boolean; forceUpdate?: boolean; storeBanned?: boolean },
