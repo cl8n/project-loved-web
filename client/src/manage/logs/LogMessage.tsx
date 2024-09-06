@@ -61,8 +61,10 @@ const logTemplates = {
     self_true: '{user} deleted {gameMode} review with {score} on {beatmapset}',
   },
   [LogType.reviewUpdated]: '{user} updated {gameMode} review with {from} to {to} on {beatmapset}',
-  [LogType.beatmapsetCreated]: '{actor} created beatmapset {beatmapset}',
+  [LogType.beatmapsetCreated]: 'Created beatmapset {beatmapset}',
   [LogType.beatmapsetDeleted]: '{actor} deleted beatmapset {beatmapset}',
+  [LogType.beatmapsetSoftDeleted]: 'Soft-deleted beatmapset {beatmapset}',
+  [LogType.beatmapsetUpdated]: 'Updated beatmapset {beatmapset}',
 } as const;
 
 function logElementForTemplate(

@@ -9,7 +9,7 @@ import superagent from 'superagent';
 import config from './config.js';
 import db from './db.js';
 import Limiter from './Limiter.js';
-import { dbLog, dbLogUser, systemLog } from './log.js';
+import { dbLog, dbLogBeatmapset, dbLogUser, systemLog } from './log.js';
 import { isResponseError } from './type-guards.js';
 
 const apiBaseUrl = `${config.osuBaseUrl}/api/v2`;
@@ -316,10 +316,20 @@ export class Osu {
           'UPDATE beatmaps SET ? WHERE beatmapset_id = ? AND deleted_at IS NULL',
           [{ deleted_at: now }, beatmapsetId],
         );
-        await connection.query('UPDATE beatmapsets SET ? WHERE id = ? AND deleted_at IS NULL', [
-          { api_fetched_at: now, deleted_at: now },
-          beatmapsetId,
-        ]);
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        if (currentInDb!.deleted_at == null) {
+          await connection.query('UPDATE beatmapsets SET ? WHERE id = ?', [
+            { api_fetched_at: now, deleted_at: now },
+            beatmapsetId,
+          ]);
+          await dbLog(
+            LogType.beatmapsetSoftDeleted,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            { beatmapset: dbLogBeatmapset(currentInDb!) },
+            connection,
+          );
+        }
       });
 
       return null;
@@ -346,6 +356,9 @@ export class Osu {
     };
     const dbFieldsWithPK = { ...dbFields, id: beatmapset.id };
     const gameModes = new Set<number>();
+    const beatmapsetExistedInDb =
+      currentInDb != null ||
+      (await db.queryOne('SELECT 1 FROM beatmapsets WHERE id = ?', [beatmapset.id])) != null;
 
     await db.transact(async (connection) => {
       await connection.query(
@@ -354,6 +367,11 @@ export class Osu {
           ON DUPLICATE KEY UPDATE ?
         `,
         [dbFieldsWithPK, dbFields],
+      );
+      await dbLog(
+        beatmapsetExistedInDb ? LogType.beatmapsetUpdated : LogType.beatmapsetCreated,
+        { beatmapset: dbLogBeatmapset(dbFieldsWithPK) },
+        connection,
       );
 
       const beatmapIdsToDelete = new Set(

@@ -127,14 +127,13 @@ interface LogValues {
     to: LogReview;
     user: LogUser;
   };
-  [LogType.beatmapsetCreated]: {
-    actor: LogUser;
-    beatmapset: LogBeatmapset;
-  };
+  [LogType.beatmapsetCreated]: { beatmapset: LogBeatmapset };
   [LogType.beatmapsetDeleted]: {
     actor: LogUser;
     beatmapset: LogBeatmapset;
   };
+  [LogType.beatmapsetSoftDeleted]: { beatmapset: LogBeatmapset };
+  [LogType.beatmapsetUpdated]: { beatmapset: LogBeatmapset };
 }
 
 export function dbLog<T extends LogType>(

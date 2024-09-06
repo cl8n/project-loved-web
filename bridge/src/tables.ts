@@ -49,8 +49,8 @@ export enum LogType {
   reviewUpdated,
   beatmapsetCreated,
   beatmapsetDeleted,
-  // beatmapsetSoftDeleted,
-  // beatmapsetUpdated,
+  beatmapsetSoftDeleted,
+  beatmapsetUpdated,
   // nominationCreated,
   // nominationDeleted,
 }
