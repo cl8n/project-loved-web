@@ -523,6 +523,7 @@ interopRouter.post(
 
     res.json({
       mainTopicIds: Object.values(mainPostTopicIdsByGameMode),
+      mainTopicIdsMap: mainPostTopicIdsByGameMode,
       nominationTopicIds,
     });
 
