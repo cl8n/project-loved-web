@@ -964,6 +964,7 @@ router.post(
         'news_intro_preview',
         'news_outro',
         'news_posted_at',
+        'video',
       ]),
       req.body.roundId,
     ]);
