@@ -1791,6 +1791,10 @@ router.get(
       return res.status(404).json({ error: 'Round not found' });
     }
 
+    if (round.done) {
+      return res.status(422).json({ error: 'Round must be in-progress' });
+    }
+
     const beatmapsetCreatorsByNominationId = groupBy<Nomination['id'], User>(
       await db.queryWithGroups<{
         creator: User;

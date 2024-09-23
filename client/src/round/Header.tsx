@@ -103,7 +103,7 @@ export default function Header({
                   </li>
                 );
               })}
-              {hasRole(authUser, Role.video) && (
+              {!round.done && hasRole(authUser, Role.video) && (
                 <a className='video-assets-link' href={`/api/video-assets?roundId=${round.id}`}>
                   Download video assets
                 </a>
