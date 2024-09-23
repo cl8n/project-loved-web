@@ -1844,7 +1844,7 @@ router.get(
     }
 
     const now = Date.now();
-    const archivePath = join(storagePath, `video-assets-${now}.zip`);
+    const archivePath = join(storagePath, `video-assets-${res.typedLocals.user.id}-${now}.zip`);
     const archiveStream = createWriteStream(archivePath);
     const archive = archiver('zip');
 
