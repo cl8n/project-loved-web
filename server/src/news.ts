@@ -1,5 +1,6 @@
 import { GameMode, gameModeLongName, gameModeShortName } from 'loved-bridge/beatmaps/gameMode';
 import type { Beatmapset, Nomination, Poll, Round, User } from 'loved-bridge/tables';
+import { joinList } from './helpers.js';
 
 type NewsPostNomination = Nomination & { beatmapset: Beatmapset };
 type ResultsNomination = NewsPostNomination & {
@@ -19,12 +20,6 @@ function formatPercent(number: number): string {
 
 function gameModeLongNameModified(gameMode: GameMode): string {
   return gameMode === GameMode.osu ? 'osu!' : gameModeLongName(gameMode);
-}
-
-function joinList(array: string[]): string {
-  return array.length < 3
-    ? array.join(' and ')
-    : array.slice(0, -1).join(', ') + ', and ' + array.at(-1);
 }
 
 function mainClosingReplyNomination(nomination: ResultsNomination): string {

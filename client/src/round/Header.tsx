@@ -103,6 +103,11 @@ export default function Header({
                   </li>
                 );
               })}
+              {hasRole(authUser, Role.video) && (
+                <a className='video-assets-link' href={`/api/video-assets?roundId=${round.id}`}>
+                  Download video assets
+                </a>
+              )}
             </ul>
             <h3>News intro preview</h3>
             <Markdown text={round.news_intro_preview ?? 'No news intro preview'} />

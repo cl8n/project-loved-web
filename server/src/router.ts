@@ -1,3 +1,4 @@
+import archiver from 'archiver';
 import { Router } from 'express';
 import { GameMode, gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
@@ -30,7 +31,12 @@ import {
   Role,
 } from 'loved-bridge/tables';
 import { randomBytes } from 'node:crypto';
+import { createWriteStream, existsSync, mkdirSync, unlinkSync } from 'node:fs';
+import { join, normalize } from 'node:path';
+import { PassThrough } from 'node:stream';
+import superagent from 'superagent';
 import { deleteCache } from './cache.js';
+import config from './config.js';
 import db from './db.js';
 import { asyncHandler } from './express-helpers.js';
 import {
@@ -41,7 +47,7 @@ import {
   isNewsAuthorMiddleware,
   isPackUploaderMiddleware,
 } from './guards.js';
-import { cleanNominationDescription, groupBy, pick, sortCreators } from './helpers.js';
+import { cleanNominationDescription, groupBy, joinList, pick, sortCreators } from './helpers.js';
 import {
   dbLog,
   dbLogBeatmapset,
@@ -1765,5 +1771,163 @@ router.post(
     );
 
     res.json(key);
+  }),
+);
+
+router.get(
+  '/video-assets',
+  asyncHandler(async (req, res) => {
+    const hasRole = currentUserRoles(req, res);
+
+    if (!hasRole(Role.video)) {
+      return res.status(403).json({ error: 'Must have video editor role' });
+    }
+
+    const round = await db.queryOne<Round>('SELECT * FROM rounds WHERE id = ?', [
+      req.query.roundId,
+    ]);
+
+    if (round == null) {
+      return res.status(404).json({ error: 'Round not found' });
+    }
+
+    const beatmapsetCreatorsByNominationId = groupBy<Nomination['id'], User>(
+      await db.queryWithGroups<{
+        creator: User;
+        nomination_id: Nomination['id'];
+      }>(
+        `
+          SELECT nominations.id AS nomination_id, creators:creator
+          FROM nominations
+          INNER JOIN beatmapset_creators
+            ON nominations.id = beatmapset_creators.nomination_id
+          INNER JOIN users AS creators
+            ON beatmapset_creators.creator_id = creators.id
+          WHERE nominations.round_id = ?
+        `,
+        [round.id],
+      ),
+      'nomination_id',
+      'creator',
+    );
+    const nominations: (Nomination & {
+      beatmapset: Beatmapset;
+      beatmapset_creators?: User[];
+    })[] = await db.queryWithGroups<
+      Nomination & {
+        beatmapset: Beatmapset;
+      }
+    >(
+      `
+        SELECT nominations.*, beatmapsets:beatmapset
+        FROM nominations
+        INNER JOIN beatmapsets
+          ON nominations.beatmapset_id = beatmapsets.id
+        WHERE nominations.round_id = ?
+        ORDER BY nominations.order ASC, nominations.id ASC
+      `,
+      [round.id],
+    );
+
+    nominations.forEach((nomination) => {
+      nomination.beatmapset_creators = sortCreators(
+        beatmapsetCreatorsByNominationId[nomination.id] || [],
+        nomination.beatmapset.creator_id,
+      );
+    });
+
+    // Set up archive in storage
+    const storagePath = normalize(config.storagePath);
+
+    if (!existsSync(storagePath)) {
+      mkdirSync(storagePath);
+    }
+
+    const now = Date.now();
+    const archivePath = join(storagePath, `video-assets-${now}.zip`);
+    const archiveStream = createWriteStream(archivePath);
+    const archive = archiver('zip');
+
+    // When the archive is ready, send the file as a response
+    archiveStream.on('close', () => {
+      res.sendFile(
+        archivePath,
+        {
+          headers: {
+            'Content-Disposition': `attachment; filename="Round #${round.id} video assets"`,
+          },
+        },
+        (error) => {
+          unlinkSync(archivePath);
+
+          if (error) {
+            throw error;
+          }
+        },
+      );
+    });
+
+    archive.on('error', (error) => {
+      throw error;
+    });
+
+    archive.pipe(archiveStream);
+
+    // Add background images to archive
+    const beatmapsetsIncluded = new Set<number>();
+
+    for (const beatmapset of nominations.map((nomination) => nomination.beatmapset)) {
+      if (beatmapsetsIncluded.has(beatmapset.id)) {
+        continue;
+      }
+      beatmapsetsIncluded.add(beatmapset.id);
+
+      await new Promise<void>((resolve) => {
+        const passthrough = new PassThrough();
+
+        superagent
+          .get(`https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/fullsize.jpg?${now}`)
+          .on('error', () => {
+            systemLog(
+              `Failed to download beatmap background #${beatmapset.id}`,
+              SyslogLevel.warning,
+            );
+            resolve();
+          })
+          .on('end', resolve)
+          .pipe(passthrough);
+
+        archive.append(passthrough, {
+          name: `${beatmapset.id} ${beatmapset.title.replace(/\\|\//, '_')}.jpg`,
+        });
+      });
+    }
+
+    // Add helper info file to archive
+    archive.append(
+      gameModes
+        .map(
+          (gameMode) =>
+            `### ${gameModeLongName(gameMode)} ###\n\n` +
+            nominations
+              .filter((nomination) => nomination.game_mode === gameMode)
+              .map((nomination) =>
+                [
+                  `Beatmapset #${nomination.beatmapset_id}`,
+                  `${nomination.beatmapset.artist} - ${nomination.beatmapset.title}`,
+                  nomination.beatmapset.artist,
+                  nomination.beatmapset.title,
+                  nomination.beatmapset.creator_name,
+                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                  joinList(nomination.beatmapset_creators!.map((user) => user.name)),
+                ].join('\n'),
+              )
+              .join('\n\n'),
+        )
+        .join('\n\n\n\n'),
+      { name: 'info.txt' },
+    );
+
+    await archive.finalize();
   }),
 );

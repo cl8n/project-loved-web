@@ -120,6 +120,12 @@ export function groupBy(
   }, {});
 }
 
+export function joinList(array: string[]): string {
+  return array.length < 3
+    ? array.join(' and ')
+    : array.slice(0, -1).join(', ') + ', and ' + array.at(-1);
+}
+
 export function modeBy<K extends string>(array: { [P in K]: number }[], key: K): number {
   const counts: Record<number, number> = { 0: 0 };
   let mode = 0;
