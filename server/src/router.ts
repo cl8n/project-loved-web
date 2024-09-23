@@ -1905,26 +1905,36 @@ router.get(
 
     // Add helper info file to archive
     archive.append(
-      gameModes
-        .map(
-          (gameMode) =>
-            `### ${gameModeLongName(gameMode)} ###\n\n` +
-            nominations
-              .filter((nomination) => nomination.game_mode === gameMode)
-              .map((nomination) =>
-                [
-                  `Beatmapset #${nomination.beatmapset_id}`,
-                  `${nomination.beatmapset.artist} - ${nomination.beatmapset.title}`,
-                  nomination.beatmapset.artist,
-                  nomination.beatmapset.title,
-                  nomination.beatmapset.creator_name,
-                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                  joinList(nomination.beatmapset_creators!.map((user) => user.name)),
-                ].join('\n'),
-              )
-              .join('\n\n'),
-        )
-        .join('\n\n\n\n'),
+      `### Round #${round.id} info\n` +
+        '###\n' +
+        '### Format:\n' +
+        '###\n' +
+        '### Beatmapset #<id>\n' +
+        '### <artist> - <title>\n' +
+        '### <artist>\n' +
+        '### <title>\n' +
+        '### <mapper (host)>\n' +
+        '### <mappers>\n\n\n\n' +
+        gameModes
+          .map(
+            (gameMode) =>
+              `### ${gameModeLongName(gameMode)}\n\n` +
+              nominations
+                .filter((nomination) => nomination.game_mode === gameMode)
+                .map((nomination) =>
+                  [
+                    `Beatmapset #${nomination.beatmapset_id}`,
+                    `${nomination.beatmapset.artist} - ${nomination.beatmapset.title}`,
+                    nomination.beatmapset.artist,
+                    nomination.beatmapset.title,
+                    nomination.beatmapset.creator_name,
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    joinList(nomination.beatmapset_creators!.map((user) => user.name)),
+                  ].join('\n'),
+                )
+                .join('\n\n'),
+          )
+          .join('\n\n\n\n'),
       { name: 'info.txt' },
     );
 
