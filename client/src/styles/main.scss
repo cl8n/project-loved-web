@@ -481,6 +481,10 @@ footer {
     width: 100%;
   }
 
+  &__poll-link {
+    color: var(--secondary-accent);
+  }
+
   &-title {
     margin-top: 0;
     margin-bottom: 0;

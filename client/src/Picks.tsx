@@ -578,6 +578,17 @@ function Nomination({
                   title={nomination.overwrite_title}
                 />{' '}
                 [#{nomination.id}]
+                {nomination.poll != null && (
+                  <>
+                    {' '}
+                    <a
+                      className='nomination__poll-link'
+                      href={`https://osu.ppy.sh/community/forums/topics/${nomination.poll.topic_id}`}
+                    >
+                      [Poll #{nomination.poll.topic_id}]
+                    </a>
+                  </>
+                )}
               </h3>
               {canDelete && (
                 <>
