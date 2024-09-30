@@ -72,7 +72,7 @@ function Root() {
               ),
               link: (c: ReactNode) => <a href='https://github.com/cl8n/project-loved-web'>{c}</a>,
               timestamp: process.env.GIT_COMMIT_TIMESTAMP
-                ? new Date(Number.parseInt(process.env.GIT_COMMIT_TIMESTAMP))
+                ? new Date(Number.parseInt(process.env.GIT_COMMIT_TIMESTAMP) * 1000)
                 : new Date(),
             }}
           />
