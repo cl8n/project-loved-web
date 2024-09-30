@@ -14,6 +14,13 @@ if (!NODE_ENV) {
   );
 }
 
+// Set git commit info for display in the site footer
+if (NODE_ENV === 'production') {
+  const { execFileSync } = require('child_process');
+  process.env.GIT_COMMIT = execFileSync('git', ['log', '-1', '--format=%H'], { encoding: 'utf8' }).trim();
+  process.env.GIT_COMMIT_TIMESTAMP = execFileSync('git', ['log', '-1', '--format=%at'], { encoding: 'utf8' }).trim();
+}
+
 // https://github.com/bkeepers/dotenv#what-other-env-files-can-i-use
 const dotenvFiles = [
   `${paths.dotenv}.${NODE_ENV}.local`,
@@ -59,7 +66,7 @@ const REACT_APP = /^REACT_APP_/i;
 
 function getClientEnvironment(publicUrl) {
   const raw = Object.keys(process.env)
-    .filter(key => REACT_APP.test(key))
+    .filter(key => REACT_APP.test(key) || key.startsWith('GIT_COMMIT'))
     .reduce(
       (env, key) => {
         env[key] = process.env[key];

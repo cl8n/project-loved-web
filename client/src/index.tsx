@@ -1,5 +1,6 @@
 import './styles/main.scss';
 import { Role } from 'loved-bridge/tables';
+import type { ReactNode } from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { FormattedMessage } from 'react-intl';
@@ -57,10 +58,29 @@ function Root() {
             values={{ author: <a href='https://icons8.com'>Icons8</a> }}
           />
           {' | '}
-          <a href='https://github.com/cl8n/project-loved-web'>
+          <FormattedMessage
+            defaultMessage='<link>Source code</link> (<commitLink>{commit}, {timestamp, date, short}</commitLink>)'
+            description='[Footer] Link to GitHub repository'
+            values={{
+              commit: process.env.GIT_COMMIT?.slice(0, 7) || 'master',
+              commitLink: (c: ReactNode) => (
+                <a
+                  href={`https://github.com/cl8n/project-loved-web/tree/${process.env.GIT_COMMIT || 'master'}`}
+                >
+                  {c}
+                </a>
+              ),
+              link: (c: ReactNode) => <a href='https://github.com/cl8n/project-loved-web'>{c}</a>,
+              timestamp: process.env.GIT_COMMIT_TIMESTAMP
+                ? new Date(Number.parseInt(process.env.GIT_COMMIT_TIMESTAMP))
+                : new Date(),
+            }}
+          />
+          {' | '}
+          <a href='https://github.com/cl8n/project-loved-web/issues'>
             <FormattedMessage
-              defaultMessage='Source code and issue tracker'
-              description='[Footer] Link to GitHub repository in site footer'
+              defaultMessage='Issue tracker'
+              description='[Footer] Link to GitHub issues'
             />
           </a>
         </div>
