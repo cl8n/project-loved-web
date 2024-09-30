@@ -1,8 +1,9 @@
+import type { ReactNode } from 'react';
 import type { IUser } from '../interfaces';
 import { UserInline } from '../UserInline';
 
 interface UserListProps {
-  title: string;
+  title: ReactNode;
   users: IUser[];
 }
 

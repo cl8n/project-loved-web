@@ -31,6 +31,10 @@ const messages = defineMessages({
     defaultMessage: 'Beatmap packers',
     description: '[Team] Team listing title',
   },
+  playlist: {
+    defaultMessage: '(playlist manager)',
+    description: '[Team] Team listing title, suffix for huu',
+  },
   video: {
     defaultMessage: 'Video editors',
     description: '[Team] Team listing title',
@@ -96,6 +100,26 @@ export default function TeamList({ current, teamApi }: TeamListProps) {
       )}
       {packUploaderUsers != null && (
         <UserList title={intl.formatMessage(messages.packUploader)} users={packUploaderUsers} />
+      )}
+      {current && (
+        // Just for fun, but this should be moved to normal role setup if a "playlist" role would
+        // actually be useful for anything
+        <UserList
+          title={
+            <>
+              huu <span style={{ fontSize: '0.5em' }}>{intl.formatMessage(messages.playlist)}</span>
+            </>
+          }
+          users={[
+            {
+              id: 6044237,
+              avatar_url: '',
+              banned: false,
+              country: 'LT',
+              name: 'huu',
+            },
+          ]}
+        />
       )}
     </div>
   );
