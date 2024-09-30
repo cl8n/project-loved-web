@@ -15,7 +15,7 @@ export default function Team() {
       </div> */}
       <div className='content-block'>
         <FormattedMessage
-          defaultMessage='Current'
+          defaultMessage='Current contributors'
           description='[Team] Team listing group title'
           tagName='h1'
         />
