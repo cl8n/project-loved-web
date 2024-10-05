@@ -72,6 +72,14 @@ const messages = defineMessages({
     defaultMessage: 'Loved and ranked',
     description: '[Submissions] Beatmap status option',
   },
+  negativeReviewed: {
+    defaultMessage: 'Negative',
+    description: '[Submissions] Review status option',
+  },
+  neutralReviewed: {
+    defaultMessage: 'Neutral',
+    description: '[Submissions] Review status option',
+  },
   notReviewed: {
     defaultMessage: 'Not reviewed',
     description: '[Submissions] Review status option',
@@ -83,6 +91,10 @@ const messages = defineMessages({
   playCount: {
     defaultMessage: 'Plays',
     description: '[Submissions] Submissions table header',
+  },
+  positiveReviewed: {
+    defaultMessage: 'Positive',
+    description: '[Submissions] Review status option',
   },
   priority: {
     defaultMessage: 'Priority',
@@ -129,8 +141,13 @@ const messages = defineMessages({
 const allBeatmapStatuses = ['pendingAndGrave', 'lovedAndRanked'] as const;
 type BeatmapStatus = (typeof allBeatmapStatuses)[number];
 
-const allReviewStatuses = ['any', 'reviewed', 'notReviewed'] as const;
-type ReviewStatus = (typeof allReviewStatuses)[number];
+type ReviewStatus =
+  | 'any'
+  | 'reviewed'
+  | 'positiveReviewed'
+  | 'neutralReviewed'
+  | 'negativeReviewed'
+  | 'notReviewed';
 
 const allSorts = [
   'artist',
@@ -382,11 +399,20 @@ export default function SubmissionListingContainer() {
                   setPage(1);
                 }}
               >
-                {allReviewStatuses.map((status) => (
-                  <option key={status} value={status}>
-                    {intl.formatMessage(messages[status])}
+                <option value='any'>{intl.formatMessage(messages.any)}</option>
+                <option value='reviewed'>{intl.formatMessage(messages.reviewed)}</option>
+                <optgroup>
+                  <option value='positiveReviewed'>
+                    {intl.formatMessage(messages.positiveReviewed)}
                   </option>
-                ))}
+                  <option value='neutralReviewed'>
+                    {intl.formatMessage(messages.neutralReviewed)}
+                  </option>
+                  <option value='negativeReviewed'>
+                    {intl.formatMessage(messages.negativeReviewed)}
+                  </option>
+                </optgroup>
+                <option value='notReviewed'>{intl.formatMessage(messages.notReviewed)}</option>
               </select>
             </>
           )}
@@ -731,8 +757,22 @@ function SubmissionListing({
           matchesSearch(beatmapset, gameMode, search) &&
           (authUser == null ||
             reviewStatus === 'any' ||
-            (reviewStatus === 'reviewed') ===
-              beatmapset.reviews.some((review) => review.reviewer_id === authUser.id)),
+            (reviewStatus === 'reviewed' &&
+              beatmapset.reviews.some((review) => review.reviewer_id === authUser.id)) ||
+            (reviewStatus === 'positiveReviewed' &&
+              beatmapset.reviews.some(
+                (review) => review.reviewer_id === authUser.id && review.score > 0,
+              )) ||
+            (reviewStatus === 'neutralReviewed' &&
+              beatmapset.reviews.some(
+                (review) => review.reviewer_id === authUser.id && review.score === 0,
+              )) ||
+            (reviewStatus === 'negativeReviewed' &&
+              beatmapset.reviews.some(
+                (review) => review.reviewer_id === authUser.id && review.score < 0,
+              )) ||
+            (reviewStatus === 'notReviewed' &&
+              !beatmapset.reviews.some((review) => review.reviewer_id === authUser.id))),
       )
       .map((beatmapset) => ({
         ...beatmapset,
