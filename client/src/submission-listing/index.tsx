@@ -108,6 +108,10 @@ const messages = defineMessages({
     defaultMessage: 'Reviewed',
     description: '[Submissions] Review status option',
   },
+  reviewedWithScore: {
+    defaultMessage: 'Reviewed with score',
+    description: '[Submissions] Review status option group',
+  },
   score: {
     defaultMessage: 'Score',
     description: '[Submissions] Submissions table header',
@@ -401,7 +405,7 @@ export default function SubmissionListingContainer() {
               >
                 <option value='any'>{intl.formatMessage(messages.any)}</option>
                 <option value='reviewed'>{intl.formatMessage(messages.reviewed)}</option>
-                <optgroup>
+                <optgroup label={intl.formatMessage(messages.reviewedWithScore)}>
                   <option value='positiveReviewed'>
                     {intl.formatMessage(messages.positiveReviewed)}
                   </option>
