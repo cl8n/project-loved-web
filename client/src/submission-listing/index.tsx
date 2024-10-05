@@ -19,7 +19,7 @@ import type { GetSubmissionsResponseBody } from '../api';
 import { apiErrorMessage, getSubmissions, useApi } from '../api';
 import { dateFromString } from '../date-format';
 import Help from '../Help';
-import type { IReview } from '../interfaces';
+import type { IReview, IUser } from '../interfaces';
 import { useOsuAuth } from '../osuAuth';
 import PageSelector from '../PageSelector';
 import useTitle from '../useTitle';
@@ -637,6 +637,31 @@ function beatmapsetSortFn(
     );
 }
 
+function matchesReviewStatus(
+  beatmapset: GetSubmissionsResponseBody['beatmapsets'][number],
+  reviewStatus: ReviewStatus,
+  authUser: IUser | undefined,
+): boolean {
+  if (authUser == null || reviewStatus === 'any') {
+    return true;
+  }
+
+  const review = beatmapset.reviews.find((review) => review.reviewer_id === authUser.id);
+
+  switch (reviewStatus) {
+    case 'reviewed':
+      return review != null;
+    case 'positiveReviewed':
+      return review != null && review.score > 0;
+    case 'neutralReviewed':
+      return review != null && review.score === 0;
+    case 'negativeReviewed':
+      return review != null && review.score < 0;
+    case 'notReviewed':
+      return review == null;
+  }
+}
+
 function matchesSearch(
   beatmapset: GetSubmissionsResponseBody['beatmapsets'][number],
   gameMode: GameMode,
@@ -759,24 +784,7 @@ function SubmissionListing({
             ? beatmapset.ranked_status > RankedStatus.pending
             : beatmapset.ranked_status <= RankedStatus.pending) &&
           matchesSearch(beatmapset, gameMode, search) &&
-          (authUser == null ||
-            reviewStatus === 'any' ||
-            (reviewStatus === 'reviewed' &&
-              beatmapset.reviews.some((review) => review.reviewer_id === authUser.id)) ||
-            (reviewStatus === 'positiveReviewed' &&
-              beatmapset.reviews.some(
-                (review) => review.reviewer_id === authUser.id && review.score > 0,
-              )) ||
-            (reviewStatus === 'neutralReviewed' &&
-              beatmapset.reviews.some(
-                (review) => review.reviewer_id === authUser.id && review.score === 0,
-              )) ||
-            (reviewStatus === 'negativeReviewed' &&
-              beatmapset.reviews.some(
-                (review) => review.reviewer_id === authUser.id && review.score < 0,
-              )) ||
-            (reviewStatus === 'notReviewed' &&
-              !beatmapset.reviews.some((review) => review.reviewer_id === authUser.id))),
+          matchesReviewStatus(beatmapset, reviewStatus, authUser),
       )
       .map((beatmapset) => ({
         ...beatmapset,
