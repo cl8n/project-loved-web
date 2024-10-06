@@ -296,7 +296,11 @@ export default function SubmissionBeatmapset({
           <Beatmap beatmapset={beatmapset} gameMode={gameMode} />
         </td>
         <td>
-          <UserInline name={beatmapset.creator_name} user={usersById[beatmapset.creator_id]} />
+          <UserInline
+            hideBannedLabel
+            name={beatmapset.creator_name}
+            user={usersById[beatmapset.creator_id]}
+          />
         </td>
         {showStatus ? (
           <StatusCell beatmapset={beatmapset} />

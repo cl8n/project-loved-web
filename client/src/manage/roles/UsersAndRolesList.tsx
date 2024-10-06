@@ -41,7 +41,7 @@ export default function UsersAndRolesList() {
           <tr key={user.id} className={hasRole(user, 'any') ? undefined : 'faded'}>
             <UserRolesEditor onRolesUpdate={onRolesUpdate(user.id)} user={user} />
             <td>
-              <UserInline user={user} />
+              <UserInline hideBannedLabel user={user} />
             </td>
             <td>
               <RolesList roles={user.roles} />

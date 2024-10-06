@@ -55,7 +55,7 @@ export function Header() {
           </a>
         ) : (
           <span>
-            <UserInline showId user={authUser} /> —{' '}
+            <UserInline hideBannedLabel showId user={authUser} /> —{' '}
             <button type='button' className='fake-a' onClick={logOut}>
               <FormattedMessage
                 defaultMessage='Log out'

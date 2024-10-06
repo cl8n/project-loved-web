@@ -14,7 +14,7 @@ export default function UserList({ title, users }: UserListProps) {
       <ul>
         {users.map((user) => (
           <li key={user.id}>
-            <UserInline user={user} />
+            <UserInline hideBannedLabel user={user} />
           </li>
         ))}
       </ul>
