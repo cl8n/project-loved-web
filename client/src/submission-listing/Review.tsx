@@ -39,7 +39,9 @@ export default function Review({ review }: ReviewProps) {
   const scoreClass = reviewScoreClasses[review.score < -3 ? 0 : review.score + 3];
 
   return (
-    <li>
+    <li
+      className={review.active_captain == null && review.captain.banned ? 'submission--banned' : ''}
+    >
       {review.score < -3 ? (
         <FormattedMessage
           defaultMessage='{user} marked as <score>not allowed</score> on {timestamp, date, long}'
