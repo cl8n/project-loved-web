@@ -10,7 +10,7 @@ interface SubmissionProps {
 
 export default function Submission({ submission }: SubmissionProps) {
   return (
-    <li>
+    <li className={submission.submitter?.banned ? 'submission--banned' : ''}>
       <FormattedMessage
         defaultMessage='
           {hasTimestamp, select,
