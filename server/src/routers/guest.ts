@@ -345,15 +345,19 @@ guestRouter.get(
   '/online',
   asyncHandler(async (req, res) => {
     // Get sessions with an expiry time that indicates they were touched within
-    // the last 10 minutes
+    // the last 10 minutes. Exclude the current session
     const sessions = await db.query<Pick<DbSession, 'data'>>(
-      'SELECT data FROM sessions WHERE expires >= ?',
-      [Math.floor(Date.now() / 1000) + 2592000 - 600],
+      'SELECT data FROM sessions WHERE expires >= ? AND session_id <> ?',
+      [Math.floor(Date.now() / 1000) + 2592000 - 600, req.session.id],
     );
-
     const sessionUserIds = sessions.map(
       (session) => (JSON.parse(session.data ?? '{}') as Partial<DbSessionData>).userId,
     );
+
+    // Add back the current session to the user IDs. This is done in case the
+    // current session hasn't had its expire time updated in the database by
+    // the time this router handles the request
+    sessionUserIds.push(req.session.userId);
 
     const guestCount = sessionUserIds.reduce<number>(
       (count, userId) => count + Number(userId == null),
