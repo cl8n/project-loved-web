@@ -18,6 +18,7 @@ import router from '../router.js';
 import anyoneRouter from '../routers/anyone.js';
 import guestRouter from '../routers/guest.js';
 import interopRouter from '../routers/interop.js';
+import { isTokenInfo } from '../type-guards.js';
 
 function destroySession(session: Request['session']): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -96,7 +97,7 @@ app.use(
     proxy: true,
     resave: false,
     rolling: true,
-    saveUninitialized: false,
+    saveUninitialized: true,
     secret: config.sessionSecret,
     store: sessionStore,
   }),
@@ -113,14 +114,14 @@ app.get('/auth/begin', function (request, response) {
 app.get(
   '/auth/callback',
   asyncHandler(async function (request, response) {
-    const backUrl = request.session.authBackUrl;
+    const backUrl = request.session.authBackUrl || '/';
     const state = request.session.authState;
     delete request.session.authBackUrl;
     delete request.session.authState;
 
     if (request.query.error) {
       if (request.query.error === 'access_denied') {
-        return response.redirect(backUrl || '/');
+        return response.redirect(backUrl);
       } else {
         throw request.query.error;
       }
@@ -131,12 +132,14 @@ app.get(
     }
 
     if (!request.query.state || request.query.state !== state) {
-      return response.status(422).json({ error: 'Invalid state. Try logging in again' });
+      return response.status(422).json({ error: 'Invalid state. Try authorizing again' });
     }
 
     const osu = new Osu();
+    // Note that the actual scopes authorized are not guaranteed to match the scopes here, in the
+    // case where a user purposely modifies the request
     const scopes: OsuApiScopes = JSON.parse(
-      Buffer.from(request.query.state, 'base64url').slice(8).toString(),
+      Buffer.from(request.query.state, 'base64url').subarray(8).toString(),
     );
     const tokenInfo = await osu.getToken(request.query.code, scopes);
     const user = await osu.createOrRefreshUser();
@@ -171,13 +174,13 @@ app.get(
       await dbLog(LogType.loggedIn, { user: logUser });
     }
 
-    response.redirect(backUrl || '/');
+    response.redirect(backUrl);
   }),
 );
 
 app.use(
   asyncHandler(async function (request, response, next) {
-    if (request.session?.userId == null) {
+    if (request.session.userId == null) {
       return next();
     }
 
@@ -193,9 +196,13 @@ app.use(
         return true;
       }
 
-      response.typedLocals.osu = new Osu(request.session);
-
       try {
+        if (!isTokenInfo(request.session)) {
+          throw new Error('Session has user ID but no token info');
+        }
+
+        response.typedLocals.osu = new Osu(request.session);
+
         const tokenInfo = await response.typedLocals.osu.tryRefreshToken();
 
         if (tokenInfo != null) {
@@ -254,7 +261,7 @@ app.use(guestRouter);
 
 // Below here requires authentication
 app.use((request, response, next) => {
-  if (!request.session?.userId) {
+  if (request.session.userId == null) {
     return response.status(401).json({ error: 'Log in first' });
   }
 
@@ -264,14 +271,14 @@ app.use((request, response, next) => {
 app.post(
   '/auth/bye',
   asyncHandler(async function (request, response) {
-    const user = await response.typedLocals.osu.createOrRefreshUser(request.session.userId);
+    const user = await response.typedLocals.osu.createOrRefreshUser();
 
     if (user == null) {
       throw 'User not found during log out';
     }
 
     await dbLog(LogType.loggedOut, { user: dbLogUser(user) });
-    await response.typedLocals.osu.revokeToken();
+    await response.typedLocals.osu.revokeToken().catch();
     await destroySession(request.session);
 
     response.status(204).send();

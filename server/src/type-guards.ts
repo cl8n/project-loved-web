@@ -1,5 +1,11 @@
 import { GameMode } from 'loved-bridge/beatmaps/gameMode';
-import type { AssigneeType, Consent, ConsentBeatmapset, UserRole } from 'loved-bridge/tables';
+import type {
+  AssigneeType,
+  Consent,
+  ConsentBeatmapset,
+  TokenInfo,
+  UserRole,
+} from 'loved-bridge/tables';
 import { ConsentValue, LogType, Role } from 'loved-bridge/tables';
 import type { ResponseError } from 'superagent';
 
@@ -129,6 +135,16 @@ export function isRoleId(roleId: unknown): roleId is Role {
 
 export function isStringArray(strings: unknown): strings is string[] {
   return Array.isArray(strings) && strings.every((string) => typeof string === 'string');
+}
+
+export function isTokenInfo(tokenInfo: unknown): tokenInfo is TokenInfo {
+  return (
+    isRecord(tokenInfo) &&
+    typeof tokenInfo.accessToken === 'string' &&
+    typeof tokenInfo.refreshToken === 'string' &&
+    (!('scopes' in tokenInfo) || isStringArray(tokenInfo.scopes)) &&
+    isInteger(tokenInfo.tokenExpiresAt)
+  );
 }
 
 export function isUserRoleWithoutUserIdArray(roles: unknown): roles is Omit<UserRole, 'user_id'>[] {

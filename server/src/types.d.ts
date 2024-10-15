@@ -28,14 +28,7 @@ type UserWithRoles = import('loved-bridge/tables').User & {
 //#region Express
 declare namespace Express {
   interface Request {
-    // Required properties are not actually required
-    session: import('express-session').Session &
-      Partial<import('express-session').SessionData> &
-      import('loved-bridge/tables').TokenInfo & {
-        authBackUrl?: string | undefined;
-        authState?: string;
-        userId: number;
-      };
+    session: import('express-session').Session & DbSessionData;
   }
 
   interface Response {

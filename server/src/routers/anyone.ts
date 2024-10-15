@@ -53,7 +53,7 @@ anyoneRouter.post(
 
     const hasRole = currentUserRoles(req, res);
 
-    if (user.id !== req.session.userId && !hasRole(Role.captain)) {
+    if (user.id !== res.typedLocals.user.id && !hasRole(Role.captain)) {
       return res.status(403).json({
         error: 'Must be a captain to update consents of other users',
       });
@@ -97,7 +97,7 @@ anyoneRouter.post(
         consent: newConsent.consent,
         consent_reason: newConsent.consent_reason,
         updated_at: new Date(),
-        updater_id: req.session.userId,
+        updater_id: res.typedLocals.user.id,
       };
       const dbFieldsWithPK = {
         ...dbFields,
