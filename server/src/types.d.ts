@@ -9,6 +9,18 @@ declare const enum SyslogLevel {
   debug,
 }
 
+interface DbSession {
+  session_id: string;
+  data: string | null;
+  expires: number;
+}
+
+type DbSessionData = Partial<import('loved-bridge/tables').TokenInfo> & {
+  authBackUrl?: string | undefined;
+  authState?: string;
+  userId?: number;
+};
+
 type UserWithRoles = import('loved-bridge/tables').User & {
   roles: import('loved-bridge/tables').UserRole[];
 };

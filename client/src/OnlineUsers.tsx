@@ -4,7 +4,7 @@ import { apiErrorMessage, getOnlineUsers, useApi } from './api';
 import { UserInline } from './UserInline';
 
 export default function OnlineUsers() {
-  const [onlineUsers, onlineUsersError] = useApi(getOnlineUsers);
+  const [onlineUsersResponse, onlineUsersError] = useApi(getOnlineUsers);
 
   if (onlineUsersError != null) {
     return (
@@ -14,25 +14,39 @@ export default function OnlineUsers() {
     );
   }
 
-  let users: ReactNode;
+  let usersNode: ReactNode;
 
-  if (onlineUsers == null) {
-    users = 'Loading...';
-  } else if (onlineUsers.length === 0) {
-    users = (
-      <FormattedMessage
-        defaultMessage='Nobody'
-        description='[Footer] Online user list content when nobody is online'
-      />
-    );
+  if (onlineUsersResponse == null) {
+    usersNode = 'Loading...';
   } else {
-    users = (
-      <FormattedList
-        value={onlineUsers.map((user) => (
-          <UserInline key={user.id} user={user} />
-        ))}
-      ></FormattedList>
-    );
+    const { guestCount, users } = onlineUsersResponse;
+    const listNodes = users.map((user) => <UserInline key={user.id} user={user} />);
+
+    if (guestCount > 0) {
+      listNodes.push(
+        <FormattedMessage
+          key='guests'
+          defaultMessage='
+            {count, plural,
+              one {# guest}
+              other {# guests}
+            }
+          '
+          description='[Footer] Online user list guest count'
+          values={{ count: guestCount }}
+        />,
+      );
+    }
+
+    usersNode =
+      listNodes.length > 0 ? (
+        <FormattedList value={listNodes} />
+      ) : (
+        <FormattedMessage
+          defaultMessage='Nobody'
+          description='[Footer] Online user list content when nobody is online'
+        />
+      );
   }
 
   return (
@@ -40,7 +54,7 @@ export default function OnlineUsers() {
       defaultMessage='Online users: {users}'
       description='[Footer] Online users list'
       tagName='div'
-      values={{ users }}
+      values={{ users: usersNode }}
     />
   );
 }

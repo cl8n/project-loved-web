@@ -346,37 +346,37 @@ guestRouter.get(
   asyncHandler(async (req, res) => {
     // Get sessions with an expiry time that indicates they were touched within
     // the last 10 minutes
-    const sessions = await db.query<{ data: string | null }>(
+    const sessions = await db.query<Pick<DbSession, 'data'>>(
       'SELECT data FROM sessions WHERE expires >= ?',
       [Math.floor(Date.now() / 1000) + 2592000 - 600],
     );
 
-    // The null checks here are for sessions that aren't full logins yet, such
-    // as when we are waiting for a user to authorize on the osu! website
-    const userIds = sessions
-      .map((session) => JSON.parse(session.data ?? '{}').userId)
-      .filter((userId) => userId != null) as number[];
-
-    // Add the current user ID, in case the current session hasn't been updated
-    if (req.session?.userId != null) {
-      userIds.push(req.session.userId);
-    }
-
-    if (userIds.length === 0) {
-      return res.json([]);
-    }
-
-    res.json(
-      await db.query<User>(
-        `
-          SELECT *
-          FROM users
-          WHERE id IN (?)
-          ORDER BY name ASC
-        `,
-        [userIds],
-      ),
+    const sessionUserIds = sessions.map(
+      (session) => (JSON.parse(session.data ?? '{}') as Partial<DbSessionData>).userId,
     );
+
+    const guestCount = sessionUserIds.reduce<number>(
+      (count, userId) => count + Number(userId == null),
+      0,
+    );
+    const userIds = sessionUserIds.filter((userId) => userId != null);
+    const users =
+      userIds.length === 0
+        ? []
+        : await db.query<User>(
+            `
+              SELECT *
+              FROM users
+              WHERE id IN (?)
+              ORDER BY name ASC
+            `,
+            [userIds],
+          );
+
+    res.json({
+      guestCount,
+      users,
+    });
   }),
 );
 
