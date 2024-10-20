@@ -90,8 +90,8 @@ function UploadInfo({ nominations, round }: Pick<PackStatusProps, 'nominations' 
             {gameModeLongName(gameMode)}:
             <br />
             <code className='pack-upload-info__command'>
-              .create-pack "{packName}" "LR{packNumber++}" {beatmapsetIdsString} --overwrite
-              --ruleset {gameMode}
+              .create-pack "{packName}" "LR{packNumber++}" {beatmapsetIdsString} --ruleset{' '}
+              {gameMode} {round.packs_state !== PacksState.notUploaded && '--overwrite'}
             </code>
           </div>
         );
