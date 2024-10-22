@@ -1,6 +1,11 @@
 import archiver from 'archiver';
 import { Router } from 'express';
-import { GameMode, gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
+import {
+  GameMode,
+  gameModeLongName,
+  gameModes,
+  gameModeShortName,
+} from 'loved-bridge/beatmaps/gameMode';
 import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
 import type {
   AssigneeType,
@@ -1878,22 +1883,20 @@ router.get(
     archive.pipe(archiveStream);
 
     // Add background images to archive
-    const beatmapsetsIncluded = new Set<number>();
+    const gameModeCounters = [0, 0, 0, 0];
 
-    for (const beatmapset of nominations.map((nomination) => nomination.beatmapset)) {
-      if (beatmapsetsIncluded.has(beatmapset.id)) {
-        continue;
-      }
-      beatmapsetsIncluded.add(beatmapset.id);
+    for (const nomination of nominations) {
+      const beatmapsetId = nomination.beatmapset.id;
+      const counter = ++gameModeCounters[nomination.game_mode];
 
       await new Promise<void>((resolve) => {
         const passthrough = new PassThrough();
 
         superagent
-          .get(`https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/fullsize.jpg?${now}`)
+          .get(`https://assets.ppy.sh/beatmaps/${beatmapsetId}/covers/fullsize.jpg?${now}`)
           .on('error', () => {
             systemLog(
-              `Failed to download beatmap background #${beatmapset.id}`,
+              `Failed to download beatmap background #${beatmapsetId}`,
               SyslogLevel.warning,
             );
             resolve();
@@ -1902,7 +1905,7 @@ router.get(
           .pipe(passthrough);
 
         archive.append(passthrough, {
-          name: `${beatmapset.id} ${beatmapset.title.replace(/\\|\//, '_')}.jpg`,
+          name: `${gameModeShortName(nomination.game_mode)}-${String(counter).padStart(2, '0')} (#${beatmapsetId}).jpg`,
         });
       });
     }
