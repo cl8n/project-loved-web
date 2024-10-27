@@ -38,7 +38,6 @@ import {
 import { randomBytes } from 'node:crypto';
 import { createWriteStream, existsSync, mkdirSync, unlinkSync } from 'node:fs';
 import { join, normalize } from 'node:path';
-import { PassThrough } from 'node:stream';
 import superagent from 'superagent';
 import { deleteCache } from './cache.js';
 import config from './config.js';
@@ -72,6 +71,7 @@ import {
   isLogTypeArray,
   isRecord,
   isRecordArray,
+  isResponseError,
   isStringArray,
   isUserRoleWithoutUserIdArray,
 } from './type-guards.js';
@@ -1888,42 +1888,25 @@ router.get(
 
     // Add background images to archive
     for (const nomination of nominations) {
-      const beatmapsetId = nomination.beatmapset.id;
+      const coverImage = await superagent
+        .get(
+          `https://assets.ppy.sh/beatmaps/${nomination.beatmapset.id}/covers/fullsize.jpg?${now}`,
+        )
+        .ok((response) => response.status === 200)
+        .then((response) => response.body)
+        .catch((error) => {
+          if (isResponseError(error) && error.status === 404) {
+            return null;
+          }
 
-      await new Promise<void>((resolve) => {
-        const passthrough = new PassThrough();
+          throw error;
+        });
 
-        const coverRequest = superagent
-          .get(`https://assets.ppy.sh/beatmaps/${beatmapsetId}/covers/fullsize.jpg?${now}`)
-          .on('end', resolve)
-          .on('error', () => {
-            systemLog(
-              `Failed to download beatmap background #${beatmapsetId}`,
-              SyslogLevel.warning,
-            );
-            resolve();
-          })
-          .on('response', (coverResponse) => {
-            if (coverResponse.status === 200) {
-              archive.append(passthrough, {
-                name: `${gameModeShortName(nomination.game_mode)}-${String(nomination.positionInRuleset).padStart(2, '0')} (#${beatmapsetId}).jpg`,
-              });
-              return;
-            }
-
-            if (coverResponse.status !== 404) {
-              systemLog(
-                `Received status code ${coverResponse.status} from beatmap background #${beatmapsetId}`,
-                SyslogLevel.warning,
-              );
-            }
-
-            coverRequest.abort();
-            resolve();
-          });
-
-        coverRequest.pipe(passthrough);
-      });
+      if (coverImage != null) {
+        archive.append(coverImage, {
+          name: `${gameModeShortName(nomination.game_mode)}-${String(nomination.positionInRuleset).padStart(2, '0')} (#${nomination.beatmapset.id}).jpg`,
+        });
+      }
     }
 
     // Add helper info file to archive
