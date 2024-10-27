@@ -16,6 +16,7 @@ import { dbLog, dbLogUser, systemLog } from '../log.js';
 import { Osu, redirectToAuth } from '../osu.js';
 import router from '../router.js';
 import anyoneRouter from '../routers/anyone.js';
+import googleInteropRouter from '../routers/googleInterop.js';
 import guestRouter from '../routers/guest.js';
 import interopRouter from '../routers/interop.js';
 import { isTokenInfo } from '../type-guards.js';
@@ -82,6 +83,8 @@ app.use((_, response, next) => {
 });
 
 app.use(express.json());
+
+app.use('/google-interop', googleInteropRouter);
 
 app.use('/local-interop', hasLocalInteropKeyMiddleware, interopRouter);
 

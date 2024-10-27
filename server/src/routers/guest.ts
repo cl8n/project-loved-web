@@ -970,7 +970,9 @@ guestRouter.get(
     }
 
     const confirmation = createHash('md5')
-      .update(user.id + config.surveyConfirmationSecret)
+      .update(String(user.id))
+      .update(req.query.id)
+      .update(config.surveyConfirmationSecret)
       .digest('hex');
     const link = config.surveyLinkTemplate.replace('{confirmation}', `${user.id}-${confirmation}`);
 
