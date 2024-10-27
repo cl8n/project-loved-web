@@ -1822,6 +1822,7 @@ router.get(
     const nominations: (Nomination & {
       beatmapset: Beatmapset;
       beatmapset_creators?: User[];
+      positionInRuleset?: number;
     })[] = await db.queryWithGroups<
       Nomination & {
         beatmapset: Beatmapset;
@@ -1838,11 +1839,14 @@ router.get(
       [round.id],
     );
 
+    const rulesetPositionCounters = [0, 0, 0, 0];
+
     nominations.forEach((nomination) => {
       nomination.beatmapset_creators = sortCreators(
         beatmapsetCreatorsByNominationId[nomination.id] || [],
         nomination.beatmapset.creator_id,
       );
+      nomination.positionInRuleset = ++rulesetPositionCounters[nomination.game_mode];
     });
 
     // Set up archive in storage
@@ -1883,11 +1887,8 @@ router.get(
     archive.pipe(archiveStream);
 
     // Add background images to archive
-    const gameModeCounters = [0, 0, 0, 0];
-
     for (const nomination of nominations) {
       const beatmapsetId = nomination.beatmapset.id;
-      const counter = ++gameModeCounters[nomination.game_mode];
 
       await new Promise<void>((resolve) => {
         const passthrough = new PassThrough();
@@ -1905,7 +1906,7 @@ router.get(
           .pipe(passthrough);
 
         archive.append(passthrough, {
-          name: `${gameModeShortName(nomination.game_mode)}-${String(counter).padStart(2, '0')} (#${beatmapsetId}).jpg`,
+          name: `${gameModeShortName(nomination.game_mode)}-${String(nomination.positionInRuleset).padStart(2, '0')} (#${beatmapsetId}).jpg`,
         });
       });
     }
