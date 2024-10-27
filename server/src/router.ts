@@ -1893,8 +1893,9 @@ router.get(
       await new Promise<void>((resolve) => {
         const passthrough = new PassThrough();
 
-        superagent
+        const coverRequest = superagent
           .get(`https://assets.ppy.sh/beatmaps/${beatmapsetId}/covers/fullsize.jpg?${now}`)
+          .on('end', resolve)
           .on('error', () => {
             systemLog(
               `Failed to download beatmap background #${beatmapsetId}`,
@@ -1902,12 +1903,26 @@ router.get(
             );
             resolve();
           })
-          .on('end', resolve)
-          .pipe(passthrough);
+          .on('response', (coverResponse) => {
+            if (coverResponse.status === 200) {
+              archive.append(passthrough, {
+                name: `${gameModeShortName(nomination.game_mode)}-${String(nomination.positionInRuleset).padStart(2, '0')} (#${beatmapsetId}).jpg`,
+              });
+              return;
+            }
 
-        archive.append(passthrough, {
-          name: `${gameModeShortName(nomination.game_mode)}-${String(nomination.positionInRuleset).padStart(2, '0')} (#${beatmapsetId}).jpg`,
-        });
+            if (coverResponse.status !== 404) {
+              systemLog(
+                `Received status code ${coverResponse.status} from beatmap background #${beatmapsetId}`,
+                SyslogLevel.warning,
+              );
+            }
+
+            coverRequest.abort();
+            resolve();
+          });
+
+        coverRequest.pipe(passthrough);
       });
     }
 
