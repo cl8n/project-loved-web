@@ -10,6 +10,32 @@
   }
 }
 
+// Keep in sync with theme.tsx
+// TODO: Deduplicate somehow?
+@mixin _dark-colors {
+  --accent: hsl(340, 90%, 70%);
+  --accent-background: hsl(340, 10%, 7%);
+  --accent-hover: hsl(340, 30%, 50%);
+  --accent-light: hsl(340, 90%, 80%);
+  --background: hsl(340, 10%, 14%);
+  --content: #eee;
+  --control: hsl(220, 90%, 65%);
+  --control-background: #9cf2;
+  --control-heavy: hsl(220, 90%, 80%);
+  --rating--3: hsl(0, 100%, 60%);
+  --rating--3-background: hsla(0, 100%, 60%, 0.067);
+  --rating--3-hover: hsl(0, 100%, 45%);
+  --rating--2: #f55;
+  --rating--1: #f77;
+  --rating-0: #fb3;
+  --rating-1: #6b6;
+  --rating-2: #4b4;
+  --rating-3: #2b2;
+  --rating-3-background: #2b21;
+  --secondary-accent: hsl(280, 90%, 70%);
+  --secondary-accent-hover: hsl(280, 30%, 50%);
+}
+
 @mixin _light-colors {
   --accent: #f6a;
   --accent-background: #fff0f8;
@@ -34,30 +60,14 @@
   --secondary-accent-hover: rgb(248, 207, 253);
 }
 
-html {
-  --accent: hsl(340, 90%, 70%);
-  --accent-background: hsl(340, 10%, 7%);
-  --accent-hover: hsl(340, 30%, 50%);
-  --accent-light: hsl(340, 90%, 80%);
-  --background: hsl(340, 10%, 14%);
-  --content: #eee;
-  --control: hsl(220, 90%, 65%);
-  --control-background: #9cf2;
-  --control-heavy: hsl(220, 90%, 80%);
-  --rating--3: hsl(0, 100%, 60%);
-  --rating--3-background: hsla(0, 100%, 60%, 0.067);
-  --rating--3-hover: hsl(0, 100%, 45%);
-  --rating--2: #f55;
-  --rating--1: #f77;
-  --rating-0: #fb3;
-  --rating-1: #6b6;
-  --rating-2: #4b4;
-  --rating-3: #2b2;
-  --rating-3-background: #2b21;
-  --secondary-accent: hsl(280, 90%, 70%);
-  --secondary-accent-hover: hsl(280, 30%, 50%);
+@include darkTheme {
+  color-scheme: dark;
 
-  &[data-theme=light] {
-    @include _light-colors;
-  }
+  @include _dark-colors;
+}
+
+@include lightTheme {
+  color-scheme: light;
+
+  @include _light-colors;
 }
