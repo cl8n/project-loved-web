@@ -12,7 +12,7 @@
 
 // Keep in sync with theme.tsx
 // TODO: Deduplicate somehow?
-@mixin _dark-colors {
+html[data-theme=dark] {
   --accent: hsl(340, 90%, 70%);
   --accent-background: hsl(340, 10%, 7%);
   --accent-hover: hsl(340, 30%, 50%);
@@ -34,9 +34,11 @@
   --rating-3-background: #2b21;
   --secondary-accent: hsl(280, 90%, 70%);
   --secondary-accent-hover: hsl(280, 30%, 50%);
+
+  color-scheme: dark;
 }
 
-@mixin _light-colors {
+html[data-theme=light] {
   --accent: #f6a;
   --accent-background: #fff0f8;
   --accent-hover: #fde;
@@ -58,16 +60,6 @@
   --rating-3-background: #1a11;
   --secondary-accent: rgb(236, 94, 255);
   --secondary-accent-hover: rgb(248, 207, 253);
-}
 
-@include darkTheme {
-  color-scheme: dark;
-
-  @include _dark-colors;
-}
-
-@include lightTheme {
   color-scheme: light;
-
-  @include _light-colors;
 }
