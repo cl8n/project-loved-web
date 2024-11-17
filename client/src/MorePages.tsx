@@ -28,7 +28,7 @@ export default function MorePages() {
           />
         </li>
         <li>
-          <a href='/exports'>
+          <a href='https://archive.loved.sh'>
             <FormattedMessage
               defaultMessage='Data exports'
               description='[Data exports] Data exports page title'

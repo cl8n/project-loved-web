@@ -7,5 +7,5 @@ if test $# -gt 1; then
   exit 1
 fi
 
-curl "${1:-https://loved.sh/exports/latest-project_loved.sql.gz}" \
+curl "${1:-https://archive.loved.sh/latest-project_loved.sql.gz}" \
   | gunzip | mysql -u project_loved project_loved

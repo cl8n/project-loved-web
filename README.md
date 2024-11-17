@@ -15,7 +15,7 @@ During the containers' startup, each file will be created with a default configu
 
 ### Live data
 
-Regular database exports are posted to <https://loved.sh/exports>. They can be imported with the following command. **This will drop and re-create all tables!**
+Regular database exports are posted to <https://archive.loved.sh>. They can be imported with the following command. **This will drop and re-create all tables!**
 
 ```
 docker compose run --rm database import [<export URL>]
