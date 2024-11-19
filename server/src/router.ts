@@ -1332,6 +1332,12 @@ router.post(
       return res.status(422).json({ error: 'Cannot set news author without news editor' });
     }
 
+    if (
+      req.body.roles.some((role) => (role.role_id === Role.captain) === (role.game_mode === -1))
+    ) {
+      return res.status(422).json({ error: 'Invalid game modes on roles' });
+    }
+
     const user = await db.queryOne<User>('SELECT * FROM users WHERE id = ?', [req.body.userId]);
 
     if (user == null) {
