@@ -1512,6 +1512,14 @@ router.post(
 );
 
 router.post('/update-api-object-bulk', isAnyRoleMiddleware, (req, res) => {
+  if (!isIntegerArray(req.body.ids)) {
+    return res.status(422).json({ error: 'Invalid IDs' });
+  }
+
+  if (req.body.type !== 'beatmapset' && req.body.type !== 'user') {
+    return res.status(422).json({ error: 'Invalid type' });
+  }
+
   let apiObject;
   const type = req.body.type;
   const bulkOsu = new Osu();
