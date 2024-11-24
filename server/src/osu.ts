@@ -1,11 +1,12 @@
 import type { Request as ExpressRequest, Response as ExpressResponse } from 'express';
-import { GameMode } from 'loved-bridge/beatmaps/gameMode';
+import { GameMode, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import type { Beatmap, Beatmapset, TokenInfo, User } from 'loved-bridge/tables';
 import { LogType } from 'loved-bridge/tables';
 import { randomBytes } from 'node:crypto';
 import qs from 'node:querystring';
 import type { Agent, Response } from 'superagent';
 import superagent from 'superagent';
+import { deleteCache } from './cache.js';
 import config from './config.js';
 import db from './db.js';
 import Limiter from './Limiter.js';
@@ -332,6 +333,12 @@ export class Osu {
         }
       });
 
+      deleteCache('mapper-consents');
+      deleteCache('polls');
+      for (const gameMode of gameModes) {
+        deleteCache(`submissions:${gameMode}:beatmapsets`);
+      }
+
       return null;
     }
 
@@ -355,7 +362,6 @@ export class Osu {
       title: beatmapset.title,
     };
     const dbFieldsWithPK = { ...dbFields, id: beatmapset.id };
-    const gameModes = new Set<number>();
     const beatmapsetExistedInDb =
       currentInDb != null ||
       (await db.queryOne('SELECT 1 FROM beatmapsets WHERE id = ?', [beatmapset.id])) != null;
@@ -396,8 +402,6 @@ export class Osu {
           beatmap.bpm = 0;
         }
 
-        gameModes.add(beatmap.mode_int);
-
         const dbFields = {
           beatmapset_id: beatmap.beatmapset_id,
           bpm: beatmap.bpm >= 9999 ? '9999.99' : beatmap.bpm.toFixed(2),
@@ -434,6 +438,12 @@ export class Osu {
       // TODO: If force updating beatmapset, also force update all exisitng beatmapset_creators
       //       who aren't the mapset host
     });
+
+    deleteCache('mapper-consents');
+    deleteCache('polls');
+    for (const gameMode of gameModes) {
+      deleteCache(`submissions:${gameMode}:beatmapsets`);
+    }
 
     return {
       ...dbFieldsWithPK,
@@ -562,6 +572,11 @@ export class Osu {
         currentInDb.name !== logUser.name
       ) {
         await dbLog(LogType.userUpdated, { from: dbLogUser(currentInDb), to: logUser }, connection);
+      }
+
+      deleteCache('mapper-consents');
+      for (const gameMode of gameModes) {
+        deleteCache(`submissions:${gameMode}:users`);
       }
 
       return dbFieldsWithPK;
