@@ -133,6 +133,11 @@ interface LogValues {
     beatmapset: LogBeatmapset;
   };
   [LogType.beatmapsetSoftDeleted]: { beatmapset: LogBeatmapset };
+  [LogType.apiUpdateForced]: {
+    actor: LogUser;
+    objectId: number;
+    objectType: string;
+  };
 }
 
 export function dbLog<T extends LogType>(

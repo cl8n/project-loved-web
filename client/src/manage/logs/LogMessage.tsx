@@ -64,6 +64,7 @@ const logTemplates = {
   [LogType.beatmapsetCreated]: 'Created beatmapset {beatmapset}',
   [LogType.beatmapsetDeleted]: '{actor} deleted beatmapset {beatmapset}',
   [LogType.beatmapsetSoftDeleted]: 'Soft-deleted beatmapset {beatmapset}',
+  [LogType.apiUpdateForced]: '{actor} forced API update for {objectType} #{objectId}',
 } as const;
 
 function logElementForTemplate(
@@ -91,6 +92,9 @@ function logElementForTemplate(
       return <ReviewScore review={values[parameter]} />;
     case `${LogType.reviewUpdated}-gameMode`:
       return gameModeLongName(values.from.game_mode);
+    case `${LogType.apiUpdateForced}-objectId`:
+    case `${LogType.apiUpdateForced}-objectType`:
+      return String(values[parameter]);
   }
 
   switch (parameter) {

@@ -50,6 +50,7 @@ export enum LogType {
   beatmapsetCreated,
   beatmapsetDeleted,
   beatmapsetSoftDeleted,
+  apiUpdateForced,
   // nominationCreated,
   // nominationDeleted,
 }

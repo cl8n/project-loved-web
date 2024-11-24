@@ -1488,6 +1488,13 @@ router.post(
       return res.status(422).json({ error: 'Invalid type' });
     }
 
+    // TODO: Shouldn't log outside of transaction like this
+    await dbLog(LogType.apiUpdateForced, {
+      actor: dbLogUser(res.typedLocals.user),
+      objectId: req.body.id,
+      objectType: req.body.type,
+    });
+
     let apiObject;
 
     switch (req.body.type) {
@@ -1528,6 +1535,13 @@ router.post('/update-api-object-bulk', isAnyRoleMiddleware, (req, res) => {
     await bulkOsu.getClientCredentialsToken();
 
     for (const id of req.body.ids) {
+      // TODO: Shouldn't log outside of transaction like this
+      await dbLog(LogType.apiUpdateForced, {
+        actor: dbLogUser(res.typedLocals.user),
+        objectId: id,
+        objectType: type,
+      });
+
       switch (type) {
         case 'beatmapset':
           apiObject = await bulkOsu.createOrRefreshBeatmapset(id, true);
