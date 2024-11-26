@@ -41,10 +41,6 @@ export function cache<T>(
 }
 
 export function deleteCache(key: string): void {
-  if (!(key in cacheStore)) {
-    systemLog(`Tried to delete nonexistent cache entry "${key}"`, SyslogLevel.warning);
-  }
-
   cacheStore[key] = null;
   usedBy[key]?.forEach(deleteCache);
 }
