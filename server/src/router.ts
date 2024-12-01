@@ -1214,60 +1214,101 @@ router.post(
       return res.status(404).json({ error: 'Round not found' });
     }
 
-    if (round.packs_state === PacksState.uploadedFinal) {
-      return res
-        .status(422)
-        .json({ error: 'Final pack upload has already been marked on this round' });
+    if (round.done) {
+      return res.status(422).json({ error: 'Round marked as done' });
     }
 
-    const nominations = await db.queryWithGroups<
+    if (round.ignore_packs_checks) {
+      return res.status(422).json({ error: 'Round ignores packs checks' });
+    }
+
+    const roundGameModes = await db.query<RoundGameMode>(
+      'SELECT * FROM round_game_modes WHERE round_id = ?',
+      [round.id],
+    );
+
+    if (roundGameModes.length === 0) {
+      return res.status(404).json({ error: 'Round rulesets not found' });
+    }
+
+    if (
+      roundGameModes.every((roundGameMode) => roundGameMode.pack_state === PacksState.uploadedFinal)
+    ) {
+      return res
+        .status(422)
+        .json({ error: 'Final pack uploads have already been marked on this round' });
+    }
+
+    const nominationsByRuleset = groupBy<
+      Nomination['game_mode'],
       Nomination & {
         beatmapset: Beatmapset;
         poll: Poll | null;
       }
     >(
-      `
-        SELECT nominations.*, beatmapsets:beatmapset, polls:poll
-        FROM nominations
-        INNER JOIN beatmapsets
-          ON nominations.beatmapset_id = beatmapsets.id
-        LEFT JOIN polls
-          ON nominations.round_id = polls.round_id
-            AND nominations.game_mode = polls.game_mode
-            AND nominations.beatmapset_id = polls.beatmapset_id
-        WHERE nominations.round_id = ?
-      `,
-      [round.id],
-    );
-    const roundGameModes = groupBy<RoundGameMode['game_mode'], RoundGameMode>(
-      await db.query<RoundGameMode>('SELECT * FROM round_game_modes WHERE round_id = ?', [
-        round.id,
-      ]),
+      await db.queryWithGroups<
+        Nomination & {
+          beatmapset: Beatmapset;
+          poll: Poll | null;
+        }
+      >(
+        `
+          SELECT nominations.*, beatmapsets:beatmapset, polls:poll
+          FROM nominations
+          INNER JOIN beatmapsets
+            ON nominations.beatmapset_id = beatmapsets.id
+          LEFT JOIN polls
+            ON nominations.round_id = polls.round_id
+              AND nominations.game_mode = polls.game_mode
+              AND nominations.beatmapset_id = polls.beatmapset_id
+          WHERE nominations.round_id = ?
+        `,
+        [round.id],
+      ),
       'game_mode',
-      null,
-      true,
     );
 
-    const allLovedOrFailed = nominations.every(
-      (nomination) =>
-        nomination.poll != null &&
-        nomination.poll.result_no != null &&
-        nomination.poll.result_yes != null &&
-        (nomination.beatmapset.ranked_status === RankedStatus.loved ||
-          nomination.poll.result_yes / (nomination.poll.result_no + nomination.poll.result_yes) <
-            (roundGameModes[nomination.game_mode]?.voting_threshold ?? 0)),
-    );
-    const roundUpdate: Partial<Round> = {
-      packs_state: allLovedOrFailed ? PacksState.uploadedFinal : PacksState.uploadedInitial,
-    };
-
-    if (allLovedOrFailed) {
-      roundUpdate.done = true;
+    for (const roundGameMode of roundGameModes) {
+      roundGameMode.pack_state = nominationsByRuleset[roundGameMode.game_mode]?.every(
+        (nomination) =>
+          nomination.poll != null &&
+          nomination.poll.result_no != null &&
+          nomination.poll.result_yes != null &&
+          (nomination.beatmapset.ranked_status === RankedStatus.loved ||
+            nomination.poll.result_yes / (nomination.poll.result_no + nomination.poll.result_yes) <
+              roundGameMode.voting_threshold),
+      )
+        ? PacksState.uploadedFinal
+        : PacksState.uploadedInitial;
     }
 
-    await db.query('UPDATE rounds SET ? WHERE id = ?', [roundUpdate, round.id]);
+    const allRulesetsFinal = roundGameModes.every(
+      (roundGameMode) => roundGameMode.pack_state === PacksState.uploadedFinal,
+    );
 
-    res.json({ ...roundUpdate, id: round.id });
+    await db.transact(async (connection) => {
+      for (const roundGameMode of roundGameModes) {
+        await connection.query(
+          'UPDATE round_game_modes SET pack_state = ? WHERE round_id = ? AND game_mode = ?',
+          [roundGameMode.pack_state, roundGameMode.round_id, roundGameMode.game_mode],
+        );
+      }
+
+      if (allRulesetsFinal) {
+        await connection.query('UPDATE rounds SET done = 1 WHERE id = ?', [round.id]);
+      }
+    });
+
+    res.json({
+      id: round.id,
+      done: allRulesetsFinal,
+      game_modes: groupBy<RoundGameMode['game_mode'], RoundGameMode>(
+        roundGameModes,
+        'game_mode',
+        null,
+        true,
+      ),
+    });
   }),
 );
 

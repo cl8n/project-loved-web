@@ -232,7 +232,6 @@ export interface Round {
   news_intro_preview: string | null;
   news_outro: string | null;
   news_posted_at: TableDateType | null;
-  packs_state: PacksState;
   video: string | null;
 }
 
@@ -240,6 +239,7 @@ export interface RoundGameMode {
   round_id: number;
   game_mode: GameMode;
   nominations_locked: boolean;
+  pack_state: PacksState;
   results_post_id: number | null;
   video: string | null;
   voting_threshold: number;

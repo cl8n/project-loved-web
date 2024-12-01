@@ -1,6 +1,5 @@
 import { gameModeLongName, gameModes } from 'loved-bridge/beatmaps/gameMode';
 import { RankedStatus } from 'loved-bridge/beatmaps/rankedStatus';
-import type { Round } from 'loved-bridge/tables';
 import { PacksState, Role } from 'loved-bridge/tables';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
@@ -20,8 +19,8 @@ function nominationFailedVoting(nomination: INominationWithPoll, round: IRound):
 }
 
 interface ButtonsProps {
-  onRoundUpdate: (round: PartialWithId<Round>) => void;
-  round: Round;
+  onRoundUpdate: (round: PartialWithId<IRound>) => void;
+  round: IRound;
   setShowingUploadInfo: Dispatch<SetStateAction<boolean>>;
   showingUploadInfo: boolean;
 }
@@ -64,18 +63,36 @@ function Buttons({ onRoundUpdate, round, setShowingUploadInfo, showingUploadInfo
   );
 }
 
-function UploadInfo({ nominations, round }: Pick<PackStatusProps, 'nominations' | 'round'>) {
+interface UploadInfoProps {
+  nominations: INominationWithPoll[];
+  round: IRound;
+}
+
+function UploadInfo({ nominations, round }: UploadInfoProps) {
   const gameModePackNames = ['osu!', 'osu!taiko', 'osu!catch', 'osu!mania'] as const;
   // TODO: shouldn't be here and will be wrong if any modes or rounds are skipped
-  let packNumber = (round.id - 109) * 4 + 1;
+  let packNumber = (round.id - 109) * 4;
 
   return (
     <div className='pack-upload-info'>
       <p>
-        Pack tag range: <b>LR{packNumber}</b> – <b>LR{packNumber + 3}</b>
+        Pack tag range: <b>LR{packNumber + 1}</b> –{' '}
+        <b>LR{packNumber + Object.values(round.game_modes).length}</b>
       </p>
       <h3>Upload commands</h3>
       {[...gameModes].reverse().map((gameMode) => {
+        if (!(gameMode in round.game_modes)) {
+          return;
+        }
+
+        packNumber++;
+
+        const packState = round.game_modes[gameMode].pack_state;
+
+        if (packState === PacksState.uploadedFinal) {
+          return;
+        }
+
         const beatmapsetIdsString = nominations
           .filter(
             (nomination) =>
@@ -90,8 +107,8 @@ function UploadInfo({ nominations, round }: Pick<PackStatusProps, 'nominations' 
             {gameModeLongName(gameMode)}:
             <br />
             <code className='pack-upload-info__command'>
-              .create-pack "{packName}" "LR{packNumber++}" {beatmapsetIdsString} --ruleset{' '}
-              {gameMode} {round.packs_state !== PacksState.notUploaded && '--overwrite'}
+              .create-pack "{packName}" "LR{packNumber}" {beatmapsetIdsString} --ruleset {gameMode}
+              {packState !== PacksState.notUploaded && ' --overwrite'}
             </code>
           </div>
         );
@@ -102,7 +119,7 @@ function UploadInfo({ nominations, round }: Pick<PackStatusProps, 'nominations' 
 
 interface PackStatusProps {
   nominations: INominationWithPoll[];
-  onRoundUpdate: (round: PartialWithId<Round>) => void;
+  onRoundUpdate: (round: PartialWithId<IRound>) => void;
   round: IRound;
 }
 
@@ -113,14 +130,22 @@ export default function PackStatus({ nominations, onRoundUpdate, round }: PackSt
     return;
   }
 
-  if (round.packs_state === PacksState.notUploaded) {
-    const allLocked = Object.values(round.game_modes).every(
-      (roundGameMode) => roundGameMode.nominations_locked,
-    );
+  const roundGameModes = Object.values(round.game_modes);
+
+  if (roundGameModes.some((roundGameMode) => roundGameMode.pack_state === PacksState.notUploaded)) {
+    // If some packs are uploaded but others aren't, this means a round game mode was created after
+    // the uploading of some packs, which should never happen
+    if (
+      roundGameModes.some((roundGameMode) => roundGameMode.pack_state !== PacksState.notUploaded)
+    ) {
+      return <span className='panic'>Invalid beatmap packs state (some uploaded, some not)</span>;
+    }
+
+    const needsUpdate = roundGameModes.every((roundGameMode) => roundGameMode.nominations_locked);
 
     return (
       <>
-        <span className={allLocked ? 'error' : undefined}>
+        <span className={needsUpdate ? 'error' : undefined}>
           Beatmap packs not uploaded
           <Buttons
             onRoundUpdate={onRoundUpdate}
@@ -134,16 +159,24 @@ export default function PackStatus({ nominations, onRoundUpdate, round }: PackSt
     );
   }
 
-  if (round.packs_state === PacksState.uploadedInitial) {
-    const allLovedOrFailed = nominations.every(
-      (nomination) =>
-        nomination.beatmapset.ranked_status === RankedStatus.loved ||
-        nominationFailedVoting(nomination, round),
+  if (
+    roundGameModes.some((roundGameMode) => roundGameMode.pack_state === PacksState.uploadedInitial)
+  ) {
+    const needsUpdate = roundGameModes.some(
+      (roundGameMode) =>
+        roundGameMode.pack_state === PacksState.uploadedInitial &&
+        nominations
+          .filter((nomination) => nomination.game_mode === roundGameMode.game_mode)
+          .every(
+            (nomination) =>
+              nomination.beatmapset.ranked_status === RankedStatus.loved ||
+              nominationFailedVoting(nomination, round),
+          ),
     );
 
     return (
       <>
-        <span className={allLovedOrFailed ? 'error' : 'pending'}>
+        <span className={needsUpdate ? 'error' : 'pending'}>
           Beatmap packs uploaded (not final version)
           <Buttons
             onRoundUpdate={onRoundUpdate}
@@ -157,7 +190,5 @@ export default function PackStatus({ nominations, onRoundUpdate, round }: PackSt
     );
   }
 
-  if (round.packs_state === PacksState.uploadedFinal) {
-    return <span className='success'>Beatmap packs uploaded</span>;
-  }
+  return <span className='success'>Beatmap packs uploaded</span>;
 }
