@@ -32,6 +32,7 @@ export const locales = [
   { code: 'uk', name: 'українська мова' },
   { code: 'vi', name: 'tiếng Việt' },
   { code: 'zh', name: '简体中文' },
+  { code: 'zh-tw', name: '繁體中文（台灣）' },
 ] as const;
 
 export function IntlProviderWrapper({ children }: PropsWithChildren<unknown>) {
