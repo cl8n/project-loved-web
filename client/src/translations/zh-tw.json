@@ -1,12 +1,12 @@
 {
   "+3rK3I": {
-    "defaultMessage": "未回應"
+    "defaultMessage": "無回應"
   },
   "+9RCG/": {
     "defaultMessage": "其他圖標由 {author} 提供"
   },
   "+bCbtl": {
-    "defaultMessage": "欄位："
+    "defaultMessage": "可顯示欄位:"
   },
   "+d4ZcX": {
     "defaultMessage": "版主"
@@ -24,16 +24,16 @@
     "defaultMessage": "原因"
   },
   "/CNHO3": {
-    "defaultMessage": "使用 osu! 帳號登入"
+    "defaultMessage": "使用osu!帳號登入"
   },
   "/JQDIJ": {
-    "defaultMessage": "譜面狀態："
+    "defaultMessage": "譜面狀態:"
   },
   "/SSCZX": {
     "defaultMessage": "同意"
   },
   "0+S3hP": {
-    "defaultMessage": "如果您發佈的譜面非常不受歡迎或完全不能玩，隊長們可能永遠不會檢查。請只發佈您認為會給 Loved 類別帶來真正價值的譜面。"
+    "defaultMessage": "如果您投稿的譜面非常不受歡迎或完全不能玩，隊長們可能永遠不會檢查。請只投稿您認為會給Loved計畫帶來真正價值的譜面。"
   },
   "06WpMi": {
     "defaultMessage": "已進榜"
@@ -51,13 +51,13 @@
     "defaultMessage": "評論"
   },
   "2YTMfX": {
-    "defaultMessage": "發佈並留在本頁面"
+    "defaultMessage": "送出並留在本頁面"
   },
   "2dOoEc": {
-    "defaultMessage": "Metadata 審核"
+    "defaultMessage": "Metadata審核"
   },
   "31rEte": {
-    "defaultMessage": "回應者身份："
+    "defaultMessage": "回應者身份:"
   },
   "34q5Z7": {
     "defaultMessage": "更新"
@@ -78,7 +78,7 @@
     "defaultMessage": "osu!官方網站"
   },
   "3RdYB+": {
-    "defaultMessage": "遊戲模式："
+    "defaultMessage": "遊戲模式:"
   },
   "4xOZTS": {
     "defaultMessage": "決定譜面是否Loved的投票論壇文章主頁"
@@ -87,34 +87,34 @@
     "defaultMessage": "黑暗"
   },
   "5NZbY5": {
-    "defaultMessage": "結果顯示："
+    "defaultMessage": "結果顯示:"
   },
   "5OS21f": {
-    "defaultMessage": "外部連結："
+    "defaultMessage": "外部連結:"
   },
   "5oqovx": {
-    "defaultMessage": "發佈一個新譜面"
+    "defaultMessage": "投稿一個新譜面"
   },
   "6RxUSQ": {
     "defaultMessage": "更多頁面"
   },
   "6iCh6Z": {
-    "defaultMessage": "編輯我的意見"
+    "defaultMessage": "編輯我的意願"
   },
   "7CJMwD": {
-    "defaultMessage": "優先度"
+    "defaultMessage": "優先程度"
   },
   "7u3Yi2": {
-    "defaultMessage": "你也可以在單點譜面集時按住 {key} 以開啟檢閱模式。"
+    "defaultMessage": "你也可以在單點譜面集時按住{key}以開啟檢閱模式。"
   },
   "8NqvA2": {
-    "defaultMessage": "鍵位數量："
+    "defaultMessage": "鍵位數量:"
   },
   "8bAHuK": {
     "defaultMessage": "關閉"
   },
   "8l6BC0": {
-    "defaultMessage": "譜師意見"
+    "defaultMessage": "譜師意願"
   },
   "8x1LMQ": {
     "defaultMessage": "新增"
@@ -126,7 +126,7 @@
     "defaultMessage": "評價"
   },
   "AGzOYr": {
-    "defaultMessage": "發佈一張想要被Loved的譜面！"
+    "defaultMessage": "投稿一張想要被Loved的譜面!"
   },
   "BGA5hC": {
     "defaultMessage": "開發者"
@@ -135,13 +135,13 @@
     "defaultMessage": "排名"
   },
   "Be0kKF": {
-    "defaultMessage": "即使你發佈的譜面確實有一些優點，也可能永遠不會被提名為Loved。目前能Loved的譜面處理速度是有限的，所以隊長們會不停地尋找更好的發佈內容。"
+    "defaultMessage": "即使你投稿的譜面確實有一些優點，也可能永遠不會被提名為Loved。目前能Loved的譜面處理速度是有限的，所以隊長們會不停地尋找更好的投稿內容。"
   },
   "Bppfuf": {
     "defaultMessage": "（校友）"
   },
   "Bsld0J": {
-    "defaultMessage": "搜尋："
+    "defaultMessage": "搜尋:"
   },
   "CCGzFA": {
     "defaultMessage": "投票已通過"
@@ -153,7 +153,7 @@
     "defaultMessage": "無意見"
   },
   "CxsxoI": {
-    "defaultMessage": "提交中..."
+    "defaultMessage": "正在送出..."
   },
   "CyTIOY": {
     "defaultMessage": "問題追蹤"
@@ -162,40 +162,40 @@
     "defaultMessage": "負面的"
   },
   "Do+EPJ": {
-    "defaultMessage": "{user} 在 {timestamp, date, long} 給出了 {score}"
+    "defaultMessage": "{user}在{timestamp, date, long} 給出了{score}"
   },
   "E7ffvt": {
     "defaultMessage": "強烈贊同"
   },
   "EquHIj": {
-    "defaultMessage": "可用運算符："
+    "defaultMessage": "可用運算符:"
   },
   "F1tQfW": {
     "defaultMessage": "標題"
   },
   "FVFRKC": {
-    "defaultMessage": "wiki頁面"
+    "defaultMessage": "Wiki頁面"
   },
   "G1mG5h": {
-    "defaultMessage": "譜師要求此譜面不加入至 Loved 計畫。"
+    "defaultMessage": "譜師要求此譜面不加入至Loved計畫。"
   },
   "H+WN2F": {
     "defaultMessage": "反對"
   },
   "H65rvb": {
-    "defaultMessage": "你離看見這個頁面還差得遠呢。"
+    "defaultMessage": "你離看見這個頁面還差得遠呢!"
   },
   "HVzPRU": {
     "defaultMessage": "不同意"
   },
   "Hf1vPz": {
-    "defaultMessage": "挑選"
+    "defaultMessage": "挑選集"
   },
   "HvpI7B": {
     "defaultMessage": "譜面集已刪除"
   },
   "IO8Ye2": {
-    "defaultMessage": "分數"
+    "defaultMessage": "評價"
   },
   "IWPQ9l": {
     "defaultMessage": "選擇一個選項"
@@ -216,7 +216,7 @@
     "defaultMessage": "您在此表格上撰寫的內容將會是公開可見的，請不要填寫一些不希望別人看見的內容。"
   },
   "JHNIy2": {
-    "defaultMessage": "投票輪次："
+    "defaultMessage": "投票輪次:"
   },
   "JPKVz4": {
     "defaultMessage": "譜面集"
@@ -234,10 +234,10 @@
     "defaultMessage": "遊戲模式"
   },
   "LOTPO2": {
-    "defaultMessage": "{count,plural,one{# 訪客} other{# 訪客}}"
+    "defaultMessage": "{count,plural,one{#位訪客} other{#位訪客}}"
   },
   "Lm++cZ": {
-    "defaultMessage": "Loved 計畫"
+    "defaultMessage": "Loved計畫"
   },
   "MItLwF": {
     "defaultMessage": "檢閱"
@@ -255,7 +255,7 @@
     "defaultMessage": "帳號年齡"
   },
   "MoR8Of": {
-    "defaultMessage": "譜師意見"
+    "defaultMessage": "譜師意願"
   },
   "N4xf2i": {
     "defaultMessage": "收藏數量"
@@ -276,13 +276,13 @@
     "defaultMessage": "無法下載"
   },
   "OZm2HC": {
-    "defaultMessage": "您有多支持這張譜面？"
+    "defaultMessage": "您有多贊同這張譜面?"
   },
   "OcsUKU": {
-    "defaultMessage": "我的檢閱狀態："
+    "defaultMessage": "我的檢閱狀態:"
   },
   "Oep6va": {
-    "defaultMessage": "提交"
+    "defaultMessage": "送出"
   },
   "PHaXeh": {
     "defaultMessage": "已刪除"
@@ -294,7 +294,7 @@
     "defaultMessage": "藝術家"
   },
   "RHg+09": {
-    "defaultMessage": "您想提名這張譜面的哪些模式？"
+    "defaultMessage": "您想提名這張譜面的哪些模式?"
   },
   "RL5Qu1": {
     "defaultMessage": "Approved"
@@ -306,13 +306,13 @@
     "defaultMessage": "譜面集"
   },
   "SonGuK": {
-    "defaultMessage": "包含一些精確比較條件能使搜尋更精確。比如{comparison} 將篩選出具有超過100個收藏的譜面。"
+    "defaultMessage": "包含一些精確比較條件能使搜尋更精確。比如{comparison}將篩選出具有超過100個收藏的譜面。"
   },
   "Sti+Y3": {
-    "defaultMessage": "發佈譜面後，你可以在<submissionsLink>發佈頁面</submissionsLink>確認譜面狀態。"
+    "defaultMessage": "投稿譜面後，你可以在<submissionsLink>投稿頁面</submissionsLink>確認譜面狀態。"
   },
   "T8mfr2": {
-    "defaultMessage": "你確定要刪除你的檢閱記錄嗎？"
+    "defaultMessage": "你確定要刪除你的檢閱記錄嗎?"
   },
   "Tf7XH9": {
     "defaultMessage": "評論"
@@ -333,7 +333,7 @@
     "defaultMessage": "待處理及拋棄"
   },
   "V5W+3b": {
-    "defaultMessage": "意見"
+    "defaultMessage": "意願"
   },
   "VHEp9G": {
     "defaultMessage": "降序"
@@ -378,13 +378,13 @@
     "defaultMessage": "此混合譜面集的遊玩次數可能不太準確。osu!會在每次譜面更新時重置每個難度的遊玩次數。"
   },
   "a/VT/Q": {
-    "defaultMessage": "關於Loved項目的wiki頁面"
+    "defaultMessage": "關於Loved項目的Wiki頁面"
   },
   "aHJR9F": {
-    "defaultMessage": "意見"
+    "defaultMessage": "意願"
   },
   "aJnlND": {
-    "defaultMessage": "意見:"
+    "defaultMessage": "意願:"
   },
   "aXImqo": {
     "defaultMessage": "編輯檢閱紀錄"
@@ -396,16 +396,16 @@
     "defaultMessage": "非常規模式"
   },
   "c/1pjl": {
-    "defaultMessage": "交叉比對："
+    "defaultMessage": "交叉比對:"
   },
   "c2UCNp": {
     "defaultMessage": "得票比"
   },
   "cDLqbq": {
-    "defaultMessage": "Loved與及已進榜"
+    "defaultMessage": "Loved及已進榜"
   },
   "ccf+6T": {
-    "defaultMessage": "{gameMode} 隊長"
+    "defaultMessage": "{gameMode}隊長"
   },
   "cqesZu": {
     "defaultMessage": "每個在這張譜面集的難度太短了。(低於 20 秒)"
@@ -432,7 +432,7 @@
     "defaultMessage": "更新中..."
   },
   "gLG6dL": {
-    "defaultMessage": "已提交谱面"
+    "defaultMessage": "已投稿譜面"
   },
   "gWofsq": {
     "defaultMessage": "無"
@@ -441,7 +441,7 @@
     "defaultMessage": "登出"
   },
   "ht0/kF": {
-    "defaultMessage": "常見模式"
+    "defaultMessage": "常規模式"
   },
   "iCkWun": {
     "defaultMessage": "投票輪次"
@@ -468,16 +468,16 @@
     "defaultMessage": "<link>源代碼</link> (<commitLink>{commit}, {timestamp, date, short}</commitLink>)"
   },
   "kr2W+L": {
-    "defaultMessage": "<p>填寫這份表格幫助<teamLink>隊長們</teamLink>決定每週提名哪些譜面。即使一張譜面已經被<submissionsLink>發佈</submissionsLink>，你也可以新增你的想法。</p> <p>以下為需要注意的事項:</p>"
+    "defaultMessage": "<p>填寫這份表格幫助<teamLink>隊長們</teamLink>決定每週提名哪些譜面。即使一張譜面已經被<submissionsLink>投稿</submissionsLink>，你也可以新增你的想法。</p> <p>以下為需要注意的事項:</p>"
   },
   "ks9SWH": {
-    "defaultMessage": "新聞發佈者"
+    "defaultMessage": "新聞編輯者"
   },
   "l39agD": {
     "defaultMessage": "狀態"
   },
   "lMSjPi": {
-    "defaultMessage": "這個還沒對你開放。有時間再回來看看！"
+    "defaultMessage": "這個還沒對你開放，有時間再回來看看!"
   },
   "lULo+e": {
     "defaultMessage": "投票未通過"
@@ -501,13 +501,13 @@
     "defaultMessage": "譜面包裝者"
   },
   "mucI2W": {
-    "defaultMessage": "清單排列方式 {definition}"
+    "defaultMessage": "清單排列方式{definition}"
   },
   "nUQEC7": {
     "defaultMessage": "強烈反對"
   },
   "nkWBfH": {
-    "defaultMessage": "Loved項目的主要維護以及針對性討論頻道"
+    "defaultMessage": "Loved計畫項目的主要維護以及針對性討論頻道"
   },
   "nn9fFb": {
     "defaultMessage": "BPM"
@@ -516,10 +516,10 @@
     "defaultMessage": "影片編輯"
   },
   "o0LXIL": {
-    "defaultMessage": "關於Loved項目貢獻者的wiki頁面"
+    "defaultMessage": "關於Loved項目貢獻者的Wiki頁面"
   },
   "oFqE9e": {
-    "defaultMessage": "譜師通常會了解他們的譜面在 Loved 計畫中的用途。這份表格顯示了每位譜師是否同意讓 Loved 計畫把他們的譜面放上去進行投票，並有可能給他們計入排名。請注意，無論曾經是否在這裡同意過，譜師們仍可以在任何時候要求將他們的譜面從 Loved 計畫中刪除。"
+    "defaultMessage": "譜師們通常會了解他們的譜面在Loved計畫中的用途。這份表格顯示了每位譜師是否同意讓Loved計畫把他們的譜面放上去進行投票，並有可能給他們計入排名。請注意，無論曾經是否在這裡同意過，譜師們仍可以在任何時候要求將他們的譜面從Loved計畫中刪除。"
   },
   "p9Evn8": {
     "defaultMessage": "在地化"
@@ -531,13 +531,13 @@
     "defaultMessage": "新增!"
   },
   "pXOU6C": {
-    "defaultMessage": "這裡什麼都沒有 =("
+    "defaultMessage": "這裡什麼都沒有QAQ"
   },
   "phKBIX": {
     "defaultMessage": "未知國家"
   },
   "pvfxi+": {
-    "defaultMessage": "已發佈谱面"
+    "defaultMessage": "已投稿譜面"
   },
   "qROhFe": {
     "defaultMessage": "正面的"
@@ -555,19 +555,19 @@
     "defaultMessage": "檢閱 {beatmapset}"
   },
   "rv3gh8": {
-    "defaultMessage": "{user} 在 {timestamp, date, long} 將此標記為 <score>未通過</score>"
+    "defaultMessage": "{user}在{timestamp, date, long}將此標記為<score>未通過</score>"
   },
   "sG6ons": {
     "defaultMessage": "Loved列表"
   },
   "tCV6dl": {
-    "defaultMessage": "語言：{selector}"
+    "defaultMessage": "語言: {selector}"
   },
   "toLR7w": {
     "defaultMessage": "調查結果"
   },
   "u/O22d": {
-    "defaultMessage": "正在編輯 {user}"
+    "defaultMessage": "正在編輯{user}"
   },
   "uizAlD": {
     "defaultMessage": "論壇"
@@ -576,13 +576,13 @@
     "defaultMessage": "譜面集"
   },
   "utiTez": {
-    "defaultMessage": "意見"
+    "defaultMessage": "意願"
   },
   "uwBono": {
-    "defaultMessage": "{hasTimestamp,select,true{{user} 發佈了這張譜面  {timestamp, date, long}} other{{user} 發佈了這張譜面}}"
+    "defaultMessage": "{hasTimestamp,select,true{{user}投稿了這張譜面  {timestamp, date, long}} other{{user}投稿了這張譜面}}"
   },
   "v4yo/q": {
-    "defaultMessage": "可用屬性："
+    "defaultMessage": "可用屬性:"
   },
   "v96otU": {
     "defaultMessage": "明亮"
@@ -600,10 +600,10 @@
     "defaultMessage": "校友"
   },
   "xJhR0t": {
-    "defaultMessage": "任何"
+    "defaultMessage": "所有"
   },
   "xR9DcO": {
-    "defaultMessage": "新增中..."
+    "defaultMessage": "正在新增..."
   },
   "xcT7oB": {
     "defaultMessage": "備份（幾乎）所有網站數據"
@@ -612,15 +612,15 @@
     "defaultMessage": "是否"
   },
   "yQeX5q": {
-    "defaultMessage": "主題：{selector}"
+    "defaultMessage": "主題: {selector}"
   },
   "zSxa2k": {
-    "defaultMessage": "這張譜面已經在 {roundName} 中被提名。"
+    "defaultMessage": "這張譜面已經在{roundName}中被提名。"
   },
   "zgiklH": {
     "defaultMessage": "譜師"
   },
   "zn6DBN": {
-    "defaultMessage": "排列方式："
+    "defaultMessage": "排列方式:"
   }
 }
