@@ -31,7 +31,7 @@ export default function UsersAndRolesList() {
   return (
     <>
       <UserAdder onUserAdd={onUserAdd} />
-      <table>
+      <table className='main-table'>
         <tr>
           <th />
           <th>User</th>
@@ -43,7 +43,7 @@ export default function UsersAndRolesList() {
             <td>
               <UserInline hideBannedLabel user={user} />
             </td>
-            <td>
+            <td className='normal-wrap'>
               <RolesList roles={user.roles} />
             </td>
           </tr>
