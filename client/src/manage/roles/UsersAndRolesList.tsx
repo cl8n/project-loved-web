@@ -32,22 +32,26 @@ export default function UsersAndRolesList() {
     <>
       <UserAdder onUserAdd={onUserAdd} />
       <table className='main-table'>
-        <tr>
-          <th />
-          <th>User</th>
-          <th>Roles</th>
-        </tr>
-        {users.map((user) => (
-          <tr key={user.id} className={hasRole(user, 'any') ? undefined : 'faded'}>
-            <UserRolesEditor onRolesUpdate={onRolesUpdate(user.id)} user={user} />
-            <td>
-              <UserInline hideBannedLabel user={user} />
-            </td>
-            <td className='normal-wrap'>
-              <RolesList roles={user.roles} />
-            </td>
+        <thead>
+          <tr>
+            <th />
+            <th>User</th>
+            <th>Roles</th>
           </tr>
-        ))}
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.id} className={hasRole(user, 'any') ? undefined : 'faded'}>
+              <UserRolesEditor onRolesUpdate={onRolesUpdate(user.id)} user={user} />
+              <td>
+                <UserInline hideBannedLabel user={user} />
+              </td>
+              <td className='normal-wrap'>
+                <RolesList roles={user.roles} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
       </table>
     </>
   );
